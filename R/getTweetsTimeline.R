@@ -55,5 +55,5 @@ getTweetsTimeline <- function(
   }
   twitter$session$close()
   timeline$session$close()
-  saveRDS(tweets_r, "timeline.rds")
+  saveRDS(tweets_r, paste0("timeline_", username, "_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
 }

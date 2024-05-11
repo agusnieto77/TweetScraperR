@@ -8,5 +8,5 @@ getTweetsTimeline()
 Esta función recupera tweets del timeline de un usuario especificado en Twitter.
 }
 \examples{
-getTweetsTimeline(username = "rstatstweet", n_tweets = 200)
+getTweetsTimeline(username = "rstatstweet", n_tweets = 10)
 }

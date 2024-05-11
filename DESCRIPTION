@@ -1,11 +1,13 @@
 Package: TweetScraperR
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Twitter Data Scraping Package
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Author: Agustín Nieto
+Maintainer: Agustín Nieto <agustin.nieto77@gmail.com>
+Description: 
+    Este paquete proporciona funciones para extraer datos de X/Twitter, incluidos tweets, usuarixs y metadatos asociados.
+    Permite realizar extracción de datos de X/Twitter y manejar la respuesta de manera conveniente en R.
+    El paquete se enfoca en facilitar la tarea de recolección de datos para análisis y visualización.
+License: MIT
 Encoding: UTF-8
 LazyData: true

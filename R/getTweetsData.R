@@ -52,7 +52,7 @@ getTweetsData <- function(
         texto = paste(rvest::html_text(tweets$html_elements(xpath = tweet_original)), collapse = " "),
         respuestas = rvest::html_text(tweets$html_elements(xpath = metrica_res))[1],
         reposteos = rvest::html_text(tweets$html_elements(xpath = metrica_rep))[1],
-        megustas = rvest::html_text(tweets$html_elements(xpath = metricameg))[1],
+        megustas = rvest::html_text(tweets$html_elements(xpath = metrica_meg))[1],
         post_completo = list(tweets$html_elements(css = "article")),
         url = i
       )

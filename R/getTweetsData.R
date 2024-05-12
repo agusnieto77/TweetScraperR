@@ -60,5 +60,6 @@ getTweetsData <- function(
     message("Datos recolectados del tweet: ", i)
   }
   twitter$session$close()
+  tweets$session$close()
   saveRDS(tweets_db, paste0("db_tweets_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
 }

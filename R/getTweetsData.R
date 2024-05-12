@@ -36,7 +36,9 @@ getTweetsData <- function(
   fech <- ".css-175oi2r.r-1r5su4o time"
   username <- "/html/body/div/div/div/div/main/div/div/div/div/div/section/div/div/div[1]/div/div/article/div/div/div/div/div/div/div/div/div/div/div/div/a/div/span"
   name <- "/html/body/div[1]/div/div/div/main/div/div/div/div/div/section/div/div/div[1]/div/div/article/div/div/div/div/div/div/div/div/div/div/div/a/div/div/span/span"
-  metricas <- "/html/body/div/div/div/div/main/div/div/div/div/div/section/div/div/div/div/div/article/div/div/div/div/div/div/div/div/div/div/span/span/span"
+  metrica_res <- "/html/body/div/div/div/div/main/div/div/div/div/div/section/div/div/div/div/div/article/div/div/div/div/div/div/div[1]/div/div/div/span/span/span"
+  metrica_rep <- "/html/body/div/div/div/div/main/div/div/div/div/div/section/div/div/div/div/div/article/div/div/div/div/div/div/div[2]/div/div/div/span/span/span"
+  metrica_meg <- "/html/body/div/div/div/div/main/div/div/div/div/div/section/div/div/div/div/div/article/div/div/div/div/div/div/div[3]/div/div/div/span/span/span"
   Sys.sleep(3)
   tweets_db <- tibble::tibble()
   for (i in urls_tweets) {
@@ -46,12 +48,11 @@ getTweetsData <- function(
       tweets_db,
       tibble::tibble(
         fecha = lubridate::as_datetime(rvest::html_attr(tweets$html_elements(css = fech), "datetime")),
-        username = rvest::html_text(tweets$html_elements(xpath = username))[1],
-        name = rvest::html_text(tweets$html_elements(xpath = name))[1],
+        username = sub("^https://twitter.com/(.*?)/.*$", "\\1", i),
         texto = paste(rvest::html_text(tweets$html_elements(xpath = tweet_original)), collapse = " "),
-        respuestas = rvest::html_text(tweets$html_elements(xpath = metricas))[1],
-        reposteos = rvest::html_text(tweets$html_elements(xpath = metricas))[2],
-        megustas = rvest::html_text(tweets$html_elements(xpath = metricas))[3],
+        respuestas = rvest::html_text(tweets$html_elements(xpath = metrica_res))[1],
+        reposteos = rvest::html_text(tweets$html_elements(xpath = metrica_rep))[1],
+        megustas = rvest::html_text(tweets$html_elements(xpath = metricameg))[1],
         post_completo = list(tweets$html_elements(css = "article")),
         url = i
       )

@@ -1,28 +1,24 @@
-#' Get Tweets from User Timeline
+#' Get Tweets Data
 #'
-#' Esta función recupera tweets del timeline de un usuario especificado en Twitter.
+#' Esta función recupera datos de tweets a partir de URLs de tweets proporcionadas.
 #'
-#' @param username El nombre de usuario de Twitter del cual quieres obtener el timeline.
-#' @param n_tweets El número máximo de tweets a obtener. Por defecto es 100.
+#' @param urls_tweets Vector de URLs de tweets de los cuales se desea obtener datos.
 #' @param xuser Nombre de usuario de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.
 #' @param xpass Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.
-#' @return Un vector que contiene los tweets obtenidos.
+#' @return Un tibble que contiene los datos de los tweets recuperados.
 #' @export
 #'
 #' @examples
 #' \dontrun{
-#' getTweetsTimeline(username = "rstatstweet", n_tweets = 200)
+#' getTweetsData(urls_tweets = "https://twitter.com/estacion_erre/status/1788929978811232537")
 #' }
 #'
-#' @references
-#' Puedes encontrar más información sobre el paquete TweetScrapeR en:
-#' \url{https://github.com/agusnieto77/TweetScraperR}
-#'
 #' @import rvest
+#' @import lubridate
+#' @import tibble
 
-getTweetsTimeline <- function(
-    username,
-    n_tweets = 100,
+getTweetsData <- function(
+    urls_tweets,
     xuser = Sys.getenv("USER"),
     xpass = Sys.getenv("PASS")
                               ) {
@@ -36,32 +32,32 @@ getTweetsTimeline <- function(
   twitter$click(css = clic__1, n_clicks = 1)
   twitter$type(css = input_2, text = xpass)
   twitter$click(css = iniciar, n_clicks = 1)
-  tweet <- ".css-1rynq56.r-8akbws.r-krxsd3.r-dnmrzs.r-1udh08x.r-bcqeeo.r-qvutc0.r-37j5jr.r-a023e6.r-rjixqe.r-16dba41.r-bnwqim"
-  timeline <- rvest::read_html_live(paste0("https://twitter.com/", username))
+  tweet_original <- "/html/body/div/div/div/div/main/div/div/div/div/div/section/div/div/div/div/div/article/div/div/div/div[1]/div/div/span"
+  fech <- ".css-175oi2r.r-1r5su4o time"
+  username <- "/html/body/div/div/div/div/main/div/div/div/div/div/section/div/div/div[1]/div/div/article/div/div/div/div/div/div/div/div/div/div/div/div/a/div/span"
+  name <- "/html/body/div[1]/div/div/div/main/div/div/div/div/div/section/div/div/div[1]/div/div/article/div/div/div/div/div/div/div/div/div/div/div/a/div/div/span/span"
+  metricas <- "/html/body/div/div/div/div/main/div/div/div/div/div/section/div/div/div/div/div/article/div/div/div/div/div/div/div/div/div/div/span/span/span"
   Sys.sleep(3)
-  tweets_r <- c()
-  i <- 1
-  repetitions <- 0
-  max_repetitions <- 2
-  while (TRUE) {
-    tweets <- rvest::html_text(timeline$html_elements(css = tweet))
-    if (length(tweets_r) > n_tweets || repetitions >= max_repetitions) {
-      cat("Finalizó la recolección de tweets.")
-      break
-    }
-    new_tweets <- unique(tweets[!tweets %in% tweets_r])
-    tweets_r <- unique(append(tweets_r, new_tweets))
-    timeline$scroll_by(top = 4000, left = 0)
-    message("Tweets recolectados: ", length(tweets_r))
-    Sys.sleep(2.5)
-    if (length(new_tweets) == 0) {
-      repetitions <- repetitions + 1
-    } else {
-      repetitions <- 0
-    }
-    i <- i + 1
+  tweets_db <- tibble::tibble()
+  for (i in urls_tweets) {
+    tweets <- rvest::read_html_live(i)
+    Sys.sleep(4)
+    tweets_db <- rbind(
+      tweets_db,
+      tibble::tibble(
+        fecha = lubridate::as_datetime(rvest::html_attr(tweets$html_elements(css = fech), "datetime")),
+        username = rvest::html_text(tweets$html_elements(xpath = username))[1],
+        name = rvest::html_text(tweets$html_elements(xpath = name))[1],
+        texto = paste(rvest::html_text(tweets$html_elements(xpath = tweet_original)), collapse = " "),
+        respuestas = rvest::html_text(tweets$html_elements(xpath = metricas))[1],
+        reposteos = rvest::html_text(tweets$html_elements(xpath = metricas))[2],
+        megustas = rvest::html_text(tweets$html_elements(xpath = metricas))[3],
+        post_completo = list(tweets$html_elements(css = "article")),
+        url = i
+      )
+    )
+    message("Datos recolectados del tweet: ", i)
   }
   twitter$session$close()
-  timeline$session$close()
-  saveRDS(tweets_r, paste0("timeline_", username, "_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
+  saveRDS(tweets_db, paste0("db_tweets_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
 }

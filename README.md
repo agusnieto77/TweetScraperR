@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# TweetScraperR<img src="man/figures/hex-twitterscraper.svg" align="right" height="160"/>
+# TweetScraperR<img src="man/figures/hex-twitterscraper.svg" align="right" height="220"/>
 
 <!-- badges: start -->
 

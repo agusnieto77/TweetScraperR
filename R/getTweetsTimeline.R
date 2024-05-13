@@ -72,7 +72,7 @@ getTweetsTimeline <- function(
     }
     tweets_udb <- unique(rbind(tweets_udb, i_tweets))
     prev_count <- new_count
-    timeline$scroll_by(top = 4000, left = 0)
+    timeline$scroll_by(top = 3000, left = 0)
     message("Tweets recolectados: ", nrow(tweets_udb))
     Sys.sleep(2.5)
   }

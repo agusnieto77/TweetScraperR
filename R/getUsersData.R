@@ -44,7 +44,7 @@ getUsersData <- function(
       users_db,
       tibble::tibble(
         fecha_inicio = lubridate::dmy(paste("01", gsub("^.*unió en |^.*ined ", "", tail(rvest::html_text(rvest::html_elements(nodo, css = fech)), 1)), collapse = " ")),
-        nombre = rvest::html_text(rvest::html_elements(nodo, css = name))[1],
+        nombre = rvest::html_text2(rvest::html_elements(nodo, css = name))[1],
         username = sub("^https://twitter.com/(.*?)", "\\1", i),
         n_post = gsub(" posts", "", rvest::html_text(rvest::html_elements(nodo, css = met_post))[1]),
         n_siguiendo = gsub(" Siguiendo", "", rvest::html_text(rvest::html_elements(nodo, css = met_siguiendo))[1]),

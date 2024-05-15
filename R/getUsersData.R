@@ -47,8 +47,8 @@ getUsersData <- function(
         nombre = rvest::html_text2(rvest::html_elements(nodo, css = name))[1],
         username = sub("^https://twitter.com/(.*?)", "\\1", i),
         n_post = gsub(" posts", "", rvest::html_text(rvest::html_elements(nodo, css = met_post))[1]),
-        n_siguiendo = gsub(" Siguiendo", "", rvest::html_text(rvest::html_elements(nodo, css = met_siguiendo))[1]),
-        n_seguidorxs = gsub(" Seguidores", "", rvest::html_text(rvest::html_elements(nodo, css = met_seguidores))[1]),
+        n_siguiendo = gsub(" Siguiendo| Following", "", rvest::html_text(rvest::html_elements(nodo, css = met_siguiendo))[1]),
+        n_seguidorxs = gsub(" Seguidores| Followers", "", rvest::html_text(rvest::html_elements(nodo, css = met_seguidores))[1]),
         url = i
       )
     )
@@ -57,7 +57,7 @@ getUsersData <- function(
   twitter$session$close()
   users$session$close()
   convertir_mil <- function(x) {
-    ifelse(grepl("mil", x), as.numeric(gsub("[^0-9.]", "", x)) * 1000, as.numeric(x))
+    ifelse(grepl("mil|K", x), as.numeric(gsub("[^0-9.]", "", x)) * 1000, as.numeric(x))
   }
   users_db$n_post <-  sapply(gsub(",", ".", gsub("\\.", "", users_db$n_post)), convertir_mil)
   users_db$n_siguiendo <-  sapply(gsub(",", ".", gsub("\\.", "", users_db$n_siguiendo)), convertir_mil)

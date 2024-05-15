@@ -38,9 +38,11 @@ devtools::install_github("agusnieto77/TweetScraperR")
 
 ### Funciones
 
-| Nombre                    | Ciclo                                                                        | Descripción                                |
-|:--------------------------|:-----------------------------------------------------------------------------|:-------------------------------------------|
-| `getTweetsData()`         | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Recupera datos de tweets a partir de URLs. |
-| `getTweetsTimeline()`     | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Recupera tweets de un timeline.            |
-| `getTweetsUrlsSearch()`   | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Recupera URLs de tweets por búsqueda.      |
-| `getTweetsUrlsTimeline()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Recupera URLs de tweets de un timeline.    |
+| Nombre                    | Ciclo                                                                        | Descripción                                    |
+|:--------------------------|:-----------------------------------------------------------------------------|:-----------------------------------------------|
+| `getAuthentication()`     | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Inicia sesión en Twitter con las credenciales. |
+| `getTweetsData()`         | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Recupera datos de tweets a partir de URLs.     |
+| `getTweetsTimeline()`     | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Recupera tweets de un timeline.                |
+| `getTweetsUrlsSearch()`   | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Recupera URLs de tweets por búsqueda.          |
+| `getTweetsUrlsTimeline()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Recupera URLs de tweets de un timeline.        |
+| `getUsersData`            | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Recupera datos de users a partir de URLs.      |

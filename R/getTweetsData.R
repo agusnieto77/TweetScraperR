@@ -35,12 +35,12 @@ getTweetsData <- function(
   twitter$click(css = login, n_clicks = 1)
   Sys.sleep(2)
   tweet_original <- "/html/body/div/div/div/div/main/div/div/div/div/div/section/div/div/div/div/div/article/div/div/div/div[1]/div/div/span"
-  fech <- ".css-175oi2r.r-1r5su4o time"
+  fech <- "time"
   username <- "/html/body/div/div/div/div/main/div/div/div/div/div/section/div/div/div[1]/div/div/article/div/div/div/div/div/div/div/div/div/div/div/div/a/div/span"
   name <- "/html/body/div[1]/div/div/div/main/div/div/div/div/div/section/div/div/div[1]/div/div/article/div/div/div/div/div/div/div/div/div/div/div/a/div/div/span/span"
-  metrica_res <- "/html/body/div/div/div/div/main/div/div/div/div/div/section/div/div/div/div/div/article/div/div/div/div/div/div/div[1]/div/div/div/span/span/span"
-  metrica_rep <- "/html/body/div/div/div/div/main/div/div/div/div/div/section/div/div/div/div/div/article/div/div/div/div/div/div/div[2]/div/div/div/span/span/span"
-  metrica_meg <- "/html/body/div/div/div/div/main/div/div/div/div/div/section/div/div/div/div/div/article/div/div/div/div/div/div/div[3]/div/div/div/span/span/span"
+  metrica_res <- "div:nth-child(1) > button > div > div.css-175oi2r.r-xoduu5.r-1udh08x > span > span > span"
+  metrica_rep <- "div:nth-child(2) > button > div > div.css-175oi2r.r-xoduu5.r-1udh08x > span > span > span"
+  metrica_meg <- "div:nth-child(3) > button > div > div.css-175oi2r.r-xoduu5.r-1udh08x > span > span > span"
   Sys.sleep(3)
   tweets_db <- tibble::tibble()
   for (i in urls_tweets) {
@@ -49,12 +49,12 @@ getTweetsData <- function(
     tweets_db <- rbind(
       tweets_db,
       tibble::tibble(
-        fecha = lubridate::as_datetime(rvest::html_attr(tweets$html_elements(css = fech), "datetime")),
+        fecha = lubridate::as_datetime(rvest::html_attr(tweets$html_elements(css = fech), "datetime")[1]),
         username = sub("^https://twitter.com/(.*?)/.*$", "\\1", i),
         texto = paste(rvest::html_text(tweets$html_elements(xpath = tweet_original)), collapse = " "),
-        respuestas = rvest::html_text(tweets$html_elements(xpath = metrica_res))[1],
-        reposteos = rvest::html_text(tweets$html_elements(xpath = metrica_rep))[1],
-        megustas = rvest::html_text(tweets$html_elements(xpath = metrica_meg))[1],
+        respuestas = rvest::html_text(tweets$html_elements(css = metrica_res))[1],
+        reposteos = rvest::html_text(tweets$html_elements(css = metrica_rep))[1],
+        megustas = rvest::html_text(tweets$html_elements(css = metrica_meg))[1],
         post_completo = list(tweets$html_elements(css = "article")),
         url = i
       )
@@ -63,5 +63,14 @@ getTweetsData <- function(
   }
   twitter$session$close()
   tweets$session$close()
+  tweets_db$respuestas <- ifelse(is.na(tweets_db$respuestas) | tweets_db$respuestas == "", "0", tweets_db$respuestas)
+  tweets_db$reposteos <- ifelse(is.na(tweets_db$reposteos) | tweets_db$reposteos == "", "0", tweets_db$reposteos)
+  tweets_db$megustas <- ifelse(is.na(tweets_db$megustas) | tweets_db$megustas == "", "0", tweets_db$megustas)
+  convertir_mil <- function(x) {
+    ifelse(grepl("mil|K", x), as.numeric(gsub("[^0-9.]", "", x)) * 1000, as.numeric(x))
+  }
+  tweets_db$respuestas <-  sapply(gsub(",", ".", gsub("\\.", "", tweets_db$respuestas)), convertir_mil)
+  tweets_db$reposteos <-  sapply(gsub(",", ".", gsub("\\.", "", tweets_db$reposteos)), convertir_mil)
+  tweets_db$megustas <-  sapply(gsub(",", ".", gsub("\\.", "", tweets_db$megustas)), convertir_mil)
   saveRDS(tweets_db, paste0("db_tweets_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
 }

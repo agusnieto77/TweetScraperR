@@ -42,7 +42,7 @@ getTweetsUrlsSearch <- function(
   Sys.sleep(2)
   searchok <- rvest::read_html_live(paste0("https://twitter.com/search?q=", gsub("#", "%23", search), "&src=trend_click&vertical=trends"))
   Sys.sleep(3)
-  url_tweet <- "div.css-175oi2r.r-18u37iz.r-1wbh5a2.r-13hce6t > div > div.css-175oi2r.r-18u37iz.r-1q142lx > a"
+  url_tweet <- "div.css-175oi2r > div > div.css-175oi2r > a.css-146c3p1.r-bcqeeo.r-1ttztb7.r-qvutc0.r-37j5jr.r-a023e6"
   tweets_urls <- c()
   i <- 1
   repetitions <- 0

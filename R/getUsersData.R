@@ -27,7 +27,7 @@ getUsersData <- function(
   TweetScraperR::getAuthentication()
   Sys.sleep(2)
   todo <- "#react-root > div > div > div.css-175oi2r.r-1f2l425.r-13qz1uu.r-417010.r-18u37iz > main > div > div > div > div > div"
-  name <- "span.css-1jxf684.r-bcqeeo.r-1ttztb7.r-qvutc0.r-poiln3.r-b88u0q > span > span:nth-child(1)"
+  name <- "h2"
   met_post <- "div.css-175oi2r.r-aqfbo4.r-gtdqiz.r-1gn8etr.r-1g40b8q > div:nth-child(1) > div > div > div > div > div > div.css-175oi2r.r-16y2uox.r-1wbh5a2.r-1pi2tsx.r-1777fci > div > div"
   descrip <- "div > div > div.css-175oi2r.r-1f2l425.r-13qz1uu.r-417010.r-18u37iz > main > div > div > div > div.css-175oi2r.r-14lw9ot.r-jxzhtn.r-13l2t4g.r-1ljd8xs.r-1phboty.r-16y2uox.r-184en5c.r-61z16t.r-11wrixw.r-1jgb5lz.r-13qz1uu.r-1ye8kvj > div > div:nth-child(3) > div > div > div > div.css-175oi2r.r-ymttw5.r-ttdzmv.r-1ifxtd0 > div:nth-child(3) > div > div"
   fech <- "span.css-1jxf684.r-bcqeeo.r-1ttztb7.r-qvutc0.r-poiln3.r-4qtqp9.r-1a11zyx span.css-1jxf684.r-bcqeeo.r-1ttztb7.r-qvutc0.r-poiln3"
@@ -56,5 +56,11 @@ getUsersData <- function(
   }
   twitter$session$close()
   users$session$close()
+  convertir_mil <- function(x) {
+    ifelse(grepl("mil", x), as.numeric(gsub("[^0-9.]", "", x)) * 1000, as.numeric(x))
+  }
+  users_db$n_post <-  sapply(gsub(",", ".", gsub("\\.", "", users_db$n_post)), convertir_mil)
+  users_db$n_siguiendo <-  sapply(gsub(",", ".", gsub("\\.", "", users_db$n_siguiendo)), convertir_mil)
+  users_db$n_seguidorxs <-  sapply(gsub(",", ".", gsub("\\.", "", users_db$n_seguidorxs)), convertir_mil)
   saveRDS(users_db, paste0("db_users_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
 }

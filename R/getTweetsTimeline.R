@@ -28,8 +28,16 @@ getTweetsTimeline <- function(
     xpass = Sys.getenv("PASS")
 ) {
   twitter <- rvest::read_html_live("https://twitter.com/i/flow/login")
+  Sys.sleep(3)
+  userx <- "input"
+  nextx <- "#layers div > div > div > button:nth-child(6) > div"
+  passx <- "#layers > div > div > div > div > div > div > div > div > div > div > div > div > div > div > div > div > div > label > div > div > div > input"
+  login <- "#layers > div > div > div > div > div > div > div.css-175oi2r > div.css-175oi2r > div > div > div.css-175oi2r > div.css-175oi2r.r-16y2uox > div.css-175oi2r > div > div.css-175oi2r > div > div > button"
+  twitter$type(css = userx, text = xuser)
+  twitter$click(css = nextx, n_clicks = 1)
   Sys.sleep(2)
-  TweetScraperR::getAuthentication()
+  twitter$type(css = passx, text = xpass)
+  twitter$click(css = login, n_clicks = 1)
   Sys.sleep(2)
   fech <- "article time"
   user1 <- "article a.css-175oi2r.r-1wbh5a2.r-dnmrzs.r-1ny4l3l.r-1loqt21 .css-1rynq56.r-dnmrzs.r-1udh08x.r-3s2u2q.r-bcqeeo.r-qvutc0.r-37j5jr.r-a023e6.r-rjixqe.r-16dba41.r-18u37iz.r-1wvb978 .css-1qaijid.r-bcqeeo.r-qvutc0.r-poiln3"

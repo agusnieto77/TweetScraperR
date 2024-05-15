@@ -23,8 +23,16 @@ getTweetsData <- function(
     xpass = Sys.getenv("PASS")
                               ) {
   twitter <- rvest::read_html_live("https://twitter.com/i/flow/login")
+  Sys.sleep(3)
+  userx <- "input"
+  nextx <- "#layers div > div > div > button:nth-child(6) > div"
+  passx <- "#layers > div > div > div > div > div > div > div > div > div > div > div > div > div > div > div > div > div > label > div > div > div > input"
+  login <- "#layers > div > div > div > div > div > div > div.css-175oi2r > div.css-175oi2r > div > div > div.css-175oi2r > div.css-175oi2r.r-16y2uox > div.css-175oi2r > div > div.css-175oi2r > div > div > button"
+  twitter$type(css = userx, text = xuser)
+  twitter$click(css = nextx, n_clicks = 1)
   Sys.sleep(2)
-  TweetScraperR::getAuthentication()
+  twitter$type(css = passx, text = xpass)
+  twitter$click(css = login, n_clicks = 1)
   Sys.sleep(2)
   tweet_original <- "/html/body/div/div/div/div/main/div/div/div/div/div/section/div/div/div/div/div/article/div/div/div/div[1]/div/div/span"
   fech <- ".css-175oi2r.r-1r5su4o time"

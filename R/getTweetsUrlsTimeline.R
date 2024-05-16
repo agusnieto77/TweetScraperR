@@ -47,6 +47,7 @@ getTweetsUrlsTimeline <- function(
       cat("Finalizó la recolección de URLs.")
       break
     }
+    urls_tweets <- urls_tweets[grep("/status/", urls_tweets)]
     new_tweets <- unique(urls_tweets[!urls_tweets %in% tweets_urls])
     tweets_urls <- unique(append(tweets_urls, new_tweets))
     usernameok$scroll_by(top = 4000, left = 0)

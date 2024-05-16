@@ -39,11 +39,11 @@ getTweetsTimeline <- function(
   twitter$type(css = passx, text = xpass)
   twitter$click(css = login, n_clicks = 1)
   Sys.sleep(2)
-  fech <- "article time"
-  user1 <- "article a.css-175oi2r.r-1wbh5a2.r-dnmrzs.r-1ny4l3l.r-1loqt21 .css-1rynq56.r-dnmrzs.r-1udh08x.r-3s2u2q.r-bcqeeo.r-qvutc0.r-37j5jr.r-a023e6.r-rjixqe.r-16dba41.r-18u37iz.r-1wvb978 .css-1qaijid.r-bcqeeo.r-qvutc0.r-poiln3"
+  fech <- "div > div > div > a > time"
+  user1 <- "div.css-175oi2r.r-18u37iz.r-1wbh5a2.r-1ez5h0i > div > div.css-175oi2r.r-1wbh5a2.r-dnmrzs > a > div > span"
   user2 <- "div.css-175oi2r.r-adacv.r-1udh08x.r-1ets6dv.r-1867qdf.r-rs99b7.r-o7ynqc.r-6416eg.r-1ny4l3l.r-1loqt21 > div > div.css-175oi2r.r-eqz5dr.r-1fz3rvf.r-1s2bzr4 > div > div > div > div.css-175oi2r.r-1wbh5a2.r-dnmrzs.r-1ny4l3l > div > div.css-175oi2r.r-18u37iz.r-1wbh5a2.r-13hce6t > div > div.css-175oi2r.r-1wbh5a2.r-dnmrzs > div > div > span"
-  tweet <- "article .css-1rynq56.r-8akbws.r-krxsd3.r-dnmrzs.r-1udh08x.r-bcqeeo.r-qvutc0.r-37j5jr.r-a023e6.r-rjixqe.r-16dba41.r-bnwqim"
-  url_tweet <- "div.css-175oi2r.r-18u37iz.r-1wbh5a2.r-13hce6t > div > div.css-175oi2r.r-18u37iz.r-1q142lx > a"
+  tweet <- "#react-root > div > div > div.css-175oi2r.r-1f2l425.r-13qz1uu.r-417010.r-18u37iz > main > div > div > div > div > div > div:nth-child(3) > div > div > section > div > div > div > div > div > article > div > div > div.css-175oi2r.r-18u37iz > div.css-175oi2r.r-1iusvr4.r-16y2uox.r-1777fci.r-kzbkwu > div:nth-child(2)"
+  url_tweet <- "div.css-175oi2r.r-18u37iz.r-1wbh5a2.r-1ez5h0i > div > div.css-175oi2r.r-18u37iz.r-1q142lx > a"
   timeline <- rvest::read_html_live(paste0("https://twitter.com/", username))
   Sys.sleep(3)
   tweets_udb <- tibble::tibble()

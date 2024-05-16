@@ -41,7 +41,7 @@ getTweetsTimeline <- function(
   Sys.sleep(2)
   fech <- "div > div > div > a > time"
   user1 <- "div.css-175oi2r.r-18u37iz.r-1wbh5a2.r-1ez5h0i > div > div.css-175oi2r.r-1wbh5a2.r-dnmrzs > a > div > span"
-  user2 <- "div.css-175oi2r.r-adacv.r-1udh08x.r-1ets6dv.r-1867qdf.r-rs99b7.r-o7ynqc.r-6416eg.r-1ny4l3l.r-1loqt21 > div > div.css-175oi2r.r-eqz5dr.r-1fz3rvf.r-1s2bzr4 > div > div > div > div.css-175oi2r.r-1wbh5a2.r-dnmrzs.r-1ny4l3l > div > div.css-175oi2r.r-18u37iz.r-1wbh5a2.r-13hce6t > div > div.css-175oi2r.r-1wbh5a2.r-dnmrzs > div > div > span"
+  user2 <- "div.css-175oi2r.r-adacv.r-1udh08x.r-1ets6dv.r-1867qdf.r-rs99b7.r-o7ynqc.r-6416eg.r-1ny4l3l.r-1loqt21 > div > div.css-175oi2r.r-14gqq1x > div > div > div > div > a"
   tweet <- "#react-root > div > div > div.css-175oi2r.r-1f2l425.r-13qz1uu.r-417010.r-18u37iz > main > div > div > div > div > div > div:nth-child(3) > div > div > section > div > div > div > div > div > article > div > div > div.css-175oi2r.r-18u37iz > div.css-175oi2r.r-1iusvr4.r-16y2uox.r-1777fci.r-kzbkwu > div:nth-child(2)"
   url_tweet <- "div.css-175oi2r.r-18u37iz.r-1wbh5a2.r-1ez5h0i > div > div.css-175oi2r.r-18u37iz.r-1q142lx > a"
   timeline <- rvest::read_html_live(paste0("https://twitter.com/", username))
@@ -58,9 +58,9 @@ getTweetsTimeline <- function(
     }
     i_tweets <- tibble::tibble(
       fecha = lubridate::as_datetime(rvest::html_attr(timeline$html_elements(css = fech), "datetime")),
-      usern = rvest::html_text(timeline$html_elements(css = paste(user1, user2, sep = ", "))),
+      usern = rvest::html_text(timeline$html_elements(css = user1)),
       tweet = rvest::html_text(timeline$html_elements(css = tweet)),
-      url = rvest::html_attr(timeline$html_elements(css = paste(url_tweet, user2, sep = ", ")), "href")
+      url = rvest::html_attr(timeline$html_elements(css = url_tweet), "href")
     )
     new_count <- nrow(i_tweets)
     if (new_count == prev_count) {

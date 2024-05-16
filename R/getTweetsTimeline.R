@@ -49,7 +49,7 @@ getTweetsTimeline <- function(
   tweets_udb <- tibble::tibble()
   i <- 1
   repetitions <- 0
-  max_repetitions <- 2
+  max_repetitions <- 3
   prev_count <- -1
   while (TRUE) {
     if (nrow(tweets_udb) > n_tweets || repetitions >= max_repetitions) {

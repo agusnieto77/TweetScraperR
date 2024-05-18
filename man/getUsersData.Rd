@@ -25,7 +25,7 @@ Esta función recupera datos de users a partir de URLs de users proporcionadas.
 }
 \examples{
 \dontrun{
-getUsersData(urls_users = "https://twitter.com/estacion_erre")
+getUsersData(urls_users = "https://x.com/estacion_erre")
 }
 
 }

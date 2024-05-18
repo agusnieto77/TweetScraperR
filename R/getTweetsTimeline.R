@@ -27,9 +27,9 @@ getTweetsTimeline <- function(
     xuser = Sys.getenv("USER"),
     xpass = Sys.getenv("PASS")
 ) {
-  twitter <- rvest::read_html_live("https://twitter.com/i/flow/login")
+  twitter <- rvest::read_html_live("https://x.com/i/flow/login")
   Sys.sleep(3)
-  userx <- "input"
+  userx <- "#layers > div > div > div > div > div > div > div.css-175oi2r > div.css-175oi2r > div > div > div.css-175oi2r > div.css-175oi2r > div > div > div > div.css-175oi2r > label > div > div.css-175oi2r > div > input"
   nextx <- "#layers div > div > div > button:nth-child(6) > div"
   passx <- "#layers > div > div > div > div > div > div > div > div > div > div > div > div > div > div > div > div > div > label > div > div > div > input"
   login <- "#layers > div > div > div > div > div > div > div.css-175oi2r > div.css-175oi2r > div > div > div.css-175oi2r > div.css-175oi2r.r-16y2uox > div.css-175oi2r > div > div.css-175oi2r > div > div > button"
@@ -44,7 +44,7 @@ getTweetsTimeline <- function(
   tweet <- "#react-root > div > div > div.css-175oi2r.r-1f2l425.r-13qz1uu.r-417010.r-18u37iz > main > div > div > div > div > div > div:nth-child(3) > div > div > section > div > div > div > div > div > article > div > div > div.css-175oi2r.r-18u37iz > div.css-175oi2r.r-1iusvr4.r-16y2uox.r-1777fci.r-kzbkwu > div:nth-child(2)"
   url_tweet <- "div.css-175oi2r.r-18u37iz.r-1wbh5a2.r-1ez5h0i > div > div.css-175oi2r.r-18u37iz.r-1q142lx > a"
   user2 <-     "div.css-175oi2r.r-18u37iz.r-1wbh5a2.r-1ez5h0i > div > div.css-175oi2r.r-18u37iz.r-1q142lx > div > a"
-  timeline <- rvest::read_html_live(paste0("https://twitter.com/", username))
+  timeline <- rvest::read_html_live(paste0("https://x.com/", username))
   Sys.sleep(3)
   tweets_udb <- tibble::tibble()
   i <- 1
@@ -80,7 +80,7 @@ getTweetsTimeline <- function(
   }
   twitter$session$close()
   timeline$session$close()
-  tweets_udb$url <- paste0("https://twitter.com", tweets_udb$url)
+  tweets_udb$url <- paste0("https://x.com", tweets_udb$url)
   tweets_udb$is_original <- tweets_udb$usern == paste0("@", username)
   tweets_udb$is_retweet <- !is.na(tweets_udb$usern) & tweets_udb$usern != paste0("@", username)
   tweets_udb$is_cita <- is.na(tweets_udb$usern)

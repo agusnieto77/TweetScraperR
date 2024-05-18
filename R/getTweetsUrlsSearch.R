@@ -28,9 +28,9 @@ getTweetsUrlsSearch <- function(
     xuser = Sys.getenv("USER"),
     xpass = Sys.getenv("PASS")
 ) {
-  twitter <- rvest::read_html_live("https://twitter.com/i/flow/login")
+  twitter <- rvest::read_html_live("https://x.com/i/flow/login")
   Sys.sleep(3)
-  userx <- "input"
+  userx <- "#layers > div > div > div > div > div > div > div.css-175oi2r > div.css-175oi2r > div > div > div.css-175oi2r > div.css-175oi2r > div > div > div > div.css-175oi2r > label > div > div.css-175oi2r > div > input"
   nextx <- "#layers div > div > div > button:nth-child(6) > div"
   passx <- "#layers > div > div > div > div > div > div > div > div > div > div > div > div > div > div > div > div > div > label > div > div > div > input"
   login <- "#layers > div > div > div > div > div > div > div.css-175oi2r > div.css-175oi2r > div > div > div.css-175oi2r > div.css-175oi2r.r-16y2uox > div.css-175oi2r > div > div.css-175oi2r > div > div > button"
@@ -40,7 +40,7 @@ getTweetsUrlsSearch <- function(
   twitter$type(css = passx, text = xpass)
   twitter$click(css = login, n_clicks = 1)
   Sys.sleep(2)
-  searchok <- rvest::read_html_live(paste0("https://twitter.com/search?q=", gsub("#", "%23", search), "&src=trend_click&vertical=trends"))
+  searchok <- rvest::read_html_live(paste0("https://x.com/search?q=", gsub("#", "%23", search), "&src=trend_click&vertical=trends"))
   Sys.sleep(3)
   url_tweet <- "div.css-175oi2r > div > div.css-175oi2r > a.css-146c3p1.r-bcqeeo.r-1ttztb7.r-qvutc0.r-37j5jr.r-a023e6"
   tweets_urls <- c()
@@ -68,5 +68,5 @@ getTweetsUrlsSearch <- function(
   }
   twitter$session$close()
   searchok$session$close()
-  saveRDS(paste0("https://twitter.com", tweets_urls), paste0("search_", gsub("#", "hashtag_", search), "_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
+  saveRDS(paste0("https://x.com", tweets_urls), paste0("search_", gsub("#", "hashtag_", search), "_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
 }

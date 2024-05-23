@@ -76,10 +76,12 @@ getTweetsData <- function(
         tweets$session$close()
       }
     }, error = function(e) {
-      errores <- append(errores, i)
+      errores <<- append(errores, conditionMessage(e))
       cat("Error al procesar el tweet:", gsub("https://twitter.com/.*/status/|https://x.com/.*/status/", "", i), "\n", e$message, "\n")
+      tweets$session$close()
     })
   }
+  twitter$session$close()
   convertir_mil <- function(x) {
     ifelse(grepl("mil|K", x), as.numeric(gsub("[^0-9.]", "", x)) * 1000, as.numeric(x))
   }
@@ -95,8 +97,8 @@ getTweetsData <- function(
   urls_tweets_r <- setdiff(urls_tweets, borrados)
   urls_tweets_n <- setdiff(urls_tweets_r, tweets_db_c$url)
   saveRDS(urls_tweets_n, paste0("url_tweets_na_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
-  saveRDS(errores, paste0("url_tweets_error_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
-  cat("Terminando el proceso.
+  saveRDS(errores, paste0("error_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
+  cat("\nTerminando el proceso.
       \nTweets recuperados:",
       length(tweets_db_c$url),
       "\nTweets borrados:",

@@ -1,7 +1,9 @@
 #' Get Live Tweet URLs by Search
+#' 
+#' `r lifecycle::badge("experimental")`
 #'
 #' Esta función recupera URLs de tweets basados en una consulta de búsqueda en tiempo real en Twitter.
-#'
+#' 
 #' @param search La consulta de búsqueda para recuperar tweets. Por defecto es "#RStats".
 #' @param n_urls El número máximo de URLs de tweets a recuperar. Por defecto es 100.
 #' @param xuser Nombre de usuario de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.
@@ -16,7 +18,7 @@
 #'
 #' @references
 #' Puedes encontrar más información sobre el paquete TweetScrapeR en:
-#' \url{https://github.com/agusnieto77/TweetScraperR}
+#' <https://github.com/agusnieto77/TweetScraperR>
 #'
 #' @import rvest
 
@@ -56,6 +58,7 @@ getUrlsSearchStreaming <- function(
       tweets_urls <- unique(append(tweets_urls, new_tweets))
       tweets_urls <- tweets_urls[!is.na(tweets_urls)]
       message("URLs recolectadas: ", length(tweets_urls))
+      searchok$session$close()
       Sys.sleep(timeout)
       
       if (length(new_tweets) == 0) {
@@ -67,7 +70,6 @@ getUrlsSearchStreaming <- function(
   }
   
   twitter$session$close()
-  searchok$session$close()
   
   tweets_urls <- tweets_urls[1:min(length(tweets_urls), n_urls)]
   saveRDS(paste0("https://x.com", tweets_urls), paste0("search_live_", gsub("#", "hashtag_", search), "_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))

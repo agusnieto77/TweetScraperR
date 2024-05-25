@@ -16,7 +16,7 @@
 #'
 #' @references
 #' Puedes encontrar más información sobre el paquete TweetScrapeR en:
-#' \url{https://github.com/agusnieto77/TweetScraperR}
+#' <https://github.com/agusnieto77/TweetScraperR>
 #'
 #' @import rvest
 #' @import tibble

@@ -11,6 +11,14 @@
 #' @param xpass Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.
 #' @param dir directorio para guardar el RDS con las URLs recolectadas
 #' @return Un tibble que contiene los datos de los tweets recuperados.
+#' 
+#' \itemize{
+#'   \item \code{tweets_recuperados}: Un tibble con los datos de los tweets recuperados, incluyendo la fecha, nombre de usuario, texto, respuestas, reposts, me gusta, URLs asociadas y otras informaciones recopiladas.
+#'   \item \code{tweets_borrados}: Un vector con las URLs de los tweets que fueron detectados como borrados.
+#'   \item \code{tweets_a_reprocesar}: Un vector con las URLs de los tweets que no pudieron ser procesados exitosamente y necesitan ser reprocesados.
+#'   \item \code{errores}: Un vector con los mensajes de error recopilados durante el proceso de recolección de datos.
+#' }
+#' 
 #' @export
 #'
 #' @examples
@@ -60,13 +68,9 @@ getTweetsData <- function(
   }, error = function(e) {
     message("La cuenta ya está autenticada")
   })
-  tweet_original <- "/html/body/div/div/div/div/main/div/div/div/div/div/section/div/div/div/div/div/article/div/div/div/div[1]/div/div/span"
-  fech <- "time"
-  username <- "/html/body/div/div/div/div/main/div/div/div/div/div/section/div/div/div[1]/div/div/article/div/div/div/div/div/div/div/div/div/div/div/div/a/div/span"
-  name <- "/html/body/div[1]/div/div/div/main/div/div/div/div/div/section/div/div/div[1]/div/div/article/div/div/div/div/div/div/div/div/div/div/div/a/div/div/span/span"
-  metrica_res <- "div:nth-child(1) > button > div > div.css-175oi2r.r-xoduu5.r-1udh08x > span > span > span"
-  metrica_rep <- "div:nth-child(2) > button > div > div.css-175oi2r.r-xoduu5.r-1udh08x > span > span > span"
-  metrica_meg <- "div:nth-child(3) > button > div > div.css-175oi2r.r-xoduu5.r-1udh08x > span > span > span"
+  metrica_res <- '//*[contains(@aria-label, "Respuestas")]'
+  metrica_rep <- '//*[contains(@aria-label, "Repostear")]'
+  metrica_meg <- '//*[contains(@aria-label, "Me gusta")]'
   Sys.sleep(1)
   tweets_db <- tibble::tibble()
   borrados <- c()
@@ -97,12 +101,12 @@ getTweetsData <- function(
         tweets_db <- rbind(
           tweets_db,
           tibble::tibble(
-            fecha = max(lubridate::as_datetime(rvest::html_attr(rvest::html_elements(articulo, css = fech), "datetime"))),
+            fecha = max(lubridate::as_datetime(rvest::html_attr(rvest::html_elements(articulo, css = "time"), "datetime"))),
             username = sub("^https://x.com/(.*?)/.*$|^https://twitter.com/(.*?)/.*$", "\\1", i),
             texto = rvest::html_text(rvest::html_elements(articulo, css = "span"))[7],
-            respuestas = as.numeric(gsub("^(\\d+).*", "\\1", rvest::html_attr(rvest::html_element(articulo, xpath = '//*[contains(@aria-label, "Respuestas")]'), "aria-label"))),
-            reposteos = as.numeric(gsub("^(\\d+).*", "\\1", rvest::html_attr(rvest::html_element(articulo, xpath = '//*[contains(@aria-label, "Repostear")]'), "aria-label"))),
-            megustas = as.numeric(gsub("^(\\d+).*", "\\1", rvest::html_attr(rvest::html_element(articulo, xpath = '//*[contains(@aria-label, "Me gusta")]'), "aria-label"))),
+            respuestas = as.numeric(gsub("^(\\d+).*", "\\1", rvest::html_attr(rvest::html_element(articulo, xpath = metrica_res), "aria-label"))),
+            reposteos = as.numeric(gsub("^(\\d+).*", "\\1", rvest::html_attr(rvest::html_element(articulo, xpath = metrica_rep), "aria-label"))),
+            megustas = as.numeric(gsub("^(\\d+).*", "\\1", rvest::html_attr(rvest::html_element(articulo, xpath = metrica_meg), "aria-label"))),
             urls = list(urls_tw),
             hilo = length(urls_tw),
             url = i
@@ -132,12 +136,13 @@ getTweetsData <- function(
   tweets_db$reposteos <- sapply(gsub(",", ".", gsub("\\.", "", tweets_db$reposteos)), convertir_mil)
   tweets_db$megustas <- sapply(gsub(",", ".", gsub("\\.", "", tweets_db$megustas)), convertir_mil)
   tweets_db_c <- tweets_db[!is.na(tweets_db$fecha), ]
-  saveRDS(tweets_db_c, paste0("db_tweets_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
-  saveRDS(borrados, paste0("url_tweets_del_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
   urls_tweets_r <- setdiff(urls_tweets, borrados)
   urls_tweets_n <- setdiff(urls_tweets_r, tweets_db_c$url)
-  saveRDS(urls_tweets_n, paste0("url_tweets_na_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
-  saveRDS(errores, paste0("error_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
+  saveRDS(list(tweets_recuperados = tweets_db_c, 
+               tweets_borrados = borrados, 
+               tweets_a_reprocesar = urls_tweets_n,
+               errores = errores),
+          paste0(dir, "/tweets_data_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
   cat("\nTerminando el proceso.
       \nTweets recuperados:",
       length(tweets_db_c$url),

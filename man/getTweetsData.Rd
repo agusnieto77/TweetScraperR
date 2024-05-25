@@ -22,6 +22,13 @@ getTweetsData(
 }
 \value{
 Un tibble que contiene los datos de los tweets recuperados.
+
+\itemize{
+\item \code{tweets_recuperados}: Un tibble con los datos de los tweets recuperados, incluyendo la fecha, nombre de usuario, texto, respuestas, reposts, me gusta, URLs asociadas y otras informaciones recopiladas.
+\item \code{tweets_borrados}: Un vector con las URLs de los tweets que fueron detectados como borrados.
+\item \code{tweets_a_reprocesar}: Un vector con las URLs de los tweets que no pudieron ser procesados exitosamente y necesitan ser reprocesados.
+\item \code{errores}: Un vector con los mensajes de error recopilados durante el proceso de recolección de datos.
+}
 }
 \description{
 \if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}

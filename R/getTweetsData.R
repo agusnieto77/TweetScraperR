@@ -88,16 +88,19 @@ getTweetsData <- function(
       Sys.sleep(2.5)
       if (!grepl("error-detail", paste(na.omit(rvest::html_attr(tweets$html_elements(css = "div.css-175oi2r div.css-175oi2r div.css-175oi2r"), "data-testid")), collapse = " "))) {
         articulo <- tweets$html_elements(xpath = paste0('//article[.//a[@href="/', gsub("https://twitter.com/|https://x.com/", "", i), '"]]'))
-        ymdhms <- tweets$html_elements(xpath = paste0('//a[@href="/', gsub("https://twitter.com/|https://x.com/", "", i), '"]'))
+        urls_tw <- rvest::html_attr(tweets$html_elements(css = "article a"), "href")
+        urls_tw <- urls_tw[grep("/status/", urls_tw)]
         tweets_db <- rbind(
           tweets_db,
           tibble::tibble(
             fecha = max(lubridate::as_datetime(rvest::html_attr(rvest::html_elements(articulo, css = fech), "datetime"))),
             username = sub("^https://x.com/(.*?)/.*$|^https://twitter.com/(.*?)/.*$", "\\1", i),
-            texto = rvest::html_text(html_elements(articulo, css = "span"))[7],
-            respuestas = as.numeric(gsub("^(\\d+).*", "\\1", rvest::html_attr(html_element(articulo, xpath = '//*[contains(@aria-label, "Respuestas")]'), "aria-label"))),
-            reposteos = as.numeric(gsub("^(\\d+).*", "\\1", rvest::html_attr(html_element(articulo, xpath = '//*[contains(@aria-label, "Repostear")]'), "aria-label"))),
-            megustas = as.numeric(gsub("^(\\d+).*", "\\1", rvest::html_attr(html_element(articulo, xpath = '//*[contains(@aria-label, "Me gusta")]'), "aria-label"))),
+            texto = rvest::html_text(rvest::html_elements(articulo, css = "span"))[7],
+            respuestas = as.numeric(gsub("^(\\d+).*", "\\1", rvest::html_attr(rvest::html_element(articulo, xpath = '//*[contains(@aria-label, "Respuestas")]'), "aria-label"))),
+            reposteos = as.numeric(gsub("^(\\d+).*", "\\1", rvest::html_attr(rvest::html_element(articulo, xpath = '//*[contains(@aria-label, "Repostear")]'), "aria-label"))),
+            megustas = as.numeric(gsub("^(\\d+).*", "\\1", rvest::html_attr(rvest::html_element(articulo, xpath = '//*[contains(@aria-label, "Me gusta")]'), "aria-label"))),
+            urls = list(urls_tw),
+            hilo = length(urls_tw),
             url = i
           )
         )

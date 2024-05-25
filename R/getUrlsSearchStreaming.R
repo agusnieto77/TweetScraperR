@@ -1,7 +1,8 @@
 #' Get Live Tweet URLs by Search
 #' 
+#' @description
 #' `r lifecycle::badge("experimental")`
-#'
+#' 
 #' Esta función recupera URLs de tweets basados en una consulta de búsqueda en tiempo real en Twitter.
 #' 
 #' @param search La consulta de búsqueda para recuperar tweets. Por defecto es "#RStats".

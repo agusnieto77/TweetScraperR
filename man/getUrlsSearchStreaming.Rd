@@ -26,8 +26,7 @@ Un vector que contiene las URLs de tweets recuperadas.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
-}
-\details{
+
 Esta función recupera URLs de tweets basados en una consulta de búsqueda en tiempo real en Twitter.
 }
 \examples{

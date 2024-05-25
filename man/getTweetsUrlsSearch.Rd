@@ -8,7 +8,8 @@ getTweetsUrlsSearch(
   search = "#RStats",
   n_urls = 100,
   xuser = Sys.getenv("USER"),
-  xpass = Sys.getenv("PASS")
+  xpass = Sys.getenv("PASS"),
+  max_retries = 3
 )
 }
 \arguments{
@@ -19,6 +20,8 @@ getTweetsUrlsSearch(
 \item{xuser}{Nombre de usuario de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.}
 
 \item{xpass}{Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.}
+
+\item{max_retries}{número máximo de intentos de conexión.}
 }
 \value{
 Un vector que contiene las URLs de tweets recuperadas.

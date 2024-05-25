@@ -7,7 +7,8 @@
 getTweetsData(
   urls_tweets,
   xuser = Sys.getenv("USER"),
-  xpass = Sys.getenv("PASS")
+  xpass = Sys.getenv("PASS"),
+  dir = getwd()
 )
 }
 \arguments{
@@ -16,6 +17,8 @@ getTweetsData(
 \item{xuser}{Nombre de usuario de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.}
 
 \item{xpass}{Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.}
+
+\item{dir}{directorio para guardar el RDS con las URLs recolectadas}
 }
 \value{
 Un tibble que contiene los datos de los tweets recuperados.

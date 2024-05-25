@@ -24,6 +24,8 @@ getTweetsData(
 Un tibble que contiene los datos de los tweets recuperados.
 }
 \description{
+\if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}
+
 Esta función recupera datos de tweets a partir de URLs de tweets proporcionadas.
 }
 \examples{

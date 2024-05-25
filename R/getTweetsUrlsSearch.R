@@ -1,7 +1,9 @@
 #' Get Tweets URLs by Search
 #'
-#' Obtener URLs de Tweets por Búsqueda
-#'
+#' @description
+#' 
+#' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
+#' 
 #' Esta función recupera URLs de tweets basados en una consulta de búsqueda especificada en Twitter.
 #'
 #' @param search La consulta de búsqueda para usar en la recuperación de tweets. Por defecto es "#RStats".

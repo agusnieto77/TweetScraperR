@@ -22,13 +22,13 @@ getUrlsSearchStreaming(
 
 \item{xpass}{Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.}
 
-\item{dir}{directorio para guardar el RDS con las URLs recolectadas}
+\item{dir}{Directorio para guardar el archivo RDS con las URLs recolectadas.}
 }
 \value{
 Un vector que contiene las URLs de tweets recuperadas.
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+\if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}
 
 Esta función recupera URLs de tweets basados en una consulta de búsqueda en tiempo real en Twitter.
 }

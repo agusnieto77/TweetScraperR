@@ -1,5 +1,9 @@
 #' Get Users Data
 #'
+#' @description
+#' 
+#' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
+#' 
 #' Esta función recupera datos de users a partir de URLs de users proporcionadas.
 #'
 #' @param urls_users Vector de URLs de users de los cuales se desea obtener datos.

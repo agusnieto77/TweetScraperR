@@ -21,6 +21,8 @@ getUsersData(
 Un tibble que contiene los datos de los users recuperados.
 }
 \description{
+\if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}
+
 Esta función recupera datos de users a partir de URLs de users proporcionadas.
 }
 \examples{

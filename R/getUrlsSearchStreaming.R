@@ -1,7 +1,8 @@
 #' Get Live Tweet URLs by Search
 #' 
 #' @description
-#' `r lifecycle::badge("experimental")`
+#' 
+#' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
 #' 
 #' Esta función recupera URLs de tweets basados en una consulta de búsqueda en tiempo real en Twitter.
 #' 
@@ -9,7 +10,7 @@
 #' @param n_urls El número máximo de URLs de tweets a recuperar. Por defecto es 100.
 #' @param xuser Nombre de usuario de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.
 #' @param xpass Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.
-#' @param dir directorio para guardar el RDS con las URLs recolectadas
+#' @param dir Directorio para guardar el archivo RDS con las URLs recolectadas.
 #' @return Un vector que contiene las URLs de tweets recuperadas.
 #' @export
 #'

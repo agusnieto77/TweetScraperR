@@ -1,5 +1,9 @@
 #' Get Tweets Data
 #'
+#' @description
+#' 
+#' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
+#' 
 #' Esta función recupera datos de tweets a partir de URLs de tweets proporcionadas.
 #'
 #' @param urls_tweets Vector de URLs de tweets de los cuales se desea obtener datos.

@@ -1,5 +1,9 @@
 #' Get URLs of User Timeline Tweets
 #'
+#' @description
+#' 
+#' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
+#' 
 #' Esta función recupera URLs de tweets del timeline de un usuario especificado en Twitter.
 #'
 #' @param username El nombre de usuario de Twitter del cual quieres obtener el timeline. Por defecto es "rstatstweet".

@@ -27,9 +27,8 @@ getTweetsUrlsSearch(
 Un vector que contiene las URLs de tweets recuperadas.
 }
 \description{
-Obtener URLs de Tweets por Búsqueda
-}
-\details{
+\if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}
+
 Esta función recupera URLs de tweets basados en una consulta de búsqueda especificada en Twitter.
 }
 \examples{

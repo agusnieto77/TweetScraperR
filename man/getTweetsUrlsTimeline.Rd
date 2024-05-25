@@ -24,6 +24,8 @@ getTweetsUrlsTimeline(
 Un vector que contiene las URLs de tweets obtenidas.
 }
 \description{
+\if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}
+
 Esta función recupera URLs de tweets del timeline de un usuario especificado en Twitter.
 }
 \examples{

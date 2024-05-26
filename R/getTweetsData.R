@@ -103,7 +103,7 @@ getTweetsData <- function(
           tibble::tibble(
             fecha = max(lubridate::as_datetime(rvest::html_attr(rvest::html_elements(articulo, css = "time"), "datetime"))),
             username = sub("^https://x.com/(.*?)/.*$|^https://twitter.com/(.*?)/.*$", "\\1", i),
-            texto = rvest::html_text(rvest::html_elements(articulo, css = "span"))[7],
+            texto = rvest::html_text(rvest::html_elements(articulo, css = 'div[data-testid="tweetText"]')),
             respuestas = as.integer(gsub("^(\\d+).*", "\\1", rvest::html_attr(rvest::html_element(articulo, xpath = metrica_res), "aria-label"))),
             reposteos = as.integer(gsub("^(\\d+).*", "\\1", rvest::html_attr(rvest::html_element(articulo, xpath = metrica_rep), "aria-label"))),
             megustas = as.integer(gsub(".*?(\\d+) Me gusta.*", "\\1", rvest::html_attr(rvest::html_element(articulo, xpath = metrica_meg), "aria-label"))),

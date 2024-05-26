@@ -68,7 +68,7 @@ getTweetsData <- function(
   }, error = function(e) {
     message("La cuenta ya está autenticada")
   })
-  metrica_res <- '//*[contains(@aria-label, "Respuestas")]'
+  metrica_res <- '//*[contains(@aria-label, "Respuesta") or contains(@aria-label, "Respuestas")]'
   metrica_rep <- '//*[contains(@aria-label, "Repostear")]'
   metrica_meg <- '//*[contains(@aria-label, "Me gusta")]'
   Sys.sleep(1)

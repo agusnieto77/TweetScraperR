@@ -98,12 +98,14 @@ getTweetsData <- function(
         articulo <- tweets$html_elements(xpath = paste0('//article[.//a[@href="/', gsub("https://twitter.com/|https://x.com/", "", i), '"]]'))
         urls_tw <- rvest::html_attr(tweets$html_elements(css = "article a"), "href")
         urls_tw <- urls_tw[grep("/status/", urls_tw)]
+        dato_fecha <- rvest::html_attr(rvest::html_elements(articulo, css = "time"), "datetime")
         tweets_db <- rbind(
           tweets_db,
           tibble::tibble(
-            fecha = max(rvest::html_attr(rvest::html_elements(articulo, css = "time"), "datetime"), na.rm = TRUE),
+            fecha = ifelse(length(dato_fecha) == 1, dato_fecha, max(dato_fecha)),
             username = sub("^https://x.com/(.*?)/.*$|^https://twitter.com/(.*?)/.*$", "\\1", i),
-            texto = rvest::html_text(rvest::html_elements(articulo, css = 'div[data-testid="tweetText"]')),
+            texto = rvest::html_text(rvest::html_elements(articulo, css = 'div[data-testid="tweetText"]'))[1],
+            tweet_citado = rvest::html_text(rvest::html_elements(articulo, css = 'div[data-testid="tweetText"]'))[2],
             emoticones = list(rvest::html_attr(rvest::html_elements(articulo, css = 'div[data-testid="tweetText"] img'), "alt")),
             links_img = list(gsub('src="([^"]+)"', '\\1', regmatches(as.character(articulo), gregexpr('src="(.*?\\.(?:png|jpg))"', as.character(articulo), perl=TRUE))[[1]])),
             respuestas = as.integer(gsub("^(\\d+).*", "\\1", rvest::html_attr(rvest::html_element(articulo, xpath = metrica_res), "aria-label"))),

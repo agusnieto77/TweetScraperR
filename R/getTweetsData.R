@@ -103,7 +103,7 @@ getTweetsData <- function(
         tweets_db <- rbind(
           tweets_db,
           tibble::tibble(
-            fecha = ifelse(length(dato_fecha) == 1, dato_fecha, max(dato_fecha)),
+            fecha = ifelse(length(dato_fecha) == 1, dato_fecha, suppressWarnings({max(dato_fecha)})),
             username = sub("^https://x.com/(.*?)/.*$|^https://twitter.com/(.*?)/.*$", "\\1", i),
             texto = rvest::html_text(rvest::html_elements(articulo, css = 'div[data-testid="tweetText"]'))[1],
             tweet_citado = rvest::html_text(rvest::html_elements(articulo, css = 'div[data-testid="tweetText"]'))[2],

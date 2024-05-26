@@ -104,9 +104,9 @@ getTweetsData <- function(
             fecha = max(lubridate::as_datetime(rvest::html_attr(rvest::html_elements(articulo, css = "time"), "datetime"))),
             username = sub("^https://x.com/(.*?)/.*$|^https://twitter.com/(.*?)/.*$", "\\1", i),
             texto = rvest::html_text(rvest::html_elements(articulo, css = "span"))[7],
-            respuestas = as.numeric(gsub("^(\\d+).*", "\\1", rvest::html_attr(rvest::html_element(articulo, xpath = metrica_res), "aria-label"))),
-            reposteos = as.numeric(gsub("^(\\d+).*", "\\1", rvest::html_attr(rvest::html_element(articulo, xpath = metrica_rep), "aria-label"))),
-            megustas = as.numeric(gsub(".*?(\\d+) Me gusta.*", "\\1", rvest::html_attr(rvest::html_element(articulo, xpath = metrica_meg), "aria-label"))),
+            respuestas = as.integer(gsub("^(\\d+).*", "\\1", rvest::html_attr(rvest::html_element(articulo, xpath = metrica_res), "aria-label"))),
+            reposteos = as.integer(gsub("^(\\d+).*", "\\1", rvest::html_attr(rvest::html_element(articulo, xpath = metrica_rep), "aria-label"))),
+            megustas = as.integer(gsub(".*?(\\d+) Me gusta.*", "\\1", rvest::html_attr(rvest::html_element(articulo, xpath = metrica_meg), "aria-label"))),
             metricas = rvest::html_attr(rvest::html_element(articulo, xpath = metrica_meg), "aria-label"),
             urls = list(urls_tw),
             hilo = length(urls_tw),
@@ -127,15 +127,6 @@ getTweetsData <- function(
     })
   }
   twitter$session$close()
-  convertir_mil <- function(x) {
-    ifelse(grepl("mil|K", x), as.numeric(gsub("[^0-9.]", "", x)) * 1000, as.numeric(x))
-  }
-  tweets_db$respuestas <- ifelse(is.na(tweets_db$respuestas) | tweets_db$respuestas == "", "0", tweets_db$respuestas)
-  tweets_db$reposteos <- ifelse(is.na(tweets_db$reposteos) | tweets_db$reposteos == "", "0", tweets_db$reposteos)
-  tweets_db$megustas <- ifelse(is.na(tweets_db$megustas) | tweets_db$megustas == "", "0", tweets_db$megustas)
-  tweets_db$respuestas <- sapply(gsub(",", ".", gsub("\\.", "", tweets_db$respuestas)), convertir_mil)
-  tweets_db$reposteos <- sapply(gsub(",", ".", gsub("\\.", "", tweets_db$reposteos)), convertir_mil)
-  tweets_db$megustas <- sapply(gsub(",", ".", gsub("\\.", "", tweets_db$megustas)), convertir_mil)
   tweets_db_c <- tweets_db[!is.na(tweets_db$fecha), ]
   urls_tweets_r <- setdiff(urls_tweets, borrados)
   urls_tweets_n <- setdiff(urls_tweets_r, tweets_db_c$url)

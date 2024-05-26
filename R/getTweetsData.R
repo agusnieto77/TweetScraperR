@@ -98,6 +98,7 @@ getTweetsData <- function(
         articulo <- tweets$html_elements(xpath = paste0('//article[.//a[@href="/', gsub("https://twitter.com/|https://x.com/", "", i), '"]]'))
         urls_tw <- rvest::html_attr(tweets$html_elements(css = "article a"), "href")
         urls_tw <- urls_tw[grep("/status/", urls_tw)]
+        urls_tw <- urls_tw[!grepl("analytics", urls_tw)]
         dato_fecha <- rvest::html_attr(rvest::html_elements(articulo, css = "time"), "datetime")
         tweets_db <- rbind(
           tweets_db,

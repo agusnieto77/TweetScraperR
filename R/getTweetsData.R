@@ -101,7 +101,7 @@ getTweetsData <- function(
         tweets_db <- rbind(
           tweets_db,
           tibble::tibble(
-            fecha = max(rvest::html_attr(rvest::html_elements(articulo, css = "time"), "datetime")),
+            fecha = max(rvest::html_attr(rvest::html_elements(articulo, css = "time"), "datetime"), na.rm = TRUE),
             username = sub("^https://x.com/(.*?)/.*$|^https://twitter.com/(.*?)/.*$", "\\1", i),
             texto = rvest::html_text(rvest::html_elements(articulo, css = 'div[data-testid="tweetText"]')),
             emoticones = list(rvest::html_attr(rvest::html_elements(articulo, css = 'div[data-testid="tweetText"] img'), "alt")),

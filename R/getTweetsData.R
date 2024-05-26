@@ -101,7 +101,7 @@ getTweetsData <- function(
         tweets_db <- rbind(
           tweets_db,
           tibble::tibble(
-            fecha = max(lubridate::as_datetime(rvest::html_attr(rvest::html_elements(articulo, css = "time"), "datetime"))),
+            fecha = max(rvest::html_attr(rvest::html_elements(articulo, css = "time"), "datetime")),
             username = sub("^https://x.com/(.*?)/.*$|^https://twitter.com/(.*?)/.*$", "\\1", i),
             texto = rvest::html_text(rvest::html_elements(articulo, css = 'div[data-testid="tweetText"]')),
             emoticones = list(rvest::html_attr(rvest::html_elements(articulo, css = 'div[data-testid="tweetText"] img'), "alt")),
@@ -129,6 +129,7 @@ getTweetsData <- function(
     })
   }
   twitter$session$close()
+  tweets_db$fecha <- lubridate::as_datetime(tweets_db$fecha)
   tweets_db_c <- tweets_db[!is.na(tweets_db$fecha), ]
   urls_tweets_r <- setdiff(urls_tweets, borrados)
   urls_tweets_n <- setdiff(urls_tweets_r, tweets_db_c$url)

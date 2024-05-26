@@ -106,7 +106,8 @@ getTweetsData <- function(
             texto = rvest::html_text(rvest::html_elements(articulo, css = "span"))[7],
             respuestas = as.numeric(gsub("^(\\d+).*", "\\1", rvest::html_attr(rvest::html_element(articulo, xpath = metrica_res), "aria-label"))),
             reposteos = as.numeric(gsub("^(\\d+).*", "\\1", rvest::html_attr(rvest::html_element(articulo, xpath = metrica_rep), "aria-label"))),
-            megustas = as.numeric(gsub("^(\\d+).*", "\\1", rvest::html_attr(rvest::html_element(articulo, xpath = metrica_meg), "aria-label"))),
+            megustas = as.numeric(gsub(".*?(\\d+) Me gusta.*", "\\1", rvest::html_attr(rvest::html_element(articulo, xpath = metrica_meg), "aria-label"))),
+            metricas = rvest::html_attr(rvest::html_element(articulo, xpath = metrica_meg), "aria-label"),
             urls = list(urls_tw),
             hilo = length(urls_tw),
             url = i

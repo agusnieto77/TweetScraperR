@@ -33,7 +33,6 @@ getUrlsSearchStreaming <- function(
     xpass = Sys.getenv("PASS"),
     dir = getwd()
 ) {
-  retry_count <- 0
   success <- FALSE
   while (!success) {
   tryCatch({

@@ -4,13 +4,18 @@
 #' 
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
 #' 
-#' Esta función recupera tweets del timeline de un usuario especificado en Twitter.
+#' Esta función recupera tweets del timeline de unx usuarix especificadx en Twitter. 
+#' La función inicia sesión en Twitter utilizando las credenciales proporcionadas, 
+#' navega al perfil de le usuarix especificadx, y recopila hasta `n_tweets` tweets. 
+#' El proceso de recolección se detiene si se alcanza el número máximo de tweets 
+#' especificado o después de alcabzar los 600 tweets con el desplazamiento (scroll).
 #'
-#' @param username El nombre de usuario de Twitter del cual quieres obtener el timeline.
+#' @param username El nombre de usuarix de Twitter del cual quieres obtener el timeline.
 #' @param n_tweets El número máximo de tweets a obtener. Por defecto es 100.
-#' @param xuser Nombre de usuario de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.
+#' @param xuser Nombre de usuarix de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.
 #' @param xpass Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.
-#' @return Un vector que contiene los tweets obtenidos.
+#' @param dir El directorio donde se guardará el archivo de salida. Por defecto es el directorio de trabajo actual.
+#' @return Un tibble que contiene los tweets obtenidos.
 #' @export
 #'
 #' @examples
@@ -29,7 +34,8 @@ getTweetsTimeline <- function(
     username = "rstatstweet",
     n_tweets = 100,
     xuser = Sys.getenv("USER"),
-    xpass = Sys.getenv("PASS")
+    xpass = Sys.getenv("PASS"),
+    dir = getwd()
 ) {
   twitter <- rvest::read_html_live("https://x.com/i/flow/login")
   Sys.sleep(3)
@@ -47,7 +53,7 @@ getTweetsTimeline <- function(
   user1 <- "div.css-175oi2r.r-18u37iz.r-1wbh5a2.r-1ez5h0i > div > div.css-175oi2r.r-1wbh5a2.r-dnmrzs > a > div > span"
   tweet <- "#react-root > div > div > div.css-175oi2r.r-1f2l425.r-13qz1uu.r-417010.r-18u37iz > main > div > div > div > div > div > div:nth-child(3) > div > div > section > div > div > div > div > div > article > div > div > div.css-175oi2r.r-18u37iz > div.css-175oi2r.r-1iusvr4.r-16y2uox.r-1777fci.r-kzbkwu > div:nth-child(2)"
   url_tweet <- "div.css-175oi2r.r-18u37iz.r-1wbh5a2.r-1ez5h0i > div > div.css-175oi2r.r-18u37iz.r-1q142lx > a"
-  user2 <-     "div.css-175oi2r.r-18u37iz.r-1wbh5a2.r-1ez5h0i > div > div.css-175oi2r.r-18u37iz.r-1q142lx > div > a"
+  user2 <- "div.css-175oi2r.r-18u37iz.r-1wbh5a2.r-1ez5h0i > div > div.css-175oi2r.r-18u37iz.r-1q142lx > div > a"
   timeline <- rvest::read_html_live(paste0("https://x.com/", username))
   Sys.sleep(3)
   tweets_udb <- tibble::tibble()
@@ -55,9 +61,10 @@ getTweetsTimeline <- function(
   repetitions <- 0
   max_repetitions <- 3
   prev_count <- -1
+  cat("Inició la recolección de tweets.\n")
   while (TRUE) {
     if (nrow(tweets_udb) > n_tweets || repetitions >= max_repetitions) {
-      cat("Finalizó la recolección de tweets.")
+      cat("Finalizó la recolección de tweets.\n")
       break
     }
     i_tweets <- tibble::tibble(
@@ -88,5 +95,6 @@ getTweetsTimeline <- function(
   tweets_udb$is_original <- tweets_udb$usern == paste0("@", username)
   tweets_udb$is_retweet <- !is.na(tweets_udb$usern) & tweets_udb$usern != paste0("@", username)
   tweets_udb$is_cita <- is.na(tweets_udb$usern)
-  saveRDS(tweets_udb, paste0("timeline_", username, "_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
+  saveRDS(tweets_udb, paste0(dir, "/timeline_", username, "_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
+  return(tweets_udb)
 }

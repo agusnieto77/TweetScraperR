@@ -4,10 +4,18 @@
 #' 
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
 #' 
-#' Esta función recupera datos de tweets a partir de URLs de tweets proporcionadas.
+#' Esta función permite recuperar y procesar datos de tweets a partir de un vector de URLs 
+#' de tweets proporcionadas. Utilizando las credenciales de unx usuarix de Twitter, la función 
+#' realiza la autenticación en Twitter y extrae información detallada de cada tweet. Los datos 
+#' extraídos incluyen la fecha del tweet, el nombre de usuarix que lo publicó, el texto del tweet, 
+#' las respuestas, reposts, me gusta, URLs asociadas, y otra información relevante.
+#' La función también maneja tweets borrados y errores durante el proceso de recolección, y 
+#' clasifica las URLs de los tweets en tres categorías: tweets recuperados, tweets borrados, y 
+#' tweets que necesitan ser reprocesados. Finalmente, los datos recopilados se guardan en un 
+#' archivo RDS en el directorio especificado por le usuarix.
 #'
 #' @param urls_tweets Vector de URLs de tweets de los cuales se desea obtener datos.
-#' @param xuser Nombre de usuario de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.
+#' @param xuser Nombre de usuarix de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.
 #' @param xpass Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.
 #' @param dir directorio para guardar el RDS con las URLs recolectadas
 #' @return Un tibble que contiene los datos de los tweets recuperados.

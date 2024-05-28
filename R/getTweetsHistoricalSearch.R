@@ -1,39 +1,44 @@
-#' Get Historical URLs of Tweets with a Specific Hashtag
+#' Get Historical Tweets from a Specific Search
 #' 
 #' @description
 #' 
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
 #' 
-#' Esta función recupera URLs de tweets históricos que contienen un hashtag específico en Twitter.
+#' Esta función permite recuperar tweets históricos de Twitter que coinciden con una búsqueda específica. 
+#' Puedes especificar términos de búsqueda relevantes para tus necesidades de análisis, y la función recuperará 
+#' tweets antiguos que coincidan con esos criterios. Esto es útil para investigaciones históricas, análisis de 
+#' tendencias a lo largo del tiempo y cualquier otro análisis que requiera acceso a datos históricos de Twitter.
 #' 
-#' @param hashtag Hashtag de Twitter del cual se desean recuperar los tweets históricos. Por defecto es "#rstats".
+#' @param search Término de búsqueda para los tweets deseados. Por defecto es "R Project".
 #' @param timeout Tiempo de espera entre solicitudes en segundos. Por defecto es 10.
-#' @param n_urls El número máximo de URLs de tweets a recuperar. Por defecto es 100.
+#' @param n_tweets El número máximo de tweets a recuperar. Por defecto es 100.
 #' @param since Fecha de inicio para la búsqueda de tweets (en formato "YYYY-MM-DD"). Por defecto es "2018-10-26".
-#' @param until Fecha de fin para la búsqueda de tweets (en formato "YYYY-MM-DD"). Por defecto es "2018-10-30".
-#' @param xuser Nombre de usuario de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.
+#' @param until Fecha de fin para la búsqueda de tweets (en formato "YYYY-MM-DD"). Por defecto es "2023-10-30".
+#' @param xuser Nombre de usuarix de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.
 #' @param xpass Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.
 #' @param dir Directorio para guardar el archivo RDS con las URLs recolectadas. Por defecto es el directorio de trabajo actual.
-#' @return Un tibble que contiene las URLs de tweets recuperadas, junto con la fecha, usuario, contenido del tweet y URL del tweet.
+#' @return Un tibble que contiene los datos de tweets recuperados, junto con la fecha, usuario, contenido del tweet y URL del tweet.
 #' @export
 #'
 #' @examples
 #' \dontrun{
-#' getUrlsHistoricalHashtag(hashtag = "#rstats", n_urls = 150, since = "2018-10-26", until = "2018-10-30")
+#' getTweetsHistoricalSearch(search = "R Project", n_tweets = 50, since = "2018-10-26", until = "2023-10-30")
 #' }
 #'
 #' @references
 #' Puedes encontrar más información sobre el paquete TweetScrapeR en:
 #' <https://github.com/agusnieto77/TweetScraperR>
-#' 
+#'
 #' @import rvest
+#' @import lubridate
+#' @import tibble
 
-getUrlsHistoricalHashtag <- function(
-    hashtag = "#rstats",
+getTweetsHistoricalSearch <- function(
+    search = "R Project",
     timeout = 10,
-    n_urls = 100,
+    n_tweets = 100,
     since = "2018-10-26",
-    until = "2018-10-30",
+    until = "2023-10-30",
     xuser = Sys.getenv("USER"),
     xpass = Sys.getenv("PASS"),
     dir = getwd()
@@ -71,11 +76,11 @@ getUrlsHistoricalHashtag <- function(
       message("Se inició la recolección de datos...")
     })
     url_tweet <- "div.css-175oi2r > div > div.css-175oi2r > a.css-146c3p1.r-bcqeeo.r-1ttztb7.r-qvutc0.r-37j5jr.r-a023e6"
-    hashtagsearch <- paste0("https://x.com/search?q=(%23", gsub("#", "", hashtag), "%20until%3A", until, "%20since%3A", since, "&src=typed_query&f=live")
+    term_search <- paste0("https://x.com/search?f=live&q=%22", search, "%22%20until%3A", since, "%20since%3A", until, "&src=typed_query")
     success3 <- FALSE
     while (!success3) {
       tryCatch({
-        historicalok <- rvest::read_html_live(hashtagsearch)
+        historicalok <- rvest::read_html_live(term_search)
         success3 <- TRUE
       }, error = function(e) {
         if (grepl("loadEventFired", e$message)) {
@@ -91,7 +96,7 @@ getUrlsHistoricalHashtag <- function(
     max_attempts <- 3
     success <- TRUE
     while (TRUE) {
-      if (length(articles) >= n_urls || attempts >= max_attempts) {
+      if (length(articles) >= n_tweets || attempts >= max_attempts) {
         cat("Finalizó la recolección de URLs.\n")
         cat("Procesando datos...\n")
         break
@@ -135,7 +140,7 @@ getUrlsHistoricalHashtag <- function(
       }
       tweets_recolectados <- unique(tweets_recolectados)
       tweets_recolectados <- tweets_recolectados[!is.na(tweets_recolectados$fecha), ]
-      saveRDS(tweets_recolectados, paste0(dir, "/urls_historical_hashtag_", hashtag, "_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
+      saveRDS(tweets_recolectados, paste0(dir, "/urls_historical_search_", search, "_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
       cat("Datos procesados y guardados.\n")
       return(tweets_recolectados)
     } else {

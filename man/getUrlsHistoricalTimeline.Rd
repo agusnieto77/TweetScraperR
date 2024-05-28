@@ -16,7 +16,7 @@ getUrlsHistoricalTimeline(
 )
 }
 \arguments{
-\item{username}{Nombre de usuario de Twitter del que se desean recuperar los tweets. Por defecto es "rstatstweet".}
+\item{username}{Nombre de usuarix de Twitter del que se desean recuperar los tweets. Por defecto es "rstatstweet".}
 
 \item{timeout}{Tiempo de espera entre solicitudes en segundos. Por defecto es 10.}
 
@@ -26,7 +26,7 @@ getUrlsHistoricalTimeline(
 
 \item{until}{Fecha de fin para la búsqueda de tweets (en formato "YYYY-MM-DD"). Por defecto es "2018-10-30".}
 
-\item{xuser}{Nombre de usuario de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.}
+\item{xuser}{Nombre de usuarix de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.}
 
 \item{xpass}{Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.}
 
@@ -38,7 +38,15 @@ Un vector que contiene las URLs de tweets recuperadas.
 \description{
 \if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}
 
-Esta función recupera URLs de tweets históricos de la línea de tiempo de un usuario específico en Twitter.
+Esta función recupera URLs de tweets del timeline histórico de unx usuarix en Twitter,
+basado en un rango de fechas especificado. Utiliza autenticación en Twitter mediante
+el nombre de usuarix y la contraseña proporcionados, o los valores predeterminados de
+las variables de entorno del sistema. Después de autenticar al usuarix, la función
+realiza una búsqueda de tweets publicados por le usuarix especificadx dentro del rango
+de fechas definido por los parámetros \code{since} y \code{until}. Las URLs de los tweets encontrados
+se recogen hasta alcanzar el número máximo de URLs especificado por el parámetro \code{n_urls} o
+hasta que no se encuentren nuevas URLs en varios intentos consecutivos. Los resultados se
+guardan en un archivo con formato \code{.rds} en el directorio especificado por el parámetro \code{dir}.
 }
 \examples{
 \dontrun{

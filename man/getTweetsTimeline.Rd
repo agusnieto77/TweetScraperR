@@ -8,25 +8,32 @@ getTweetsTimeline(
   username = "rstatstweet",
   n_tweets = 100,
   xuser = Sys.getenv("USER"),
-  xpass = Sys.getenv("PASS")
+  xpass = Sys.getenv("PASS"),
+  dir = getwd()
 )
 }
 \arguments{
-\item{username}{El nombre de usuario de Twitter del cual quieres obtener el timeline.}
+\item{username}{El nombre de usuarix de Twitter del cual quieres obtener el timeline.}
 
 \item{n_tweets}{El número máximo de tweets a obtener. Por defecto es 100.}
 
-\item{xuser}{Nombre de usuario de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.}
+\item{xuser}{Nombre de usuarix de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.}
 
 \item{xpass}{Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.}
+
+\item{dir}{El directorio donde se guardará el archivo de salida. Por defecto es el directorio de trabajo actual.}
 }
 \value{
-Un vector que contiene los tweets obtenidos.
+Un tibble que contiene los tweets obtenidos.
 }
 \description{
 \if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}
 
-Esta función recupera tweets del timeline de un usuario especificado en Twitter.
+Esta función recupera tweets del timeline de unx usuarix especificadx en Twitter.
+La función inicia sesión en Twitter utilizando las credenciales proporcionadas,
+navega al perfil de le usuarix especificadx, y recopila hasta \code{n_tweets} tweets.
+El proceso de recolección se detiene si se alcanza el número máximo de tweets
+especificado o después de alcabzar los 600 tweets con el desplazamiento (scroll).
 }
 \examples{
 \dontrun{

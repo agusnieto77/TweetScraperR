@@ -4,14 +4,22 @@
 #' 
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
 #' 
-#' Esta función recupera URLs de tweets históricos de la línea de tiempo de un usuario específico en Twitter.
+#' Esta función recupera URLs de tweets del timeline histórico de unx usuarix en Twitter, 
+#' basado en un rango de fechas especificado. Utiliza autenticación en Twitter mediante 
+#' el nombre de usuarix y la contraseña proporcionados, o los valores predeterminados de 
+#' las variables de entorno del sistema. Después de autenticar al usuarix, la función 
+#' realiza una búsqueda de tweets publicados por le usuarix especificadx dentro del rango 
+#' de fechas definido por los parámetros `since` y `until`. Las URLs de los tweets encontrados 
+#' se recogen hasta alcanzar el número máximo de URLs especificado por el parámetro `n_urls` o 
+#' hasta que no se encuentren nuevas URLs en varios intentos consecutivos. Los resultados se 
+#' guardan en un archivo con formato `.rds` en el directorio especificado por el parámetro `dir`.
 #' 
-#' @param username Nombre de usuario de Twitter del que se desean recuperar los tweets. Por defecto es "rstatstweet".
+#' @param username Nombre de usuarix de Twitter del que se desean recuperar los tweets. Por defecto es "rstatstweet".
 #' @param timeout Tiempo de espera entre solicitudes en segundos. Por defecto es 10.
 #' @param n_urls El número máximo de URLs de tweets a recuperar. Por defecto es 100.
 #' @param since Fecha de inicio para la búsqueda de tweets (en formato "YYYY-MM-DD"). Por defecto es "2018-10-26".
 #' @param until Fecha de fin para la búsqueda de tweets (en formato "YYYY-MM-DD"). Por defecto es "2018-10-30".
-#' @param xuser Nombre de usuario de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.
+#' @param xuser Nombre de usuarix de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.
 #' @param xpass Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.
 #' @param dir Directorio para guardar el archivo RDS con las URLs recolectadas. Por defecto es el directorio de trabajo actual.
 #' @return Un vector que contiene las URLs de tweets recuperadas.

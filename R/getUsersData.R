@@ -4,11 +4,18 @@
 #' 
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
 #' 
-#' Esta función recupera datos de users a partir de URLs de users proporcionadas.
+#' Esta función permite recuperar y procesar datos de usuarixs de Twitter a partir de un vector de URLs 
+#' proporcionadas. Utilizando las credenciales de unx usuarix de Twitter, la función realiza la autenticación y 
+#' extrae información detallada de cada perfil de usuarix. Los datos extraídos incluyen el nombre del usuarix, 
+#' el username, la fecha de creación del perfil, el número de publicaciones, seguidorxs y seguidxs.
+#' La función maneja posibles errores durante el proceso de recolección de datos, como tiempos de espera prolongados, y 
+#' se asegura de obtener información precisa mediante múltiples intentos si es necesario. Los datos recopilados se 
+#' devuelven en forma de un tibble y se guardan en un archivo RDS para su posterior uso.
 #'
 #' @param urls_users Vector de URLs de users de los cuales se desea obtener datos.
-#' @param xuser Nombre de usuario de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.
+#' @param xuser Nombre de usuarix de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.
 #' @param xpass Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.
+#' @param dir Directorio donde se guardará el archivo RDS con los datos recopilados. Por defecto es el directorio actual.
 #' @return Un tibble que contiene los datos de los users recuperados.
 #' @export
 #'
@@ -24,7 +31,8 @@
 getUsersData <- function(
     urls_users,
     xuser = Sys.getenv("USER"),
-    xpass = Sys.getenv("PASS")
+    xpass = Sys.getenv("PASS"),
+    dir = getwd()
 ) {
   twitter <- rvest::read_html_live("https://x.com/i/flow/login")
   Sys.sleep(6)
@@ -113,7 +121,7 @@ getUsersData <- function(
   users_db$n_siguiendo <- sapply(gsub(",", ".", gsub("\\.", "", users_db$n_siguiendo)), convertir_mil)
   users_db$n_seguidorxs <- sapply(gsub(",", ".", gsub("\\.", "", users_db$n_seguidorxs)), convertir_mil)
   
-  saveRDS(users_db, paste0("db_users_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
+  saveRDS(users_db, paste0(dir, "/db_users_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
   
   return(users_db)
 }

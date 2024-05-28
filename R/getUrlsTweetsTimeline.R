@@ -4,27 +4,33 @@
 #' 
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
 #' 
-#' Esta función recupera URLs de tweets del timeline de un usuario especificado en Twitter.
+#' Esta función recupera URLs de tweets del timeline de unx usuarix especificadx en Twitter. 
+#' Inicia sesión en Twitter utilizando las credenciales proporcionadas, navega al perfil del 
+#' usuarix especificadx, y recopila hasta `n_urls` URLs de tweets. 
+#' El proceso de recolección se detiene si se alcanza el número máximo de URLs especificado o 
+#' después de realizar 600 capturas y se detiene el desplazamiento (scroll).
 #'
-#' @param username El nombre de usuario de Twitter del cual quieres obtener el timeline. Por defecto es "rstatstweet".
+#' @param username El nombre de usuarix de Twitter del cual quieres obtener el timeline. Por defecto es "rstatstweet".
 #' @param n_urls El número máximo de URLs de tweets a obtener. Por defecto es 100.
-#' @param xuser Nombre de usuario de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.
+#' @param xuser Nombre de usuarix de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.
 #' @param xpass Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.
+#' @param dir Directorio donde se guardará el archivo de salida. Por defecto es el directorio de trabajo actual.
 #' @return Un vector que contiene las URLs de tweets obtenidas.
 #' @export
 #'
 #' @examples
 #' \dontrun{
-#' getTweetsUrlsTimeline(username = "rstatstweet", n_urls = 200)
+#' getUrlsTweetsTimeline(username = "rstatstweet", n_urls = 200)
 #' }
 #'
 #' @import rvest
 
-getTweetsUrlsTimeline <- function(
+getUrlsTweetsTimeline <- function(
     username = "rstatstweet",
     n_urls = 100,
     xuser = Sys.getenv("USER"),
-    xpass = Sys.getenv("PASS")
+    xpass = Sys.getenv("PASS"),
+    dir = getwd()
 ) {
   twitter <- rvest::read_html_live("https://x.com/i/flow/login")
   Sys.sleep(3)
@@ -42,13 +48,13 @@ getTweetsUrlsTimeline <- function(
   Sys.sleep(3)
   url_tweet <- "div.css-175oi2r > div > div.css-175oi2r > a.css-146c3p1.r-bcqeeo.r-1ttztb7.r-qvutc0.r-37j5jr.r-a023e6"
   tweets_urls <- c()
-  i <- 1
   repetitions <- 0
   max_repetitions <- 2
+  cat("Inició la recolección de URLs.\n")
   while (TRUE) {
     urls_tweets <- rvest::html_attr(usernameok$html_elements(css = url_tweet), "href")
     if (length(tweets_urls) > n_urls || repetitions >= max_repetitions) {
-      cat("Finalizó la recolección de URLs.")
+      cat("Finalizó la recolección de URLs.\n")
       break
     }
     urls_tweets <- urls_tweets[grep("/status/", urls_tweets)]
@@ -62,9 +68,10 @@ getTweetsUrlsTimeline <- function(
     } else {
       repetitions <- 0
     }
-    i <- i + 1
   }
   twitter$session$close()
   usernameok$session$close()
-  saveRDS(paste0("https://x.com", tweets_urls), paste0("urls_", username, "_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
+  tweets_urls <- paste0("https://x.com", tweets_urls)
+  saveRDS(tweets_urls, file.path(dir, paste0("urls_", username, "_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds")))
+  return(tweets_urls)
 }

@@ -29,7 +29,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' getUrlsTweetsSearchStreaming(search = "#RStats", n_tweets = 200)
+#' getTweetsSearchStreaming(search = "#RStats", n_tweets = 200)
 #' }
 #'
 #' @references
@@ -38,7 +38,7 @@
 #'
 #' @import rvest
 
-getUrlsTweetsSearchStreaming <- function(
+getTweetsSearchStreaming <- function(
     search = "#RStats",
     timeout = 10,
     n_tweets = 100,

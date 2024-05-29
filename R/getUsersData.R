@@ -73,7 +73,8 @@ getUsersData <- function(
         n_post = gsub(" posts", "", rvest::html_text(rvest::html_elements(nodo, css = met_post))[1]),
         n_siguiendo = gsub(" Siguiendo| Following", "", rvest::html_text(rvest::html_elements(nodo, css = met_siguiendo))[1]),
         n_seguidorxs = gsub(" Seguidores| Followers", "", rvest::html_text(rvest::html_elements(nodo, css = met_seguidores))[1]),
-        url = i
+        url = i,
+        fecha_captura = Sys.time()
       )
     )
     message("Datos recolectados usuarix: ", sub("^https://twitter.com/(.*?)|^https://x.com/(.*?)", "\\1", i))

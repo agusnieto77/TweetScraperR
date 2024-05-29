@@ -71,7 +71,8 @@ getTweetsTimeline <- function(
       fecha = lubridate::as_datetime(rvest::html_attr(timeline$html_elements(css = fech), "datetime")),
       usern = rvest::html_text(timeline$html_elements(css = user1)),
       tweet = rvest::html_text(timeline$html_elements(css = tweet)),
-      url = rvest::html_attr(timeline$html_elements(css = paste(url_tweet, user2, sep = ", ")), "href")
+      url = rvest::html_attr(timeline$html_elements(css = paste(url_tweet, user2, sep = ", ")), "href"),
+      fecha_captura = Sys.time()
     )
     new_count <- nrow(i_tweets)
     if (new_count == prev_count) {

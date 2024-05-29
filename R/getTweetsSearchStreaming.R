@@ -127,7 +127,8 @@ getTweetsSearchStreaming <- function(
       fecha =  lubridate::as_datetime("2008-11-09 09:12:30 UTC"),
       user = "",
       tweet = "",
-      url = ""
+      url = "",
+      fecha_captura = Sys.time()
     )
     for (i in 1:length(tweets_recolectados$art_html)) {
       fechas <- lubridate::as_datetime(rvest::html_attr(rvest::html_elements(rvest::read_html(articles[[i]]), css = "time"), "datetime"))
@@ -137,6 +138,7 @@ getTweetsSearchStreaming <- function(
       tweets_recolectados$user[i] <- rvest::html_text(rvest::html_element(rvest::read_html(articles[[i]]), css = "div.css-175oi2r.r-18u37iz.r-1wbh5a2.r-1ez5h0i > div > div.css-175oi2r.r-1wbh5a2.r-dnmrzs > a > div > span"))
       tweets_recolectados$tweet[i] <- rvest::html_text(rvest::html_element(rvest::read_html(articles[[i]]), css = "div[data-testid='tweetText']"))
       tweets_recolectados$url[i] <- paste0("https://x.com", rvest::html_attr(rvest::html_element(rvest::read_html(articles[[i]]), css = url_tweet), "href"))
+      tweets_recolectados$fecha_captura[i] <- Sys.time()
     }
     tweets_recolectados <- unique(tweets_recolectados)
     tweets_recolectados <- tweets_recolectados[!is.na(tweets_recolectados$fecha), ]

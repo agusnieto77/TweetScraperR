@@ -128,7 +128,8 @@ getTweetsHistoricalTimeline <- function(
         fecha =  lubridate::as_datetime("2008-11-09 09:12:30 UTC"),
         user = "",
         tweet = "",
-        url = ""
+        url = "",
+        fecha_captura =  Sys.time()
       )
       for (i in 1:length(tweets_recolectados$art_html)) {
         fechas <- lubridate::as_datetime(rvest::html_attr(rvest::html_elements(rvest::read_html(articles[[i]]), css = "time"), "datetime"))

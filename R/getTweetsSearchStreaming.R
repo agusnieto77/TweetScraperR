@@ -1,10 +1,10 @@
-#' Get Live Tweet URLs by Search
+#' Get Live Tweet by Search
 #' 
 #' @description
 #' 
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
 #' 
-#' Esta función recupera URLs de tweets basados en una consulta de búsqueda en tiempo real en Twitter. 
+#' Esta función recupera tweets basados en una consulta de búsqueda en tiempo real en Twitter. 
 #' Utiliza autenticación en Twitter mediante el nombre de usuario y la contraseña proporcionados, 
 #' o los valores predeterminados de las variables de entorno del sistema. Después de autenticar al usuario, 
 #' la función realiza la búsqueda especificada por el parámetro `search` y recoge las URLs de los tweets que 

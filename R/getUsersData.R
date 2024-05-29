@@ -114,13 +114,20 @@ getUsersData <- function(
   
   twitter$session$close()
   
-  convertir_mil <- function(x) {
-    ifelse(grepl("mil|K", x), as.numeric(gsub("[^0-9.]", "", x)) * 1000, as.numeric(x))
+  convertir_numero <- function(x) {
+    x <- as.character(x)  # Convertir a caracteres por si acaso
+    if (grepl("mil|K", x)) {
+      return(as.numeric(gsub("[^0-9.]", "", x)) * 1000)
+    } else if (grepl("M", x)) {
+      return(as.numeric(gsub("[^0-9.]", "", x)) * 1000000)
+    } else {
+      return(as.numeric(x))
+    }
   }
   
-  users_db$n_post <- sapply(gsub(",", ".", gsub("\\.", "", users_db$n_post)), convertir_mil)
-  users_db$n_siguiendo <- sapply(gsub(",", ".", gsub("\\.", "", users_db$n_siguiendo)), convertir_mil)
-  users_db$n_seguidorxs <- sapply(gsub(",", ".", gsub("\\.", "", users_db$n_seguidorxs)), convertir_mil)
+  users_db$n_post <- sapply(gsub(",", ".", gsub("\\.", "", users_db$n_post)), convertir_numero)
+  users_db$n_siguiendo <- sapply(gsub(",", ".", gsub("\\.", "", users_db$n_siguiendo)), convertir_numero)
+  users_db$n_seguidorxs <- sapply(gsub(",", ".", gsub("\\.", "", users_db$n_seguidorxs)), convertir_numero)
   
   saveRDS(users_db, paste0(dir, "/db_users_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
   

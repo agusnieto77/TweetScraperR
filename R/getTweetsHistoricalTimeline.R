@@ -23,7 +23,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' getTweetsHistoricalTimeline(search = "rstatstweet", n_tweets = 50, since = "2018-10-26", until = "2023-10-30")
+#' getTweetsHistoricalTimeline(username = "rstatstweet", n_tweets = 50, since = "2018-10-26", until = "2023-10-30")
 #' }
 #'
 #' @references

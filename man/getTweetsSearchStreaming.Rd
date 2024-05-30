@@ -2,7 +2,7 @@
 % Please edit documentation in R/getTweetsSearchStreaming.R
 \name{getTweetsSearchStreaming}
 \alias{getTweetsSearchStreaming}
-\title{Get Live Tweet URLs by Search}
+\title{Get Live Tweet by Search}
 \usage{
 getTweetsSearchStreaming(
   search = "#RStats",
@@ -30,7 +30,7 @@ Un vector que contiene las URLs de tweets recuperadas.
 \description{
 \if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}
 
-Esta función recupera URLs de tweets basados en una consulta de búsqueda en tiempo real en Twitter.
+Esta función recupera tweets basados en una consulta de búsqueda en tiempo real en Twitter.
 Utiliza autenticación en Twitter mediante el nombre de usuario y la contraseña proporcionados,
 o los valores predeterminados de las variables de entorno del sistema. Después de autenticar al usuario,
 la función realiza la búsqueda especificada por el parámetro \code{search} y recoge las URLs de los tweets que

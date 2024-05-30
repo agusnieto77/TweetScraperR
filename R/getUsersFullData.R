@@ -28,7 +28,7 @@
 #' @import lubridate
 #' @import tibble
 
-getUsersDataFull <- function(
+getUsersFullData <- function(
     urls_users,
     xuser = Sys.getenv("USER"),
     xpass = Sys.getenv("PASS"),

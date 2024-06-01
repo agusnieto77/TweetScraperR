@@ -37,6 +37,7 @@
 #' <https://github.com/agusnieto77/TweetScraperR>
 #'
 #' @import rvest
+#' @import dplyr
 
 getTweetsSearchStreaming <- function(
     search = "#RStats",
@@ -140,7 +141,7 @@ getTweetsSearchStreaming <- function(
       tweets_recolectados$url[i] <- paste0("https://x.com", rvest::html_attr(rvest::html_element(rvest::read_html(articles[[i]]), css = url_tweet), "href"))
       tweets_recolectados$fecha_captura[i] <- Sys.time()
     }
-    tweets_recolectados <- unique(tweets_recolectados)
+    tweets_recolectados <- dplyr::distinct(tweets_recolectados, url, .keep_all = TRUE)
     tweets_recolectados <- tweets_recolectados[!is.na(tweets_recolectados$fecha), ]
     saveRDS(tweets_recolectados, paste0(dir, "/tweets_search_", gsub("\\s|#", "", search), "_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
     cat("Datos procesados y guardados.\n")

@@ -145,6 +145,7 @@ getTweetsSearchStreaming <- function(
     tweets_recolectados <- tweets_recolectados[!is.na(tweets_recolectados$fecha), ]
     saveRDS(tweets_recolectados, paste0(dir, "/tweets_search_", gsub("\\s|#", "", search), "_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
     cat("Datos procesados y guardados.\n")
+    cat("Tweets únicos reolectados:", length(tweets_recolectados$url), "\n")
     return(tweets_recolectados)
   } else {
     cat("No hay tweets para procesar.\n")

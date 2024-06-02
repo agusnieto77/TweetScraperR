@@ -139,10 +139,11 @@ getTweetsHistoricalSearch <- function(
         tweets_recolectados$tweet[i] <- rvest::html_text(rvest::html_element(rvest::read_html(articles[[i]]), css = "div[data-testid='tweetText']"))
         tweets_recolectados$url[i] <- paste0("https://x.com", rvest::html_attr(rvest::html_element(rvest::read_html(articles[[i]]), css = url_tweet), "href"))
       }
-      tweets_recolectados <- unique(tweets_recolectados)
+      tweets_recolectados <- dplyr::distinct(tweets_recolectados, url, .keep_all = TRUE)
       tweets_recolectados <- tweets_recolectados[!is.na(tweets_recolectados$fecha), ]
-      saveRDS(tweets_recolectados, paste0(dir, "/historical_search_", search, "_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
+      saveRDS(tweets_recolectados, paste0(dir, "/historical_search_", gsub("\\s", "_", search), "_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
       cat("Datos procesados y guardados.\n")
+      cat("Tweets únicos recolectados:", length(tweets_recolectados$url), "\n")
       return(tweets_recolectados)
     } else {
       cat("No hay artículos para procesar.\n")

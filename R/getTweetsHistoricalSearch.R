@@ -16,7 +16,7 @@
 #' @param until Fecha de fin para la búsqueda de tweets (en formato "YYYY-MM-DD"). Por defecto es "2023-10-30".
 #' @param xuser Nombre de usuarix de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.
 #' @param xpass Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.
-#' @param dir Directorio para guardar el archivo RDS con las URLs recolectadas. Por defecto es el directorio de trabajo actual.
+#' @param dir Directorio para guardar el archivo RDS con los tweets recolectados. Por defecto es el directorio de trabajo actual.
 #' @return Un tibble que contiene los datos de tweets recuperados, junto con la fecha, usuario, contenido del tweet y URL del tweet.
 #' @export
 #'
@@ -32,6 +32,7 @@
 #' @import rvest
 #' @import lubridate
 #' @import tibble
+#' @import dplyr
 
 getTweetsHistoricalSearch <- function(
     search = "R Project",
@@ -94,10 +95,11 @@ getTweetsHistoricalSearch <- function(
     articles <- list()
     attempts <- 0
     max_attempts <- 3
+    cat("Inició la recolección de tweets.\n")
     success <- TRUE
     while (TRUE) {
       if (length(articles) >= n_tweets || attempts >= max_attempts) {
-        cat("Finalizó la recolección de URLs.\n")
+        cat("Finalizó la recolección de tweets.\n")
         cat("Procesando datos...\n")
         break
       }
@@ -109,7 +111,7 @@ getTweetsHistoricalSearch <- function(
         articles <- unique(append(articles, nuevos_articles))
         articles <- articles[!is.na(articles)]
         historicalok$scroll_by(top = 4000, left = 0)
-        message("URLs recolectadas: ", length(articles))
+        message("Tweets recolectados: ", length(articles))
         Sys.sleep(timeout)
         if (new_tweets == 0) {
           attempts <- attempts + 1
@@ -117,7 +119,7 @@ getTweetsHistoricalSearch <- function(
           attempts <- 0
         }
       }, error = function(e) {
-        message("Error al recolectar URLs: ", e$message)
+        message("Error al recolectar tweet")
         attempts <- attempts + 1
       })
     }

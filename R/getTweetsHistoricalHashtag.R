@@ -7,22 +7,22 @@
 #'  Esta función recupera datos de los tweets que contienen un hashtag específico en Twitter, 
 #'  basado en un rango de fechas especificado. Utiliza autenticación en Twitter mediante el 
 #'  nombre de usuarix y la contraseña proporcionados, o los valores predeterminados de las 
-#'  variables de entorno del sistema. Después de autenticar al usuario, la función realiza 
+#'  variables de entorno del sistema. Después de autenticar al usuarix, la función realiza 
 #'  una búsqueda de tweets que contienen el hashtag especificado dentro del rango de fechas 
 #'  definido por los parámetros `since` y `until`. Las URLs de los tweets encontrados se recogen 
-#'  hasta alcanzar el número máximo de URLs especificado por el parámetro `n_tweets` o hasta que no 
-#'  se encuentren nuevas URLs en varios intentos consecutivos. Los resultados se guardan en un 
+#'  hasta alcanzar el número máximo de tweets especificado por el parámetro `n_tweets` o hasta que no 
+#'  se encuentren nuevos tweets en varios intentos consecutivos. Los resultados se guardan en un 
 #'  archivo con formato `.rds` en el directorio especificado por el parámetro `dir`.
 #' 
 #' @param hashtag Hashtag de Twitter del cual se desean recuperar los tweets históricos. Por defecto es "#rstats".
 #' @param timeout Tiempo de espera entre solicitudes en segundos. Por defecto es 10.
-#' @param n_tweets El número máximo de URLs de tweets a recuperar. Por defecto es 100.
+#' @param n_tweets El número máximo de tweets a recuperar. Por defecto es 100.
 #' @param since Fecha de inicio para la búsqueda de tweets (en formato "YYYY-MM-DD"). Por defecto es "2018-10-26".
 #' @param until Fecha de fin para la búsqueda de tweets (en formato "YYYY-MM-DD"). Por defecto es "2018-10-30".
 #' @param xuser Nombre de usuarix de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.
 #' @param xpass Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.
 #' @param dir Directorio para guardar el archivo RDS con los datos de los tweets recolectados. Por defecto es el directorio de trabajo actual.
-#' @return Un tibble que contiene las URLs de tweets recuperadas, junto con la fecha, usuario, contenido del tweet y URL del tweet.
+#' @return Un tibble que contiene los datos de tweets recuperados, junto con la fecha, usuario, contenido del tweet y URL del tweet.
 #' @export
 #'
 #' @examples
@@ -35,8 +35,9 @@
 #' <https://github.com/agusnieto77/TweetScraperR>
 #' 
 #' @import rvest
-#' @import tibble
 #' @import lubridate
+#' @import tibble
+#' @import dplyr
 
 getTweetsHistoricalHashtag <- function(
     hashtag = "#rstats",
@@ -99,6 +100,7 @@ getTweetsHistoricalHashtag <- function(
     articles <- list()
     attempts <- 0
     max_attempts <- 3
+    cat("Inició la recolección de tweets.\n")
     success <- TRUE
     while (TRUE) {
       if (length(articles) >= n_tweets || attempts >= max_attempts) {
@@ -143,10 +145,11 @@ getTweetsHistoricalHashtag <- function(
         tweets_recolectados$tweet[i] <- rvest::html_text(rvest::html_element(rvest::read_html(articles[[i]]), css = "div[data-testid='tweetText']"))
         tweets_recolectados$url[i] <- paste0("https://x.com", rvest::html_attr(rvest::html_element(rvest::read_html(articles[[i]]), css = url_tweet), "href"))
       }
-      tweets_recolectados <- unique(tweets_recolectados)
+      tweets_recolectados <- dplyr::distinct(tweets_recolectados, url, .keep_all = TRUE)
       tweets_recolectados <- tweets_recolectados[!is.na(tweets_recolectados$fecha), ]
       saveRDS(tweets_recolectados, paste0(dir, "/historical_hashtag_", gsub("#", "", hashtag), "_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
       cat("Datos procesados y guardados.\n")
+      cat("Tweets únicos recolectados:", length(tweets_recolectados$url), "\n")
       return(tweets_recolectados)
     } else {
       cat("No hay tweets para procesar.\n")

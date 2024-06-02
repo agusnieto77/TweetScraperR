@@ -76,7 +76,7 @@ getTweetsHistoricalSearch <- function(
       message("Se inició la recolección de datos...")
     })
     url_tweet <- "div.css-175oi2r > div > div.css-175oi2r > a.css-146c3p1.r-bcqeeo.r-1ttztb7.r-qvutc0.r-37j5jr.r-a023e6"
-    term_search <- paste0("https://x.com/search?f=live&q=%22", search, "%22%20until%3A", since, "%20since%3A", until, "&src=typed_query")
+    term_search <- paste0("https://x.com/search?f=live&q=", search, "%20until%3A", since, "%20since%3A", until, "&src=typed_query")
     success3 <- FALSE
     while (!success3) {
       tryCatch({

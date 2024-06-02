@@ -141,7 +141,7 @@ getTweetsHistoricalSearch <- function(
       }
       tweets_recolectados <- unique(tweets_recolectados)
       tweets_recolectados <- tweets_recolectados[!is.na(tweets_recolectados$fecha), ]
-      saveRDS(tweets_recolectados, paste0(dir, "/urls_historical_search_", search, "_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
+      saveRDS(tweets_recolectados, paste0(dir, "/historical_search_", search, "_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
       cat("Datos procesados y guardados.\n")
       return(tweets_recolectados)
     } else {

@@ -22,16 +22,23 @@ MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://cran.r-project.
 ### Vision general
 
 Este paquete proporciona funciones para extraer datos de X/Twitter,
-incluidos tweets, usuarixs y metadatos asociados. Permite realizar
-extracción de datos de X/Twitter y manejar la respuesta de manera
-conveniente en R. El paquete se enfoca en facilitar la tarea de
-recolección de datos para análisis y visualización.
+incluidos tweets, usuarixs y metadatos asociados, permitiendo realizar
+la extracción y manejo de estos datos de manera conveniente en R.
+Enfocado en facilitar la recolección de datos para análisis y
+visualización, el paquete puede obtener tweets desde la búsqueda de
+X/Twitter y está construido sobre rvest, sin utilizar las API de
+X/Twitter. Aunque los datos rastreados no son tan limpios como los
+obtenidos a través de las API, el costo actual de las API hace que esta
+sea una alternativa flexible, gratuita y de código abierto.
 
-This package provides functions to extract X/Twitter data, including
-tweets, users and associated metadata. It allows you to perform
-X/Twitter data extraction and handle the response in a convenient way in
-R. The package focuses on easing the task of data collection for
-analysis and visualisation.
+This package provides functions to extract data from X/Twitter,
+including tweets, users, and associated metadata, allowing for
+convenient data extraction and handling in R. Focused on facilitating
+data collection for analysis and visualization, the package can obtain
+tweets from X/Twitter search and is built on rvest, without using the
+X/Twitter APIs. Although the scraped data is not as clean as that
+obtained through the APIs, the current cost of the APIs makes this a
+flexible, free, and open-source alternative.
 
 ### Instalacion de la version en desarrollo
 
@@ -76,25 +83,17 @@ urls_hashtagRstats <- getTweetsSearchStreaming(search = "#RStats", n_tweets = 20
     #> Inició la recolección de tweets.
     #> Finalizó la recolección de tweets.
     #> Datos procesados y guardados.
+    #> Tweets únicos recolectados: 2
 
 ``` r
 urls_hashtagRstats
 ```
 
-    #> # A tibble: 25 × 6
-    #>    art_html  fecha               user           tweet  url   fecha_captura      
-    #>    <list>    <dttm>              <chr>          <chr>  <chr> <dttm>             
-    #>  1 <chr [1]> 2024-05-30 03:08:12 @Sheilds_Tech_ "\nDM… http… 2024-05-30 00:12:59
-    #>  2 <chr [1]> 2024-05-30 03:04:49 @rcityviews    "\nIm… http… 2024-05-30 00:12:59
-    #>  3 <chr [1]> 2024-05-30 02:51:46 @DawnDarasMS   "\nUp… http… 2024-05-30 00:12:59
-    #>  4 <chr [1]> 2024-05-30 02:50:37 @DawnDarasMS   "\nUp… http… 2024-05-30 00:12:59
-    #>  5 <chr [1]> 2024-05-30 02:32:15 @danoehm       "\nWr… http… 2024-05-30 00:12:59
-    #>  6 <chr [1]> 2024-05-30 03:08:12 @Sheilds_Tech_ "\nDM… http… 2024-05-30 00:12:59
-    #>  7 <chr [1]> 2024-05-30 03:04:49 @rcityviews    "\nIm… http… 2024-05-30 00:12:59
-    #>  8 <chr [1]> 2024-05-30 02:51:46 @DawnDarasMS   "\nUp… http… 2024-05-30 00:12:59
-    #>  9 <chr [1]> 2024-05-30 02:50:37 @DawnDarasMS   "\nUp… http… 2024-05-30 00:12:59
-    #> 10 <chr [1]> 2024-05-30 02:32:15 @danoehm       "\nWr… http… 2024-05-30 00:12:59
-    #> # ℹ 15 more rows
+    #> # A tibble: 2 × 6
+    #>   art_html  fecha               user         tweet     url   fecha_captura      
+    #>   <list>    <dttm>              <chr>        <chr>     <chr> <dttm>             
+    #> 1 <chr [1]> 2024-06-03 22:05:01 @kpfssport   "\nSaint… http… 2024-06-03 19:08:13
+    #> 2 <chr [1]> 2024-06-03 21:56:51 @Geekcore_HQ "\nHave … http… 2024-06-03 19:08:13
 
 ``` r
 # Con la función getTweetsHistoricalHashtag(), recuperamos tweets históricos 
@@ -103,28 +102,30 @@ urls_hashtagRstats
 tweets_historicos <- getTweetsHistoricalHashtag("#rstats", n_tweets = 20)
 ```
 
+    #> Inició la recolección de tweets.
     #> Finalizó la recolección de tweets.
     #> Procesando datos...
     #> Datos procesados y guardados.
+    #> Tweets únicos recolectados: 34
 
 ``` r
 tweets_historicos
 ```
 
-    #> # A tibble: 40 × 6
+    #> # A tibble: 34 × 6
     #>    art_html  fecha               user            tweet url   fecha_captura      
     #>    <list>    <dttm>              <chr>           <chr> <chr> <dttm>             
-    #>  1 <chr [1]> 2018-10-29 23:54:40 @gjmount        "\nC… http… 2024-05-30 00:13:33
-    #>  2 <chr [1]> 2018-10-29 23:53:10 @ahammami0      "\nP… http… 2024-05-30 00:13:33
-    #>  3 <chr [1]> 2018-10-29 23:49:06 @ChrisTokita    "\nC… http… 2024-05-30 00:13:33
-    #>  4 <chr [1]> 2018-10-29 23:35:04 @gp_pulipaka    "\nI… http… 2024-05-30 00:13:33
-    #>  5 <chr [1]> 2018-10-29 23:30:07 @gp_pulipaka    "\nA… http… 2024-05-30 00:13:33
-    #>  6 <chr [1]> 2018-10-29 23:28:07 @gp_pulipaka    "\nL… http… 2024-05-30 00:13:33
-    #>  7 <chr [1]> 2018-10-29 23:26:09 @gp_pulipaka    "\nM… http… 2024-05-30 00:13:33
-    #>  8 <chr [1]> 2018-10-29 23:00:32 @tidyversetwee… "\nG… http… 2024-05-30 00:13:33
-    #>  9 <chr [1]> 2018-10-29 23:49:06 @ChrisTokita    "\nC… http… 2024-05-30 00:13:33
-    #> 10 <chr [1]> 2018-10-29 23:35:04 @gp_pulipaka    "\nI… http… 2024-05-30 00:13:33
-    #> # ℹ 30 more rows
+    #>  1 <chr [1]> 2018-10-29 23:54:40 @gjmount        "\nC… http… 2024-06-03 19:08:48
+    #>  2 <chr [1]> 2018-10-29 23:53:10 @ahammami0      "\nP… http… 2024-06-03 19:08:48
+    #>  3 <chr [1]> 2018-10-29 23:49:06 @ChrisTokita    "\nC… http… 2024-06-03 19:08:48
+    #>  4 <chr [1]> 2018-10-29 23:35:04 @gp_pulipaka    "\nI… http… 2024-06-03 19:08:48
+    #>  5 <chr [1]> 2018-10-29 23:30:07 @gp_pulipaka    "\nA… http… 2024-06-03 19:08:48
+    #>  6 <chr [1]> 2018-10-29 23:28:07 @gp_pulipaka    "\nL… http… 2024-06-03 19:08:48
+    #>  7 <chr [1]> 2018-10-29 23:26:09 @gp_pulipaka    "\nM… http… 2024-06-03 19:08:48
+    #>  8 <chr [1]> 2018-10-29 23:00:32 @tidyversetwee… "\nG… http… 2024-06-03 19:08:48
+    #>  9 <chr [1]> 2018-10-29 23:00:31 @tidyversetwee… "\nW… http… 2024-06-03 19:08:48
+    #> 10 <chr [1]> 2018-10-29 23:00:26 @ProCogia       "\nW… http… 2024-06-03 19:08:48
+    #> # ℹ 24 more rows
 
 ``` r
 # Ahora con la getTweetsHistoricalTimeline() recuperamos los datos de tweets originales 
@@ -134,9 +135,11 @@ timeline_tweets <- getTweetsHistoricalTimeline(username = "rstatstweet", n_tweet
                                                since = "2018-10-26", until = "2020-10-30")
 ```
 
-    #> Finalizó la recolección de URLs.
+    #> Inició la recolección de tweets.
+    #> Finalizó la recolección de tweets.
     #> Procesando datos...
     #> Datos procesados y guardados.
+    #> Tweets únicos recolectados: 13
 
 ``` r
 # Imprimimos en pantalla los datos de los tweets recuperados
@@ -147,19 +150,19 @@ timeline_tweets
     #> # A tibble: 13 × 6
     #>    art_html  fecha               user         tweet    url   fecha_captura      
     #>    <list>    <dttm>              <chr>        <chr>    <chr> <dttm>             
-    #>  1 <chr [1]> 2020-09-25 22:12:32 @rstatstweet "I can’… http… 2024-05-30 00:13:56
-    #>  2 <chr [1]> 2020-09-24 15:58:14 @rstatstweet "Welcom… http… 2024-05-30 00:13:56
-    #>  3 <chr [1]> 2020-09-24 15:30:13 @rstatstweet "\nI am… http… 2024-05-30 00:13:56
-    #>  4 <chr [1]> 2020-09-24 15:10:16 @rstatstweet "This i… http… 2024-05-30 00:13:56
-    #>  5 <chr [1]> 2020-09-24 15:05:32 @rstatstweet "\nThan… http… 2024-05-30 00:13:56
-    #>  6 <chr [1]> 2020-09-24 13:07:33 @rstatstweet "\nThan… http… 2024-05-30 00:13:56
-    #>  7 <chr [1]> 2020-09-24 09:11:22 @rstatstweet "That’s… http… 2024-05-30 00:13:56
-    #>  8 <chr [1]> 2020-09-24 00:28:46 @rstatstweet "I will… http… 2024-05-30 00:13:56
-    #>  9 <chr [1]> 2020-09-24 00:25:17 @rstatstweet "\nTher… http… 2024-05-30 00:13:56
-    #> 10 <chr [1]> 2020-09-24 00:21:15 @rstatstweet "\nSo t… http… 2024-05-30 00:13:56
-    #> 11 <chr [1]> 2020-09-24 00:16:20 @rstatstweet "I was … http… 2024-05-30 00:13:56
-    #> 12 <chr [1]> 2020-09-24 00:09:42 @rstatstweet "\nThis… http… 2024-05-30 00:13:56
-    #> 13 <chr [1]> 2020-02-12 01:36:45 @rstatstweet "Happy … http… 2024-05-30 00:13:56
+    #>  1 <chr [1]> 2020-09-25 22:12:32 @rstatstweet "I can’… http… 2024-06-03 19:09:13
+    #>  2 <chr [1]> 2020-09-24 15:58:14 @rstatstweet "Welcom… http… 2024-06-03 19:09:13
+    #>  3 <chr [1]> 2020-09-24 15:30:13 @rstatstweet "\nI am… http… 2024-06-03 19:09:13
+    #>  4 <chr [1]> 2020-09-24 15:10:16 @rstatstweet "This i… http… 2024-06-03 19:09:13
+    #>  5 <chr [1]> 2020-09-24 15:05:32 @rstatstweet "\nThan… http… 2024-06-03 19:09:13
+    #>  6 <chr [1]> 2020-09-24 13:07:33 @rstatstweet "\nThan… http… 2024-06-03 19:09:13
+    #>  7 <chr [1]> 2020-09-24 09:11:22 @rstatstweet "That’s… http… 2024-06-03 19:09:13
+    #>  8 <chr [1]> 2020-09-24 00:28:46 @rstatstweet "I will… http… 2024-06-03 19:09:13
+    #>  9 <chr [1]> 2020-09-24 00:25:17 @rstatstweet "\nTher… http… 2024-06-03 19:09:13
+    #> 10 <chr [1]> 2020-09-24 00:21:15 @rstatstweet "\nSo t… http… 2024-06-03 19:09:13
+    #> 11 <chr [1]> 2020-09-24 00:16:20 @rstatstweet "I was … http… 2024-06-03 19:09:13
+    #> 12 <chr [1]> 2020-09-24 00:09:42 @rstatstweet "\nThis… http… 2024-06-03 19:09:13
+    #> 13 <chr [1]> 2020-02-12 01:36:45 @rstatstweet "Happy … http… 2024-06-03 19:09:13
 
 ``` r
 # Ahora con la función getUsersFullData() recuperamos los datos de usuarixs a 
@@ -183,8 +186,8 @@ dplyr::glimpse(usuarixs)
     #> $ identificador        <chr> "2489702532", "918024449194065925", "41155612", "…
     #> $ url_imagen           <chr> "https://pbs.twimg.com/profile_images/16538332253…
     #> $ url_miniatura        <chr> "https://pbs.twimg.com/profile_images/16538332253…
-    #> $ seguidorxs           <int> 4594, 117, 1447, 174922, 12190, 1628, 2238, 403, …
-    #> $ amigxs               <int> 4236, 120, 1849, 20498, 0, 148, 1866, 315, 2481, …
-    #> $ tweets               <int> 28631, 883, 5534, 88428, 98491, 1546, 967, 780, 2…
+    #> $ seguidorxs           <int> 4588, 116, 1439, 174836, 12189, 1629, 2245, 402, …
+    #> $ amigxs               <int> 4233, 120, 1849, 20494, 0, 148, 1867, 314, 2482, …
+    #> $ tweets               <int> 28672, 883, 5538, 88626, 98491, 1546, 967, 780, 2…
     #> $ url                  <chr> "https://twitter.com/gjmount", "https://twitter.c…
     #> $ enlaces_relacionados <chr> "https://t.co/JcWH7Lwy9r, https://stringfestanaly…

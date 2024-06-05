@@ -105,7 +105,7 @@ getTweetsData <- function(
         Sys.sleep(5)
         tweet_out <- paste(na.omit(rvest::html_attr(tweets$html_elements(css = "div.css-175oi2r div.css-175oi2r div.css-175oi2r"), "data-testid")), collapse = " ")
         user_out <- rvest::html_text(tweets$html_elements(xpath = paste0('//article[.//a[@rel="noopener noreferrer nofollow"]]')))
-        if (!grepl("error-detail", tweet_out) || length(user_out) == 0) {
+        if (!grepl("error-detail", tweet_out) || length(user_out) > 0) {
           articulo <- tweets$html_elements(xpath = paste0('//article[.//a[@href="/', gsub("https://twitter.com/|https://x.com/", "", i), '"]]'))
           urls_tw <- rvest::html_attr(tweets$html_elements(css = "article a"), "href")
           urls_tw <- urls_tw[grep("/status/", urls_tw)]

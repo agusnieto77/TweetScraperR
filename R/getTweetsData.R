@@ -103,10 +103,15 @@ getTweetsData <- function(
           })
         }
         Sys.sleep(5)
-        tweet_out <- paste(na.omit(rvest::html_attr(tweets$html_elements(css = "div.css-175oi2r div.css-175oi2r div.css-175oi2r"), "data-testid")), collapse = " ")
-        user_out <- rvest::html_text(tweets$html_elements(xpath = paste0('//article[.//a[@rel="noopener noreferrer nofollow"]]')))
-        if (!grepl("error-detail", tweet_out) || length(user_out) > 0) {
-          articulo <- tweets$html_elements(xpath = paste0('//article[.//a[@href="/', gsub("https://twitter.com/|https://x.com/", "", i), '"]]'))
+        raiz <- gsub("\\D", "", sub(".*status/", "", i))
+        tuit_out   <- tweets$html_elements(xpath = paste0('//article[.//a[contains(@href, ', '"', raiz, '"', ')]]'))
+        if (grepl("i/communities/", i) || length(tuit_out) == 0) {
+          borrados <- append(borrados, i)
+          cat("El tweet", gsub("https://twitter.com/.*/status/|https://x.com/.*/status/|https://x.com/i/communities/", "", i),"fue BORRADO.\n")
+          tweets$session$close()
+        } else {
+          articulo <- tweets$html_elements(xpath = paste0('//article[.//a[contains(@href, ', '"', raiz, '"', ')]]'))
+          articulo <- articulo[1]
           urls_tw <- rvest::html_attr(tweets$html_elements(css = "article a"), "href")
           urls_tw <- urls_tw[grep("/status/", urls_tw)]
           urls_tw <- urls_tw[!grepl("/status/.*/analytics|/status/.*/photo|/status/.*/hidden|/status/.*/quotes", urls_tw)]
@@ -137,10 +142,6 @@ getTweetsData <- function(
             )
           )
           message("Datos recolectados del tweet: ", gsub("https://twitter.com/|https://x.com/", "", i), " ", contador, " de ", length(urls_tweets))
-          tweets$session$close()
-        } else {
-          borrados <- append(borrados, i)
-          cat("El tweet", gsub("https://twitter.com/.*/status/|https://x.com/.*/status/", "", i),"fue BORRADO.\n")
           tweets$session$close()
         }
       }, error = function(e) {

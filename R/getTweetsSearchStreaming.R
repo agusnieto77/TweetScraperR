@@ -38,6 +38,8 @@
 #'
 #' @import rvest
 #' @import dplyr
+#' @import tibble
+#' @import lubridate
 
 getTweetsSearchStreaming <- function(
     search = "#RStats",

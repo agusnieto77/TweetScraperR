@@ -58,7 +58,7 @@ getUsersFullData <- function(
   for (i in urls_users) {
     users <- rvest::read_html_live(i)
     Sys.sleep(2)
-    json_list <- jsonlite::fromJSON(rvest::html_text(users$html_elements(xpath = "/html/head/script[3]")))
+    json_list <- jsonlite::fromJSON(rvest::html_text(users$html_elements(xpath = "/html/head/script[2]")))
     author <- json_list$author
     interaction_stats <- author$interactionStatistic
     users_db <- rbind(users_db, tibble::tibble(

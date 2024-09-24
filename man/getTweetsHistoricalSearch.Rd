@@ -30,7 +30,7 @@ getTweetsHistoricalSearch(
 
 \item{xpass}{Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.}
 
-\item{dir}{Directorio para guardar el archivo RDS con las URLs recolectadas. Por defecto es el directorio de trabajo actual.}
+\item{dir}{Directorio para guardar el archivo RDS con los tweets recolectados. Por defecto es el directorio de trabajo actual.}
 }
 \value{
 Un tibble que contiene los datos de tweets recuperados, junto con la fecha, usuario, contenido del tweet y URL del tweet.

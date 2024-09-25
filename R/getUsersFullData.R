@@ -36,51 +36,79 @@ getUsersFullData <- function(
 ) {
   twitter <- rvest::read_html_live("https://x.com/i/flow/login")
   Sys.sleep(6)
+  
   userx <- "#layers > div > div > div > div > div > div > div.css-175oi2r > div.css-175oi2r > div > div > div.css-175oi2r > div.css-175oi2r > div > div > div > div.css-175oi2r > label > div > div.css-175oi2r > div > input"
   nextx <- "#layers div > div > div > button:nth-child(6) > div"
   passx <- "#layers > div > div > div > div > div > div > div > div > div > div > div > div > div > div > div > div > div > label > div > div > div > input"
   login <- "#layers > div > div > div > div > div > div > div.css-175oi2r > div.css-175oi2r > div > div > div.css-175oi2r > div.css-175oi2r.r-16y2uox > div.css-175oi2r > div > div.css-175oi2r > div > div > button"
-  twitter$type(css = userx, text = xuser)
-  twitter$click(css = nextx, n_clicks = 1)
-  Sys.sleep(2)
-  twitter$type(css = passx, text = xpass)
-  twitter$click(css = login, n_clicks = 1)
-  Sys.sleep(2)
-  todo <- "#react-root > div > div > div.css-175oi2r.r-1f2l425.r-13qz1uu.r-417010.r-18u37iz > main > div > div > div > div > div"
-  name <- "h2"
-  met_post <- "div.css-175oi2r.r-aqfbo4.r-gtdqiz.r-1gn8etr.r-1g40b8q > div:nth-child(1) > div > div > div > div > div > div.css-175oi2r.r-16y2uox.r-1wbh5a2.r-1pi2tsx.r-1777fci > div > div"
-  descrip <- "div > div > div.css-175oi2r.r-1f2l425.r-13qz1uu.r-417010.r-18u37iz > main > div > div > div > div.css-175oi2r.r-14lw9ot.r-jxzhtn.r-13l2t4g.r-1ljd8xs.r-1phboty.r-16y2uox.r-184en5c.r-61z16t.r-11wrixw.r-1jgb5lz.r-13qz1uu.r-1ye8kvj > div > div:nth-child(3) > div > div > div > div.css-175oi2r.r-ymttw5.r-ttdzmv.r-1ifxtd0 > div:nth-child(3) > div > div"
-  fech <- "span.css-1jxf684.r-bcqeeo.r-1ttztb7.r-qvutc0.r-poiln3.r-4qtqp9.r-1a11zyx span.css-1jxf684.r-bcqeeo.r-1ttztb7.r-qvutc0.r-poiln3"
-  met_siguiendo <- "div:nth-child(3) > div > div > div > div.css-175oi2r.r-3pj75a.r-ttdzmv.r-1ifxtd0 > div.css-175oi2r.r-13awgt0.r-18u37iz.r-1w6e6rj > div:nth-child(1)"
-  met_seguidores <- "div:nth-child(3) > div > div > div > div.css-175oi2r.r-3pj75a.r-ttdzmv.r-1ifxtd0 > div.css-175oi2r.r-13awgt0.r-18u37iz.r-1w6e6rj > div:nth-child(2)"
-  Sys.sleep(1)
+  
+  tryCatch({
+    twitter$type(css = userx, text = xuser)
+    twitter$click(css = nextx, n_clicks = 1)
+    Sys.sleep(2)
+    
+    twitter$type(css = passx, text = xpass)
+    twitter$click(css = login, n_clicks = 1)
+    Sys.sleep(2)
+  }, error = function(e) {
+    message("Sesión ya iniciada...")
+  })
+  
   users_db <- tibble::tibble()
+  
+  # Inicializar el objeto para almacenar las URLs que fallan
+  urls_fallidas <- c()
+  
   for (i in urls_users) {
-    users <- rvest::read_html_live(i)
-    Sys.sleep(2)
-    json_list <- jsonlite::fromJSON(rvest::html_text(users$html_elements(xpath = "/html/head/script[2]")))
-    author <- json_list$author
-    interaction_stats <- author$interactionStatistic
-    users_db <- rbind(users_db, tibble::tibble(
-      fecha_creacion = lubridate::as_datetime(json_list$dateCreated),
-      nombre_adicional = author$additionalName,
-      descripcion = author$description,
-      nombre = author$givenName,
-      ubicacion = author$homeLocation$name,
-      identificador = author$identifier,
-      url_imagen = author$image$contentUrl,
-      url_miniatura = author$image$thumbnailUrl,
-      seguidorxs = interaction_stats$userInteractionCount[1],
-      amigxs = interaction_stats$userInteractionCount[2],
-      tweets = interaction_stats$userInteractionCount[3],
-      url = author$url,
-      enlaces_relacionados = paste(json_list$relatedLink, collapse = ", ")
-    ))
-    Sys.sleep(2)
-    message("Datos recolectados usuarix: ", sub("^https://twitter.com/(.*?)|^https://x.com/(.*?)", "\\1", i))
-    users$session$close()
+    tryCatch({
+      users <- rvest::read_html_live(i)
+      Sys.sleep(2)
+      
+      json_list <- jsonlite::fromJSON(rvest::html_text(users$html_elements(xpath = "/html/head/script[2]")))
+      author <- json_list$author
+      interaction_stats <- author$interactionStatistic
+      
+      users_db <- rbind(users_db, tibble::tibble(
+        fecha_creacion = lubridate::as_datetime(json_list$dateCreated),
+        nombre_adicional = author$additionalName,
+        descripcion = author$description,
+        nombre = author$givenName,
+        ubicacion = author$homeLocation$name,
+        identificador = author$identifier,
+        url_imagen = author$image$contentUrl,
+        url_miniatura = author$image$thumbnailUrl,
+        seguidorxs = interaction_stats$userInteractionCount[1],
+        amigxs = interaction_stats$userInteractionCount[2],
+        tweets = interaction_stats$userInteractionCount[3],
+        url = author$url,
+        enlaces_relacionados = paste(json_list$relatedLink, collapse = ", ")
+      ))
+      
+      Sys.sleep(2)
+      message("Datos recolectados usuarix: ", sub("^https://twitter.com/(.*?)|^https://x.com/(.*?)", "\\1", i))
+      users$session$close()
+    }, error = function(e) {
+      message("Datos sin recolectar usuarix: ", sub("^https://twitter.com/(.*?)|^https://x.com/(.*?)", "\\1", i))
+      
+      # Agregar la URL que falló al objeto urls_fallidas
+      urls_fallidas <<- c(urls_fallidas, i)
+    })
   }
+  
   twitter$session$close()
+  
+  # Guardar la base de datos de usuarios recolectados
   saveRDS(users_db, paste0(dir, "/db_full_users_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
+  
+  # Guardar las URLs fallidas en un archivo
+  if (length(urls_fallidas) > 0) {
+    writeLines(urls_fallidas, paste0(dir, "/urls_fallidas_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".txt"))
+  }
+  cat("\nTerminando el proceso.
+      \nUsuarixs recuperados:",
+      length(users_db$url),
+      "\nUsuarixs no recuperados:",
+      length(urls_fallidas),
+      "\n\n")
   return(users_db)
 }

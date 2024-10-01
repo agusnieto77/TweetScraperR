@@ -25,7 +25,12 @@
 #' @export
 
 closeTwitter <- function() {
-  print(twitter$session$close())
-  Sys.sleep(1)
-  rm(twitter, envir = .GlobalEnv)
+  tryCatch({
+    print(twitter$session$close())  # Intenta cerrar la sesión
+    Sys.sleep(1)
+    rm(twitter, envir = .GlobalEnv)  # Elimina el objeto twitter del entorno global
+    message("Sesión de Twitter cerrada correctamente.")
+  }, error = function(e) {
+    message("Error al intentar cerrar la sesión de Twitter: ", e$message)
+  })
 }

@@ -25,7 +25,14 @@
 #' @export
 
 openTwitter <- function() {
-  twitter <- rvest::read_html_live("https://x.com/i/flow/login")
-  assign("twitter", twitter, envir = .GlobalEnv)
-  return(twitter$view())
+  tryCatch({
+    twitter <- rvest::read_html_live("https://x.com/i/flow/login")
+    
+    assign("twitter", twitter, envir = .GlobalEnv)
+    
+    return(twitter$view())
+  }, error = function(e) {
+    message("Error al abrir la página de Twitter: ", e$message)
+    return(NULL)
+  })
 }

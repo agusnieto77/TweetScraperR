@@ -8,7 +8,7 @@
 [![Project Status: Active – The project has reached a stable, usable
 state and is being actively
 developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
-[![](https://img.shields.io/badge/devel%20version-0.1.0.04-blue.svg)](https://github.com/agusnieto77/TweetScraperR)
+[![](https://img.shields.io/badge/devel%20version-0.1.0.05-blue.svg)](https://github.com/agusnieto77/TweetScraperR)
 [![License:
 MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://cran.r-project.org/web/licenses/MIT)
 [![](https://img.shields.io/github/languages/code-size/agusnieto77/TweetScraperR.svg)](https://github.com/agusnieto77/TweetScraperR)
@@ -59,8 +59,8 @@ devtools::install_github("agusnieto77/TweetScraperR")
 | `getTweetsHistoricalHashtag()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Recupera tweets históricos con un hashtag específico. |
 | `getTweetsHistoricalSearch()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Recupera tweets históricos con un término específico. |
 | `getTweetsHistoricalTimeline()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Recupera tweets históricos de un timeline. |
-| `getTweetsImages()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Descarga las imágenes publicadas en los tweets. |
 | `getTweetsSearchStreaming()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Recupera tweets en tiempo real. |
+| `getTweetsSearchStreamingFor()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Itera la recupera tweets en tiempo real. |
 | `getTweetsTimeline()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Recupera tweets de un timeline. |
 | `getUrlsHistoricalTimeline()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Recupera URLs de tweets históricos de un timeline. |
 | `getUrlsSearchStreaming()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Recupera URLs de tweets en tiempo real. |
@@ -86,22 +86,23 @@ urls_hashtagRstats <- getTweetsSearchStreaming(search = "#RStats", n_tweets = 20
     #> Inició la recolección de tweets.
     #> Finalizó la recolección de tweets.
     #> Datos procesados y guardados.
-    #> Tweets únicos recolectados: 7
+    #> Tweets únicos recolectados: 8
 
 ``` r
 urls_hashtagRstats
 ```
 
-    #> # A tibble: 7 × 6
-    #>   art_html  fecha               user            tweet  url   fecha_captura      
-    #>   <list>    <dttm>              <chr>           <chr>  <chr> <dttm>             
-    #> 1 <chr [1]> 2024-10-09 01:55:41 @tidyverse_news "\n{r… http… 2024-10-08 23:23:47
-    #> 2 <chr [1]> 2024-10-09 01:46:21 @RHablamos      "\nin… http… 2024-10-08 23:23:47
-    #> 3 <chr [1]> 2024-10-09 01:45:39 @RHablamos      "\nin… http… 2024-10-08 23:23:47
-    #> 4 <chr [1]> 2024-10-09 01:44:57 @RHablamos      "\nin… http… 2024-10-08 23:23:47
-    #> 5 <chr [1]> 2024-10-09 01:44:17 @RHablamos      "\nin… http… 2024-10-08 23:23:47
-    #> 6 <chr [1]> 2024-10-09 01:43:55 @RHablamos      "\nin… http… 2024-10-08 23:23:47
-    #> 7 <chr [1]> 2024-10-09 01:43:31 @RHablamos      "\nin… http… 2024-10-08 23:23:47
+    #> # A tibble: 8 × 6
+    #>   art_html  fecha               user             tweet url   fecha_captura      
+    #>   <list>    <dttm>              <chr>            <chr> <chr> <dttm>             
+    #> 1 <chr [1]> 2024-10-09 13:39:56 @BiochemistTomas "\nW… http… 2024-10-09 10:53:25
+    #> 2 <chr [1]> 2024-10-09 13:22:23 @RodgersData     "\nA… http… 2024-10-09 10:53:25
+    #> 3 <chr [1]> 2024-10-09 12:17:43 @rcityviews      "\nI… http… 2024-10-09 10:53:25
+    #> 4 <chr [1]> 2024-10-09 12:16:37 @d_mykhailyshyna "\nT… http… 2024-10-09 10:53:25
+    #> 5 <chr [1]> 2024-10-09 12:04:54 @cyberpuck01     "\nC… http… 2024-10-09 10:53:25
+    #> 6 <chr [1]> 2024-10-09 11:59:31 @leonardohansa   "\nD… http… 2024-10-09 10:53:25
+    #> 7 <chr [1]> 2024-10-09 11:58:01 @BjnNowak        "\nT… http… 2024-10-09 10:53:25
+    #> 8 <chr [1]> 2024-10-09 11:57:34 @HackCyber80     "\nC… http… 2024-10-09 10:53:25
 
 ``` r
 # Con la función getTweetsHistoricalHashtag(), recuperamos tweets históricos 
@@ -123,16 +124,16 @@ tweets_historicos
     #> # A tibble: 34 × 6
     #>    art_html  fecha               user            tweet url   fecha_captura      
     #>    <list>    <dttm>              <chr>           <chr> <chr> <dttm>             
-    #>  1 <chr [1]> 2018-10-29 23:54:40 @gjmount        "\nC… http… 2024-10-08 23:24:33
-    #>  2 <chr [1]> 2018-10-29 23:53:10 @ahammami0      "\nP… http… 2024-10-08 23:24:33
-    #>  3 <chr [1]> 2018-10-29 23:49:06 @ChrisTokita    "\nC… http… 2024-10-08 23:24:33
-    #>  4 <chr [1]> 2018-10-29 23:35:04 @gp_pulipaka    "\nI… http… 2024-10-08 23:24:33
-    #>  5 <chr [1]> 2018-10-29 23:30:07 @gp_pulipaka    "\nA… http… 2024-10-08 23:24:33
-    #>  6 <chr [1]> 2018-10-29 23:28:07 @gp_pulipaka    "\nL… http… 2024-10-08 23:24:33
-    #>  7 <chr [1]> 2018-10-29 23:26:09 @gp_pulipaka    "\nM… http… 2024-10-08 23:24:33
-    #>  8 <chr [1]> 2018-10-29 23:00:32 @tidyversetwee… "\nG… http… 2024-10-08 23:24:33
-    #>  9 <chr [1]> 2018-10-29 23:00:31 @tidyversetwee… "\nW… http… 2024-10-08 23:24:33
-    #> 10 <chr [1]> 2018-10-29 23:00:26 @ProCogia       "\nW… http… 2024-10-08 23:24:33
+    #>  1 <chr [1]> 2018-10-29 23:54:40 @gjmount        "\nC… http… 2024-10-09 10:54:12
+    #>  2 <chr [1]> 2018-10-29 23:53:10 @ahammami0      "\nP… http… 2024-10-09 10:54:12
+    #>  3 <chr [1]> 2018-10-29 23:49:06 @ChrisTokita    "\nC… http… 2024-10-09 10:54:12
+    #>  4 <chr [1]> 2018-10-29 23:35:04 @gp_pulipaka    "\nI… http… 2024-10-09 10:54:12
+    #>  5 <chr [1]> 2018-10-29 23:30:07 @gp_pulipaka    "\nA… http… 2024-10-09 10:54:12
+    #>  6 <chr [1]> 2018-10-29 23:28:07 @gp_pulipaka    "\nL… http… 2024-10-09 10:54:12
+    #>  7 <chr [1]> 2018-10-29 23:26:09 @gp_pulipaka    "\nM… http… 2024-10-09 10:54:12
+    #>  8 <chr [1]> 2018-10-29 23:00:32 @tidyversetwee… "\nG… http… 2024-10-09 10:54:12
+    #>  9 <chr [1]> 2018-10-29 23:00:31 @tidyversetwee… "\nW… http… 2024-10-09 10:54:12
+    #> 10 <chr [1]> 2018-10-29 23:00:26 @ProCogia       "\nW… http… 2024-10-09 10:54:12
     #> # ℹ 24 more rows
 
 ``` r
@@ -147,7 +148,7 @@ timeline_tweets <- getTweetsHistoricalTimeline(username = "rstatstweet", n_tweet
     #> Finalizó la recolección de tweets.
     #> Procesando datos...
     #> Datos procesados y guardados.
-    #> Tweets únicos recolectados: 28
+    #> Tweets únicos recolectados: 13
 
 ``` r
 # Imprimimos en pantalla los datos de los tweets recuperados
@@ -155,20 +156,22 @@ timeline_tweets <- getTweetsHistoricalTimeline(username = "rstatstweet", n_tweet
 timeline_tweets
 ```
 
-    #> # A tibble: 28 × 6
+    #> # A tibble: 13 × 6
     #>    art_html  fecha               user         tweet    url   fecha_captura      
     #>    <list>    <dttm>              <chr>        <chr>    <chr> <dttm>             
-    #>  1 <chr [1]> 2020-09-25 22:12:32 @rstatstweet "I can’… http… 2024-10-08 23:25:09
-    #>  2 <chr [1]> 2020-09-24 15:58:14 @rstatstweet "Welcom… http… 2024-10-08 23:25:09
-    #>  3 <chr [1]> 2020-09-24 15:30:13 @rstatstweet "\nI am… http… 2024-10-08 23:25:09
-    #>  4 <chr [1]> 2020-09-24 15:10:16 @rstatstweet "This i… http… 2024-10-08 23:25:09
-    #>  5 <chr [1]> 2020-09-24 15:05:32 @rstatstweet "\nThan… http… 2024-10-08 23:25:09
-    #>  6 <chr [1]> 2020-09-24 13:07:33 @rstatstweet "\nThan… http… 2024-10-08 23:25:09
-    #>  7 <chr [1]> 2020-09-24 09:11:22 @rstatstweet "That’s… http… 2024-10-08 23:25:09
-    #>  8 <chr [1]> 2020-09-24 00:28:46 @rstatstweet "I will… http… 2024-10-08 23:25:09
-    #>  9 <chr [1]> 2020-09-24 00:25:17 @rstatstweet "\nTher… http… 2024-10-08 23:25:09
-    #> 10 <chr [1]> 2020-09-24 00:21:15 @rstatstweet "\nSo t… http… 2024-10-08 23:25:09
-    #> # ℹ 18 more rows
+    #>  1 <chr [1]> 2020-09-25 22:12:32 @rstatstweet "I can’… http… 2024-10-09 10:54:36
+    #>  2 <chr [1]> 2020-09-24 15:58:14 @rstatstweet "Welcom… http… 2024-10-09 10:54:36
+    #>  3 <chr [1]> 2020-09-24 15:30:13 @rstatstweet "\nI am… http… 2024-10-09 10:54:36
+    #>  4 <chr [1]> 2020-09-24 15:10:16 @rstatstweet "This i… http… 2024-10-09 10:54:36
+    #>  5 <chr [1]> 2020-09-24 15:05:32 @rstatstweet "\nThan… http… 2024-10-09 10:54:36
+    #>  6 <chr [1]> 2020-09-24 13:07:33 @rstatstweet "\nThan… http… 2024-10-09 10:54:36
+    #>  7 <chr [1]> 2020-09-24 09:11:22 @rstatstweet "That’s… http… 2024-10-09 10:54:36
+    #>  8 <chr [1]> 2020-09-24 00:28:46 @rstatstweet "I will… http… 2024-10-09 10:54:36
+    #>  9 <chr [1]> 2020-09-24 00:25:17 @rstatstweet "\nTher… http… 2024-10-09 10:54:36
+    #> 10 <chr [1]> 2020-09-24 00:21:15 @rstatstweet "\nSo t… http… 2024-10-09 10:54:36
+    #> 11 <chr [1]> 2020-09-24 00:16:20 @rstatstweet "I was … http… 2024-10-09 10:54:36
+    #> 12 <chr [1]> 2020-09-24 00:09:42 @rstatstweet "\nThis… http… 2024-10-09 10:54:36
+    #> 13 <chr [1]> 2020-02-12 01:36:45 @rstatstweet "Happy … http… 2024-10-09 10:54:36
 
 ``` r
 # Ahora con la función getUsersFullData() recuperamos los datos de usuarixs a 
@@ -200,8 +203,8 @@ dplyr::glimpse(usuarixs)
     #> $ identificador        <chr> "2489702532", "918024449194065925", "41155612", "…
     #> $ url_imagen           <chr> "https://pbs.twimg.com/profile_images/16538332253…
     #> $ url_miniatura        <chr> "https://pbs.twimg.com/profile_images/16538332253…
-    #> $ seguidorxs           <int> 4670, 125, 1528, 183708, 12025, 1621, 2350, 397, …
-    #> $ amigxs               <int> 4274, 120, 1880, 20261, 0, 147, 1918, 311, 2505, …
-    #> $ tweets               <int> 29713, 883, 5653, 92868, 98491, 1545, 1004, 779, …
+    #> $ seguidorxs           <int> 4674, 125, 1529, 183257, 12025, 1621, 2351, 396, …
+    #> $ amigxs               <int> 4273, 120, 1880, 20258, 0, 147, 1919, 310, 2505, …
+    #> $ tweets               <int> 29713, 883, 5653, 92873, 98491, 1545, 1004, 779, …
     #> $ url                  <chr> "https://twitter.com/gjmount", "https://twitter.c…
     #> $ enlaces_relacionados <chr> "https://t.co/JcWH7Lwy9r, https://stringfestanaly…

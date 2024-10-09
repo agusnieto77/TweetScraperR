@@ -37,6 +37,7 @@
 #' @import rvest
 #' @import lubridate
 #' @import tibble
+#' @import stringr
 
 getTweetsData <- function(
     urls_tweets,
@@ -79,6 +80,7 @@ getTweetsData <- function(
     metrica_res <- '//*[contains(@aria-label, "Respuesta") or contains(@aria-label, "Respuestas")]'
     metrica_rep <- '//*[contains(@aria-label, "Repostear")]'
     metrica_meg <- '//*[contains(@aria-label, "Me gusta")]'
+    pattern <- "https?://pbs\\.twimg\\.com/media/[^\\s\"']+(?:\\?[^\\s\"']+)?"
     Sys.sleep(1)
     tweets_db <- tibble::tibble()
     borrados <- c()
@@ -130,7 +132,8 @@ getTweetsData <- function(
               tweet_citado = rvest::html_text(rvest::html_elements(articulo, css = 'div[data-testid="tweetText"]'))[2],
               user_citado = rvest::html_text(rvest::html_elements(articulo, css = 'div.css-175oi2r.r-1wbh5a2.r-dnmrzs > div > div > span'))[3],
               emoticones = list(rvest::html_attr(rvest::html_elements(articulo, css = 'div[data-testid="tweetText"] img'), "alt")),
-              links_img = list(gsub('src="([^"]+)"', '\\1', regmatches(as.character(articulo), gregexpr('src="(.*?\\.(?:png|jpg))"', as.character(articulo), perl=TRUE))[[1]])),
+              links_img_user = list(gsub('src="([^"]+)"', '\\1', regmatches(as.character(articulo), gregexpr('src="(.*?\\.(?:png|jpg))"', as.character(articulo), perl=TRUE))[[1]])),
+              links_img_post = list(unique(gsub("&amp;", "&", stringr::str_extract_all(as.character(articulo), pattern)[[1]]))),
               respuestas = resp_ok,
               reposteos = as.integer(gsub("^(\\d+).*", "\\1", rvest::html_attr(rvest::html_element(articulo, xpath = metrica_rep), "aria-label"))),
               megustas = as.integer(gsub(".*?(\\d+) Me gusta.*", "\\1", rvest::html_attr(rvest::html_element(articulo, xpath = metrica_meg), "aria-label"))),

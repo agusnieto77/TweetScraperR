@@ -109,7 +109,7 @@ getTweetsData <- function(
         tuit_out   <- tweets$html_elements(xpath = paste0('//article[.//a[contains(@href, ', '"', raiz, '"', ')]]'))
         if (grepl("i/communities/", i) || length(tuit_out) == 0) {
           borrados <- append(borrados, i)
-          cat("El tweet", gsub("https://twitter.com/.*/status/|https://x.com/.*/status/|https://x.com/i/communities/", "", i),"fue BORRADO.\n")
+          cat("El tweet", gsub("https://twitter.com/.*/status/|https://x.com/.*/status/|https://x.com/i/communities/", "", i),"fue BORRADO o se encuentra momentáneamente INACCESIBLE.\n")
           tweets$session$close()
         } else {
           articulo <- tweets$html_elements(xpath = paste0('//article[.//a[contains(@href, ', '"', raiz, '"', ')]]'))
@@ -160,14 +160,14 @@ getTweetsData <- function(
       urls_tweets_r <- setdiff(urls_tweets, borrados)
       urls_tweets_n <- setdiff(urls_tweets_r, tweets_db_c$url)
       saveRDS(list(tweets_recuperados = tweets_db_c, 
-                   tweets_borrados = borrados, 
+                   tweets_borrados_o_inaccesibles = borrados, 
                    tweets_a_reprocesar = urls_tweets_n,
                    errores = errores),
               paste0(dir, "/tweets_data_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
       cat("\nTerminando el proceso.
       \nTweets recuperados:",
           length(tweets_db_c$url),
-          "\nTweets borrados:",
+          "\nTweets borrados o inaccesibles:",
           length(borrados),
           "\nTweets con errores:",
           length(errores),
@@ -184,7 +184,7 @@ getTweetsData <- function(
       cat("\nTerminando el proceso.
       \nTweets recuperados:",
           0,
-          "\nTweets borrados:",
+          "\nTweets borrados o inaccesibles:",
           length(borrados),
           "\nTweets con errores:",
           length(errores),

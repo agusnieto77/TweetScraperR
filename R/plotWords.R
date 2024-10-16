@@ -26,7 +26,7 @@ plotWords <- function(
     min_freq = 3, 
     max_words = 100, 
     random_order = FALSE, 
-    colors = NULL) {
+    colors = 'random-dark') {
   
   # Lista de paquetes necesarios
   required_packages <- c("tm", "dplyr", "wordcloud2")

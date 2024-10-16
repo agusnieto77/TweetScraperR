@@ -8,7 +8,7 @@
 [![Project Status: Active – The project has reached a stable, usable
 state and is being actively
 developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
-[![](https://img.shields.io/badge/devel%20version-0.1.0.06-blue.svg)](https://github.com/agusnieto77/TweetScraperR)
+[![](https://img.shields.io/badge/devel%20version-0.1.0.07-blue.svg)](https://github.com/agusnieto77/TweetScraperR)
 [![License:
 MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://cran.r-project.org/web/licenses/MIT)
 [![](https://img.shields.io/github/languages/code-size/agusnieto77/TweetScraperR.svg)](https://github.com/agusnieto77/TweetScraperR)
@@ -57,9 +57,11 @@ devtools::install_github("agusnieto77/TweetScraperR")
 | `closeTwitter()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Cierre de sesión. |
 | `getTweetsData()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Recupera datos de tweets a partir de URLs. |
 | `getTweetsFullSearch()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Recupera tweets desde la búsqueda avanzada. |
+| `getTweetsHashtags()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Recupera los hashtags de la columna 'texto'. |
 | `getTweetsHistoricalHashtag()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Recupera tweets históricos con un hashtag específico. |
 | `getTweetsHistoricalSearch()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Recupera tweets históricos con un término específico. |
 | `getTweetsHistoricalTimeline()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Recupera tweets históricos de un timeline. |
+| `getTweetsImages()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Descarga las imágenes posteadas en los tweets. |
 | `getTweetsSearchStreaming()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Recupera tweets en tiempo real. |
 | `getTweetsSearchStreamingFor()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Itera la recupera tweets en tiempo real. |
 | `getTweetsTimeline()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Recupera tweets de un timeline. |
@@ -71,6 +73,9 @@ devtools::install_github("agusnieto77/TweetScraperR")
 | `getUsersData()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Recupera datos de users a partir de URLs. |
 | `getUsersFullData()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Recupera datos completos de users a partir de URLs. |
 | `openTwitter()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Inicio de sesión. |
+| `plotEmojis()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Hace un gráfico de barras en base a la columna 'emoticones' |
+| `plotTime()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Hace un gráfico de líneas en base a la columna 'texto' |
+| `plotWords()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Hace una nube de palabras en base a la columna 'texto' |
 
 ### Uso de las funciones del paquete {TweetScraperR}
 

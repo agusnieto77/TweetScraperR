@@ -130,7 +130,7 @@ getTweetsFullSearch <- function(
     success3 <- FALSE
     while (!success3) {
       tryCatch({
-        historicalok <- rvest::read_html_live(term_search)
+        fullsearchok <- rvest::read_html_live(term_search)
         success3 <- TRUE
       }, error = function(e) {
         if (grepl("loadEventFired", e$message)) {
@@ -154,12 +154,12 @@ getTweetsFullSearch <- function(
       }
       tryCatch({
         Sys.sleep(1.5)
-        nuevos_articles <- as.character(historicalok$html_elements(css = "article"))
+        nuevos_articles <- as.character(fullsearchok$html_elements(css = "article"))
         urls_tweets <- nuevos_articles
         new_tweets <- length(unique(urls_tweets[!urls_tweets %in% articles]))
         articles <- unique(append(articles, nuevos_articles))
         articles <- articles[!is.na(articles)]
-        historicalok$scroll_by(top = 4000, left = 0)
+        fullsearchok$scroll_by(top = 4000, left = 0)
         message("Tweets recolectados: ", length(articles))
         Sys.sleep(timeout)
         if (new_tweets == 0) {
@@ -200,7 +200,7 @@ getTweetsFullSearch <- function(
       cat("No hay artículos para procesar.\n")
       return(NULL)
     }
-    historicalok$session$close()
+    fullsearchok$session$close()
     twitter$session$close()
   }
 }

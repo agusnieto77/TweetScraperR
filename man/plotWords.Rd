@@ -9,7 +9,7 @@ plotWords(
   min_freq = 3,
   max_words = 100,
   random_order = FALSE,
-  colors = NULL
+  colors = "random-dark"
 )
 }
 \arguments{

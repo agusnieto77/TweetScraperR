@@ -13,7 +13,7 @@ plotWords(
 )
 }
 \arguments{
-\item{df}{Un dataframe que contiene una columna 'texto' con el contenido de los tweets.}
+\item{df}{Un dataframe que contiene una columna 'texto' o 'tweet' con el contenido de los tweets.}
 
 \item{min_freq}{Frecuencia mínima de palabras para incluir en la nube (por defecto 3).}
 
@@ -21,16 +21,16 @@ plotWords(
 
 \item{random_order}{Booleano, si las palabras deben ordenarse aleatoriamente (por defecto FALSE).}
 
-\item{colors}{Vector de colores para las palabras (por defecto NULL, usa colores predeterminados).}
+\item{colors}{Vector de colores para las palabras (por defecto 'random-dark').}
 }
 \value{
 Un objeto de tipo wordcloud2.
 }
 \description{
 Esta función toma un dataframe de tweets y crea una nube de palabras
-basada en el contenido de la columna 'texto'.
+basada en el contenido de la columna 'texto' o 'tweet'.
 }
 \examples{
 df <- data.frame(texto = c("Este es un tweet de ejemplo", "Otro tweet para la nube de palabras"))
-create_wordcloud(df)
+plotWords(df)
 }

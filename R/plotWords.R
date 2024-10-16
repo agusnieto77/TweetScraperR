@@ -1,25 +1,25 @@
 #' Create Word Cloud from Tweets
 #'
 #' Esta función toma un dataframe de tweets y crea una nube de palabras
-#' basada en el contenido de la columna 'texto'.
+#' basada en el contenido de la columna 'texto' o 'tweet'.
 #'
-#' @param df Un dataframe que contiene una columna 'texto' con el contenido de los tweets.
+#' @param df Un dataframe que contiene una columna 'texto' o 'tweet' con el contenido de los tweets.
 #' @param min_freq Frecuencia mínima de palabras para incluir en la nube (por defecto 3).
 #' @param max_words Número máximo de palabras a incluir en la nube (por defecto 100).
 #' @param random_order Booleano, si las palabras deben ordenarse aleatoriamente (por defecto FALSE).
-#' @param colors Vector de colores para las palabras (por defecto NULL, usa colores predeterminados).
+#' @param colors Vector de colores para las palabras (por defecto 'random-dark').
 #' 
 #' @return Un objeto de tipo wordcloud2.
 #' 
 #' @import wordcloud2
-#' @import tm
+#' @import quanteda
 #' @import dplyr
 #' 
 #' @export
 #'
 #' @examples
 #' df <- data.frame(texto = c("Este es un tweet de ejemplo", "Otro tweet para la nube de palabras"))
-#' create_wordcloud(df)
+#' plotWords(df)
 
 plotWords <- function(
     df, 
@@ -29,7 +29,7 @@ plotWords <- function(
     colors = 'random-dark') {
   
   # Lista de paquetes necesarios
-  required_packages <- c("tm", "dplyr", "wordcloud2")
+  required_packages <- c("quanteda", "dplyr", "wordcloud2")
   
   # Función para instalar paquetes si no están instalados
   install_if_missing <- function(package) {
@@ -42,28 +42,32 @@ plotWords <- function(
   # Instalar y cargar paquetes necesarios
   sapply(required_packages, install_if_missing)
   
-  # Verificar que el dataframe tiene una columna 'texto'
-  if (!"texto" %in% colnames(df)) {
-    stop("El dataframe debe contener una columna llamada 'texto'")
+  # Verificar que el dataframe tiene una columna 'texto' o 'tweet'
+  if ("texto" %in% colnames(df)) {
+    text_column <- "texto"
+  } else if ("tweet" %in% colnames(df)) {
+    text_column <- "tweet"
+  } else {
+    stop("El dataframe debe contener una columna llamada 'texto' o 'tweet'")
   }
   
   # Crear un corpus con los tweets
-  corpus <- tm::Corpus(tm::VectorSource(df$texto))
+  corpus <- quanteda::corpus(df[[text_column]])
   
   # Preprocesamiento del texto
-  corpus <- tm::tm_map(corpus, tm::content_transformer(tolower))
-  corpus <- tm::tm_map(corpus, tm::removePunctuation)
-  corpus <- tm::tm_map(corpus, tm::removeNumbers)
-  corpus <- tm::tm_map(corpus, tm::removeWords, tm::stopwords("spanish"))
-  corpus <- tm::tm_map(corpus, tm::stripWhitespace)
+  tokens <- quanteda::tokens(corpus, 
+                             remove_punct = TRUE, 
+                             remove_numbers = TRUE, 
+                             remove_symbols = TRUE) %>%
+    quanteda::tokens_remove(pattern = quanteda::stopwords("es")) %>%
+    quanteda::tokens_tolower()
   
-  # Crear una matriz de términos-documentos
-  dtm <- tm::TermDocumentMatrix(corpus)
+  # Crear una matriz de frecuencia de términos
+  dfm <- quanteda::dfm(tokens)
   
   # Convertir la matriz a un dataframe
-  m <- as.matrix(dtm)
-  word_freq <- sort(rowSums(m), decreasing = TRUE)
-  df_word_freq <- data.frame(word = names(word_freq), freq = word_freq)
+  word_freq <- quanteda::topfeatures(dfm, n = Inf)
+  df_word_freq <- data.frame(word = names(word_freq), freq = unname(word_freq))
   
   # Filtrar palabras por frecuencia mínima y número máximo de palabras
   df_word_freq <- df_word_freq %>%

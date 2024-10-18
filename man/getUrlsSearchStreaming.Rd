@@ -16,6 +16,8 @@ getUrlsSearchStreaming(
 \arguments{
 \item{search}{La consulta de búsqueda para recuperar tweets. Por defecto es "#RStats".}
 
+\item{timeout}{Tiempo de espera.}
+
 \item{n_urls}{El número máximo de URLs de tweets a recuperar. Por defecto es 100.}
 
 \item{xuser}{Nombre de usuario de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.}

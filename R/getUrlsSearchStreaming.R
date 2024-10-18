@@ -24,6 +24,8 @@
 #' @param xuser Nombre de usuario de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.
 #' @param xpass Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.
 #' @param dir Directorio para guardar el archivo RDS con las URLs recolectadas.
+#' @param timeout Tiempo de espera.
+#' 
 #' @return Un vector que contiene las URLs de tweets recuperadas.
 #' @export
 #'

@@ -4,11 +4,15 @@
 \alias{openTwitter}
 \title{openTwitter {TweetScraperR}}
 \usage{
-openTwitter()
+openTwitter(view = TRUE)
+}
+\arguments{
+\item{view}{Logical. If TRUE (default), returns a view of the HTML instance. If FALSE, returns the HTML instance itself.}
 }
 \value{
-Devuelve una vista de la instancia HTML de la página de inicio de sesión de Twitter.
-La información de la sesión se guarda en la variable global \code{twitter} para su uso posterior.
+Si \code{view} es TRUE, devuelve una vista de la instancia HTML de la página de inicio de sesión de Twitter.
+Si \code{view} es FALSE, devuelve la instancia HTML directamente.
+En ambos casos, la información de la sesión se guarda en la variable global \code{twitter} para su uso posterior.
 }
 \description{
 \if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}
@@ -16,16 +20,17 @@ La información de la sesión se guarda en la variable global \code{twitter} par
 Esta función permite abrir la página de inicio de sesión de Twitter en un navegador web y
 guardar la instancia HTML en el entorno global. Es útil para iniciar el proceso de autenticación
 antes de realizar la recolección de datos de Twitter.
-
-Usage
-openTwitter()
 }
 \details{
 Open Twitter Login Page
 }
 \examples{
 \dontrun{
+# Para obtener la vista (comportamiento predeterminado)
 openTwitter()
+
+# Para obtener el objeto twitter sin la vista
+twitter <- openTwitter(view = FALSE)
 }
 
 }

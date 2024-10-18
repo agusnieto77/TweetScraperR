@@ -6,6 +6,7 @@
 ### Software necesario:
 - **Instalación de R**: Asegúrate de tener R instalado en tu ordenador.
 - **RStudio**: Instala RStudio para facilitar el desarrollo en R.
+- **Instalación de Java**: Asegúrate de tener Java instalado en tu ordenador.
 - **Controlador de Chrome**: Instala el controlador **chromedriver.exe** en tu sistema operativo para realizar tareas de scraping.
 
 ### Librerías de R:
@@ -13,9 +14,17 @@ Asegúrate de tener instaladas las siguientes librerías en R:
 
 - `tidyverse`
 
-- `rvest` (última versión)
+- `rvest` (última versión 1.0.4)
 
 - `chromote`
+
+- `devtools`
+
+- `quanteda`
+
+- `wordcloud2`
+
+- `httr`
 
 - `TweetScraperR`
 
@@ -46,4 +55,4 @@ El paquete incluye funciones para:
 - Recuperar timelines y buscar por hashtags.
 - Obtener datos completos de usuarixs.
 
-El paquete se encuentra en un estado activo de desarrollo, con una licencia MIT que garantiza su uso libre y abierto.
+El paquete se encuentra en un estado activo de desarrollo (esto significa que no todas sus funciones son totalmente estables), con una licencia MIT que garantiza su uso libre y abierto.

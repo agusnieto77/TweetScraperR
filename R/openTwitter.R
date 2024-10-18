@@ -10,27 +10,37 @@
 #' guardar la instancia HTML en el entorno global. Es útil para iniciar el proceso de autenticación 
 #' antes de realizar la recolección de datos de Twitter.
 #' 
-#' Usage
-#' openTwitter()
+#' @param view Logical. If TRUE (default), returns a view of the HTML instance. If FALSE, returns the HTML instance itself.
+#' 
+#' @usage openTwitter(view = TRUE)
 #' 
 #' @return 
-#' Devuelve una vista de la instancia HTML de la página de inicio de sesión de Twitter. 
-#' La información de la sesión se guarda en la variable global `twitter` para su uso posterior.
+#' Si `view` es TRUE, devuelve una vista de la instancia HTML de la página de inicio de sesión de Twitter.
+#' Si `view` es FALSE, devuelve la instancia HTML directamente.
+#' En ambos casos, la información de la sesión se guarda en la variable global `twitter` para su uso posterior.
 #' 
 #' @examples
 #' \dontrun{
+#' # Para obtener la vista (comportamiento predeterminado)
 #' openTwitter()
+#' 
+#' # Para obtener el objeto twitter sin la vista
+#' twitter <- openTwitter(view = FALSE)
 #' }
 #' 
 #' @export
 
-openTwitter <- function() {
+openTwitter <- function(view = TRUE) {
   tryCatch({
     twitter <- rvest::read_html_live("https://x.com/i/flow/login")
     
     assign("twitter", twitter, envir = .GlobalEnv)
     
-    return(twitter$view())
+    if (view) {
+      return(twitter$view())
+    } else {
+      return(twitter)
+    }
   }, error = function(e) {
     message("Error al abrir la página de Twitter: ", e$message)
     return(NULL)

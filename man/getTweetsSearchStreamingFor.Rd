@@ -2,7 +2,7 @@
 % Please edit documentation in R/getTweetsSearchStreamingFor.R
 \name{getTweetsSearchStreamingFor}
 \alias{getTweetsSearchStreamingFor}
-\title{Get Tweets Iteratively}
+\title{Get Iterative Tweets in Streaming}
 \usage{
 getTweetsSearchStreamingFor(
   iterations,

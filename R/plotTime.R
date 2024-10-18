@@ -13,11 +13,21 @@
 #' @import ggplot2
 #' @import dplyr
 #' @import lubridate
+#' 
 #' @export
 #'
 #' @examples
-#' df <- data.frame(fecha = seq(as.POSIXct("2023-01-01"), by = "hour", length.out = 1000))
-#' plot_tweets_over_time(df, group_by = "day")
+#' 
+#' df <- data.frame(fecha = c(
+#'   seq(as.POSIXct("2023-01-02 00:00:00"), by = "hour", length.out = 3),
+#'   seq(as.POSIXct("2023-01-02 01:00:00"), by = "hour", length.out = 2),
+#'   seq(as.POSIXct("2023-01-02 03:00:00"), by = "hour", length.out = 3),
+#'   seq(as.POSIXct("2023-01-02 01:00:00"), by = "hour", length.out = 2),
+#'   seq(as.POSIXct("2023-01-02 03:00:00"), by = "hour", length.out = 3),
+#'   seq(as.POSIXct("2023-01-02 01:00:00"), by = "hour", length.out = 2),
+#'   seq(as.POSIXct("2023-01-02 03:00:00"), by = "hour", length.out = 3)
+#' ))
+#' plotTime(df, group_by = "hour")
 #' 
 
 plotTime <- function(
@@ -34,7 +44,6 @@ plotTime <- function(
     if (!requireNamespace(package, quietly = TRUE)) {
       install.packages(package, dependencies = TRUE)
     }
-    library(package, character.only = TRUE)
   }
   
   # Instalar y cargar paquetes necesarios
@@ -46,8 +55,8 @@ plotTime <- function(
   }
   
   # Verificar que 'fecha' es de tipo fecha o datetime
-  if (!inherits(df$fecha, c("Date", "POSIXct", "POSIXlt"))) {
-    stop("La columna 'fecha' debe ser de tipo Date o POSIXct/POSIXlt")
+  if (!inherits(df$fecha, c("POSIXct", "POSIXlt"))) {
+    stop("La columna 'fecha' debe ser de tipo POSIXct/POSIXlt")
   }
   
   # Verificar que group_by es una opción válida
@@ -79,9 +88,12 @@ plotTime <- function(
     ggplot2::labs(
       title = paste("Frecuencia de tweets por", group_by),
       x = "Fecha",
-      y = "Número de tweets"
+      y = "Nº de tweets"
     ) +
-    ggplot2::theme_minimal()
+    ggplot2::theme_minimal() +
+    ggplot2::theme(
+      axis.text.x = ggplot2::element_text(angle = 90, hjust = 1, vjust = 0.5)
+    )
   
   # Ajustar el formato del eje x según la agrupación
   if (group_by == "hour") {

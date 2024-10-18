@@ -9,7 +9,10 @@ plotWords(
   min_freq = 3,
   max_words = 100,
   random_order = FALSE,
-  colors = "random-dark"
+  colors = "random-dark",
+  size = 0.3,
+  lang = "es",
+  sw = NULL
 )
 }
 \arguments{
@@ -22,6 +25,12 @@ plotWords(
 \item{random_order}{Booleano, si las palabras deben ordenarse aleatoriamente (por defecto FALSE).}
 
 \item{colors}{Vector de colores para las palabras (por defecto 'random-dark').}
+
+\item{size}{Tamaño de la fuente (por defecto 0.3).}
+
+\item{lang}{idioma para las stopwords 'es', 'en', 'de', 'pt', etc. (por defecto 'es').}
+
+\item{sw}{vector de palabras extras para sumar a la lista de stopwords (por defecto NULL).}
 }
 \value{
 Un objeto de tipo wordcloud2.
@@ -31,6 +40,7 @@ Esta función toma un dataframe de tweets y crea una nube de palabras
 basada en el contenido de la columna 'texto' o 'tweet'.
 }
 \examples{
+
 df <- data.frame(texto = c("Este es un tweet de ejemplo", "Otro tweet para la nube de palabras"))
-plotWords(df)
+plotWords(df, min_freq = 1)
 }

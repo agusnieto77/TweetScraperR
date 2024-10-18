@@ -23,7 +23,16 @@ mostrando la frecuencia de tweets a lo largo del tiempo, con opciones
 para agrupar por hora, día, semana, mes o año.
 }
 \examples{
-df <- data.frame(fecha = seq(as.POSIXct("2023-01-01"), by = "hour", length.out = 1000))
-plot_tweets_over_time(df, group_by = "day")
+
+df <- data.frame(fecha = c(
+  seq(as.POSIXct("2023-01-02 00:00:00"), by = "hour", length.out = 3),
+  seq(as.POSIXct("2023-01-02 01:00:00"), by = "hour", length.out = 2),
+  seq(as.POSIXct("2023-01-02 03:00:00"), by = "hour", length.out = 3),
+  seq(as.POSIXct("2023-01-02 01:00:00"), by = "hour", length.out = 2),
+  seq(as.POSIXct("2023-01-02 03:00:00"), by = "hour", length.out = 3),
+  seq(as.POSIXct("2023-01-02 01:00:00"), by = "hour", length.out = 2),
+  seq(as.POSIXct("2023-01-02 03:00:00"), by = "hour", length.out = 3)
+))
+plotTime(df, group_by = "hour")
 
 }

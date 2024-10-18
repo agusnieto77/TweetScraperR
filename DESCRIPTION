@@ -1,7 +1,7 @@
 Package: TweetScraperR
 Type: Package
 Title: Twitter Data Scraping Package
-Version: 0.1.0.08
+Version: 0.1.0.09
 Author: Agustín Nieto
 Maintainer: Agustín Nieto <agustin.nieto77@gmail.com>
 Description: 
@@ -19,12 +19,16 @@ Imports:
     quanteda,
     wordcloud2,
     ggplot2,
+    ggimage,
     stringr,
+    purrr,
     httr,
-    chromote
+    jsonlite
 Suggests: 
+    chromote,
     binman
-License: MIT
+AdditionalFiles: README.Rmd, Requisitos.md
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.2

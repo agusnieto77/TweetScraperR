@@ -1,4 +1,4 @@
-#' Get Tweets Iteratively
+#' Get Iterative Tweets in Streaming
 #'
 #' Esta función recolecta tweets de forma iterativa utilizando TweetScraperR,
 #' con la opción de cerrar el navegador entre iteraciones.
@@ -25,12 +25,14 @@
 #' )
 #' }
 
-getTweetsSearchStreamingFor <- function(iterations, search, n_tweets, dir, system = "unix", sleep_time = 300) {
-  # Verificar que TweetScraperR esté instalado
-  if (!requireNamespace("TweetScraperR", quietly = TRUE)) {
-    stop("El paquete TweetScraperR debe estar instalado para usar esta función.")
-  }
-  
+getTweetsSearchStreamingFor <- function(
+    iterations, 
+    search, 
+    n_tweets, 
+    dir, 
+    system = "unix", 
+    sleep_time = 300
+    ) {
   # Crear el directorio si no existe
   if (!dir.exists(dir)) {
     dir.create(dir, recursive = TRUE)

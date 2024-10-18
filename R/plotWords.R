@@ -8,6 +8,9 @@
 #' @param max_words Número máximo de palabras a incluir en la nube (por defecto 100).
 #' @param random_order Booleano, si las palabras deben ordenarse aleatoriamente (por defecto FALSE).
 #' @param colors Vector de colores para las palabras (por defecto 'random-dark').
+#' @param size Tamaño de la fuente (por defecto 0.3).
+#' @param lang idioma para las stopwords 'es', 'en', 'de', 'pt', etc. (por defecto 'es').
+#' @param sw vector de palabras extras para sumar a la lista de stopwords (por defecto NULL).
 #' 
 #' @return Un objeto de tipo wordcloud2.
 #' 
@@ -18,15 +21,20 @@
 #' @export
 #'
 #' @examples
+#' 
 #' df <- data.frame(texto = c("Este es un tweet de ejemplo", "Otro tweet para la nube de palabras"))
-#' plotWords(df)
+#' plotWords(df, min_freq = 1)
 
 plotWords <- function(
     df, 
     min_freq = 3, 
     max_words = 100, 
     random_order = FALSE, 
-    colors = 'random-dark') {
+    colors = 'random-dark',
+    size = 0.3,
+    lang = "es",
+    sw = NULL
+    ) {
   
   # Lista de paquetes necesarios
   required_packages <- c("quanteda", "dplyr", "wordcloud2")
@@ -36,7 +44,6 @@ plotWords <- function(
     if (!requireNamespace(package, quietly = TRUE)) {
       install.packages(package, dependencies = TRUE)
     }
-    library(package, character.only = TRUE)
   }
   
   # Instalar y cargar paquetes necesarios
@@ -51,15 +58,26 @@ plotWords <- function(
     stop("El dataframe debe contener una columna llamada 'texto' o 'tweet'")
   }
   
+  # Comprobación para sw
+  if (!is.null(sw)) {
+    if (!is.character(sw)) {
+      stop("'sw' debe ser una cadena de texto o un vector de cadenas de texto")
+    }
+    if (length(sw) == 1) {
+      sw <- c(sw)  # Convertir una sola palabra en un vector
+    }
+  }
+  
   # Crear un corpus con los tweets
   corpus <- quanteda::corpus(df[[text_column]])
   
   # Preprocesamiento del texto
+  stop_words <- c(quanteda::stopwords(lang), sw)
   tokens <- quanteda::tokens(corpus, 
                              remove_punct = TRUE, 
                              remove_numbers = TRUE, 
                              remove_symbols = TRUE) %>%
-    quanteda::tokens_remove(pattern = quanteda::stopwords("es")) %>%
+    quanteda::tokens_remove(pattern = stop_words) %>%
     quanteda::tokens_tolower()
   
   # Crear una matriz de frecuencia de términos
@@ -76,10 +94,10 @@ plotWords <- function(
   
   # Crear la nube de palabras
   wc <- wordcloud2::wordcloud2(data = df_word_freq, 
-                               size = 1, 
+                               size = size, 
                                minSize = 0, 
                                gridSize = 0,
-                               fontFamily = 'Segoe UI',
+                               fontFamily = 'Montserrat',
                                fontWeight = 'bold',
                                color = colors,
                                backgroundColor = "white",
@@ -89,7 +107,7 @@ plotWords <- function(
                                rotateRatio = 0.4,
                                shape = 'circle',
                                ellipticity = 0.65,
-                               widgetsize = c(800, 500))
+                               widgetsize = c(750, 750))
   
   return(wc)
 }

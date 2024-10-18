@@ -1,7 +1,7 @@
-#' Create Bar Chart of Emoticons in Tweets
+#' Create Bar Chart of EmoticonsPNG in Tweets
 #'
 #' Esta función toma un dataframe de tweets y crea un gráfico de barras
-#' mostrando la frecuencia de los emoticones utilizados en los tweets.
+#' mostrando la frecuencia de los emoticones en colores utilizados en los tweets.
 #'
 #' @param df Un dataframe que contiene una columna 'emoticones' con listas de emoticones.
 #' @param top_n Número de emoticones más frecuentes a mostrar (por defecto 10).
@@ -22,7 +22,7 @@
 #' plotEmojisPNG(df)
 #' 
 
-plotEmojis <- function(
+plotEmojisPNG <- function(
     df, 
     top_n = 10, 
     fill = "skyblue",
@@ -30,7 +30,7 @@ plotEmojis <- function(
 ) {
   
   # Lista de paquetes necesarios
-  required_packages <- c("ggplot2", "tidyr", "dplyr")
+  required_packages <- c("ggplot2", "tidyr", "dplyr", "stringr", "purrr", "ggimage")
   
   # Función para instalar paquetes si no están instalados
   install_if_missing <- function(package) {
@@ -53,15 +53,22 @@ plotEmojis <- function(
   }
   
   # Desanidar la columna de emoticones y contar frecuencias
-  emoji_counts <- df |>
-    tidyr::unnest(emoticones) |>
-    dplyr::filter(emoticones != "") |>
-    dplyr::count(emoticones, sort = TRUE) |>
-    dplyr::slice_head(n = top_n)
+  emoji_counts <- df %>%
+    tidyr::unnest(emoticones) %>%
+    dplyr::filter(emoticones != "") %>%
+    dplyr::mutate(emoji = stringr::str_sub(emoticones, end = 1)) %>%
+    dplyr::count(emoji, sort = TRUE) %>%
+    dplyr::slice_head(n = top_n) %>%
+    dplyr::mutate(
+      emoji_url = purrr::map_chr(emoji, 
+                                 ~paste0("https://abs.twimg.com/emoji/v2/72x72/", 
+                                         as.hexmode(utf8ToInt(.x)),".png"))
+    )
   
   # Crear el gráfico
-  p <- ggplot2::ggplot(emoji_counts, ggplot2::aes(x = reorder(emoticones, n), y = n)) +
-    ggplot2::geom_col(fill = fill, color = color) +
+  p <- ggplot2::ggplot(emoji_counts, ggplot2::aes(x = reorder(emoji, n), y = n)) +
+    ggplot2::geom_col(fill = fill, color = color, width = 0.2) +
+    ggimage::geom_image(ggplot2::aes(image = emoji_url), size = 0.04) +
     ggplot2::coord_flip() +
     ggplot2::labs(
       title = paste("Top", top_n, "emoticones más usados"),
@@ -70,7 +77,7 @@ plotEmojis <- function(
     ) +
     ggplot2::theme_minimal() +
     ggplot2::theme(
-      axis.text.y = ggplot2::element_text(size = 20)  # Aumentar el tamaño de los emoticones
+      axis.text.y = ggplot2::element_blank()  # Ocultar el texto del eje y ya que usamos imágenes
     )
   
   return(p)

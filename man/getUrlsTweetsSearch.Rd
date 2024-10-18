@@ -23,6 +23,8 @@ getUrlsTweetsSearch(
 \item{xpass}{Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.}
 
 \item{max_retries}{número máximo de intentos de conexión.}
+
+\item{dir}{Directorio de destino de los RDS.}
 }
 \value{
 Un vector que contiene las URLs de tweets recuperadas.

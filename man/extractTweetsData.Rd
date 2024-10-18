@@ -7,7 +7,7 @@
 extractTweetsData(data)
 }
 \arguments{
-\item{data}{Un dataframe o una lista que contiene dos elementos: 'art_html' (el contenido HTML de los tweets) y 'url' (las URLs de los tweets).}
+\item{data}{Un dataframe o una lista que contiene dos elementos: 'art_html' (el contenido HTML de los tweets), 'url' (las URLs de los tweets) y 'fecha_captura' (la fecha y hora de captura de cada tweet).}
 }
 \value{
 Un tibble con las siguientes columnas:
@@ -27,7 +27,7 @@ Un tibble con las siguientes columnas:
 \item urls: Una lista de URLs mencionadas en el tweet.
 \item hilo: Indica si el tweet es parte de un hilo.
 \item url: La URL original del tweet.
-\item fecha_captura: La fecha y hora en que se capturó la información del tweet.
+\item fecha_captura: La fecha y hora en que se capturó la información del tweet (heredada de los datos de entrada).
 }
 }
 \description{
@@ -37,11 +37,11 @@ Puede manejar tanto un dataframe como una lista que contenga el HTML de los twee
 \details{
 La función utiliza expresiones XPath y selectores CSS para extraer información específica de cada tweet.
 Procesa cada tweet individualmente y maneja posibles errores, permitiendo continuar con el procesamiento
-incluso si algunos tweets fallan.
+incluso si algunos tweets fallan. La fecha de captura se hereda de los datos de entrada.
 }
 \examples{
 \dontrun{
-# Asumiendo que tienes un dataframe llamado 'tweets_data' con columnas 'art_html' y 'url' como resultado del uso de funciones como getTweetHistoricalSearch.
+# Asumiendo que tienes un dataframe llamado 'tweets_data' con columnas 'art_html', 'url' y 'fecha_captura'
 resultados <- extractTweetsData(tweets_data)
 }
 

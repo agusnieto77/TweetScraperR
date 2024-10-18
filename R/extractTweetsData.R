@@ -4,7 +4,7 @@
 #' Esta función procesa un conjunto de tweets almacenados localmente y extrae información relevante de cada uno.
 #' Puede manejar tanto un dataframe como una lista que contenga el HTML de los tweets y sus URLs correspondientes.
 #'
-#' @param data Un dataframe o una lista que contiene dos elementos: 'art_html' (el contenido HTML de los tweets) y 'url' (las URLs de los tweets).
+#' @param data Un dataframe o una lista que contiene dos elementos: 'art_html' (el contenido HTML de los tweets), 'url' (las URLs de los tweets) y 'fecha_captura' (la fecha y hora de captura de cada tweet).
 #'
 #' @return Un tibble con las siguientes columnas:
 #' \itemize{
@@ -23,17 +23,17 @@
 #'   \item urls: Una lista de URLs mencionadas en el tweet.
 #'   \item hilo: Indica si el tweet es parte de un hilo.
 #'   \item url: La URL original del tweet.
-#'   \item fecha_captura: La fecha y hora en que se capturó la información del tweet.
+#'   \item fecha_captura: La fecha y hora en que se capturó la información del tweet (heredada de los datos de entrada).
 #' }
 #'
 #' @details
 #' La función utiliza expresiones XPath y selectores CSS para extraer información específica de cada tweet.
 #' Procesa cada tweet individualmente y maneja posibles errores, permitiendo continuar con el procesamiento
-#' incluso si algunos tweets fallan.
+#' incluso si algunos tweets fallan. La fecha de captura se hereda de los datos de entrada.
 #'
 #' @examples
 #' \dontrun{
-#' # Asumiendo que tienes un dataframe llamado 'tweets_data' con columnas 'art_html' y 'url' como resultado del uso de funciones como getTweetHistoricalSearch.
+#' # Asumiendo que tienes un dataframe llamado 'tweets_data' con columnas 'art_html', 'url' y 'fecha_captura'
 #' resultados <- extractTweetsData(tweets_data)
 #' }
 #'
@@ -57,20 +57,22 @@ extractTweetsData <- function(data) {
   
   # Verificar si la entrada es un dataframe o una lista
   if (is.data.frame(data)) {
-    if (!all(c("art_html", "url") %in% colnames(data))) {
-      stop("El dataframe debe contener las columnas 'art_html' y 'url'")
+    if (!all(c("art_html", "url", "fecha_captura") %in% colnames(data))) {
+      stop("El dataframe debe contener las columnas 'art_html', 'url' y 'fecha_captura'")
     }
     art_html_list <- data$art_html
     url_list <- data$url
-  } else if (is.list(data) && length(data) == 2 && all(c("art_html", "url") %in% names(data))) {
+    fecha_captura_list <- data$fecha_captura
+  } else if (is.list(data) && length(data) == 3 && all(c("art_html", "url", "fecha_captura") %in% names(data))) {
     art_html_list <- data$art_html
     url_list <- data$url
+    fecha_captura_list <- data$fecha_captura
   } else {
-    stop("La entrada debe ser un dataframe o una lista con elementos 'art_html' y 'url'")
+    stop("La entrada debe ser un dataframe o una lista con elementos 'art_html', 'url' y 'fecha_captura'")
   }
   
   # Función para procesar un solo artículo
-  process_single_article <- function(art_html, url) {
+  process_single_article <- function(art_html, url, fecha_captura) {
     tryCatch({
       # Comprobar si art_html es una lista y extraer el primer elemento si es así
       if (is.list(art_html)) {
@@ -115,7 +117,7 @@ extractTweetsData <- function(data) {
         urls = list(urls_tw),
         hilo = resp_ok,
         url = url,
-        fecha_captura = Sys.time()
+        fecha_captura = fecha_captura
       )
     }, error = function(e) {
       message("Error al procesar el tweet: ", url, "\n", conditionMessage(e))
@@ -124,7 +126,7 @@ extractTweetsData <- function(data) {
   }
   
   # Procesar todos los artículos
-  results <- purrr::map2(art_html_list, url_list, process_single_article)
+  results <- purrr::pmap(list(art_html_list, url_list, fecha_captura_list), process_single_article)
   
   # Combinar los resultados en un solo dataframe
   dplyr::bind_rows(results)

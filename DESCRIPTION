@@ -1,7 +1,7 @@
 Package: TweetScraperR
 Type: Package
 Title: Twitter Data Scraping Package
-Version: 0.1.0.10
+Version: 0.1.0.11
 Author: Agustín Nieto
 Maintainer: Agustín Nieto <agustin.nieto77@gmail.com>
 Description: 
@@ -24,6 +24,8 @@ Imports:
     purrr,
     httr,
     xml2,
+    utils,
+    stats,
     jsonlite
 Suggests: 
     chromote,

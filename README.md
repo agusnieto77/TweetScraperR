@@ -58,7 +58,7 @@ devtools::install_github("agusnieto77/TweetScraperR")
 | `closeTwitter()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Cierre de sesión. |
 | `extractTweetsData()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Extrae información relevante de tweets almacenados localmente. |
 | `getScrollExtract()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Scrolea y extrae tweets. |
-| `getScrollExtract()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Scrolea y extrae URLs de tweets. |
+| `getScrollExtractUrls()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Scrolea y extrae URLs de tweets. |
 | `getTweetsData()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Recupera datos de tweets a partir de URLs. |
 | `getTweetsFullSearch()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Recupera tweets desde la búsqueda avanzada. |
 | `getTweetsHashtags()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Recupera los hashtags de la columna 'texto'. |

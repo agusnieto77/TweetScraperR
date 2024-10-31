@@ -34,10 +34,11 @@
 #' getTweetsData(urls_tweets = "https://twitter.com/estacion_erre/status/1788929978811232537")
 #' }
 #'
-#' @import rvest
-#' @import lubridate
-#' @import tibble
-#' @import stringr
+#' @importFrom rvest read_html_live html_elements html_element html_attr html_text
+#' @importFrom lubridate as_datetime is.POSIXct
+#' @importFrom tibble tibble
+#' @importFrom stringr str_extract_all
+#' 
 
 getTweetsData <- function(
     urls_tweets,
@@ -81,7 +82,7 @@ getTweetsData <- function(
     metrica_rep <- '//*[contains(@aria-label, "Repostear")]'
     metrica_meg <- '//*[contains(@aria-label, "Me gusta")]'
     pattern <- "https?://pbs\\.twimg\\.com/media/[^\\s\"']+(?:\\?[^\\s\"']+)?"
-    Sys.sleep(1)
+    Sys.sleep(3)
     tweets_db <- tibble::tibble()
     borrados <- c()
     errores <- c()
@@ -98,13 +99,13 @@ getTweetsData <- function(
           }, error = function(e) {
             if (grepl("loadEventFired", e$message)) {
               message("Error de tiempo de espera, reintentando...")
-              Sys.sleep(2)
+              Sys.sleep(3)
             } else {
               stop(e)
             }
           })
         }
-        Sys.sleep(5)
+        Sys.sleep(6)
         raiz <- gsub("\\D", "", sub(".*status/", "", i))
         tuit_out   <- tweets$html_elements(xpath = paste0('//article[.//a[contains(@href, ', '"', raiz, '"', ')]]'))
         if (grepl("i/communities/", i) || length(tuit_out) == 0) {

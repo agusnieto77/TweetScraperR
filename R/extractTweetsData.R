@@ -1,6 +1,9 @@
 #' Extracts Relevant Information from Locally Stored Tweets
 #'
 #' @description
+#' 
+#' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
+#' 
 #' Esta función procesa un conjunto de tweets almacenados localmente y extrae información relevante de cada uno.
 #' Puede manejar tanto un dataframe como una lista que contenga el HTML de los tweets y sus URLs correspondientes.
 #'
@@ -104,7 +107,7 @@ extractTweetsData <- function(data) {
       tibble::tibble(
         fecha = lubridate::as_datetime(max_fecha),
         username = sub("^https://x.com/(.*?)/.*$|^https://twitter.com/(.*?)/.*$", "\\1", url),
-        texto = rvest::html_text(rvest::html_elements(articulo, css = 'div[data-testid="tweetText"]'))[1],
+        texto = rvest::html_text(rvest::html_element(rvest::read_html(stringr::str_replace_all(as.character(articulo), '<img alt="([^"]+)"[^>]*>', '\\1')), "[data-testid='tweetText']"), trim = T)[1],
         tweet_citado = rvest::html_text(rvest::html_elements(articulo, css = 'div[data-testid="tweetText"]'))[2],
         user_citado = rvest::html_text(rvest::html_elements(articulo, css = 'div.css-175oi2r.r-1wbh5a2.r-dnmrzs > div > div > span'))[3],
         emoticones = list(rvest::html_attr(rvest::html_elements(articulo, css = 'div[data-testid="tweetText"] img'), "alt")),

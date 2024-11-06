@@ -19,12 +19,14 @@ plotEmojis(df, top_n = 10, fill = "skyblue", color = "grey30")
 Un objeto ggplot con el gráfico de barras.
 }
 \description{
+\if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}
+
 Esta función toma un dataframe de tweets y crea un gráfico de barras
 mostrando la frecuencia de los emoticones utilizados en los tweets.
 }
 \examples{
 
 df <- data.frame(emoticones = I(list(c("😊", "😂", "😂"), c("😊"), c("😂", "😍"), character(0))))
-plotEmojisPNG(df)
+plotEmojis(df)
 
 }

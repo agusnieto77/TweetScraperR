@@ -18,6 +18,8 @@ Opciones válidas son "hour", "day", "week", "month", "year".}
 Un objeto ggplot con el gráfico de líneas.
 }
 \description{
+\if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}
+
 Esta función toma un dataframe de tweets y crea un gráfico de líneas
 mostrando la frecuencia de tweets a lo largo del tiempo, con opciones
 para agrupar por hora, día, semana, mes o año.

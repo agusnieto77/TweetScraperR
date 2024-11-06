@@ -2,7 +2,7 @@
 % Please edit documentation in R/closeTwitter.R
 \name{closeTwitter}
 \alias{closeTwitter}
-\title{closeTwitter {TweetScraperR}}
+\title{Close Twitter Session}
 \usage{
 closeTwitter()
 }
@@ -19,9 +19,6 @@ de datos en Twitter.
 
 Usage
 closeTwitter()
-}
-\details{
-Close Twitter Session
 }
 \examples{
 \dontrun{

@@ -35,6 +35,8 @@ Un tibble con los tweets extraídos, que incluye las siguientes columnas:
 }
 }
 \description{
+\if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}
+
 Esta función extrae tweets de una línea de tiempo de Twitter previamente abierta,
 desplazándose por la página para recopilar la información deseada.
 }

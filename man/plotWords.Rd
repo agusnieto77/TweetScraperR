@@ -36,6 +36,8 @@ plotWords(
 Un objeto de tipo wordcloud2.
 }
 \description{
+\if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}
+
 Esta función toma un dataframe de tweets y crea una nube de palabras
 basada en el contenido de la columna 'texto' o 'tweet'.
 }

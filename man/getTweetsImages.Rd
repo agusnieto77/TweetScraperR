@@ -13,6 +13,8 @@ getTweetsImages(urls, directorio = "img_x")
 El valor predeterminado es "img_x". Si el directorio no existe, la función lo crea.}
 }
 \description{
+\if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}
+
 Esta función toma una lista de URLs de imágenes extraídas de tweets, las descarga y
 las guarda en un directorio específico. Si el directorio no existe, se creará.
 }

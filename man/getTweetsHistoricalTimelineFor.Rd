@@ -42,6 +42,8 @@ getTweetsHistoricalTimelineFor(
 No devuelve un valor explícito, pero guarda los tweets recolectados en el directorio especificado.
 }
 \description{
+\if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}
+
 Esta función realiza búsquedas históricas de tweets de la línea de tiempo de un usuario de forma iterativa,
 permitiendo recolectar tweets en intervalos de tiempo específicos.
 }

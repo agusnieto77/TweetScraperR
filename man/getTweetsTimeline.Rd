@@ -7,8 +7,10 @@
 getTweetsTimeline(
   username = "rstatstweet",
   n_tweets = 100,
+  view = FALSE,
   xuser = Sys.getenv("USER"),
   xpass = Sys.getenv("PASS"),
+  mailx = "tweetscraperr@gmail.com",
   dir = getwd()
 )
 }
@@ -17,9 +19,13 @@ getTweetsTimeline(
 
 \item{n_tweets}{El número máximo de tweets a obtener. Por defecto es 100.}
 
+\item{view}{Mostrar una vista en vivo de Twitter/X TRUE o FALSE}
+
 \item{xuser}{Nombre de usuarix de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.}
 
 \item{xpass}{Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.}
+
+\item{mailx}{Dirección de e-mail para la autenticación. Tiene que ser la misma que la usada en Twitter/X.}
 
 \item{dir}{El directorio donde se guardará el archivo de salida. Por defecto es el directorio de trabajo actual.}
 }
@@ -33,7 +39,7 @@ Esta función recupera tweets del timeline de unx usuarix especificadx en Twitte
 La función inicia sesión en Twitter utilizando las credenciales proporcionadas,
 navega al perfil de le usuarix especificadx, y recopila hasta \code{n_tweets} tweets.
 El proceso de recolección se detiene si se alcanza el número máximo de tweets
-especificado o después de alcabzar los 600 tweets con el desplazamiento (scroll).
+especificado o después de alcanzar los 600 tweets con el desplazamiento (scroll).
 }
 \examples{
 \dontrun{

@@ -2,7 +2,7 @@
 % Please edit documentation in R/openTwitter.R
 \name{openTwitter}
 \alias{openTwitter}
-\title{openTwitter {TweetScraperR}}
+\title{Open Twitter Login Page}
 \usage{
 openTwitter(view = TRUE)
 }
@@ -20,9 +20,6 @@ En ambos casos, la información de la sesión se guarda en la variable global \c
 Esta función permite abrir la página de inicio de sesión de Twitter en un navegador web y
 guardar la instancia HTML en el entorno global. Es útil para iniciar el proceso de autenticación
 antes de realizar la recolección de datos de Twitter.
-}
-\details{
-Open Twitter Login Page
 }
 \examples{
 \dontrun{

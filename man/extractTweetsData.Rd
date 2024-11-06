@@ -31,6 +31,8 @@ Un tibble con las siguientes columnas:
 }
 }
 \description{
+\if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}
+
 Esta función procesa un conjunto de tweets almacenados localmente y extrae información relevante de cada uno.
 Puede manejar tanto un dataframe como una lista que contenga el HTML de los tweets y sus URLs correspondientes.
 }

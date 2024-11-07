@@ -5,16 +5,16 @@
 \title{Analyze images of tweets}
 \usage{
 getTweetsImagesAnalysis(
-  img_url,
+  img_sources,
   modelo = "gpt-4o-mini",
   api_key = Sys.getenv("OPENAI_API_KEY"),
   dir = getwd()
 )
 }
 \arguments{
-\item{img_url}{Un vector de caracteres que contiene las URLs de las imágenes a analizar.}
+\item{img_sources}{Un vector de caracteres que contiene las URLs de las imágenes o rutas de archivos locales a analizar.}
 
-\item{modelo}{Una cadena de caracteres que contiene el modelo de OpenAI. Por defecto es "gpt-4o-mini".}
+\item{modelo}{Una cadena de caracteres que contiene el modelo de OpenAI. Por defecto es "gpt-4-vision-preview".}
 
 \item{api_key}{Una cadena de caracteres que contiene la clave de API de OpenAI.
 Por defecto es \code{Sys.getenv("OPENAI_API_KEY")}.}
@@ -26,18 +26,18 @@ guardarán los resultados. Por defecto es \code{getwd()}.}
 Un tibble con las siguientes columnas:
 \item{clasificacion}{La clasificación de la imagen}
 \item{contiene_texto}{Un booleano que indica si la imagen contiene texto}
-\item{texto_contenido}{El contenido de texto de la imagen (si lo hay)}
+\item{texto_contenido}{El contenido de texto de la imagen (si lo hay, limitado a 10 palabras)}
 \item{contenido_discriminatorio}{Un booleano que indica la presencia de contenido discriminatorio}
 \item{contenido_violento}{Un booleano que indica la presencia de contenido violento}
 \item{contenido_pornografico}{Un booleano que indica la presencia de contenido pornográfico}
 \item{contenido_inapropiado}{Un booleano que indica la presencia de contenido inapropiado}
 \item{descripcion}{Una descripción detallada de la imagen}
-\item{url}{La URL de la imagen analizada}
+\item{url}{La URL o ruta del archivo de la imagen analizada}
 }
 \description{
 \if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}
 
-Esta función analiza imágenes asociadas con tweets. Procesa un vector de URLs de imágenes,
+Esta función analiza imágenes asociadas con tweets. Procesa un vector de URLs de imágenes o rutas de archivos locales,
 envía estas imágenes a la API de OpenAI para su análisis y devuelve un informe detallado sobre
 el contenido de cada imagen.
 }
@@ -45,11 +45,12 @@ el contenido de cada imagen.
 La función realiza los siguientes pasos:
 \enumerate{
 \item Verifica la presencia de una clave de API válida.
-\item Procesa el vector de URLs de imágenes, eliminando valores NA.
+\item Procesa el vector de URLs de imágenes o rutas de archivos locales, eliminando valores NA.
+\item Convierte los archivos locales a formato base64 si es necesario.
 \item Define un prompt de sistema detallado para la API de OpenAI, instruyéndola sobre cómo analizar las imágenes.
 \item Para cada imagen:
 \itemize{
-\item Envía una solicitud a la API de OpenAI con la URL de la imagen.
+\item Envía una solicitud a la API de OpenAI con la URL de la imagen o los datos base64.
 \item Procesa la respuesta de la API para extraer los resultados del análisis.
 }
 \item Combina todos los resultados en un solo tibble.
@@ -59,19 +60,24 @@ La función realiza los siguientes pasos:
 El análisis de la imagen incluye:
 \itemize{
 \item Clasificación del tipo de imagen (por ejemplo, foto, meme, captura de pantalla)
-\item Detección de texto en la imagen
+\item Detección de texto en la imagen (limitado a 10 palabras si es extenso)
 \item Identificación de contenido discriminatorio, violento, pornográfico o inapropiado
 \item Una descripción detallada del contenido de la imagen
 }
 }
 \note{
 Esta función requiere una conexión a internet activa y una clave de API de OpenAI válida para funcionar correctamente.
+La función está diseñada para manejar errores y continuar procesando otras imágenes si una falla.
 }
 \examples{
 \dontrun{
 # Ejemplo de uso con un vector de URLs de imágenes
 urls <- c("https://ejemplo.com/imagen1.jpg", "https://ejemplo.com/imagen2.jpg")
 resultados <- getTweetsImagesAnalysis(urls)
+
+# Ejemplo de uso con rutas de archivos locales
+archivos_locales <- c("./imagen1.jpg", "./imagen2.png")
+resultados_locales <- getTweetsImagesAnalysis(archivos_locales)
 }
 
 }

@@ -78,6 +78,7 @@ devtools::install_github("agusnieto77/TweetScraperR")
 | `getUrlsTweetsTimeline()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Recupera URLs de tweets de un timeline. |
 | `getUsersData()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Recupera datos de users a partir de URLs. |
 | `getUsersFullData()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Recupera datos completos de users a partir de URLs. |
+| `HTMLImgReport()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Crea una visualización HTML interactiva de imágenes analizadas. |
 | `openTimeline()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Accede al Timeline de un/a usuario/a. |
 | `openTwitter()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Inicio de sesión. |
 | `plotEmojis()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Hace un gráfico de barras en base a la columna 'emoticones'. |

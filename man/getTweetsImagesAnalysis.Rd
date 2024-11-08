@@ -14,7 +14,7 @@ getTweetsImagesAnalysis(
 \arguments{
 \item{img_sources}{Un vector de caracteres que contiene las URLs de las imágenes o rutas de archivos locales a analizar.}
 
-\item{modelo}{Una cadena de caracteres que contiene el modelo de OpenAI. Por defecto es "gpt-4-vision-preview".}
+\item{modelo}{Una cadena de caracteres que contiene el modelo de OpenAI. Por defecto es "gpt-4o-mini".}
 
 \item{api_key}{Una cadena de caracteres que contiene la clave de API de OpenAI.
 Por defecto es \code{Sys.getenv("OPENAI_API_KEY")}.}
@@ -32,7 +32,8 @@ Un tibble con las siguientes columnas:
 \item{contenido_pornografico}{Un booleano que indica la presencia de contenido pornográfico}
 \item{contenido_inapropiado}{Un booleano que indica la presencia de contenido inapropiado}
 \item{descripcion}{Una descripción detallada de la imagen}
-\item{url}{La URL o ruta del archivo de la imagen analizada}
+\item{palabras_clave}{Una cadena de texto con 2 a 4 palabras clave separadas por punto y coma}
+\item{img}{La URL o nombre del archivo de la imagen analizada}
 }
 \description{
 \if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}
@@ -54,7 +55,7 @@ La función realiza los siguientes pasos:
 \item Procesa la respuesta de la API para extraer los resultados del análisis.
 }
 \item Combina todos los resultados en un solo tibble.
-\item Guarda los resultados como un archivo RDS en el directorio especificado.
+\item Guarda los resultados como archivos RDS en el directorio especificado, con resultados parciales cada 7 imágenes si el total es mayor a 7.
 }
 
 El análisis de la imagen incluye:
@@ -63,11 +64,13 @@ El análisis de la imagen incluye:
 \item Detección de texto en la imagen (limitado a 10 palabras si es extenso)
 \item Identificación de contenido discriminatorio, violento, pornográfico o inapropiado
 \item Una descripción detallada del contenido de la imagen
+\item Generación de palabras clave descriptivas
 }
 }
 \note{
 Esta función requiere una conexión a internet activa y una clave de API de OpenAI válida para funcionar correctamente.
 La función está diseñada para manejar errores y continuar procesando otras imágenes si una falla.
+El tiempo de espera para las solicitudes HTTP está configurado en 300 segundos (5 minutos).
 }
 \examples{
 \dontrun{

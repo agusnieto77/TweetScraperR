@@ -14,8 +14,8 @@
 #'   se intenta obtener de la variable de entorno OPENAI_API_KEY.
 #' @param model Una cadena de caracteres que especifica el modelo de OpenAI a utilizar.
 #'   Por defecto es "gpt-4o-mini".
-#' @param dir Una cadena de caracteres que especifica el directorio donde se guardará
-#'   el archivo RDS con los resultados. Por defecto es el directorio de trabajo actual.
+#' @param dir Una cadena de caracteres que especifica el directorio donde se guardarán
+#'   los archivos RDS con los resultados. Por defecto es el directorio de trabajo actual.
 #'
 #' @return Un tibble con los resultados del análisis para cada tweet. Cada fila
 #'   contiene el tweet original y los resultados del análisis (tono, sentimiento,
@@ -26,9 +26,9 @@
 #' La función realiza las siguientes operaciones:
 #' 1. Verifica que se haya proporcionado una clave de API válida.
 #' 2. Define un prompt detallado para el análisis de los tweets.
-#' 3. Define una función interna `analyze_tweet` que procesa cada tweet individualmente.
-#' 4. Utiliza `purrr::map_dfr` para aplicar `analyze_tweet` a cada tweet en el vector de entrada.
-#' 5. Guarda los resultados en un archivo RDS en el directorio especificado.
+#' 3. Define una función interna `analyzeTweet` que procesa cada tweet individualmente.
+#' 4. Procesa los tweets en lotes de 250 para manejar grandes volúmenes de datos.
+#' 5. Guarda resultados parciales cada 50 tweets procesados.
 #' 6. Devuelve los resultados como un tibble.
 #'
 #' La función utiliza la API de OpenAI para realizar el análisis de sentimiento,
@@ -44,8 +44,7 @@
 #' @importFrom httr POST add_headers content
 #' @importFrom jsonlite fromJSON
 #' @importFrom purrr map_dfr
-#' @importFrom dplyr mutate
-#' @importFrom tibble as_tibble
+#' @importFrom tibble tibble
 #'
 #' @export
 #' 
@@ -78,7 +77,7 @@ getTweetsSentiments <- function(tweets, api_key = Sys.getenv("OPENAI_API_KEY"),
   # Notes\n\n- Procura analizar los elementos clave del tweet en su totalidad, prestando atención a sarcasmo, juegos de palabras y emoticones.\n- Recuerda que algunas expresiones pueden tener significados implícitos y depender del contexto para clasificarse correctamente.\n- Al evaluar si el mensaje está direccionado, considera tanto menciones explícitas (@usuario) como referencias implícitas a personas, grupos o entidades específicas.\n- Para determinar si hay un llamado a la acción, busca verbos imperativos o sugerencias directas de acciones a tomar."
   
   # Función interna para analizar un solo tweet
-  analyze_tweet <- function(tweet) {
+  analyzeTweet <- function(tweet) {
     # Preparación del cuerpo de la solicitud a la API
     body <- list(
       model = model,
@@ -92,31 +91,7 @@ getTweetsSentiments <- function(tweets, api_key = Sys.getenv("OPENAI_API_KEY"),
           content = tweet
         )
       ),
-      response_format = list(
-        type = "json_schema",
-        json_schema = list(
-          name = "tweet_analysis",
-          strict = TRUE,
-          schema = list(
-            type = "object",
-            properties = list(
-              tono = list(type = "string"),
-              sentimiento = list(type = "string"),
-              expresiones_de_odio = list(type = "boolean"),
-              direccionado = list(type = "boolean"),
-              llama_a_accion = list(type = "boolean"),
-              explicacion = list(type = "string")
-            ),
-            required = c("tono", "sentimiento", "expresiones_de_odio", "direccionado", "llama_a_accion", "explicacion"),
-            additionalProperties = FALSE
-          )
-        )
-      ),
-      temperature = 0,
-      max_tokens = 2048,
-      top_p = 0,
-      frequency_penalty = 0,
-      presence_penalty = 0
+      response_format = list(type = "json_object")
     )
     
     # Realización de la solicitud POST a la API de OpenAI
@@ -135,20 +110,54 @@ getTweetsSentiments <- function(tweets, api_key = Sys.getenv("OPENAI_API_KEY"),
     
     # Procesamiento de la respuesta
     result <- httr::content(response, "text", encoding = "UTF-8")
-    json_data <- jsonlite::fromJSON(result)
-    json_data <- jsonlite::fromJSON(json_data$choices$message$content)
-    
-    # Creación del tibble con los resultados
-    tibble::as_tibble(json_data) |>
-      dplyr::mutate(tweet = tweet, .before = tono)
+    tryCatch({
+      json_data <- jsonlite::fromJSON(result, simplifyVector = FALSE)
+      content <- json_data$choices[[1]]$message$content
+      parsed_content <- jsonlite::fromJSON(content, simplifyVector = FALSE)
+      
+      # Creación del tibble con los resultados
+      tibble::tibble(
+        tweet = tweet,
+        tono = parsed_content$tono,
+        sentimiento = parsed_content$sentimiento,
+        expresiones_de_odio = parsed_content$expresiones_de_odio,
+        direccionado = parsed_content$direccionado,
+        llama_a_accion = parsed_content$llama_a_accion,
+        explicacion = parsed_content$explicacion
+      )
+    }, error = function(e) {
+      warning("Error al procesar la respuesta de la API para el tweet: ", substr(tweet, 1, 50), "...")
+      warning("Error: ", e$message)
+      return(NULL)
+    })
   }
   
-  # Aplicación de la función de análisis a todos los tweets
-  results <- purrr::map_dfr(tweets, analyze_tweet, .progress = TRUE)
+  # Configuración para el procesamiento por lotes
+  total_tweets <- length(tweets)
+  batch_size <- 250
   
-  # Guardado de los resultados en un archivo RDS
-  saveRDS(results, paste0(dir, "/results_analyze_tweet_", format(Sys.time(), "%Y_%m_%d_%H_%M_%S"), ".rds"))
+  message("\nAnalizando los tweets...")
   
-  # Devolución de los resultados
+  if (total_tweets > batch_size) {
+    results <- list()
+    for (i in seq(1, total_tweets, by = batch_size)) {
+      end <- min(i + batch_size - 1, total_tweets)
+      batch_results <- purrr::map_dfr(tweets[i:end], analyzeTweet, .progress = TRUE)
+      results[[length(results) + 1]] <- batch_results
+      
+      # Guardar resultados parciales cada 50 tweets
+      partial <- batch_results
+      saveRDS(partial, paste0(dir, "/partial_results_tweets_analyze_", format(Sys.time(), "%Y_%m_%d_%H_%M_%S"), ".rds"))
+      
+      message(paste("Procesados", end, "de", total_tweets, "tweets"))
+    }
+    results <- do.call(rbind, results)
+  } else {
+    results <- purrr::map_dfr(tweets, analyzeTweet, .progress = TRUE)
+    saveRDS(results, paste0(dir, "/results_tweets_analyze_", format(Sys.time(), "%Y_%m_%d_%H_%M_%S"), ".rds"))
+  }
+  
+  message("\nEl análisis de tweets ha finalizado.\n")
+  
   return(results)
 }

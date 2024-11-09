@@ -132,13 +132,23 @@ getTweetsImagesAnalysis <- function(img_sources, modelo = "gpt-4o-mini", api_key
 
   1. **Clasificación de la imagen**: Selecciona una categoría adecuada para la imagen. Las posibles clasificaciones incluyen una de las siguientes: 
       - **Foto**: Imágenes realistas capturadas con una cámara o dispositivo como un smartphone, que representan escenas del mundo real, tales como paisajes, retratos, escenas urbanas, vehículos, objetos diversos, entre otros.
-      - **Meme**: Imagen con un mensaje humorístico o irónico, generalmente tiene texto superpuesto.
+      - **Meme**: Imagen con un mensaje humorístico o irónico, generalmente con texto superpuesto.
       - **Captura de pantalla**: Representación directa de la pantalla de un dispositivo, normalmente incluye una interfaz de usuario visible.
-      - **Dibujo**: Ilustraciones hechas a mano, ya sean digitales o tradicionales, no necesariamente creadas como un gráfico de información.
-      - **Gráfico**: Representación visual de datos, como diagramas, gráficos circulares, de barra, etc.
-      - **Flyer**: Imagen que tiene un diseño publicitario, promocional, o informativo que se asemeja a un volante.
-      - **Placa de texto**: Imagen que consiste principalmente de texto, frecuentemente usada para citas, advertencias, o declaraciones.
-      - **Otro**: Categoría reservada para imágenes que no encajan ninguna de las definiciones anteriores.
+      - **Dibujo**: Ilustraciones hechas a mano, ya sean digitales o tradicionales, sin necesariamente tener un propósito informativo.
+      - **Pintura**: Imagen artística de técnica pictórica tradicional o digital, que representa escenas, personas, naturaleza muerta, abstracciones, etc.
+      - **Viñeta**: Ilustración humorística o crítica que normalmente incluye un personaje o situación breve y puede tener texto.
+      - **Caricatura**: Dibujo estilizado o exagerado de personas o personajes, generalmente con un fin humorístico o satírico.
+      - **Comic o historieta**: Secuencia de viñetas o ilustraciones que narran una historia breve, con texto en globos de diálogo o cuadros de narración.
+      - **Gráfico**: Representación visual de datos, como diagramas, gráficos circulares, de barras, etc.
+      - **Infografía**: Imagen que combina gráficos, ilustraciones y texto para presentar información de manera visual y simplificada.
+      - **Flyer**: Imagen de diseño publicitario, promocional o informativo, semejante a un volante.
+      - **Poster o cartel**: Imagen diseñada para exhibirse en espacios públicos, usada para anuncios, promociones o campañas culturales.
+      - **Placa de texto**: Imagen que consiste principalmente de texto, frecuentemente usada para citas, advertencias o declaraciones.
+      - **Arte digital**: Creaciones visuales generadas digitalmente, con un estilo único o experimental, que no encajan en \"Dibujo\" o \"Pintura\".
+      - **Mapa**: Representación visual de una zona geográfica, que puede incluir datos geográficos, políticos o culturales.
+      - **Collage**: Composición de varias imágenes o elementos visuales combinados en una sola imagen.
+      - **Fotomontaje**: Imagen creada combinando varias fotografías, a menudo con fines artísticos o surrealistas.
+      - **Otro**: Categoría reservada para imágenes que no encajan en ninguna de las definiciones anteriores.
 
   2. **Indicador de si contiene texto**: Determina si la imagen contiene texto.
      - Valores: `[TRUE / FALSE]`
@@ -320,7 +330,8 @@ getTweetsImagesAnalysis <- function(img_sources, modelo = "gpt-4o-mini", api_key
       results[[length(results) + 1]] <- batch_results
       
       # Guardar resultados parciales cada 50 imágenes
-      saveRDS(do.call(rbind, results), paste0(dir, "/results_images_analyze_", format(Sys.time(), "%Y_%m_%d_%H_%M_%S"), ".rds"))
+      partial <- batch_results
+      saveRDS(partial, paste0(dir, "/partial_results_images_analyze_", format(Sys.time(), "%Y_%m_%d_%H_%M_%S"), ".rds"))
       
       message(paste("Procesadas", end, "de", total_images, "imágenes"))
     }

@@ -29,10 +29,11 @@
 #' Puedes encontrar más información sobre el paquete TweetScrapeR en:
 #' <https://github.com/agusnieto77/TweetScraperR>
 #'
-#' @import rvest
-#' @import lubridate
-#' @import tibble
-#' @import dplyr
+#' @importFrom rvest read_html_live html_elements html_attr html_text html_element read_html
+#' @importFrom lubridate as_datetime is.POSIXct
+#' @importFrom tibble tibble
+#' @importFrom dplyr distinct
+#' 
 
 getTweetsHistoricalSearch <- function(
     search = "R Project",
@@ -105,7 +106,12 @@ getTweetsHistoricalSearch <- function(
       }
       tryCatch({
         Sys.sleep(1.5)
-        nuevos_articles <- as.character(historicalok$html_elements(css = "article"))
+        tryCatch({
+          nuevos_articles <- as.character(historicalok$html_elements(css = "article"))
+        }, error = function(e) {
+          message("Error al procesar artículos: ", e$message)
+          nuevos_articles <- character(0)
+        })
         urls_tweets <- nuevos_articles
         new_tweets <- length(unique(urls_tweets[!urls_tweets %in% articles]))
         articles <- unique(append(articles, nuevos_articles))

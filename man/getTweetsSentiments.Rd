@@ -20,8 +20,8 @@ se intenta obtener de la variable de entorno OPENAI_API_KEY.}
 \item{model}{Una cadena de caracteres que especifica el modelo de OpenAI a utilizar.
 Por defecto es "gpt-4o-mini".}
 
-\item{dir}{Una cadena de caracteres que especifica el directorio donde se guardará
-el archivo RDS con los resultados. Por defecto es el directorio de trabajo actual.}
+\item{dir}{Una cadena de caracteres que especifica el directorio donde se guardarán
+los archivos RDS con los resultados. Por defecto es el directorio de trabajo actual.}
 }
 \value{
 Un tibble con los resultados del análisis para cada tweet. Cada fila
@@ -42,9 +42,9 @@ La función realiza las siguientes operaciones:
 \enumerate{
 \item Verifica que se haya proporcionado una clave de API válida.
 \item Define un prompt detallado para el análisis de los tweets.
-\item Define una función interna \code{analyze_tweet} que procesa cada tweet individualmente.
-\item Utiliza \code{purrr::map_dfr} para aplicar \code{analyze_tweet} a cada tweet en el vector de entrada.
-\item Guarda los resultados en un archivo RDS en el directorio especificado.
+\item Define una función interna \code{analyzeTweet} que procesa cada tweet individualmente.
+\item Procesa los tweets en lotes de 250 para manejar grandes volúmenes de datos.
+\item Guarda resultados parciales cada 50 tweets procesados.
 \item Devuelve los resultados como un tibble.
 }
 

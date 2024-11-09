@@ -38,10 +38,11 @@
 #' Puedes encontrar más información sobre el paquete TweetScrapeR en:
 #' <https://github.com/agusnieto77/TweetScraperR>
 #'
-#' @import rvest
-#' @import dplyr
-#' @import tibble
-#' @import lubridate
+#' @importFrom rvest read_html_live html_elements html_attr html_text html_element read_html
+#' @importFrom dplyr distinct
+#' @importFrom tibble tibble
+#' @importFrom lubridate as_datetime is.POSIXct
+#' 
 
 getTweetsSearchStreaming <- function(
     search = "#RStats",

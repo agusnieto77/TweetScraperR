@@ -1,5 +1,9 @@
 #' Get Iterative Tweets in Streaming
 #'
+#' @description
+#' 
+#' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
+#' 
 #' Esta función recolecta tweets de forma iterativa utilizando TweetScraperR,
 #' con la opción de cerrar el navegador entre iteraciones.
 #'

@@ -1,5 +1,9 @@
 #' Create Bar Chart of Emoticons in Tweets
 #'
+#' @description
+#' 
+#' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
+#' 
 #' Esta función toma un dataframe de tweets y crea un gráfico de barras
 #' mostrando la frecuencia de los emoticones utilizados en los tweets.
 #'
@@ -10,16 +14,18 @@
 #' 
 #' @return Un objeto ggplot con el gráfico de barras.
 #' 
-#' @import ggplot2
-#' @import dplyr
-#' @import tidyr
+#' @importFrom ggplot2 ggplot aes geom_col coord_flip labs theme_minimal theme element_text
+#' @importFrom tidyr unnest
+#' @importFrom dplyr filter count slice_head
+#' @importFrom stats reorder
+#' @importFrom utils install.packages
 #' 
 #' @export
 #'
 #' @examples
 #' 
 #' df <- data.frame(emoticones = I(list(c("😊", "😂", "😂"), c("😊"), c("😂", "😍"), character(0))))
-#' plotEmojisPNG(df)
+#' plotEmojis(df)
 #' 
 
 plotEmojis <- function(
@@ -35,11 +41,11 @@ plotEmojis <- function(
   # Función para instalar paquetes si no están instalados
   install_if_missing <- function(package) {
     if (!requireNamespace(package, quietly = TRUE)) {
-      install.packages(package, dependencies = TRUE)
+      utils::install.packages(package, dependencies = TRUE)
     }
   }
   
-  # Instalar y cargar paquetes necesarios
+  # Instalar paquetes necesarios
   sapply(required_packages, install_if_missing)
   
   # Verificar que el dataframe tiene una columna 'emoticones'
@@ -60,7 +66,7 @@ plotEmojis <- function(
     dplyr::slice_head(n = top_n)
   
   # Crear el gráfico
-  p <- ggplot2::ggplot(emoji_counts, ggplot2::aes(x = reorder(emoticones, n), y = n)) +
+  p <- ggplot2::ggplot(emoji_counts, ggplot2::aes(x = stats::reorder(emoticones, n), y = n)) +
     ggplot2::geom_col(fill = fill, color = color) +
     ggplot2::coord_flip() +
     ggplot2::labs(
@@ -70,7 +76,7 @@ plotEmojis <- function(
     ) +
     ggplot2::theme_minimal() +
     ggplot2::theme(
-      axis.text.y = ggplot2::element_text(size = 20)  # Aumentar el tamaño de los emoticones
+      axis.text.y = ggplot2::element_text(size = 20)
     )
   
   return(p)

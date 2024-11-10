@@ -58,10 +58,11 @@
 #' )
 #' }
 #'
-#' @import rvest
-#' @import lubridate
-#' @import tibble
-#' @import dplyr
+#' @importFrom rvest read_html_live html_elements html_attr html_text html_element read_html
+#' @importFrom lubridate as_datetime is.POSIXct
+#' @importFrom tibble tibble
+#' @importFrom dplyr distinct
+#' 
 
 getTweetsFullSearch <- function(
     search_all = "R Project",

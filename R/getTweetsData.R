@@ -81,7 +81,7 @@ getTweetsData <- function(
     metrica_res <- '//*[contains(@aria-label, "Respuesta") or contains(@aria-label, "Respuestas")]'
     metrica_rep <- '//*[contains(@aria-label, "Repostear")]'
     metrica_meg <- '//*[contains(@aria-label, "Me gusta")]'
-    pattern <- "https?://pbs\\.twimg\\.com/media/[^\\s\"']+(?:\\?[^\\s\"']+)?"
+    pattern <- "https?://(pbs|video)\\.twimg\\.com/(media|tweet_video_thumb|tweet_video|amplify_video_thumb)/[^\\s\"']+(?:\\?[^\\s\"']+)?"
     Sys.sleep(3)
     tweets_db <- tibble::tibble()
     borrados <- c()

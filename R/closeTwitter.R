@@ -1,5 +1,3 @@
-#' closeTwitter {TweetScraperR}
-#' 
 #' Close Twitter Session
 #' 
 #' @description

@@ -1,5 +1,9 @@
 #' Get Tweets Images
 #'
+#' @description
+#' 
+#' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
+#' 
 #' Esta función toma una lista de URLs de imágenes extraídas de tweets, las descarga y
 #' las guarda en un directorio específico. Si el directorio no existe, se creará.
 #'
@@ -23,8 +27,9 @@
 #' getTweetsImages(urls)
 #' }
 #' 
-#' @import httr
-#' @import stringr
+#' @importFrom httr GET write_disk
+#' @importFrom stringr str_extract
+#' 
 
 getTweetsImages <- function(urls, directorio = "img_x") {
   

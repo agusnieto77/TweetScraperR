@@ -1,6 +1,9 @@
 #' Extraer las urls de los tweets de una línea de tiempo de Twitter mediante desplazamiento
 #'
 #' @description
+#' 
+#' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
+#' 
 #' Esta función extrae las urls de los tweets de una línea de tiempo de Twitter previamente abierta,
 #' desplazándose por la página para recopilar la información deseada.
 #'

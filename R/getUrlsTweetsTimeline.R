@@ -23,7 +23,8 @@
 #' getUrlsTweetsTimeline(username = "rstatstweet", n_urls = 200)
 #' }
 #'
-#' @import rvest
+#' @importFrom rvest read_html_live html_elements html_attr
+#' 
 
 getUrlsTweetsTimeline <- function(
     username = "rstatstweet",

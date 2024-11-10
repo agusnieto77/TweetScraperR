@@ -35,7 +35,7 @@
 #' Puedes encontrar más información sobre el paquete TweetScraperR en:
 #' <https://github.com/agusnieto77/TweetScraperR>
 #'
-#' @import rvest
+#' @importFrom rvest read_html_live html_elements html_attr
 #'
 #' @note
 #' Esta función utiliza web scraping y puede ser sensible a cambios en la estructura de la página de Twitter.

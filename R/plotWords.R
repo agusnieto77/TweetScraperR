@@ -1,5 +1,9 @@
 #' Create Word Cloud from Tweets
 #'
+#' @description
+#' 
+#' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
+#' 
 #' Esta función toma un dataframe de tweets y crea una nube de palabras
 #' basada en el contenido de la columna 'texto' o 'tweet'.
 #'
@@ -14,9 +18,10 @@
 #' 
 #' @return Un objeto de tipo wordcloud2.
 #' 
-#' @import wordcloud2
-#' @import quanteda
-#' @import dplyr
+#' @importFrom wordcloud2 wordcloud2
+#' @importFrom quanteda corpus tokens tokens_remove tokens_tolower dfm topfeatures stopwords
+#' @importFrom dplyr filter slice_head
+#' @importFrom utils install.packages
 #' 
 #' @export
 #'
@@ -42,11 +47,11 @@ plotWords <- function(
   # Función para instalar paquetes si no están instalados
   install_if_missing <- function(package) {
     if (!requireNamespace(package, quietly = TRUE)) {
-      install.packages(package, dependencies = TRUE)
+      utils::install.packages(package, dependencies = TRUE)
     }
   }
   
-  # Instalar y cargar paquetes necesarios
+  # Instalar paquetes necesarios
   sapply(required_packages, install_if_missing)
   
   # Verificar que el dataframe tiene una columna 'texto' o 'tweet'
@@ -76,8 +81,8 @@ plotWords <- function(
   tokens <- quanteda::tokens(corpus, 
                              remove_punct = TRUE, 
                              remove_numbers = TRUE, 
-                             remove_symbols = TRUE) %>%
-    quanteda::tokens_remove(pattern = stop_words) %>%
+                             remove_symbols = TRUE) |>
+    quanteda::tokens_remove(pattern = stop_words) |>
     quanteda::tokens_tolower()
   
   # Crear una matriz de frecuencia de términos
@@ -88,8 +93,8 @@ plotWords <- function(
   df_word_freq <- data.frame(word = names(word_freq), freq = unname(word_freq))
   
   # Filtrar palabras por frecuencia mínima y número máximo de palabras
-  df_word_freq <- df_word_freq %>%
-    dplyr::filter(freq >= min_freq) %>%
+  df_word_freq <- df_word_freq |>
+    dplyr::filter(freq >= min_freq) |>
     dplyr::slice_head(n = max_words)
   
   # Crear la nube de palabras

@@ -7,7 +7,7 @@
 extractTweetsData(data)
 }
 \arguments{
-\item{data}{Un dataframe o una lista que contiene dos elementos: 'art_html' (el contenido HTML de los tweets), 'url' (las URLs de los tweets) y 'fecha_captura' (la fecha y hora de captura de cada tweet).}
+\item{data}{Un dataframe o una lista que contiene tres elementos: 'art_html' (el contenido HTML de los tweets), 'url' (las URLs de los tweets) y 'fecha_captura' (la fecha y hora de captura de cada tweet).}
 }
 \value{
 Un tibble con las siguientes columnas:
@@ -20,12 +20,13 @@ Un tibble con las siguientes columnas:
 \item emoticones: Una lista de emoticones utilizados en el tweet.
 \item links_img_user: El enlace a la imagen de perfil del usuario.
 \item links_img_post: Una lista de enlaces a las imágenes incluidas en el tweet.
+\item links_youtube: Una lista de enlaces a videos de YouTube mencionados en el tweet.
 \item respuestas: El número de respuestas al tweet.
 \item reposteos: El número de reposteos del tweet.
 \item megustas: El número de "me gusta" del tweet.
 \item metricas: Información adicional sobre las métricas del tweet.
 \item urls: Una lista de URLs mencionadas en el tweet.
-\item hilo: Indica si el tweet es parte de un hilo.
+\item hilo: Indica si el tweet es parte de un hilo (basado en el número de respuestas).
 \item url: La URL original del tweet.
 \item fecha_captura: La fecha y hora en que se capturó la información del tweet (heredada de los datos de entrada).
 }
@@ -34,17 +35,31 @@ Un tibble con las siguientes columnas:
 \if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}
 
 Esta función procesa un conjunto de tweets almacenados localmente y extrae información relevante de cada uno.
-Puede manejar tanto un dataframe como una lista que contenga el HTML de los tweets y sus URLs correspondientes.
+Puede manejar tanto un dataframe como una lista que contenga el HTML de los tweets, sus URLs correspondientes y las fechas de captura.
 }
 \details{
 La función utiliza expresiones XPath y selectores CSS para extraer información específica de cada tweet.
 Procesa cada tweet individualmente y maneja posibles errores, permitiendo continuar con el procesamiento
-incluso si algunos tweets fallan. La fecha de captura se hereda de los datos de entrada.
+incluso si algunos tweets fallan. La función ahora puede manejar tanto URLs de Twitter como de X.com.
+Se han añadido nuevas extracciones, como enlaces a videos de YouTube y se ha mejorado la extracción de emoticones.
 }
 \examples{
 \dontrun{
-# Asumiendo que tienes un dataframe llamado 'tweets_data' con columnas 'art_html', 'url' y 'fecha_captura'
+# Usando un dataframe
+tweets_data <- data.frame(
+  art_html = c("<html>...</html>", "<html>...</html>"),
+  url = c("https://twitter.com/user1/status/123", "https://x.com/user2/status/456"),
+  fecha_captura = c("2023-01-01 12:00:00", "2023-01-02 13:00:00")
+)
 resultados <- extractTweetsData(tweets_data)
+
+# Usando una lista
+tweets_list <- list(
+  art_html = c("<html>...</html>", "<html>...</html>"),
+  url = c("https://twitter.com/user1/status/123", "https://x.com/user2/status/456"),
+  fecha_captura = c("2023-01-01 12:00:00", "2023-01-02 13:00:00")
+)
+resultados <- extractTweetsData(tweets_list)
 }
 
 }

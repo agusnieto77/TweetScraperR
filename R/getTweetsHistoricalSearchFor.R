@@ -1,5 +1,9 @@
 #' Get Historical Tweets Iteratively
 #'
+#' @description
+#' 
+#' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
+#' 
 #' Esta función realiza búsquedas históricas de tweets de forma iterativa,
 #' permitiendo recolectar tweets en intervalos de tiempo específicos.
 #'
@@ -38,8 +42,7 @@
 #'   sleep_time = 300
 #' )
 #' }
-#'
-#' @import rvest dplyr tibble lubridate
+#' 
 #' @export
 
 getTweetsHistoricalSearchFor <- function(
@@ -54,20 +57,6 @@ getTweetsHistoricalSearchFor <- function(
     system = "windows", 
     sleep_time = 5*60
 ) {
-  # Verificar que TweetScraperR esté instalado
-  # Lista de paquetes necesarios
-  required_packages <- c("rvest", "dplyr", "tibble", "lubridate")
-  
-  # Función para instalar paquetes si no están instalados
-  install_if_missing <- function(package) {
-    if (!requireNamespace(package, quietly = TRUE)) {
-      install.packages(package, dependencies = TRUE)
-    }
-  }
-  
-  # Instalar y cargar paquetes necesarios
-  sapply(required_packages, install_if_missing)
-  
   # Crear el directorio si no existe
   if (!dir.exists(dir)) {
     dir.create(dir, recursive = TRUE)

@@ -1,5 +1,9 @@
 #' Create Line Graph of Tweets by Time
 #'
+#' @description
+#' 
+#' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
+#' 
 #' Esta función toma un dataframe de tweets y crea un gráfico de líneas
 #' mostrando la frecuencia de tweets a lo largo del tiempo, con opciones
 #' para agrupar por hora, día, semana, mes o año.
@@ -10,9 +14,10 @@
 #' @param color Color de la línea en el gráfico (por defecto "blue").
 #' @return Un objeto ggplot con el gráfico de líneas.
 #' 
-#' @import ggplot2
-#' @import dplyr
-#' @import lubridate
+#' @importFrom ggplot2 ggplot aes geom_line labs theme_minimal theme element_text scale_x_datetime scale_x_date
+#' @importFrom lubridate floor_date as_date
+#' @importFrom dplyr mutate group_by summarise n
+#' @importFrom utils install.packages
 #' 
 #' @export
 #'
@@ -42,7 +47,7 @@ plotTime <- function(
   # Función para instalar paquetes si no están instalados
   install_if_missing <- function(package) {
     if (!requireNamespace(package, quietly = TRUE)) {
-      install.packages(package, dependencies = TRUE)
+      utils::install.packages(package, dependencies = TRUE)
     }
   }
   
@@ -77,16 +82,16 @@ plotTime <- function(
   }
   
   # Agrupar y contar tweets
-  df_grouped <- df %>%
-    dplyr::mutate(date_grouped = round_date(fecha, group_by)) %>%
-    dplyr::group_by(date_grouped) %>%
-    dplyr::summarise(count = n())
+  df_grouped <- df |>
+    dplyr::mutate(date_grouped = round_date(fecha, group_by)) |>
+    dplyr::group_by(date_grouped) |>
+    dplyr::summarise(count = dplyr::n())
   
   # Crear el gráfico
   p <- ggplot2::ggplot(df_grouped, ggplot2::aes(x = date_grouped, y = count)) +
     ggplot2::geom_line(color = color) +
     ggplot2::labs(
-      title = paste("Frecuencia de tweets por", group_by),
+      title = paste0("Frecuencia de tweets por '", group_by,"'"),
       x = "Fecha",
       y = "Nº de tweets"
     ) +

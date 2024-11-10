@@ -24,9 +24,11 @@
 #' getUsersFullData(urls_users = "https://x.com/estacion_erre")
 #' }
 #'
-#' @import rvest
-#' @import lubridate
-#' @import tibble
+#' @importFrom rvest read_html_live html_elements html_text
+#' @importFrom lubridate as_datetime
+#' @importFrom tibble tibble
+#' @importFrom jsonlite fromJSON
+#' 
 
 getUsersFullData <- function(
     urls_users,

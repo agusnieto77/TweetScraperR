@@ -24,9 +24,11 @@
 #' getUsersData(urls_users = "https://x.com/estacion_erre")
 #' }
 #'
-#' @import rvest
-#' @import lubridate
-#' @import tibble
+#' @importFrom rvest read_html_live html_elements html_text html_text2
+#' @importFrom lubridate dmy
+#' @importFrom tibble tibble
+#' @importFrom utils tail
+#' 
 
 getUsersData <- function(
     urls_users,

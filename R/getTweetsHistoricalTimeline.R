@@ -30,10 +30,11 @@
 #' Puedes encontrar más información sobre el paquete TweetScrapeR en:
 #' <https://github.com/agusnieto77/TweetScraperR>
 #'
-#' @import rvest
-#' @import lubridate
-#' @import tibble
-#' @import dplyr
+#' @importFrom rvest read_html_live html_elements html_attr html_text html_element read_html
+#' @importFrom lubridate as_datetime is.POSIXct
+#' @importFrom tibble tibble
+#' @importFrom dplyr distinct
+#' 
 
 getTweetsHistoricalTimeline <- function(
     username = "rstatstweet",

@@ -1,5 +1,9 @@
 #' Get Hashtags from Tweets
 #'
+#' @description
+#' 
+#' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
+#' 
 #' Esta función toma un dataframe de tweets y extrae todos los hashtags
 #' del campo 'texto', añadiéndolos como una nueva columna al dataframe.
 #'
@@ -12,8 +16,8 @@
 #' df <- data.frame(texto = c("Este es un #tweet con #hashtags", "Este no tiene hashtags", "Otro #ejemplo"))
 #' getTweetsHashtags(df)
 #' 
-#' @import stringr
-
+#' @importFrom stringr str_extract_all
+#' 
 
 getTweetsHashtags <- function(df) {
   # Verificar que el dataframe tiene una columna 'texto'

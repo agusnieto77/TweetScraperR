@@ -38,7 +38,8 @@
 #' Puedes encontrar más información sobre el paquete TweetScrapeR en:
 #' <https://github.com/agusnieto77/TweetScraperR>
 #'
-#' @import rvest
+#' @importFrom rvest read_html_live html_elements html_attr
+#' 
 
 getUrlsSearchStreaming <- function(
     search = "#RStats",

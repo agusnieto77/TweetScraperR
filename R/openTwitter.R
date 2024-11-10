@@ -1,5 +1,3 @@
-#' openTwitter {TweetScraperR}
-#' 
 #' Open Twitter Login Page
 #' 
 #' @description
@@ -29,20 +27,33 @@
 #' }
 #' 
 #' @export
+#' 
+#' @importFrom rvest read_html_live
+#' 
 
 openTwitter <- function(view = TRUE) {
-  tryCatch({
-    twitter <- rvest::read_html_live("https://x.com/i/flow/login")
-    
-    assign("twitter", twitter, envir = .GlobalEnv)
-    
-    if (view) {
-      return(twitter$view())
-    } else {
-      return(twitter)
-    }
-  }, error = function(e) {
-    message("Error al abrir la página de Twitter: ", e$message)
-    return(NULL)
-  })
+  max_attempts <- 3
+  attempts <- 0
+  while (attempts < max_attempts) {
+    attempts <- attempts + 1
+    tryCatch({
+      twitter <- rvest::read_html_live("https://x.com/i/flow/login")
+      assign("twitter", twitter, envir = .GlobalEnv)
+      if (view) {
+        return(twitter$view())
+      } else {
+        return(message('Objeto "twitter" creado.'))
+      }
+    }, error = function(e) {
+      if (attempts < max_attempts) {
+        message("Error al abrir la página de Twitter (intento ", attempts, " de ", max_attempts, "): ", e$message)
+        message("Reintentando...")
+        Sys.sleep(2)
+      } else {
+        message("No se pudo abrir la página de Twitter luego de 3 intentos. Por favor, intente más tarde.")
+        return(NULL)
+      }
+    })
+  }
+  return(NULL)
 }

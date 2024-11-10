@@ -49,7 +49,7 @@
 #' 
 #' Nota: Esta función depende de la estructura actual de la página web de Twitter (X). Cambios en la estructura del sitio pueden afectar su funcionamiento.
 #' 
-#' #' @export
+#' @export
 #' 
 
 getTweetsHistoricalSearch <- function(

@@ -10,6 +10,7 @@ getTweetsHistoricalSearchFor(
   n_tweets,
   since,
   until,
+  interval_unit = "days",
   live = TRUE,
   xuser = Sys.getenv("USER"),
   xpass = Sys.getenv("PASS"),
@@ -25,9 +26,11 @@ getTweetsHistoricalSearchFor(
 
 \item{n_tweets}{Número de tweets a recolectar por iteración.}
 
-\item{since}{Fecha de inicio para la búsqueda (formato: "YYYY-MM-DD").}
+\item{since}{Fecha y hora de inicio para la búsqueda (formato: "YYYY-MM-DD_HH:MM:SS_UTC").}
 
-\item{until}{Número de días a avanzar en cada iteración.}
+\item{until}{Número de unidades de tiempo a avanzar en cada iteración.}
+
+\item{interval_unit}{Unidad de tiempo para el intervalo ("days", "hours", o "minutes").}
 
 \item{live}{Booleano que indica si se debe realizar una búsqueda en vivo (por defecto: TRUE).}
 
@@ -53,8 +56,10 @@ permitiendo recolectar tweets en intervalos de tiempo específicos.
 \details{
 La función realiza las siguientes operaciones:
 \enumerate{
+\item Valida el formato de la fecha y hora de inicio.
 \item Crea el directorio de destino si no existe.
 \item Ejecuta búsquedas históricas de tweets de forma iterativa.
+\item Calcula la fecha y hora de finalización para cada iteración basándose en el intervalo especificado.
 \item Cierra el navegador después de cada iteración según el sistema operativo especificado.
 \item Espera un tiempo especificado entre iteraciones.
 }
@@ -65,8 +70,9 @@ getTweetsHistoricalSearchFor(
   iterations = 5,
   search = "cambio climático",
   n_tweets = 1000,
-  since = "2023-01-01",
+  since = "2023-01-01_15:55:00_UTC",
   until = 7,
+  interval_unit = "days",
   live = TRUE,
   dir = "./datos/tweets",
   system = "windows",

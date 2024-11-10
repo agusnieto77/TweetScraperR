@@ -10,8 +10,9 @@
 #' @param iterations Número de iteraciones a realizar.
 #' @param search Término de búsqueda para los tweets.
 #' @param n_tweets Número de tweets a recolectar por iteración.
-#' @param since Fecha de inicio para la búsqueda (formato: "YYYY-MM-DD").
-#' @param until Número de días a avanzar en cada iteración.
+#' @param since Fecha y hora de inicio para la búsqueda (formato: "YYYY-MM-DD_HH:MM:SS_UTC").
+#' @param until Número de unidades de tiempo a avanzar en cada iteración.
+#' @param interval_unit Unidad de tiempo para el intervalo ("days", "hours", o "minutes").
 #' @param live Booleano que indica si se debe realizar una búsqueda en vivo (por defecto: TRUE).
 #' @param xuser Nombre de usuario de Twitter para autenticación (por defecto: variable de entorno del sistema "USER").
 #' @param xpass Contraseña de Twitter para autenticación (por defecto: variable de entorno del sistema "PASS").
@@ -21,13 +22,18 @@
 #'
 #' @details
 #' La función realiza las siguientes operaciones:
-#' 1. Crea el directorio de destino si no existe.
-#' 2. Ejecuta búsquedas históricas de tweets de forma iterativa.
-#' 3. Cierra el navegador después de cada iteración según el sistema operativo especificado.
-#' 4. Espera un tiempo especificado entre iteraciones.
+#' 1. Valida el formato de la fecha y hora de inicio.
+#' 2. Crea el directorio de destino si no existe.
+#' 3. Ejecuta búsquedas históricas de tweets de forma iterativa.
+#' 4. Calcula la fecha y hora de finalización para cada iteración basándose en el intervalo especificado.
+#' 5. Cierra el navegador después de cada iteración según el sistema operativo especificado.
+#' 6. Espera un tiempo especificado entre iteraciones.
 #'
 #' @return
 #' No devuelve un valor explícito, pero guarda los tweets recolectados en el directorio especificado.
+#' 
+#' @importFrom lubridate ymd_hms days hours minutes
+#' @importFrom stringr str_detect
 #'
 #' @examples
 #' \dontrun{
@@ -35,8 +41,9 @@
 #'   iterations = 5,
 #'   search = "cambio climático",
 #'   n_tweets = 1000,
-#'   since = "2023-01-01",
+#'   since = "2023-01-01_15:55:00_UTC",
 #'   until = 7,
+#'   interval_unit = "days",
 #'   live = TRUE,
 #'   dir = "./datos/tweets",
 #'   system = "windows",
@@ -53,6 +60,7 @@ getTweetsHistoricalSearchFor <- function(
     n_tweets, 
     since,
     until,
+    interval_unit = "days",
     live = TRUE,
     xuser = Sys.getenv("USER"),
     xpass = Sys.getenv("PASS"),
@@ -60,6 +68,15 @@ getTweetsHistoricalSearchFor <- function(
     system = "windows", 
     sleep_time = 5*60
 ) {
+  
+  # Validar el formato de 'since'
+  validate_datetime <- function(datetime_str) {
+    pattern <- "^\\d{4}-\\d{2}-\\d{2}_\\d{2}:\\d{2}:\\d{2}_UTC$"
+    if (!stringr::str_detect(datetime_str, pattern)) {
+      stop("El formato de 'since' es incorrecto. Debe ser 'YYYY-MM-DD_HH:MM:SS_UTC'")
+    }
+  }
+  
   # Crear el directorio si no existe
   if (!dir.exists(dir)) {
     dir.create(dir, recursive = TRUE)
@@ -78,11 +95,24 @@ getTweetsHistoricalSearchFor <- function(
     }
   }
   
+  calculate_untilok <- function(since, until, interval_unit) {
+    since_datetime <- lubridate::ymd_hms(since)
+    if (interval_unit == "days") {
+      untilok <- since_datetime + lubridate::days(until)
+    } else if (interval_unit == "hours") {
+      untilok <- since_datetime + lubridate::hours(until)
+    } else if (interval_unit == "minutes") {
+      untilok <- since_datetime + lubridate::minutes(until)
+    } else {
+      stop("interval_unit debe ser 'days', 'hours' o 'minutes'")
+    }
+    paste0(gsub(" ", "_", as.character(untilok)), "_UTC")
+  }
+  
   # Bucle principal
   for (i in 1:iterations) {
     cat("Iteración:", i, "\n")
-    untilok <- as.Date(since) + until
-    untilok <- as.character(untilok)
+    untilok <- calculate_untilok(since, until, interval_unit)
     tryCatch({
       TweetScraperR::getTweetsHistoricalSearch(
         search = search, 

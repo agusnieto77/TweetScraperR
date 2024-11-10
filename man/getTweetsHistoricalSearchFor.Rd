@@ -10,6 +10,7 @@ getTweetsHistoricalSearchFor(
   n_tweets,
   since,
   until,
+  live = TRUE,
   xuser = Sys.getenv("USER"),
   xpass = Sys.getenv("PASS"),
   dir = getwd(),
@@ -27,6 +28,8 @@ getTweetsHistoricalSearchFor(
 \item{since}{Fecha de inicio para la búsqueda (formato: "YYYY-MM-DD").}
 
 \item{until}{Número de días a avanzar en cada iteración.}
+
+\item{live}{Booleano que indica si se debe realizar una búsqueda en vivo (por defecto: TRUE).}
 
 \item{xuser}{Nombre de usuario de Twitter para autenticación (por defecto: variable de entorno del sistema "USER").}
 
@@ -50,10 +53,9 @@ permitiendo recolectar tweets en intervalos de tiempo específicos.
 \details{
 La función realiza las siguientes operaciones:
 \enumerate{
-\item Verifica e instala los paquetes necesarios.
 \item Crea el directorio de destino si no existe.
 \item Ejecuta búsquedas históricas de tweets de forma iterativa.
-\item Cierra el navegador después de cada iteración.
+\item Cierra el navegador después de cada iteración según el sistema operativo especificado.
 \item Espera un tiempo especificado entre iteraciones.
 }
 }
@@ -65,6 +67,7 @@ getTweetsHistoricalSearchFor(
   n_tweets = 1000,
   since = "2023-01-01",
   until = 7,
+  live = TRUE,
   dir = "./datos/tweets",
   system = "windows",
   sleep_time = 300

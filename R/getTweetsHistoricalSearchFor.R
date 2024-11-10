@@ -12,6 +12,7 @@
 #' @param n_tweets Número de tweets a recolectar por iteración.
 #' @param since Fecha de inicio para la búsqueda (formato: "YYYY-MM-DD").
 #' @param until Número de días a avanzar en cada iteración.
+#' @param live Booleano que indica si se debe realizar una búsqueda en vivo (por defecto: TRUE).
 #' @param xuser Nombre de usuario de Twitter para autenticación (por defecto: variable de entorno del sistema "USER").
 #' @param xpass Contraseña de Twitter para autenticación (por defecto: variable de entorno del sistema "PASS").
 #' @param dir Directorio para guardar los tweets recolectados (por defecto: directorio de trabajo actual).
@@ -20,11 +21,10 @@
 #'
 #' @details
 #' La función realiza las siguientes operaciones:
-#' 1. Verifica e instala los paquetes necesarios.
-#' 2. Crea el directorio de destino si no existe.
-#' 3. Ejecuta búsquedas históricas de tweets de forma iterativa.
-#' 4. Cierra el navegador después de cada iteración.
-#' 5. Espera un tiempo especificado entre iteraciones.
+#' 1. Crea el directorio de destino si no existe.
+#' 2. Ejecuta búsquedas históricas de tweets de forma iterativa.
+#' 3. Cierra el navegador después de cada iteración según el sistema operativo especificado.
+#' 4. Espera un tiempo especificado entre iteraciones.
 #'
 #' @return
 #' No devuelve un valor explícito, pero guarda los tweets recolectados en el directorio especificado.
@@ -37,6 +37,7 @@
 #'   n_tweets = 1000,
 #'   since = "2023-01-01",
 #'   until = 7,
+#'   live = TRUE,
 #'   dir = "./datos/tweets",
 #'   system = "windows",
 #'   sleep_time = 300
@@ -44,6 +45,7 @@
 #' }
 #' 
 #' @export
+#' 
 
 getTweetsHistoricalSearchFor <- function(
     iterations, 
@@ -51,6 +53,7 @@ getTweetsHistoricalSearchFor <- function(
     n_tweets, 
     since,
     until,
+    live = TRUE,
     xuser = Sys.getenv("USER"),
     xpass = Sys.getenv("PASS"),
     dir = getwd(), 
@@ -86,6 +89,7 @@ getTweetsHistoricalSearchFor <- function(
         n_tweets = n_tweets, 
         since = since,
         until = untilok,
+        live = live,
         xuser = xuser,
         xpass = xpass,
         dir = dir

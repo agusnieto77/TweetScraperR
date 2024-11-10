@@ -10,6 +10,7 @@ getTweetsHistoricalSearch(
   n_tweets = 100,
   since = "2018-10-26",
   until = "2023-10-30",
+  live = TRUE,
   xuser = Sys.getenv("USER"),
   xpass = Sys.getenv("PASS"),
   dir = getwd()
@@ -26,6 +27,8 @@ getTweetsHistoricalSearch(
 
 \item{until}{Fecha de fin para la búsqueda de tweets (en formato "YYYY-MM-DD"). Por defecto es "2023-10-30".}
 
+\item{live}{Booleano que indica si se deben buscar tweets en tiempo real. Por defecto es TRUE.}
+
 \item{xuser}{Nombre de usuarix de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.}
 
 \item{xpass}{Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.}
@@ -33,19 +36,37 @@ getTweetsHistoricalSearch(
 \item{dir}{Directorio para guardar el archivo RDS con los tweets recolectados. Por defecto es el directorio de trabajo actual.}
 }
 \value{
-Un tibble que contiene los datos de tweets recuperados, junto con la fecha, usuario, contenido del tweet y URL del tweet.
+Un tibble que contiene los datos de tweets recuperados, incluyendo la fecha, usuario, contenido del tweet, URL del tweet y fecha de captura.
 }
 \description{
 \if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}
 
-Esta función permite recuperar tweets históricos de Twitter que coinciden con una búsqueda específica.
+Esta función permite recuperar tweets históricos de Twitter (ahora X) que coinciden con una búsqueda específica.
 Puedes especificar términos de búsqueda relevantes para tus necesidades de análisis, y la función recuperará
 tweets antiguos que coincidan con esos criterios. Esto es útil para investigaciones históricas, análisis de
 tendencias a lo largo del tiempo y cualquier otro análisis que requiera acceso a datos históricos de Twitter.
+
+La función ahora incluye un proceso de autenticación automático y manejo de errores mejorado.
+}
+\details{
+La función ahora incluye las siguientes mejoras y características:
+\enumerate{
+\item Autenticación automática: La función intenta autenticarse automáticamente en Twitter (X) usando las credenciales proporcionadas.
+\item Manejo de errores mejorado: Se han implementado múltiples bloques try-catch para manejar diferentes tipos de errores que pueden ocurrir durante la ejecución.
+\item Reintento automático: En caso de errores de tiempo de espera, la función reintentará automáticamente la operación.
+\item Opción de búsqueda en vivo: Se ha añadido un parámetro \code{live} para permitir la búsqueda de tweets en tiempo real.
+\item Procesamiento de datos mejorado: Se ha mejorado el proceso de extracción y almacenamiento de datos de los tweets.
+\item Límite de intentos: Se ha implementado un límite de intentos para evitar bucles infinitos en caso de problemas persistentes.
+\item Feedback en tiempo real: La función ahora proporciona mensajes informativos sobre el progreso de la recolección de tweets.
+}
+
+Nota: Esta función depende de la estructura actual de la página web de Twitter (X). Cambios en la estructura del sitio pueden afectar su funcionamiento.
+
+#' @export
 }
 \examples{
 \dontrun{
-getTweetsHistoricalSearch(search = "R Project", n_tweets = 50, since = "2018-10-26", until = "2023-10-30")
+getTweetsHistoricalSearch(search = "R Project", n_tweets = 50, since = "2018-10-26", until = "2023-10-30", live = TRUE)
 }
 
 }

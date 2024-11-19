@@ -129,7 +129,7 @@ extractTweetsData <- function(data) {
         emoticones = list(rvest::html_attr(rvest::html_elements(articulo, css = 'div[data-testid="tweetText"] img'), "alt")),
         links_img_user = sub(".*?(https://.*?(?:png|jpg)).*", "\\1", grep("profile_images", gsub('src="([^"]+)"', '\\1', regmatches(as.character(articulo), gregexpr('src="(.*?\\.(?:png|jpg))"', as.character(articulo), perl=TRUE))[[1]]), value = TRUE)[1]),
         links_img_post = list(unique(gsub("&amp;", "&", stringr::str_extract_all(as.character(articulo), pattern)[[1]]))),
-        links_youtube = list(unique(stringr::str_extract_all(as.character(char_art_gif), pattern2)[[1]])),
+        links_externos = list(unique(stringr::str_extract_all(as.character(articulo), yt)[[1]])),
         respuestas = resp_ok,
         reposteos = as.integer(gsub("^(\\d+).*", "\\1", rvest::html_attr(rvest::html_element(articulo, xpath = metrica_rep), "aria-label"))),
         megustas = as.integer(gsub(".*?(\\d+) Me gusta.*", "\\1", rvest::html_attr(rvest::html_element(articulo, xpath = metrica_meg), "aria-label"))),

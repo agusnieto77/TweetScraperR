@@ -44,7 +44,7 @@ getTweetsTimeline <- function(
     mailx = "tweetscraperr@gmail.com",
     dir = getwd()
 ) {
-  twitter <- TweetScraperR::openTwitter(view = view)
+  TweetScraperR::openTwitter(view = view)
   Sys.sleep(3)
   userx <- "#layers > div > div > div > div > div > div > div.css-175oi2r > div.css-175oi2r > div > div > div.css-175oi2r > div.css-175oi2r > div > div > div > div.css-175oi2r > label > div > div.css-175oi2r > div > input"
   nextx <- "#layers div > div > div > button:nth-child(6) > div"

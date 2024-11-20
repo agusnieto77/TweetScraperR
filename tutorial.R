@@ -223,3 +223,30 @@ plotTime(unificados_df)
 plotWords(unificados_df, sw = c("Javier", "Milei"))
 plotEmojis(unificados_df)
 plotEmojisPNG(unificados_df)
+
+# Funciones para descarga masiva 
+getTweetsHistoricalTimelineFor()
+getTweetsHistoricalSearchFor()
+getTweetsHistoricalHashtagFor()
+
+getTweetsSearchStreamingFor(
+  iterations = 5,
+  search = "Milei",
+  n_tweets = 6,
+  dir = "./data/tweets",
+  system = "windows",
+  sleep_time = 1
+)
+
+getTweetsHistoricalSearchFor(
+  iterations = 3,
+  search = "cambio climático",
+  n_tweets = 6,
+  since = "2023-01-01_15:55:00_UTC",
+  until = 7,
+  interval_unit = "days",
+  live = FALSE,
+  dir = "./data/tweets",
+  system = "windows",
+  sleep_time = 4
+)

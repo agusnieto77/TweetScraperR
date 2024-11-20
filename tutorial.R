@@ -1,78 +1,97 @@
-# Carga la biblioteca TweetScraperR para el análisis de tweets
+# Cargar la biblioteca TweetScraperR
 require(TweetScraperR)
 
-# Inicia una sesión de Twitter en modo oculto (sin interfaz gráfica)
+# Abrir una sesión de Twitter sin mostrar la ventana del navegador
 openTwitter(view = FALSE)
 
-# Muestra la estructura del objeto Twitter (útil para depuración)
+# Mostrar la vista actual de Twitter (para depuración)
 twitter$view()
 
-# Cierra la sesión de Twitter
+# Cerrar la sesión de Twitter
 closeTwitter()
 
-# Inicia una sesión del Timeline de Twitter en modo oculto
+# Abrir la línea de tiempo de Twitter sin mostrar la ventana del navegador
 openTimeline(view = FALSE)
 
-# Muestra la estructura del objeto Timeline (útil para depuración)
+# Mostrar la vista actual de la línea de tiempo (para depuración)
 timeline$view()
 
-# Cierra la sesión del Timeline
+# Cerrar la línea de tiempo
 closeTimeline()
 
-# Abre simultáneamente las interfaces de Twitter y Timeline
+# Abrir una nueva sesión de Twitter
 openTwitter()
+# Abrir la línea de tiempo sin mostrar la ventana del navegador
 openTimeline(view = FALSE)
 
-# Extrae URLs del Timeline, desplazándose automáticamente, y las guarda en disco
+# Obtener y guardar las URLs de los tweets mientras se desplaza por la línea de tiempo
 getScrollExtractUrls(save = TRUE)
 
-# Cierra las sesiones de Timeline y Twitter
+# Cerrar la línea de tiempo y la sesión de Twitter
 closeTimeline()
 closeTwitter()
 
-# Combina URLs obtenidas de diferentes timelines y elimina duplicados
+# Combinar las URLs obtenidas de diferentes fuentes
 urls_uni <- c(timeline_urls, timeline_rstatstweet_2024_11_19_20_02_22)
+
+# Eliminar URLs duplicadas
 urls_uni <- unique(urls_uni)
 
-# Inicia sesiones de Twitter y Timeline para un usuario específico
+# Abrir una nueva sesión de Twitter
 openTwitter()
+# Abrir la línea de tiempo de un usuario específico sin mostrar la ventana del navegador
 openTimeline(username = "agusnieto77", view = FALSE)
 
-# Extrae tweets desplazándose por el Timeline del usuario especificado
+# Obtener tweets del usuario especificado
 tweets_agusnieto77 <- getScrollExtract(username = "agusnieto77")
 
-# Cierra las sesiones de Timeline y Twitter
+# Cerrar la línea de tiempo y la sesión de Twitter
 closeTimeline()
 closeTwitter()
 
-# Selecciona las primeras 10 URLs únicas para análisis
+# Seleccionar las primeras 10 URLs únicas
 urls <- urls_uni[1:10]
 
-# Inicia una sesión de Twitter y extrae datos detallados de los tweets correspondientes a las URLs seleccionadas
+# Abrir una nueva sesión de Twitter
 openTwitter()
+
+# Obtener datos completos de los tweets a partir de las URLs seleccionadas
 tweets_full <- getTweetsData(
   urls_tweets = urls,
   save = FALSE
 )
+
+# Cerrar la sesión de Twitter
 closeTwitter()
 
-# Realiza una búsqueda avanzada de tweets usando diversos filtros
+# Cargar nuevamente la biblioteca TweetScraperR (esto podría ser redundante)
+require(TweetScraperR)
+
+# Realizar una búsqueda completa de tweets con varios parámetros
 getTweetsFullSearch(
-  search_all = "Milei",      # Palabra clave para buscar
-  rep = 0,                   # Mínimo de respuestas requeridas
-  fav = 2,                   # Mínimo de favoritos requeridos
-  rt = 1,                    # Mínimo de retweets requeridos
-  timeout = 10,              # Tiempo de espera máximo para cada intento (en segundos)
-  n_tweets = 100,            # Número de tweets a extraer
-  since = Sys.Date() - 7,    # Fecha de inicio del período de búsqueda (7 días atrás)
-  until = Sys.Date(),        # Fecha de fin del período de búsqueda (hoy)
-  save = FALSE               # No guardar resultados en disco
+  search_all = "Milei",
+  search_exact = NULL,
+  search_any = NULL,
+  no_search = NULL,
+  hashtag = NULL,
+  lan = NULL,
+  from = NULL,
+  to = NULL,
+  men = NULL,
+  rep = 0,
+  fav = 2,
+  rt = 1,
+  timeout = 10,
+  n_tweets = 100,
+  since = Sys.Date() - 7,
+  until = Sys.Date(),
+  save = FALSE
 )
 
-# Extrae hashtags de los tweets recuperados del usuario agusnieto77
+# Extraer hashtags de los tweets de un usuario específico
 hashtags <- getTweetsHashtags(tweets_agusnieto77)
 
-# Obtiene tweets históricos con un hashtag específico (#rstats)
+# Obtener tweets históricos con un hashtag específico
 rstats_hashtags <- getTweetsHistoricalHashtag(
   hashtag = "#rstats",
   n_tweets = 100,
@@ -81,7 +100,7 @@ rstats_hashtags <- getTweetsHistoricalHashtag(
   save = FALSE
 )
 
-# Realiza una búsqueda histórica de tweets con un término específico
+# Realizar una búsqueda histórica de tweets
 tweets_search_2 <- getTweetsHistoricalSearch(
   search = "Javier Milei",
   timeout = 4,
@@ -92,11 +111,13 @@ tweets_search_2 <- getTweetsHistoricalSearch(
   save = FALSE
 )
 
-# Combina resultados de múltiples búsquedas en un único DataFrame
+# Combinar resultados de búsquedas
 unificados <- rbind(tweets_search, tweets_search_2)
+
+# Extraer datos de los tweets unificados
 unificados_df <- extractTweetsData(unificados)
 
-# Obtiene el Timeline histórico de un usuario específico
+# Obtener tweets históricos de la línea de tiempo de un usuario
 historical_timeline <- getTweetsHistoricalTimeline(
   username = "AAS_Sociologia",
   timeout = 2,
@@ -106,7 +127,7 @@ historical_timeline <- getTweetsHistoricalTimeline(
   save = FALSE
 )
 
-# Obtiene el Timeline actual de un usuario específico
+# Obtener tweets actuales de la línea de tiempo de un usuario
 timeline_actual <- getTweetsTimeline(
   username = "rstatstweet",
   n_tweets = 160,
@@ -115,7 +136,10 @@ timeline_actual <- getTweetsTimeline(
   save = FALSE
 )
 
-# Extrae URLs de tweets desde un Timeline histórico de un usuario
+# Obtener URLs de tweets de la línea de tiempo de un usuario
+getUrlsTweetsTimeline(username = "rstatstweet", n_urls = 200, save = FALSE)
+
+# Obtener URLs históricas de la línea de tiempo de un usuario
 urls_timeline <- getUrlsHistoricalTimeline(
   username = "AAS_Sociologia",
   timeout = 1,
@@ -125,7 +149,15 @@ urls_timeline <- getUrlsHistoricalTimeline(
   save = FALSE
 )
 
-# Obtiene datos de tweets de un streaming de búsqueda en tiempo real
+# Obtener URLs de tweets en tiempo real basados en una búsqueda
+getUrlsSearchStreaming(
+  search = "#MarDelPlata",
+  timeout = 1,
+  n_urls = 10,
+  save = FALSE
+)
+
+# Obtener tweets en tiempo real basados en una búsqueda
 search_streaming <- getTweetsSearchStreaming(
   search = "Messi",
   timeout = 12,
@@ -133,37 +165,64 @@ search_streaming <- getTweetsSearchStreaming(
   save = FALSE
 )
 
-# Convierte nombres de usuarios en URLs y extrae datos básicos de perfil
+# Extraer URLs de usuarios de los tweets unificados
 urls_users <- unique(gsub("@", "https://x.com/", unificados$user))[1:20]
+
+# Obtener datos básicos de usuarios
 user_data <- getUsersData(
   urls_users = urls_users,
   save = FALSE
 )
 
-# Extrae datos completos de perfiles de usuarios
+# Obtener datos completos de usuarios
 user_data_2 <- getUsersFullData(
   urls_users = urls_users,
   save = FALSE
 )
 
-# Realiza análisis de imágenes de tweets usando un modelo de IA
+# Obtener URLs de tweets basados en una búsqueda
+getUrlsTweetsSearch(search = "#RStats", n_urls = 20, save = FALSE)
+
+# Obtener URLs de respuestas a un tweet específico
+respuestas <- getUrlsTweetsReplies(
+  url = "https://x.com/LANACION/status/1718779652913696847",
+  n_urls = 100,
+  save = FALSE
+)
+
+# Descargar imágenes de tweets
+getTweetsImages(urls = unificados_df$links_img_post, directorio = "img_x")
+
+# Seleccionar tweets únicos para análisis de sentimientos
+tweets_sent <- unique(dplyr::filter(dplyr::arrange(unificados_df, desc(megustas)) , !is.na(texto))$texto[1:21])
+
+# Realizar análisis de sentimientos en los tweets seleccionados
+tweets_sent_ok <- getTweetsSentiments(
+  tweets = tweets_sent,
+  api_key = Sys.getenv("OPENAI_API_KEY"),
+  model = "gpt-4o-mini",
+  dir = getwd()
+)
+
+# Preparar URLs de imágenes para análisis
+urls_img <- paste0("./img_demo/", list.files("./img_demo"))
+
+# Realizar análisis de imágenes de tweets
 tweets_analysis_img <- getTweetsImagesAnalysis(
-  img_sources = paste0("./img_demo/", list.files("./img_demo")),
+  img_sources = urls_img,
   modelo = "gpt-4o-mini",
   api_key = Sys.getenv("OPENAI_API_KEY"),
   dir = getwd()
 )
 
-# Crea un informe HTML con el análisis de imágenes
+# Cambiar el directorio de trabajo
 setwd("./img_demo")
+
+# Generar un informe HTML de análisis de imágenes
 HTMLImgReport(tweets_analysis_img)
 
-# Visualiza la distribución temporal de los tweets
+# Generar gráficos de análisis
 plotTime(unificados_df)
-
-# Visualiza las palabras más frecuentes en los tweets (excluyendo "Javier" y "Milei")
 plotWords(unificados_df, sw = c("Javier", "Milei"))
-
-# Visualiza los emojis más utilizados en los tweets
 plotEmojis(unificados_df)
 plotEmojisPNG(unificados_df)

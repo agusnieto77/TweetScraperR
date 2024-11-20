@@ -4,7 +4,7 @@ require(TweetScraperR)
 # Abrir una sesión de Twitter sin mostrar la ventana del navegador
 openTwitter(view = FALSE)
 
-# Mostrar la vista actual de Twitter (para depuración)
+# Mostrar la vista actual de Twitter
 twitter$view()
 
 # Cerrar la sesión de Twitter
@@ -13,7 +13,7 @@ closeTwitter()
 # Abrir la línea de tiempo de Twitter sin mostrar la ventana del navegador
 openTimeline(view = FALSE)
 
-# Mostrar la vista actual de la línea de tiempo (para depuración)
+# Mostrar la vista actual de la línea de tiempo
 timeline$view()
 
 # Cerrar la línea de tiempo
@@ -63,9 +63,6 @@ tweets_full <- getTweetsData(
 
 # Cerrar la sesión de Twitter
 closeTwitter()
-
-# Cargar nuevamente la biblioteca TweetScraperR (esto podría ser redundante)
-require(TweetScraperR)
 
 # Realizar una búsqueda completa de tweets con varios parámetros
 getTweetsFullSearch(

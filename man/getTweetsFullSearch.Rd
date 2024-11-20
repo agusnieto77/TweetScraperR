@@ -23,7 +23,8 @@ getTweetsFullSearch(
   until = Sys.Date(),
   xuser = Sys.getenv("USER"),
   xpass = Sys.getenv("PASS"),
-  dir = getwd()
+  dir = getwd(),
+  save = TRUE
 )
 }
 \arguments{
@@ -64,6 +65,8 @@ getTweetsFullSearch(
 \item{xpass}{Cadena de texto. Contraseña para la autenticación en Twitter (por defecto se toma de la variable de entorno PASS).}
 
 \item{dir}{Cadena de texto. Directorio donde se guardarán los resultados (por defecto el directorio de trabajo actual).}
+
+\item{save}{Lógico. Indica si se debe guardar el resultado en un archivo RDS (por defecto TRUE).}
 }
 \value{
 Un tibble con los tweets recolectados, incluyendo las columnas:
@@ -85,7 +88,8 @@ La función primero intenta autenticarse en Twitter utilizando las credenciales 
 Luego, construye una URL de búsqueda basada en los parámetros proporcionados y realiza la búsqueda.
 Los tweets se recolectan iterativamente, scrolleando la página hasta que se alcance el número
 deseado de tweets o se agoten los intentos.
-Los tweets recolectados se procesan para extraer la información relevante y se guardan en un archivo RDS.
+Los tweets recolectados se procesan para extraer la información relevante y, si save es TRUE,
+se guardan en un archivo RDS.
 }
 \note{
 Esta función requiere una conexión a Internet y credenciales válidas de Twitter.
@@ -97,7 +101,18 @@ tweets <- getTweetsFullSearch(
   hashtag = "#medioambiente",
   lan = "es",
   n_tweets = 100,
-  since = Sys.Date() - 30
+  since = Sys.Date() - 30,
+  save = TRUE
+)
+
+# Sin guardar los resultados
+tweets <- getTweetsFullSearch(
+  search_all = "clima cambio",
+  hashtag = "#medioambiente",
+  lan = "es",
+  n_tweets = 100,
+  since = Sys.Date() - 30,
+  save = FALSE
 )
 }
 

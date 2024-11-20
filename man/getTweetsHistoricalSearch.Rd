@@ -13,7 +13,8 @@ getTweetsHistoricalSearch(
   live = TRUE,
   xuser = Sys.getenv("USER"),
   xpass = Sys.getenv("PASS"),
-  dir = getwd()
+  dir = getwd(),
+  save = TRUE
 )
 }
 \arguments{
@@ -27,13 +28,15 @@ getTweetsHistoricalSearch(
 
 \item{until}{Fecha de fin para la búsqueda de tweets (en formato "YYYY-MM-DD"). Por defecto es "2023-10-30".}
 
-\item{live}{Booleano que indica si se deben buscar tweets en tiempo real. Por defecto es TRUE.}
+\item{live}{Booleano que indica si se deben buscar tweets más recientes (TRUE) o destacados (FALSE). Por defecto es TRUE.}
 
 \item{xuser}{Nombre de usuarix de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.}
 
 \item{xpass}{Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.}
 
 \item{dir}{Directorio para guardar el archivo RDS con los tweets recolectados. Por defecto es el directorio de trabajo actual.}
+
+\item{save}{Lógico. Indica si se debe guardar el resultado en un archivo RDS (por defecto TRUE).}
 }
 \value{
 Un tibble que contiene los datos de tweets recuperados, incluyendo la fecha, usuario, contenido del tweet, URL del tweet y fecha de captura.
@@ -54,10 +57,11 @@ La función ahora incluye las siguientes mejoras y características:
 \item Autenticación automática: La función intenta autenticarse automáticamente en Twitter (X) usando las credenciales proporcionadas.
 \item Manejo de errores mejorado: Se han implementado múltiples bloques try-catch para manejar diferentes tipos de errores que pueden ocurrir durante la ejecución.
 \item Reintento automático: En caso de errores de tiempo de espera, la función reintentará automáticamente la operación.
-\item Opción de búsqueda en vivo: Se ha añadido un parámetro \code{live} para permitir la búsqueda de tweets en tiempo real.
+\item Opción de búsqueda en vivo: Se ha añadido un parámetro \code{live} para permitir la búsqueda de tweets más recientes (TRUE) o destacados (FALSE).
 \item Procesamiento de datos mejorado: Se ha mejorado el proceso de extracción y almacenamiento de datos de los tweets.
 \item Límite de intentos: Se ha implementado un límite de intentos para evitar bucles infinitos en caso de problemas persistentes.
 \item Feedback en tiempo real: La función ahora proporciona mensajes informativos sobre el progreso de la recolección de tweets.
+\item Control de guardado: Se ha añadido un parámetro \code{save} para controlar si los resultados se guardan en un archivo RDS.
 }
 
 Nota: Esta función depende de la estructura actual de la página web de Twitter (X). Cambios en la estructura del sitio pueden afectar su funcionamiento.
@@ -65,6 +69,9 @@ Nota: Esta función depende de la estructura actual de la página web de Twitter
 \examples{
 \dontrun{
 getTweetsHistoricalSearch(search = "R Project", n_tweets = 50, since = "2018-10-26", until = "2023-10-30", live = TRUE)
+
+# Sin guardar los resultados
+getTweetsHistoricalSearch(search = "R Project", n_tweets = 50, since = "2018-10-26", until = "2023-10-30", live = TRUE, save = FALSE)
 }
 
 }

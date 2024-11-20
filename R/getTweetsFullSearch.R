@@ -26,6 +26,7 @@
 #' @param xuser Cadena de texto. Nombre de usuario para la autenticación en Twitter (por defecto se toma de la variable de entorno USER).
 #' @param xpass Cadena de texto. Contraseña para la autenticación en Twitter (por defecto se toma de la variable de entorno PASS).
 #' @param dir Cadena de texto. Directorio donde se guardarán los resultados (por defecto el directorio de trabajo actual).
+#' @param save Lógico. Indica si se debe guardar el resultado en un archivo RDS (por defecto TRUE).
 #'
 #' @return Un tibble con los tweets recolectados, incluyendo las columnas:
 #'   \item{art_html}{HTML del artículo del tweet}
@@ -40,7 +41,8 @@
 #' Luego, construye una URL de búsqueda basada en los parámetros proporcionados y realiza la búsqueda.
 #' Los tweets se recolectan iterativamente, scrolleando la página hasta que se alcance el número
 #' deseado de tweets o se agoten los intentos.
-#' Los tweets recolectados se procesan para extraer la información relevante y se guardan en un archivo RDS.
+#' Los tweets recolectados se procesan para extraer la información relevante y, si save es TRUE,
+#' se guardan en un archivo RDS.
 #'
 #' @note
 #' Esta función requiere una conexión a Internet y credenciales válidas de Twitter.
@@ -54,7 +56,18 @@
 #'   hashtag = "#medioambiente",
 #'   lan = "es",
 #'   n_tweets = 100,
-#'   since = Sys.Date() - 30
+#'   since = Sys.Date() - 30,
+#'   save = TRUE
+#' )
+#' 
+#' # Sin guardar los resultados
+#' tweets <- getTweetsFullSearch(
+#'   search_all = "clima cambio",
+#'   hashtag = "#medioambiente",
+#'   lan = "es",
+#'   n_tweets = 100,
+#'   since = Sys.Date() - 30,
+#'   save = FALSE
 #' )
 #' }
 #'
@@ -83,7 +96,8 @@ getTweetsFullSearch <- function(
     until = Sys.Date(),
     xuser = Sys.getenv("USER"),
     xpass = Sys.getenv("PASS"),
-    dir = getwd()
+    dir = getwd(),
+    save = TRUE
 ) {
   success <- FALSE
   while (!success) {
@@ -193,8 +207,14 @@ getTweetsFullSearch <- function(
       }
       tweets_recolectados <- dplyr::distinct(tweets_recolectados, url, .keep_all = TRUE)
       tweets_recolectados <- tweets_recolectados[!is.na(tweets_recolectados$fecha), ]
-      saveRDS(tweets_recolectados, paste0(dir, "/full_search_", "_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
-      cat("Datos procesados y guardados.\n")
+      
+      if (save) {
+        saveRDS(tweets_recolectados, paste0(dir, "/full_search_", "_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
+        cat("Datos procesados y guardados.\n")
+      } else {
+        cat("Datos procesados. No se han guardado en un archivo RDS.\n")
+      }
+      
       cat("Tweets únicos recolectados:", length(tweets_recolectados$url), "\n")
       return(tweets_recolectados)
     } else {

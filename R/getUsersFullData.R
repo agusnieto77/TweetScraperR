@@ -10,18 +10,22 @@
 #' el username, la fecha de creación del perfil, el número de publicaciones, seguidorxs, seguidxs y otros metadatos.
 #' La función maneja posibles errores durante el proceso de recolección de datos, como tiempos de espera prolongados, y 
 #' se asegura de obtener información precisa mediante múltiples intentos si es necesario. Los datos recopilados se 
-#' devuelven en forma de un tibble y se guardan en un archivo RDS para su posterior uso.
+#' devuelven en forma de un tibble y, si se especifica, se guardan en un archivo RDS para su posterior uso.
 #'
 #' @param urls_users Vector de URLs de users de los cuales se desea obtener datos.
 #' @param xuser Nombre de usuarix de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.
 #' @param xpass Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.
 #' @param dir Directorio donde se guardará el archivo RDS con los datos recopilados. Por defecto es el directorio actual.
+#' @param save Lógico. Indica si se debe guardar el resultado en un archivo RDS (por defecto TRUE).
 #' @return Un tibble que contiene los datos de los users recuperados.
 #' @export
 #'
 #' @examples
 #' \dontrun{
 #' getUsersFullData(urls_users = "https://x.com/estacion_erre")
+#' 
+#' # Sin guardar los resultados
+#' getUsersFullData(urls_users = "https://x.com/estacion_erre", save = FALSE)
 #' }
 #'
 #' @importFrom rvest read_html_live html_elements html_text
@@ -34,7 +38,8 @@ getUsersFullData <- function(
     urls_users,
     xuser = Sys.getenv("USER"),
     xpass = Sys.getenv("PASS"),
-    dir = getwd()
+    dir = getwd(),
+    save = TRUE
 ) {
   twitter <- rvest::read_html_live("https://x.com/i/flow/login")
   Sys.sleep(6)
@@ -99,13 +104,19 @@ getUsersFullData <- function(
   
   twitter$session$close()
   
-  # Guardar la base de datos de usuarios recolectados
-  saveRDS(users_db, paste0(dir, "/db_full_users_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
-  
-  # Guardar las URLs fallidas en un archivo
-  if (length(urls_fallidas) > 0) {
-    writeLines(urls_fallidas, paste0(dir, "/urls_fallidas_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".txt"))
+  if (save) {
+    # Guardar la base de datos de usuarios recolectados
+    saveRDS(users_db, paste0(dir, "/db_full_users_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
+    
+    # Guardar las URLs fallidas en un archivo
+    if (length(urls_fallidas) > 0) {
+      writeLines(urls_fallidas, paste0(dir, "/urls_fallidas_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".txt"))
+    }
+    cat("Datos procesados y guardados.\n")
+  } else {
+    cat("Datos procesados. No se han guardado en archivos.\n")
   }
+  
   cat("\nTerminando el proceso.
       \nUsuarixs recuperados:",
       length(users_db$url),

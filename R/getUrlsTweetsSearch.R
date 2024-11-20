@@ -12,7 +12,7 @@
 #' 
 #' La recolección se detiene cuando se ha alcanzado el número especificado de URLs o cuando no se encuentran
 #' nuevas URLs después de varios intentos. Las URLs recolectadas se guardan en un archivo RDS en el directorio
-#' especificado, y también se devuelven como un vector de cadenas con las urls recolectadas.
+#' especificado si el parámetro 'save' es TRUE, y también se devuelven como un vector de cadenas con las urls recolectadas.
 #'
 #' @param search La consulta de búsqueda para usar en la recuperación de tweets. Por defecto es "#RStats".
 #' @param n_urls El número máximo de URLs de tweets a recuperar. Por defecto es 100.
@@ -20,6 +20,7 @@
 #' @param xpass Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.
 #' @param max_retries número máximo de intentos de conexión.
 #' @param dir Directorio de destino de los RDS.
+#' @param save Lógico. Indica si se debe guardar el resultado en un archivo RDS (por defecto TRUE).
 #' 
 #' @return Un vector que contiene las URLs de tweets recuperadas.
 #' @export
@@ -27,6 +28,9 @@
 #' @examples
 #' \dontrun{
 #' getUrlsTweetsSearch(search = "#RStats", n_urls = 200)
+#' 
+#' # Sin guardar los resultados
+#' getUrlsTweetsSearch(search = "#RStats", n_urls = 200, save = FALSE)
 #' }
 #'
 #' @references
@@ -42,7 +46,8 @@ getUrlsTweetsSearch <- function(
     xuser = Sys.getenv("USER"),
     xpass = Sys.getenv("PASS"),
     max_retries = 3,
-    dir = getwd()
+    dir = getwd(),
+    save = TRUE
 ) {
   retry_count <- 0
   success <- FALSE
@@ -103,7 +108,12 @@ getUrlsTweetsSearch <- function(
   }
   if (length(tweets_urls) > 0) {
     tweets_urls <- paste0("https://x.com", tweets_urls)
-    saveRDS(tweets_urls, paste0(dir, "/search_", gsub("#", "hashtag_", search), "_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
+    if (save) {
+      saveRDS(tweets_urls, paste0(dir, "/search_", gsub("#", "hashtag_", search), "_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
+      cat("URLs procesadas y guardadas.\n")
+    } else {
+      cat("URLs procesadas. No se han guardado en un archivo RDS.\n")
+    }
   } else {
     warning("No se encontraron URLs de tweets.")
   }

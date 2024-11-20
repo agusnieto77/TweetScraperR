@@ -5,11 +5,12 @@
 \title{Get Tweets URLs Replies}
 \usage{
 getUrlsTweetsReplies(
-  url,
+  url = "https://x.com/Picanumeros/status/1610715405705789442",
   n_urls = 100,
   xuser = Sys.getenv("USER"),
   xpass = Sys.getenv("PASS"),
-  dir = getwd()
+  dir = getwd(),
+  save = TRUE
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ getUrlsTweetsReplies(
 \item{xpass}{Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.}
 
 \item{dir}{Directorio donde se guardará el archivo RDS con las URLs recolectadas. Por defecto es el directorio de trabajo actual.}
+
+\item{save}{Lógico. Indica si se debe guardar el resultado en un archivo RDS (por defecto TRUE).}
 }
 \value{
 Un vector que contiene las URLs de las respuestas al tweet especificado.
@@ -41,7 +44,7 @@ El proceso incluye:
 \item Continuar scrolling y recolectando URLs hasta alcanzar el número deseado o no encontrar nuevas URLs.
 }
 
-La función guarda las URLs recolectadas en un archivo RDS en el directorio especificado
+La función guarda las URLs recolectadas en un archivo RDS en el directorio especificado si el parámetro 'save' es TRUE,
 y las devuelve como un vector de cadenas.
 }
 \note{
@@ -50,6 +53,9 @@ Esta función utiliza web scraping y puede ser sensible a cambios en la estructu
 \examples{
 \dontrun{
 getUrlsTweetsReplies(url = "https://x.com/Picanumeros/status/1610715405705789442", n_urls = 130)
+
+# Sin guardar los resultados
+getUrlsTweetsReplies(url = "https://x.com/Picanumeros/status/1610715405705789442", n_urls = 130, save = FALSE)
 }
 
 }

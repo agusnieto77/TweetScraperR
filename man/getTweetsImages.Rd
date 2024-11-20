@@ -4,33 +4,44 @@
 \alias{getTweetsImages}
 \title{Get Tweets Images}
 \usage{
-getTweetsImages(urls, directorio = "img_x")
+getTweetsImages(urls, directorio = "img_x", save = TRUE)
 }
 \arguments{
 \item{urls}{Lista o vector de URLs de imágenes que se desea descargar.}
 
 \item{directorio}{(opcional) Nombre del directorio donde se guardarán las imágenes.
 El valor predeterminado es "img_x". Si el directorio no existe, la función lo crea.}
+
+\item{save}{Lógico. Indica si se deben guardar las imágenes en el directorio especificado (por defecto TRUE).}
+}
+\value{
+Una lista invisible de las rutas de archivo donde se guardaron las imágenes,
+o NULL si save = FALSE.
 }
 \description{
 \if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}
 
 Esta función toma una lista de URLs de imágenes extraídas de tweets, las descarga y
-las guarda en un directorio específico. Si el directorio no existe, se creará.
+opcionalmente las guarda en un directorio específico. Si el directorio no existe, se creará.
 }
 \details{
 La función primero asegura que el directorio donde se guardarán las
-imágenes exista; si no es así, lo crea. Luego, recorre cada URL proporcionada,
+imágenes exista; si no es así, lo crea (si save = TRUE). Luego, recorre cada URL proporcionada,
 extrae un nombre de archivo a partir del URL, y descarga la imagen en formato
 JPG usando la librería \code{httr}.
 
 El nombre de archivo se genera a partir del segmento de la URL que sigue a "media/"
 y se le agrega la extensión ".jpg".
+
+Si save = FALSE, la función descargará las imágenes pero no las guardará en el disco.
 }
 \examples{
 \dontrun{
 urls <- c("https://x.com/AAS_Sociologia/status/1838907832927768645", "https://x.com/AAS_Sociologia/status/1841819590587822081")
 getTweetsImages(urls)
+
+# Sin guardar las imágenes
+getTweetsImages(urls, save = FALSE)
 }
 
 }

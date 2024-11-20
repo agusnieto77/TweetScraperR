@@ -12,7 +12,7 @@
 #'  definido por los parámetros `since` y `until`. Las URLs de los tweets encontrados se recogen 
 #'  hasta alcanzar el número máximo de tweets especificado por el parámetro `n_tweets` o hasta que no 
 #'  se encuentren nuevos tweets en varios intentos consecutivos. Los resultados se guardan en un 
-#'  archivo con formato `.rds` en el directorio especificado por el parámetro `dir`.
+#'  archivo con formato `.rds` en el directorio especificado por el parámetro `dir` si `save` es TRUE.
 #' 
 #' @param hashtag Hashtag de Twitter del cual se desean recuperar los tweets históricos. Por defecto es "#rstats".
 #' @param timeout Tiempo de espera entre solicitudes en segundos. Por defecto es 10.
@@ -22,12 +22,16 @@
 #' @param xuser Nombre de usuarix de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.
 #' @param xpass Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.
 #' @param dir Directorio para guardar el archivo RDS con los datos de los tweets recolectados. Por defecto es el directorio de trabajo actual.
+#' @param save Lógico. Indica si se debe guardar el resultado en un archivo RDS (por defecto TRUE).
 #' @return Un tibble que contiene los datos de tweets recuperados, junto con la fecha, usuario, contenido del tweet y URL del tweet.
 #' @export
 #'
 #' @examples
 #' \dontrun{
 #' getTweetsHistoricalHashtag(hashtag = "#rstats", n_tweets = 150, since = "2018-10-26", until = "2018-10-30")
+#' 
+#' # Sin guardar los resultados
+#' getTweetsHistoricalHashtag(hashtag = "#rstats", n_tweets = 150, since = "2018-10-26", until = "2018-10-30", save = FALSE)
 #' }
 #'
 #' @references
@@ -48,7 +52,8 @@ getTweetsHistoricalHashtag <- function(
     until = "2018-10-30",
     xuser = Sys.getenv("USER"),
     xpass = Sys.getenv("PASS"),
-    dir = getwd()
+    dir = getwd(),
+    save = TRUE
 ) {
   success <- FALSE
   while (!success) {
@@ -148,8 +153,12 @@ getTweetsHistoricalHashtag <- function(
       }
       tweets_recolectados <- dplyr::distinct(tweets_recolectados, url, .keep_all = TRUE)
       tweets_recolectados <- tweets_recolectados[!is.na(tweets_recolectados$fecha), ]
-      saveRDS(tweets_recolectados, paste0(dir, "/historical_hashtag_", gsub("#", "", hashtag), "_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
-      cat("Datos procesados y guardados.\n")
+      if (save) {
+        saveRDS(tweets_recolectados, paste0(dir, "/historical_hashtag_", gsub("#", "", hashtag), "_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
+        cat("Datos procesados y guardados.\n")
+      } else {
+        cat("Datos procesados. No se han guardado en un archivo RDS.\n")
+      }
       cat("Tweets únicos recolectados:", length(tweets_recolectados$url), "\n")
       return(tweets_recolectados)
     } else {

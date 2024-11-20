@@ -11,7 +11,8 @@ getTweetsTimeline(
   xuser = Sys.getenv("USER"),
   xpass = Sys.getenv("PASS"),
   mailx = "tweetscraperr@gmail.com",
-  dir = getwd()
+  dir = getwd(),
+  save = TRUE
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ getTweetsTimeline(
 \item{mailx}{Dirección de e-mail para la autenticación. Tiene que ser la misma que la usada en Twitter/X.}
 
 \item{dir}{El directorio donde se guardará el archivo de salida. Por defecto es el directorio de trabajo actual.}
+
+\item{save}{Lógico. Indica si se debe guardar el resultado en un archivo RDS (por defecto TRUE).}
 }
 \value{
 Un tibble que contiene los tweets obtenidos.
@@ -44,6 +47,9 @@ especificado o después de alcanzar los 600 tweets con el desplazamiento (scroll
 \examples{
 \dontrun{
 getTweetsTimeline(username = "rstatstweet", n_tweets = 200)
+
+# Sin guardar los resultados
+getTweetsTimeline(username = "rstatstweet", n_tweets = 200, save = FALSE)
 }
 
 }

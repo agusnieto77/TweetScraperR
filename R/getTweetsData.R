@@ -11,13 +11,14 @@
 #' las respuestas, reposts, me gusta, URLs asociadas, y otra información relevante.
 #' La función también maneja tweets borrados y errores durante el proceso de recolección, y 
 #' clasifica las URLs de los tweets en tres categorías: tweets recuperados, tweets borrados, y 
-#' tweets que necesitan ser reprocesados. Finalmente, los datos recopilados se guardan en un 
-#' archivo RDS en el directorio especificado por le usuarix.
+#' tweets que necesitan ser reprocesados. Si el parámetro 'save' es TRUE, los datos recopilados 
+#' se guardan en un archivo RDS en el directorio especificado por le usuarix.
 #'
 #' @param urls_tweets Vector de URLs de tweets de los cuales se desea obtener datos.
 #' @param xuser Nombre de usuarix de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.
 #' @param xpass Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.
 #' @param dir directorio para guardar el RDS con las URLs recolectadas
+#' @param save Logical. Indica si se debe guardar el resultado en un archivo RDS. Por defecto es TRUE.
 #' @return Un tibble que contiene los datos de los tweets recuperados.
 #' 
 #' \itemize{
@@ -32,6 +33,7 @@
 #' @examples
 #' \dontrun{
 #' getTweetsData(urls_tweets = "https://twitter.com/estacion_erre/status/1788929978811232537")
+#' getTweetsData(urls_tweets = "https://twitter.com/estacion_erre/status/1788929978811232537", save = FALSE)
 #' }
 #'
 #' @importFrom rvest read_html_live html_elements html_element html_attr html_text
@@ -44,7 +46,8 @@ getTweetsData <- function(
     urls_tweets,
     xuser = Sys.getenv("USER"),
     xpass = Sys.getenv("PASS"),
-    dir = getwd()
+    dir = getwd(),
+    save = TRUE
 ) {
   success <- FALSE
   while (!success) {
@@ -160,11 +163,18 @@ getTweetsData <- function(
       tweets_db_c <- tweets_db[!is.na(tweets_db$fecha), ]
       urls_tweets_r <- setdiff(urls_tweets, borrados)
       urls_tweets_n <- setdiff(urls_tweets_r, tweets_db_c$url)
-      saveRDS(list(tweets_recuperados = tweets_db_c, 
-                   tweets_borrados_o_inaccesibles = borrados, 
-                   tweets_a_reprocesar = urls_tweets_n,
-                   errores = errores),
-              paste0(dir, "/tweets_data_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
+      
+      if (save) {
+        saveRDS(list(tweets_recuperados = tweets_db_c, 
+                     tweets_borrados_o_inaccesibles = borrados, 
+                     tweets_a_reprocesar = urls_tweets_n,
+                     errores = errores),
+                paste0(dir, "/tweets_data_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
+        cat("\nLos datos de los tweets se han guardado en un archivo RDS.\n")
+      } else {
+        cat("\nLos datos de los tweets no se han guardado en un archivo RDS.\n")
+      }
+      
       cat("\nTerminando el proceso.
       \nTweets recuperados:",
           length(tweets_db_c$url),
@@ -178,10 +188,17 @@ getTweetsData <- function(
       return(tweets_db_c)
     } else {
       urls_tweets_n <- setdiff(urls_tweets, borrados)
-      saveRDS(list(tweets_borrados = borrados, 
-                   tweets_a_reprocesar = urls_tweets_n,
-                   errores = errores),
-              paste0(dir, "/tweets_data_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
+      
+      if (save) {
+        saveRDS(list(tweets_borrados = borrados, 
+                     tweets_a_reprocesar = urls_tweets_n,
+                     errores = errores),
+                paste0(dir, "/tweets_data_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
+        cat("\nLos datos de los tweets se han guardado en un archivo RDS.\n")
+      } else {
+        cat("\nLos datos de los tweets no se han guardado en un archivo RDS.\n")
+      }
+      
       cat("\nTerminando el proceso.
       \nTweets recuperados:",
           0,

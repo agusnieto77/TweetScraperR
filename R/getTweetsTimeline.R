@@ -17,12 +17,16 @@
 #' @param xpass Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.
 #' @param mailx Dirección de e-mail para la autenticación. Tiene que ser la misma que la usada en Twitter/X.
 #' @param dir El directorio donde se guardará el archivo de salida. Por defecto es el directorio de trabajo actual.
+#' @param save Lógico. Indica si se debe guardar el resultado en un archivo RDS (por defecto TRUE).
 #' @return Un tibble que contiene los tweets obtenidos.
 #' @export
 #'
 #' @examples
 #' \dontrun{
 #' getTweetsTimeline(username = "rstatstweet", n_tweets = 200)
+#' 
+#' # Sin guardar los resultados
+#' getTweetsTimeline(username = "rstatstweet", n_tweets = 200, save = FALSE)
 #' }
 #'
 #' @references
@@ -42,7 +46,8 @@ getTweetsTimeline <- function(
     xuser = Sys.getenv("USER"),
     xpass = Sys.getenv("PASS"),
     mailx = "tweetscraperr@gmail.com",
-    dir = getwd()
+    dir = getwd(),
+    save = TRUE
 ) {
   TweetScraperR::openTwitter(view = view)
   Sys.sleep(3)
@@ -72,7 +77,7 @@ getTweetsTimeline <- function(
   tweet <- "#react-root > div > div > div.css-175oi2r.r-1f2l425.r-13qz1uu.r-417010.r-18u37iz > main > div > div > div > div > div > div:nth-child(3) > div > div > section > div > div > div > div > div > article > div > div > div.css-175oi2r.r-18u37iz > div.css-175oi2r.r-1iusvr4.r-16y2uox.r-1777fci.r-kzbkwu > div:nth-child(2)"
   url_tweet <- "div.css-175oi2r.r-18u37iz.r-1wbh5a2.r-1ez5h0i > div > div.css-175oi2r.r-18u37iz.r-1q142lx > a"
   user2 <- "div.css-175oi2r.r-18u37iz.r-1wbh5a2.r-1ez5h0i > div > div.css-175oi2r.r-18u37iz.r-1q142lx > div > a"
-
+  
   timeline <- rvest::read_html_live(paste0("https://x.com/", username))
   
   assign("timeline", timeline, envir = .GlobalEnv)
@@ -82,7 +87,7 @@ getTweetsTimeline <- function(
   } else {
     timeline
   }
-
+  
   Sys.sleep(3)
   tweets_udb <- tibble::tibble()
   i <- 1
@@ -125,6 +130,11 @@ getTweetsTimeline <- function(
   tweets_udb$is_original <- tweets_udb$usern == paste0("@", username)
   tweets_udb$is_retweet <- !is.na(tweets_udb$usern) & tweets_udb$usern != paste0("@", username)
   tweets_udb$is_cita <- is.na(tweets_udb$usern)
-  saveRDS(tweets_udb, paste0(dir, "/timeline_", username, "_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
+  if (save) {
+    saveRDS(tweets_udb, paste0(dir, "/timeline_", username, "_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
+    cat("Datos procesados y guardados.\n")
+  } else {
+    cat("Datos procesados. No se han guardado en un archivo RDS.\n")
+  }
   return(tweets_udb)
 }

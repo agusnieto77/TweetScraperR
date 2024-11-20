@@ -15,12 +15,16 @@
 #' @param xuser Nombre de usuarix de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.
 #' @param xpass Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.
 #' @param dir Directorio donde se guardará el archivo de salida. Por defecto es el directorio de trabajo actual.
+#' @param save Lógico. Indica si se debe guardar el resultado en un archivo RDS (por defecto TRUE).
 #' @return Un vector que contiene las URLs de tweets obtenidas.
 #' @export
 #'
 #' @examples
 #' \dontrun{
 #' getUrlsTweetsTimeline(username = "rstatstweet", n_urls = 200)
+#' 
+#' # Sin guardar los resultados
+#' getUrlsTweetsTimeline(username = "rstatstweet", n_urls = 200, save = FALSE)
 #' }
 #'
 #' @importFrom rvest read_html_live html_elements html_attr
@@ -31,7 +35,8 @@ getUrlsTweetsTimeline <- function(
     n_urls = 100,
     xuser = Sys.getenv("USER"),
     xpass = Sys.getenv("PASS"),
-    dir = getwd()
+    dir = getwd(),
+    save = TRUE
 ) {
   twitter <- rvest::read_html_live("https://x.com/i/flow/login")
   Sys.sleep(3)
@@ -73,6 +78,13 @@ getUrlsTweetsTimeline <- function(
   twitter$session$close()
   usernameok$session$close()
   tweets_urls <- paste0("https://x.com", tweets_urls)
-  saveRDS(tweets_urls, file.path(dir, paste0("urls_", username, "_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds")))
+  
+  if (save) {
+    saveRDS(tweets_urls, file.path(dir, paste0("urls_", username, "_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds")))
+    cat("URLs procesadas y guardadas.\n")
+  } else {
+    cat("URLs procesadas. No se han guardado en un archivo RDS.\n")
+  }
+  
   return(tweets_urls)
 }

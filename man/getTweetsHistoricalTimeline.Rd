@@ -12,7 +12,8 @@ getTweetsHistoricalTimeline(
   until = "2018-10-30",
   xuser = Sys.getenv("USER"),
   xpass = Sys.getenv("PASS"),
-  dir = getwd()
+  dir = getwd(),
+  save = TRUE
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ getTweetsHistoricalTimeline(
 \item{xpass}{Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.}
 
 \item{dir}{Directorio para guardar el archivo RDS con las tweets recolectados. Por defecto es el directorio de trabajo actual.}
+
+\item{save}{Lógico. Indica si se debe guardar el resultado en un archivo RDS (por defecto TRUE).}
 }
 \value{
 Un tibble que contiene los datos de tweets recuperados, junto con la fecha, usuario, contenido del tweet y URL del tweet.
@@ -47,6 +50,9 @@ captura tweets de otras cuentas que han sido retuiteados por le usuarix especifi
 \examples{
 \dontrun{
 getTweetsHistoricalTimeline(username = "rstatstweet", n_tweets = 50, since = "2018-10-26", until = "2023-10-30")
+
+# Sin guardar los resultados
+getTweetsHistoricalTimeline(username = "rstatstweet", n_tweets = 50, since = "2018-10-26", until = "2023-10-30", save = FALSE)
 }
 
 }

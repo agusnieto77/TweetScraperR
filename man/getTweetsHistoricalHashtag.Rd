@@ -12,7 +12,8 @@ getTweetsHistoricalHashtag(
   until = "2018-10-30",
   xuser = Sys.getenv("USER"),
   xpass = Sys.getenv("PASS"),
-  dir = getwd()
+  dir = getwd(),
+  save = TRUE
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ getTweetsHistoricalHashtag(
 \item{xpass}{Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.}
 
 \item{dir}{Directorio para guardar el archivo RDS con los datos de los tweets recolectados. Por defecto es el directorio de trabajo actual.}
+
+\item{save}{Lógico. Indica si se debe guardar el resultado en un archivo RDS (por defecto TRUE).}
 }
 \value{
 Un tibble que contiene los datos de tweets recuperados, junto con la fecha, usuario, contenido del tweet y URL del tweet.
@@ -46,11 +49,14 @@ una búsqueda de tweets que contienen el hashtag especificado dentro del rango d
 definido por los parámetros \code{since} y \code{until}. Las URLs de los tweets encontrados se recogen
 hasta alcanzar el número máximo de tweets especificado por el parámetro \code{n_tweets} o hasta que no
 se encuentren nuevos tweets en varios intentos consecutivos. Los resultados se guardan en un
-archivo con formato \code{.rds} en el directorio especificado por el parámetro \code{dir}.
+archivo con formato \code{.rds} en el directorio especificado por el parámetro \code{dir} si \code{save} es TRUE.
 }
 \examples{
 \dontrun{
 getTweetsHistoricalHashtag(hashtag = "#rstats", n_tweets = 150, since = "2018-10-26", until = "2018-10-30")
+
+# Sin guardar los resultados
+getTweetsHistoricalHashtag(hashtag = "#rstats", n_tweets = 150, since = "2018-10-26", until = "2018-10-30", save = FALSE)
 }
 
 }

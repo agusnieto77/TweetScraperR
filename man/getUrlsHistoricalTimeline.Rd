@@ -12,7 +12,8 @@ getUrlsHistoricalTimeline(
   until = "2018-10-30",
   xuser = Sys.getenv("USER"),
   xpass = Sys.getenv("PASS"),
-  dir = getwd()
+  dir = getwd(),
+  save = TRUE
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ getUrlsHistoricalTimeline(
 \item{xpass}{Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.}
 
 \item{dir}{Directorio para guardar el archivo RDS con las URLs recolectadas. Por defecto es el directorio de trabajo actual.}
+
+\item{save}{Lógico. Indica si se debe guardar el resultado en un archivo RDS (por defecto TRUE).}
 }
 \value{
 Un vector que contiene las URLs de tweets recuperadas.
@@ -46,11 +49,15 @@ realiza una búsqueda de tweets publicados por le usuarix especificadx dentro de
 de fechas definido por los parámetros \code{since} y \code{until}. Las URLs de los tweets encontrados
 se recogen hasta alcanzar el número máximo de URLs especificado por el parámetro \code{n_urls} o
 hasta que no se encuentren nuevas URLs en varios intentos consecutivos. Los resultados se
-guardan en un archivo con formato \code{.rds} en el directorio especificado por el parámetro \code{dir}.
+guardan en un archivo con formato \code{.rds} en el directorio especificado por el parámetro \code{dir}
+si el parámetro \code{save} es TRUE.
 }
 \examples{
 \dontrun{
 getUrlsHistoricalTimeline(username = "rstatstweet", n_urls = 50, since = "2018-10-26", until = "2018-10-30")
+
+# Sin guardar los resultados
+getUrlsHistoricalTimeline(username = "rstatstweet", n_urls = 50, since = "2018-10-26", until = "2018-10-30", save = FALSE)
 }
 
 }

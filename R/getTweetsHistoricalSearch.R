@@ -16,15 +16,19 @@
 #' @param n_tweets El número máximo de tweets a recuperar. Por defecto es 100.
 #' @param since Fecha de inicio para la búsqueda de tweets (en formato "YYYY-MM-DD"). Por defecto es "2018-10-26".
 #' @param until Fecha de fin para la búsqueda de tweets (en formato "YYYY-MM-DD"). Por defecto es "2023-10-30".
-#' @param live Booleano que indica si se deben buscar tweets en tiempo real. Por defecto es TRUE.
+#' @param live Booleano que indica si se deben buscar tweets más recientes (TRUE) o destacados (FALSE). Por defecto es TRUE.
 #' @param xuser Nombre de usuarix de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.
 #' @param xpass Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.
 #' @param dir Directorio para guardar el archivo RDS con los tweets recolectados. Por defecto es el directorio de trabajo actual.
+#' @param save Lógico. Indica si se debe guardar el resultado en un archivo RDS (por defecto TRUE).
 #' @return Un tibble que contiene los datos de tweets recuperados, incluyendo la fecha, usuario, contenido del tweet, URL del tweet y fecha de captura.
 #'
 #' @examples
 #' \dontrun{
 #' getTweetsHistoricalSearch(search = "R Project", n_tweets = 50, since = "2018-10-26", until = "2023-10-30", live = TRUE)
+#' 
+#' # Sin guardar los resultados
+#' getTweetsHistoricalSearch(search = "R Project", n_tweets = 50, since = "2018-10-26", until = "2023-10-30", live = TRUE, save = FALSE)
 #' }
 #'
 #' @references
@@ -42,10 +46,11 @@
 #' 1. Autenticación automática: La función intenta autenticarse automáticamente en Twitter (X) usando las credenciales proporcionadas.
 #' 2. Manejo de errores mejorado: Se han implementado múltiples bloques try-catch para manejar diferentes tipos de errores que pueden ocurrir durante la ejecución.
 #' 3. Reintento automático: En caso de errores de tiempo de espera, la función reintentará automáticamente la operación.
-#' 4. Opción de búsqueda en vivo: Se ha añadido un parámetro `live` para permitir la búsqueda de tweets en tiempo real.
+#' 4. Opción de búsqueda en vivo: Se ha añadido un parámetro `live` para permitir la búsqueda de tweets más recientes (TRUE) o destacados (FALSE).
 #' 5. Procesamiento de datos mejorado: Se ha mejorado el proceso de extracción y almacenamiento de datos de los tweets.
 #' 6. Límite de intentos: Se ha implementado un límite de intentos para evitar bucles infinitos en caso de problemas persistentes.
 #' 7. Feedback en tiempo real: La función ahora proporciona mensajes informativos sobre el progreso de la recolección de tweets.
+#' 8. Control de guardado: Se ha añadido un parámetro `save` para controlar si los resultados se guardan en un archivo RDS.
 #' 
 #' Nota: Esta función depende de la estructura actual de la página web de Twitter (X). Cambios en la estructura del sitio pueden afectar su funcionamiento.
 #' 
@@ -61,7 +66,8 @@ getTweetsHistoricalSearch <- function(
     live = TRUE,
     xuser = Sys.getenv("USER"),
     xpass = Sys.getenv("PASS"),
-    dir = getwd()
+    dir = getwd(),
+    save = TRUE
 ) {
   success <- FALSE
   while (!success) {
@@ -99,7 +105,7 @@ getTweetsHistoricalSearch <- function(
     term_search <- if(live) {
       paste0("https://x.com/search?f=live&q=", search, "%20since%3A", since, "%20until%3A", until, "&src=typed_query")
     } else {
-      paste0("https://x.com/search?&q=", search, "%20since%3A", since, "%20until%3A", until, "&src=typed_query")
+      paste0("https://x.com/search?f=top&q=", search, "%20since%3A", since, "%20until%3A", until, "&src=typed_query")
     }
     success3 <- FALSE
     while (!success3) {
@@ -171,8 +177,12 @@ getTweetsHistoricalSearch <- function(
       }
       tweets_recolectados <- dplyr::distinct(tweets_recolectados, url, .keep_all = TRUE)
       tweets_recolectados <- tweets_recolectados[!is.na(tweets_recolectados$fecha), ]
-      saveRDS(tweets_recolectados, paste0(dir, "/historical_search_", gsub("\\s", "_", search), "_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
-      cat("Datos procesados y guardados.\n")
+      if (save) {
+        saveRDS(tweets_recolectados, paste0(dir, "/historical_search_", gsub("\\s", "_", search), "_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
+        cat("Datos procesados y guardados.\n")
+      } else {
+        cat("Datos procesados. No se han guardado en un archivo RDS.\n")
+      }
       cat("Tweets únicos recolectados:", length(tweets_recolectados$url), "\n")
       return(tweets_recolectados)
     } else {

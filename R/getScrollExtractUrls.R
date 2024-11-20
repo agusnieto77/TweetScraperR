@@ -12,6 +12,7 @@
 #' @param n_tweets Numeric. El número máximo de tweets a extraer. Por defecto es 100.
 #' @param dir Character. El directorio donde se guardará el archivo RDS con los tweets extraídos.
 #'             Por defecto es el directorio de trabajo actual.
+#' @param save Logical. Indica si se debe guardar el resultado en un archivo RDS. Por defecto es TRUE.
 #'
 #' @return Un vector con las urls extraídas
 #'
@@ -21,7 +22,7 @@
 #' 2. Desplaza la página hacia abajo para cargar más tweets.
 #' 3. Extrae las urls de los tweets visibles.
 #' 4. Continúa el proceso hasta alcanzar el número deseado de urls o hasta que no se carguen más tweets nuevos.
-#' 5. Guarda las urls extraídas en un archivo RDS en el directorio especificado.
+#' 5. Si save es TRUE, guarda las urls extraídas en un archivo RDS en el directorio especificado.
 #'
 #' La función utiliza selectores CSS específicos para extraer la url de los tweets.
 #' Si la extracción se detiene antes de alcanzar el número deseado de tweets, puede ser debido a
@@ -36,8 +37,11 @@
 #' # Primero, abrir una línea de tiempo
 #' openTimeline("rstatstweet")
 #' 
-#' # Luego, extraer tweets
-#' urls_extraidas <- getScrollExtractUrls(timeline, "rstatstweet", n_tweets = 200)
+#' # Luego, extraer tweets y guardar el resultado
+#' urls_extraidas <- getScrollExtractUrls(timeline, "rstatstweet", n_tweets = 200, save = TRUE)
+#' 
+#' # Extraer tweets sin guardar el resultado
+#' urls_extraidas <- getScrollExtractUrls(timeline, "rstatstweet", n_tweets = 200, save = FALSE)
 #' 
 #' # Cerrar la línea de tiempo después de la extracción
 #' closeTimeline()
@@ -51,7 +55,12 @@
 #'
 #' @export
 #' 
-getScrollExtractUrls <- function(objeto = timeline, username = "rstatstweet", n_tweets = 100, dir = getwd()) {
+
+getScrollExtractUrls <- function(objeto = timeline, 
+                                 username = "rstatstweet", 
+                                 n_tweets = 100, 
+                                 dir = getwd(), 
+                                 save = TRUE) {
   fech <- "div > div > div > a > time"
   user1 <- "div.css-175oi2r.r-18u37iz.r-1wbh5a2.r-1ez5h0i > div > div.css-175oi2r.r-1wbh5a2.r-dnmrzs > a > div > span"
   tweet <- "#react-root > div > div > div.css-175oi2r.r-1f2l425.r-13qz1uu.r-417010.r-18u37iz > main > div > div > div > div > div > div:nth-child(3) > div > div > section > div > div > div > div > div > article > div > div > div.css-175oi2r.r-18u37iz > div.css-175oi2r.r-1iusvr4.r-16y2uox.r-1777fci.r-kzbkwu > div:nth-child(2)"
@@ -88,6 +97,13 @@ getScrollExtractUrls <- function(objeto = timeline, username = "rstatstweet", n_
     Sys.sleep(2.5)
   }
   tweets_udb <- paste0("https://x.com", tweets_udb)
-  saveRDS(tweets_udb, paste0(dir, "/", nom_ob, "_", username, "_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
+  
+  if (save) {
+    saveRDS(tweets_udb, paste0(dir, "/", nom_ob, "_", username, "_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
+    cat("Los tweets se han guardado en un archivo RDS.\n")
+  } else {
+    cat("Los tweets no se han guardado en un archivo RDS.\n")
+  }
+  
   return(tweets_udb)
 }

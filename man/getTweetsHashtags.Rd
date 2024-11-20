@@ -7,7 +7,7 @@
 getTweetsHashtags(df)
 }
 \arguments{
-\item{df}{Un dataframe que contiene una columna 'texto' con el contenido de los tweets.}
+\item{df}{Un dataframe que contiene una columna 'texto' o 'tweet' con el contenido de los tweets.}
 }
 \value{
 Un dataframe con una nueva columna 'hashtags' que contiene una lista de hashtags para cada tweet.
@@ -16,10 +16,13 @@ Un dataframe con una nueva columna 'hashtags' que contiene una lista de hashtags
 \if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}
 
 Esta función toma un dataframe de tweets y extrae todos los hashtags
-del campo 'texto', añadiéndolos como una nueva columna al dataframe.
+del campo 'texto' o 'tweet', añadiéndolos como una nueva columna al dataframe.
 }
 \examples{
-df <- data.frame(texto = c("Este es un #tweet con #hashtags", "Este no tiene hashtags", "Otro #ejemplo"))
-getTweetsHashtags(df)
+df1 <- data.frame(texto = c("Este es un #tweet con #hashtags", "Este no tiene hashtags", "Otro #ejemplo"))
+getTweetsHashtags(df1)
+
+df2 <- data.frame(tweet = c("Este es un #tweet con #hashtags", "Este no tiene hashtags", "Otro #ejemplo"))
+getTweetsHashtags(df2)
 
 }

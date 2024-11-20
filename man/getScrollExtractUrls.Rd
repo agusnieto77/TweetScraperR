@@ -8,7 +8,8 @@ getScrollExtractUrls(
   objeto = timeline,
   username = "rstatstweet",
   n_tweets = 100,
-  dir = getwd()
+  dir = getwd(),
+  save = TRUE
 )
 }
 \arguments{
@@ -20,6 +21,8 @@ getScrollExtractUrls(
 
 \item{dir}{Character. El directorio donde se guardará el archivo RDS con los tweets extraídos.
 Por defecto es el directorio de trabajo actual.}
+
+\item{save}{Logical. Indica si se debe guardar el resultado en un archivo RDS. Por defecto es TRUE.}
 }
 \value{
 Un vector con las urls extraídas
@@ -37,7 +40,7 @@ La función realiza las siguientes acciones:
 \item Desplaza la página hacia abajo para cargar más tweets.
 \item Extrae las urls de los tweets visibles.
 \item Continúa el proceso hasta alcanzar el número deseado de urls o hasta que no se carguen más tweets nuevos.
-\item Guarda las urls extraídas en un archivo RDS en el directorio especificado.
+\item Si save es TRUE, guarda las urls extraídas en un archivo RDS en el directorio especificado.
 }
 
 La función utiliza selectores CSS específicos para extraer la url de los tweets.
@@ -53,8 +56,11 @@ utilizando la función \code{openTimeline()} u otra función similar.
 # Primero, abrir una línea de tiempo
 openTimeline("rstatstweet")
 
-# Luego, extraer tweets
-urls_extraidas <- getScrollExtractUrls(timeline, "rstatstweet", n_tweets = 200)
+# Luego, extraer tweets y guardar el resultado
+urls_extraidas <- getScrollExtractUrls(timeline, "rstatstweet", n_tweets = 200, save = TRUE)
+
+# Extraer tweets sin guardar el resultado
+urls_extraidas <- getScrollExtractUrls(timeline, "rstatstweet", n_tweets = 200, save = FALSE)
 
 # Cerrar la línea de tiempo después de la extracción
 closeTimeline()

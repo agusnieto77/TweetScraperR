@@ -18,12 +18,16 @@
 #' @param xuser Nombre de usuarix de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.
 #' @param xpass Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.
 #' @param dir Directorio para guardar el archivo RDS con las tweets recolectados. Por defecto es el directorio de trabajo actual.
+#' @param save Lógico. Indica si se debe guardar el resultado en un archivo RDS (por defecto TRUE).
 #' @return Un tibble que contiene los datos de tweets recuperados, junto con la fecha, usuario, contenido del tweet y URL del tweet.
 #' @export
 #'
 #' @examples
 #' \dontrun{
 #' getTweetsHistoricalTimeline(username = "rstatstweet", n_tweets = 50, since = "2018-10-26", until = "2023-10-30")
+#' 
+#' # Sin guardar los resultados
+#' getTweetsHistoricalTimeline(username = "rstatstweet", n_tweets = 50, since = "2018-10-26", until = "2023-10-30", save = FALSE)
 #' }
 #'
 #' @references
@@ -44,7 +48,8 @@ getTweetsHistoricalTimeline <- function(
     until = "2018-10-30",
     xuser = Sys.getenv("USER"),
     xpass = Sys.getenv("PASS"),
-    dir = getwd()
+    dir = getwd(),
+    save = TRUE
 ) {
   success <- FALSE
   while (!success) {
@@ -145,8 +150,12 @@ getTweetsHistoricalTimeline <- function(
       }
       tweets_recolectados <- dplyr::distinct(tweets_recolectados, url, .keep_all = TRUE)
       tweets_recolectados <- tweets_recolectados[!is.na(tweets_recolectados$fecha), ]
-      saveRDS(tweets_recolectados, paste0(dir, "/historical_timeline_", username, "_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
-      cat("Datos procesados y guardados.\n")
+      if (save) {
+        saveRDS(tweets_recolectados, paste0(dir, "/historical_timeline_", username, "_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
+        cat("Datos procesados y guardados.\n")
+      } else {
+        cat("Datos procesados. No se han guardado en un archivo RDS.\n")
+      }
       cat("Tweets únicos recolectados:", length(tweets_recolectados$url), "\n")
       return(tweets_recolectados)
     } else {

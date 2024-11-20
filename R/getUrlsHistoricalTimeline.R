@@ -12,7 +12,8 @@
 #' de fechas definido por los parámetros `since` y `until`. Las URLs de los tweets encontrados 
 #' se recogen hasta alcanzar el número máximo de URLs especificado por el parámetro `n_urls` o 
 #' hasta que no se encuentren nuevas URLs en varios intentos consecutivos. Los resultados se 
-#' guardan en un archivo con formato `.rds` en el directorio especificado por el parámetro `dir`.
+#' guardan en un archivo con formato `.rds` en el directorio especificado por el parámetro `dir`
+#' si el parámetro `save` es TRUE.
 #' 
 #' @param username Nombre de usuarix de Twitter del que se desean recuperar los tweets. Por defecto es "rstatstweet".
 #' @param timeout Tiempo de espera entre solicitudes en segundos. Por defecto es 10.
@@ -22,12 +23,16 @@
 #' @param xuser Nombre de usuarix de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.
 #' @param xpass Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.
 #' @param dir Directorio para guardar el archivo RDS con las URLs recolectadas. Por defecto es el directorio de trabajo actual.
+#' @param save Lógico. Indica si se debe guardar el resultado en un archivo RDS (por defecto TRUE).
 #' @return Un vector que contiene las URLs de tweets recuperadas.
 #' @export
 #'
 #' @examples
 #' \dontrun{
 #' getUrlsHistoricalTimeline(username = "rstatstweet", n_urls = 50, since = "2018-10-26", until = "2018-10-30")
+#' 
+#' # Sin guardar los resultados
+#' getUrlsHistoricalTimeline(username = "rstatstweet", n_urls = 50, since = "2018-10-26", until = "2018-10-30", save = FALSE)
 #' }
 #'
 #' @references
@@ -45,7 +50,8 @@ getUrlsHistoricalTimeline <- function(
     until = "2018-10-30",
     xuser = Sys.getenv("USER"),
     xpass = Sys.getenv("PASS"),
-    dir = getwd()
+    dir = getwd(),
+    save = TRUE
 ) {
   success <- FALSE
   while (!success) {
@@ -127,7 +133,12 @@ getUrlsHistoricalTimeline <- function(
     twitter$session$close()
     tweets_urls <- tweets_urls[1:min(length(tweets_urls), n_urls)]
     tweets_urls <- paste0("https://x.com", tweets_urls)
-    saveRDS(tweets_urls, paste0(dir, "/urls_historical_timeline_", username, "_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
+    if (save) {
+      saveRDS(tweets_urls, paste0(dir, "/urls_historical_timeline_", username, "_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
+      cat("URLs procesadas y guardadas.\n")
+    } else {
+      cat("URLs procesadas. No se han guardado en un archivo RDS.\n")
+    }
     return(tweets_urls)
   }
 }

@@ -10,7 +10,8 @@ getUrlsTweetsSearch(
   xuser = Sys.getenv("USER"),
   xpass = Sys.getenv("PASS"),
   max_retries = 3,
-  dir = getwd()
+  dir = getwd(),
+  save = TRUE
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ getUrlsTweetsSearch(
 \item{max_retries}{número máximo de intentos de conexión.}
 
 \item{dir}{Directorio de destino de los RDS.}
+
+\item{save}{Lógico. Indica si se debe guardar el resultado en un archivo RDS (por defecto TRUE).}
 }
 \value{
 Un vector que contiene las URLs de tweets recuperadas.
@@ -40,11 +43,14 @@ recolecta las URLs de los tweets que corresponden a la consulta.
 
 La recolección se detiene cuando se ha alcanzado el número especificado de URLs o cuando no se encuentran
 nuevas URLs después de varios intentos. Las URLs recolectadas se guardan en un archivo RDS en el directorio
-especificado, y también se devuelven como un vector de cadenas con las urls recolectadas.
+especificado si el parámetro 'save' es TRUE, y también se devuelven como un vector de cadenas con las urls recolectadas.
 }
 \examples{
 \dontrun{
 getUrlsTweetsSearch(search = "#RStats", n_urls = 200)
+
+# Sin guardar los resultados
+getUrlsTweetsSearch(search = "#RStats", n_urls = 200, save = FALSE)
 }
 
 }

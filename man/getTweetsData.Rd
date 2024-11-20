@@ -8,7 +8,8 @@ getTweetsData(
   urls_tweets,
   xuser = Sys.getenv("USER"),
   xpass = Sys.getenv("PASS"),
-  dir = getwd()
+  dir = getwd(),
+  save = TRUE
 )
 }
 \arguments{
@@ -19,6 +20,8 @@ getTweetsData(
 \item{xpass}{Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.}
 
 \item{dir}{directorio para guardar el RDS con las URLs recolectadas}
+
+\item{save}{Logical. Indica si se debe guardar el resultado en un archivo RDS. Por defecto es TRUE.}
 }
 \value{
 Un tibble que contiene los datos de los tweets recuperados.
@@ -40,12 +43,13 @@ extraídos incluyen la fecha del tweet, el nombre de usuarix que lo publicó, el
 las respuestas, reposts, me gusta, URLs asociadas, y otra información relevante.
 La función también maneja tweets borrados y errores durante el proceso de recolección, y
 clasifica las URLs de los tweets en tres categorías: tweets recuperados, tweets borrados, y
-tweets que necesitan ser reprocesados. Finalmente, los datos recopilados se guardan en un
-archivo RDS en el directorio especificado por le usuarix.
+tweets que necesitan ser reprocesados. Si el parámetro 'save' es TRUE, los datos recopilados
+se guardan en un archivo RDS en el directorio especificado por le usuarix.
 }
 \examples{
 \dontrun{
 getTweetsData(urls_tweets = "https://twitter.com/estacion_erre/status/1788929978811232537")
+getTweetsData(urls_tweets = "https://twitter.com/estacion_erre/status/1788929978811232537", save = FALSE)
 }
 
 }

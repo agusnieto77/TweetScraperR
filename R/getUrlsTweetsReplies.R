@@ -14,7 +14,7 @@
 #' 3. Extraer las URLs de las respuestas mediante scraping.
 #' 4. Continuar scrolling y recolectando URLs hasta alcanzar el número deseado o no encontrar nuevas URLs.
 #' 
-#' La función guarda las URLs recolectadas en un archivo RDS en el directorio especificado
+#' La función guarda las URLs recolectadas en un archivo RDS en el directorio especificado si el parámetro 'save' es TRUE,
 #' y las devuelve como un vector de cadenas.
 #'
 #' @param url URL del tweet del cual se quieren obtener las respuestas. Por defecto es "https://x.com/Picanumeros/status/1610715405705789442".
@@ -22,6 +22,7 @@
 #' @param xuser Nombre de usuario de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.
 #' @param xpass Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.
 #' @param dir Directorio donde se guardará el archivo RDS con las URLs recolectadas. Por defecto es el directorio de trabajo actual.
+#' @param save Lógico. Indica si se debe guardar el resultado en un archivo RDS (por defecto TRUE).
 #'
 #' @return Un vector que contiene las URLs de las respuestas al tweet especificado.
 #' @export
@@ -29,6 +30,9 @@
 #' @examples
 #' \dontrun{
 #' getUrlsTweetsReplies(url = "https://x.com/Picanumeros/status/1610715405705789442", n_urls = 130)
+#' 
+#' # Sin guardar los resultados
+#' getUrlsTweetsReplies(url = "https://x.com/Picanumeros/status/1610715405705789442", n_urls = 130, save = FALSE)
 #' }
 #'
 #' @references
@@ -41,11 +45,12 @@
 #' Esta función utiliza web scraping y puede ser sensible a cambios en la estructura de la página de Twitter.
 
 getUrlsTweetsReplies <- function(
-    url,
+    url = "https://x.com/Picanumeros/status/1610715405705789442",
     n_urls = 100,
     xuser = Sys.getenv("USER"),
     xpass = Sys.getenv("PASS"),
-    dir = getwd()
+    dir = getwd(),
+    save = TRUE
 ) {
   retry_count <- 0
   max_retries <- 3
@@ -107,7 +112,12 @@ getUrlsTweetsReplies <- function(
   }
   if (length(tweets_urls) > 0) {
     tweets_urls <- paste0("https://x.com", tweets_urls)
-    saveRDS(tweets_urls, paste0(dir, "/replies_", sub("https://x.com/(.*)/status/(.*)", "\\1_\\2", url), "_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
+    if (save) {
+      saveRDS(tweets_urls, paste0(dir, "/replies_", sub("https://x.com/(.*)/status/(.*)", "\\1_\\2", url), "_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
+      cat("URLs procesadas y guardadas.\n")
+    } else {
+      cat("URLs procesadas. No se han guardado en un archivo RDS.\n")
+    }
   } else {
     warning("No se encontraron URLs de tweets.")
   }

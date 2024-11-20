@@ -10,7 +10,8 @@ getTweetsSearchStreaming(
   n_tweets = 100,
   xuser = Sys.getenv("USER"),
   xpass = Sys.getenv("PASS"),
-  dir = getwd()
+  dir = getwd(),
+  save = TRUE
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ getTweetsSearchStreaming(
 \item{xpass}{Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.}
 
 \item{dir}{Directorio para guardar el archivo RDS con las URLs recolectadas.}
+
+\item{save}{Lógico. Indica si se debe guardar el resultado en un archivo RDS (por defecto TRUE).}
 }
 \value{
 Un vector que contiene las URLs de tweets recuperadas.
@@ -43,13 +46,16 @@ encontrar nuevas URLs, indicando que no hay más resultados disponibles en ese m
 mecanismos de manejo de errores y tiempos de espera para asegurar que las conexiones y búsquedas se realicen
 de manera robusta y continua.
 Las URLs de los tweets recolectados se almacenan en un vector y se guardan en un archivo con formato \code{.rds}
-en el directorio especificado por el parámetro \code{dir}. Este archivo se nombra de manera única utilizando la
-consulta de búsqueda y la marca de tiempo del momento en que se realiza la recolección, asegurando que no
-se sobrescriban archivos anteriores.
+en el directorio especificado por el parámetro \code{dir} si el parámetro \code{save} es TRUE. Este archivo se nombra
+de manera única utilizando la consulta de búsqueda y la marca de tiempo del momento en que se realiza la
+recolección, asegurando que no se sobrescriban archivos anteriores.
 }
 \examples{
 \dontrun{
 getTweetsSearchStreaming(search = "#RStats", n_tweets = 200)
+
+# Sin guardar los resultados
+getTweetsSearchStreaming(search = "#RStats", n_tweets = 200, save = FALSE)
 }
 
 }

@@ -9,7 +9,8 @@ getUrlsTweetsTimeline(
   n_urls = 100,
   xuser = Sys.getenv("USER"),
   xpass = Sys.getenv("PASS"),
-  dir = getwd()
+  dir = getwd(),
+  save = TRUE
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ getUrlsTweetsTimeline(
 \item{xpass}{Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.}
 
 \item{dir}{Directorio donde se guardará el archivo de salida. Por defecto es el directorio de trabajo actual.}
+
+\item{save}{Lógico. Indica si se debe guardar el resultado en un archivo RDS (por defecto TRUE).}
 }
 \value{
 Un vector que contiene las URLs de tweets obtenidas.
@@ -38,6 +41,9 @@ después de realizar 600 capturas y se detiene el desplazamiento (scroll).
 \examples{
 \dontrun{
 getUrlsTweetsTimeline(username = "rstatstweet", n_urls = 200)
+
+# Sin guardar los resultados
+getUrlsTweetsTimeline(username = "rstatstweet", n_urls = 200, save = FALSE)
 }
 
 }

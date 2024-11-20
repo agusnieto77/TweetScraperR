@@ -226,7 +226,6 @@ plotEmojisPNG(unificados_df)
 
 # Funciones para descarga masiva 
 getTweetsHistoricalTimelineFor()
-getTweetsHistoricalSearchFor()
 getTweetsHistoricalHashtagFor()
 
 getTweetsSearchStreamingFor(

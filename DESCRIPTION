@@ -26,7 +26,9 @@ Imports:
     xml2,
     utils,
     stats,
-    jsonlite
+    jsonlite,
+    htmltools,
+    tools
 Suggests: 
     chromote,
     binman

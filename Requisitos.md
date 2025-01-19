@@ -1,7 +1,7 @@
 ## Requisitos para usar **TweetScraperR**
 
 ### Conocimientos previos:
-- Tener un conocimiento básico de **R**.
+- Tener un conocimiento básico de **R** y **RStudio**.
 
 ### Software necesario:
 - **Instalación de R**: Asegúrate de tener R instalado en tu ordenador.

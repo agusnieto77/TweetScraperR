@@ -21,6 +21,7 @@
 #' @param n_urls El número máximo de URLs de respuestas a recuperar. Por defecto es 100.
 #' @param xuser Nombre de usuario de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.
 #' @param xpass Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.
+#' @param view Ver el navegador. Por defecto es FALSE.
 #' @param dir Directorio donde se guardará el archivo RDS con las URLs recolectadas. Por defecto es el directorio de trabajo actual.
 #' @param save Lógico. Indica si se debe guardar el resultado en un archivo RDS (por defecto TRUE).
 #'

@@ -49,6 +49,7 @@ getUrlsTweetsReplies <- function(
     n_urls = 100,
     xuser = Sys.getenv("USER"),
     xpass = Sys.getenv("PASS"),
+    view = FALSE,
     dir = getwd(),
     save = TRUE
 ) {
@@ -57,19 +58,22 @@ getUrlsTweetsReplies <- function(
   success <- FALSE
   while (retry_count < max_retries && !success) {
     tryCatch({
-      twitter <- rvest::read_html_live("https://x.com/i/flow/login")
-      Sys.sleep(3)
-      userx <- "#layers > div > div > div > div > div > div > div.css-175oi2r > div.css-175oi2r > div > div > div.css-175oi2r > div.css-175oi2r > div > div > div > div.css-175oi2r > label > div > div.css-175oi2r > div > input"
-      nextx <- "#layers div > div > div > button:nth-child(6) > div"
-      passx <- "#layers > div > div > div > div > div > div > div > div > div > div > div > div > div > div > div > div > div > label > div > div > div > input"
-      login <- "#layers > div > div > div > div > div > div > div.css-175oi2r > div.css-175oi2r > div > div > div.css-175oi2r > div.css-175oi2r.r-16y2uox > div.css-175oi2r > div > div.css-175oi2r > div > div > button"
-      twitter$type(css = userx, text = xuser)
-      twitter$click(css = nextx, n_clicks = 1)
-      Sys.sleep(2)
-      twitter$type(css = passx, text = xpass)
-      twitter$click(css = login, n_clicks = 1)
-      Sys.sleep(2)
+      # twitter <- rvest::read_html_live("https://x.com/i/flow/login")
+      # Sys.sleep(3)
+      # userx <- "#layers > div > div > div > div > div > div > div.css-175oi2r > div.css-175oi2r > div > div > div.css-175oi2r > div.css-175oi2r > div > div > div > div.css-175oi2r > label > div > div.css-175oi2r > div > input"
+      # nextx <- "#layers div > div > div > button:nth-child(6) > div"
+      # passx <- "#layers > div > div > div > div > div > div > div > div > div > div > div > div > div > div > div > div > div > label > div > div > div > input"
+      # login <- "#layers > div > div > div > div > div > div > div.css-175oi2r > div.css-175oi2r > div > div > div.css-175oi2r > div.css-175oi2r.r-16y2uox > div.css-175oi2r > div > div.css-175oi2r > div > div > button"
+      # twitter$type(css = userx, text = xuser)
+      # twitter$click(css = nextx, n_clicks = 1)
+      # Sys.sleep(2)
+      # twitter$type(css = passx, text = xpass)
+      # twitter$click(css = login, n_clicks = 1)
+      # Sys.sleep(2)
       urlok <- rvest::read_html_live(url)
+      if (view) {
+        urlok$view()
+      }
       Sys.sleep(3)
       url_tweet <- "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/section/div/div/div/div/div/article/div/div/div[2]/div[2]/div[1]/div/div[1]/div/div/div[2]/div/div[3]/a"
       tweets_urls <- c()

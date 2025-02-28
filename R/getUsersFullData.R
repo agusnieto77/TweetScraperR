@@ -71,26 +71,19 @@ getUsersFullData <- function(
       users <- rvest::read_html_live(i)
       Sys.sleep(2)
       
-      json_list <- jsonlite::fromJSON(rvest::html_text(users$html_elements(xpath = "/html/head/script[2]")))
-      author <- json_list$author
-      interaction_stats <- author$interactionStatistic
-      
-      users_db <- rbind(users_db, tibble::tibble(
-        fecha_creacion = lubridate::as_datetime(json_list$dateCreated),
-        nombre_adicional = author$additionalName,
-        descripcion = author$description,
-        nombre = author$givenName,
-        ubicacion = author$homeLocation$name,
-        identificador = author$identifier,
-        url_imagen = author$image$contentUrl,
-        url_miniatura = author$image$thumbnailUrl,
-        seguidorxs = interaction_stats$userInteractionCount[1],
-        amigxs = interaction_stats$userInteractionCount[2],
-        tweets = interaction_stats$userInteractionCount[3],
-        url = author$url,
-        enlaces_relacionados = paste(json_list$relatedLink, collapse = ", ")
-      ))
-      
+      json_list <- jsonlite::fromJSON(rvest::html_text(users$html_elements(xpath = "/html/head/script[1]")))
+      author <- json_list$mainEntity$givenName
+      interaction_stats <- json_list$mainEntity$interactionStatistic
+      users_db <- rbind(users_db, tibble::tibble(fecha_creacion = lubridate::as_datetime(json_list$dateCreated), 
+                                                 nombre_adicional = json_list$mainEntity$additionalName, descripcion = json_list$mainEntity$description, 
+                                                 nombre = author, ubicacion = json_list$mainEntity$homeLocation$name, 
+                                                 identificador = json_list$mainEntity$identifier, url_imagen = json_list$mainEntity$image$contentUrl, 
+                                                 url_miniatura = json_list$mainEntity$image$thumbnailUrl, 
+                                                 seguidorxs = json_list$mainEntity$interactionStatistic$userInteractionCount[1], 
+                                                 amigxs = json_list$mainEntity$interactionStatistic$userInteractionCount[2], 
+                                                 tweets = json_list$mainEntity$interactionStatistic$userInteractionCount[3], 
+                                                 url = json_list$mainEntity$url, enlaces_relacionados = paste(json_list$relatedLink, 
+                                                                                                              collapse = ", ")))
       Sys.sleep(2)
       message("Datos recolectados usuarix: ", sub("^https://twitter.com/(.*?)|^https://x.com/(.*?)", "\\1", i))
       users$session$close()

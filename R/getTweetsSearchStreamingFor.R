@@ -12,6 +12,7 @@
 #' @param n_tweets Número de tweets a recolectar en cada iteración
 #' @param dir Directorio donde se guardarán los tweets
 #' @param system Sistema operativo ('windows', 'unix', 'macOS')
+#' @param kill_system Booleano que indica si se debe cerrar el navegador después de cada iteración (por defecto: FALSE)
 #' @param sleep_time Tiempo de espera entre iteraciones en segundos
 #'
 #' @return No devuelve un valor, pero guarda los tweets en el directorio especificado
@@ -25,6 +26,7 @@
 #'   n_tweets = 10,
 #'   dir = "./data/tweets",
 #'   system = "unix",
+#'   kill_system = FALSE,
 #'   sleep_time = 5
 #' )
 #' }
@@ -35,8 +37,9 @@ getTweetsSearchStreamingFor <- function(
     n_tweets, 
     dir, 
     system = "unix", 
+    kill_system = FALSE,
     sleep_time = 300
-    ) {
+) {
   # Crear el directorio si no existe
   if (!dir.exists(dir)) {
     dir.create(dir, recursive = TRUE)
@@ -65,7 +68,10 @@ getTweetsSearchStreamingFor <- function(
       warning("Error en la iteración ", i, ": ", conditionMessage(e))
     })
     
-    close_browser(system)
+    # Solo cerrar el navegador si kill_system es TRUE
+    if (kill_system) {
+      close_browser(system)
+    }
     
     if (i < iterations) {  # No esperar después de la última iteración
       cat("Esperando", sleep_time, "segundos antes de la próxima iteración...\n")

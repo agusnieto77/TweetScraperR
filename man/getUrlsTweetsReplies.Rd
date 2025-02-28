@@ -9,6 +9,7 @@ getUrlsTweetsReplies(
   n_urls = 100,
   xuser = Sys.getenv("USER"),
   xpass = Sys.getenv("PASS"),
+  view = FALSE,
   dir = getwd(),
   save = TRUE
 )
@@ -21,6 +22,8 @@ getUrlsTweetsReplies(
 \item{xuser}{Nombre de usuario de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.}
 
 \item{xpass}{Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.}
+
+\item{view}{Ver el navegador. Por defecto es FALSE.}
 
 \item{dir}{Directorio donde se guardará el archivo RDS con las URLs recolectadas. Por defecto es el directorio de trabajo actual.}
 

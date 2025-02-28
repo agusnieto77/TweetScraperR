@@ -16,6 +16,7 @@
 #' @param xpass Contraseña de Twitter para autenticación (por defecto: variable de entorno del sistema "PASS").
 #' @param dir Directorio para guardar los tweets recolectados (por defecto: directorio de trabajo actual).
 #' @param system Sistema operativo ("windows", "unix", o "mac").
+#' @param kill_system Booleano que indica si se debe cerrar el navegador después de cada iteración (por defecto: FALSE).
 #' @param sleep_time Tiempo de espera entre iteraciones en segundos (por defecto: 300 segundos).
 #'
 #' @details
@@ -23,7 +24,7 @@
 #' 1. Verifica e instala los paquetes necesarios.
 #' 2. Crea el directorio de destino si no existe.
 #' 3. Ejecuta búsquedas históricas de tweets de la línea de tiempo del usuario de forma iterativa.
-#' 4. Cierra el navegador después de cada iteración.
+#' 4. Cierra el navegador después de cada iteración si kill_system es TRUE.
 #' 5. Espera un tiempo especificado entre iteraciones.
 #'
 #' @return
@@ -39,6 +40,7 @@
 #'   until = 60,
 #'   dir = "./datos/tweets",
 #'   system = "windows",
+#'   kill_system = FALSE,
 #'   sleep_time = 10
 #' )
 #' }
@@ -56,9 +58,10 @@ getTweetsHistoricalTimelineFor <- function(
     xpass = Sys.getenv("PASS"),
     dir = getwd(), 
     system = "windows", 
+    kill_system = FALSE,
     sleep_time = 5*60
 ) {
-
+  
   # Crear el directorio si no existe
   if (!dir.exists(dir)) {
     dir.create(dir, recursive = TRUE)
@@ -98,7 +101,10 @@ getTweetsHistoricalTimelineFor <- function(
     
     since = untilok
     
-    close_browser(system)
+    # Solo cerrar el navegador si kill_system es TRUE
+    if (kill_system) {
+      close_browser(system)
+    }
     
     if (i < iterations) {  # No esperar después de la última iteración
       Sys.sleep(3)

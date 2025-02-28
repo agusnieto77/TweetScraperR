@@ -7,8 +7,10 @@
 getUrlsTweetsTimeline(
   username = "rstatstweet",
   n_urls = 100,
+  open = FALSE,
   xuser = Sys.getenv("USER"),
   xpass = Sys.getenv("PASS"),
+  max_retries = 3,
   dir = getwd(),
   save = TRUE
 )
@@ -18,9 +20,13 @@ getUrlsTweetsTimeline(
 
 \item{n_urls}{El número máximo de URLs de tweets a obtener. Por defecto es 100.}
 
+\item{open}{Indica si se debe realizar el proceso de autenticación (por defecto FALSE).}
+
 \item{xuser}{Nombre de usuarix de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.}
 
 \item{xpass}{Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.}
+
+\item{max_retries}{número máximo de intentos de conexión. Por defecto es 3.}
 
 \item{dir}{Directorio donde se guardará el archivo de salida. Por defecto es el directorio de trabajo actual.}
 
@@ -33,14 +39,18 @@ Un vector que contiene las URLs de tweets obtenidas.
 \if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}
 
 Esta función recupera URLs de tweets del timeline de unx usuarix especificadx en Twitter.
-Inicia sesión en Twitter utilizando las credenciales proporcionadas, navega al perfil del
-usuarix especificadx, y recopila hasta \code{n_urls} URLs de tweets.
+Opcionalmente puede iniciar sesión en Twitter utilizando las credenciales proporcionadas si open=TRUE,
+navega al perfil del usuarix especificadx, y recopila hasta \code{n_urls} URLs de tweets.
 El proceso de recolección se detiene si se alcanza el número máximo de URLs especificado o
 después de realizar 600 capturas y se detiene el desplazamiento (scroll).
 }
 \examples{
 \dontrun{
+# Sin autenticación
 getUrlsTweetsTimeline(username = "rstatstweet", n_urls = 200)
+
+# Con autenticación
+getUrlsTweetsTimeline(username = "rstatstweet", n_urls = 200, open = TRUE)
 
 # Sin guardar los resultados
 getUrlsTweetsTimeline(username = "rstatstweet", n_urls = 200, save = FALSE)

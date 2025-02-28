@@ -6,8 +6,10 @@
 \usage{
 getUsersData(
   urls_users,
+  open = FALSE,
   xuser = Sys.getenv("USER"),
   xpass = Sys.getenv("PASS"),
+  max_retries = 3,
   dir = getwd(),
   save = TRUE
 )
@@ -15,9 +17,13 @@ getUsersData(
 \arguments{
 \item{urls_users}{Vector de URLs de users de los cuales se desea obtener datos.}
 
+\item{open}{Indica si se debe realizar el proceso de autenticación (por defecto FALSE).}
+
 \item{xuser}{Nombre de usuarix de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.}
 
 \item{xpass}{Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.}
+
+\item{max_retries}{número máximo de intentos de conexión. Por defecto es 3.}
 
 \item{dir}{Directorio donde se guardará el archivo RDS con los datos recopilados. Por defecto es el directorio actual.}
 
@@ -30,16 +36,20 @@ Un tibble que contiene los datos de los users recuperados.
 \if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}
 
 Esta función permite recuperar y procesar datos de usuarixs de Twitter a partir de un vector de URLs
-proporcionadas. Utilizando las credenciales de unx usuarix de Twitter, la función realiza la autenticación y
-extrae información detallada de cada perfil de usuarix. Los datos extraídos incluyen el nombre del usuarix,
-el username, la fecha de creación del perfil, el número de publicaciones, seguidorxs y seguidxs.
-La función maneja posibles errores durante el proceso de recolección de datos, como tiempos de espera prolongados, y
-se asegura de obtener información precisa mediante múltiples intentos si es necesario. Los datos recopilados se
-devuelven en forma de un tibble y, si se especifica, se guardan en un archivo RDS para su posterior uso.
+proporcionadas. Opcionalmente puede realizar la autenticación en Twitter si open=TRUE utilizando las
+credenciales proporcionadas. La función extrae información detallada de cada perfil de usuarix incluyendo
+el nombre del usuarix, el username, la fecha de creación del perfil, el número de publicaciones,
+seguidorxs y seguidxs. La función maneja posibles errores durante el proceso de recolección de datos y
+realiza reintentos automáticos cuando es necesario. Los datos recopilados se devuelven en forma de un
+tibble y, si se especifica, se guardan en un archivo RDS para su posterior uso.
 }
 \examples{
 \dontrun{
+# Sin autenticación
 getUsersData(urls_users = "https://x.com/estacion_erre")
+
+# Con autenticación
+getUsersData(urls_users = "https://x.com/estacion_erre", open = TRUE)
 
 # Sin guardar los resultados
 getUsersData(urls_users = "https://x.com/estacion_erre", save = FALSE)

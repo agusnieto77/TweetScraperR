@@ -178,7 +178,7 @@ getTweetsHistoricalSearch <- function(
       tweets_recolectados <- dplyr::distinct(tweets_recolectados, url, .keep_all = TRUE)
       tweets_recolectados <- tweets_recolectados[!is.na(tweets_recolectados$fecha), ]
       if (save) {
-        saveRDS(tweets_recolectados, paste0(dir, "/historical_search_", gsub("\\s", "_", search), "_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
+        saveRDS(tweets_recolectados, paste0(dir, "/historical_search_", substr(gsub("\\s", "_", search), 1, 12), "_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
         cat("Datos procesados y guardados.\n")
       } else {
         cat("Datos procesados. No se han guardado en un archivo RDS.\n")

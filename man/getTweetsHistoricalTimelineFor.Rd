@@ -14,6 +14,7 @@ getTweetsHistoricalTimelineFor(
   xpass = Sys.getenv("PASS"),
   dir = getwd(),
   system = "windows",
+  kill_system = FALSE,
   sleep_time = 5 * 60
 )
 }
@@ -36,6 +37,8 @@ getTweetsHistoricalTimelineFor(
 
 \item{system}{Sistema operativo ("windows", "unix", o "mac").}
 
+\item{kill_system}{Booleano que indica si se debe cerrar el navegador después de cada iteración (por defecto: FALSE).}
+
 \item{sleep_time}{Tiempo de espera entre iteraciones en segundos (por defecto: 300 segundos).}
 }
 \value{
@@ -53,7 +56,7 @@ La función realiza las siguientes operaciones:
 \item Verifica e instala los paquetes necesarios.
 \item Crea el directorio de destino si no existe.
 \item Ejecuta búsquedas históricas de tweets de la línea de tiempo del usuario de forma iterativa.
-\item Cierra el navegador después de cada iteración.
+\item Cierra el navegador después de cada iteración si kill_system es TRUE.
 \item Espera un tiempo especificado entre iteraciones.
 }
 }
@@ -67,6 +70,7 @@ getTweetsHistoricalTimelineFor(
   until = 60,
   dir = "./datos/tweets",
   system = "windows",
+  kill_system = FALSE,
   sleep_time = 10
 )
 }

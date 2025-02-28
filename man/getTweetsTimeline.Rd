@@ -8,9 +8,10 @@ getTweetsTimeline(
   username = "rstatstweet",
   n_tweets = 100,
   view = FALSE,
+  open = FALSE,
   xuser = Sys.getenv("USER"),
   xpass = Sys.getenv("PASS"),
-  mailx = "tweetscraperr@gmail.com",
+  mailx = NULL,
   dir = getwd(),
   save = TRUE
 )
@@ -21,6 +22,8 @@ getTweetsTimeline(
 \item{n_tweets}{El número máximo de tweets a obtener. Por defecto es 100.}
 
 \item{view}{Mostrar una vista en vivo de Twitter/X TRUE o FALSE}
+
+\item{open}{Indica si se debe realizar el proceso de autenticación (por defecto FALSE)}
 
 \item{xuser}{Nombre de usuarix de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.}
 
@@ -47,6 +50,9 @@ especificado o después de alcanzar los 600 tweets con el desplazamiento (scroll
 \examples{
 \dontrun{
 getTweetsTimeline(username = "rstatstweet", n_tweets = 200)
+
+# Con autenticación
+getTweetsTimeline(username = "rstatstweet", n_tweets = 200, open = TRUE)
 
 # Sin guardar los resultados
 getTweetsTimeline(username = "rstatstweet", n_tweets = 200, save = FALSE)

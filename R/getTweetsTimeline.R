@@ -13,6 +13,7 @@
 #' @param username El nombre de usuarix de Twitter del cual quieres obtener el timeline.
 #' @param n_tweets El número máximo de tweets a obtener. Por defecto es 100.
 #' @param view Mostrar una vista en vivo de Twitter/X TRUE o FALSE 
+#' @param open Indica si se debe realizar el proceso de autenticación (por defecto FALSE)
 #' @param xuser Nombre de usuarix de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.
 #' @param xpass Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.
 #' @param mailx Dirección de e-mail para la autenticación. Tiene que ser la misma que la usada en Twitter/X.
@@ -24,6 +25,9 @@
 #' @examples
 #' \dontrun{
 #' getTweetsTimeline(username = "rstatstweet", n_tweets = 200)
+#' 
+#' # Con autenticación
+#' getTweetsTimeline(username = "rstatstweet", n_tweets = 200, open = TRUE)
 #' 
 #' # Sin guardar los resultados
 #' getTweetsTimeline(username = "rstatstweet", n_tweets = 200, save = FALSE)
@@ -43,35 +47,39 @@ getTweetsTimeline <- function(
     username = "rstatstweet",
     n_tweets = 100,
     view = FALSE,
+    open = FALSE,
     xuser = Sys.getenv("USER"),
     xpass = Sys.getenv("PASS"),
-    mailx = "tweetscraperr@gmail.com",
+    mailx = NULL,
     dir = getwd(),
     save = TRUE
 ) {
-  TweetScraperR::openTwitter(view = view)
-  Sys.sleep(3)
-  userx <- "#layers > div > div > div > div > div > div > div.css-175oi2r > div.css-175oi2r > div > div > div.css-175oi2r > div.css-175oi2r > div > div > div > div.css-175oi2r > label > div > div.css-175oi2r > div > input"
-  nextx <- "#layers div > div > div > button:nth-child(6) > div"
-  passx <- "#layers > div > div > div > div > div > div > div > div > div > div > div > div > div > div > div > div > div > label > div > div > div > input"
-  login <- "#layers > div > div > div > div > div > div > div.css-175oi2r > div.css-175oi2r > div > div > div.css-175oi2r > div.css-175oi2r.r-16y2uox > div.css-175oi2r > div > div.css-175oi2r > div > div > button"
-  twitter$type(css = userx, text = xuser)
-  twitter$click(css = nextx, n_clicks = 1)
-  Sys.sleep(2)
-  twitter$type(css = passx, text = xpass)
-  twitter$click(css = login, n_clicks = 1)
-  Sys.sleep(2)
-  mailtext <- "#layers > div> div > div > div > div > div > div > div > div > div > div > div > div > div > div > label > div > div > div > span"
-  email_address <- tryCatch({rvest::html_text(twitter$html_elements(css = mailtext))}, error = function(e) {e$message
-    return(NULL)
-  })
-  mailbox <- "#layers > div > div > div > div > div > div > div > div > div > div > div > div > div > div > div > label > div > div > div > input"
-  nextx2 <- "#layers > div > div > div > div > div > div > div > div > div > div > div > div > div > div > div > div > button > div"
-  if (!is.null(email_address)) {
-    twitter$type(css = mailbox, text = mailx)
-    twitter$click(css = nextx2, n_clicks = 1)
+  if (open) {
+    TweetScraperR::openTwitter(view = view)
+    Sys.sleep(3)
+    userx <- "#layers > div > div > div > div > div > div > div.css-175oi2r > div.css-175oi2r > div > div > div.css-175oi2r > div.css-175oi2r > div > div > div > div.css-175oi2r > label > div > div.css-175oi2r > div > input"
+    nextx <- "#layers div > div > div > button:nth-child(6) > div"
+    passx <- "#layers > div > div > div > div > div > div > div > div > div > div > div > div > div > div > div > div > div > label > div > div > div > input"
+    login <- "#layers > div > div > div > div > div > div > div.css-175oi2r > div.css-175oi2r > div > div > div.css-175oi2r > div.css-175oi2r.r-16y2uox > div.css-175oi2r > div > div.css-175oi2r > div > div > button"
+    twitter$type(css = userx, text = xuser)
+    twitter$click(css = nextx, n_clicks = 1)
+    Sys.sleep(2)
+    twitter$type(css = passx, text = xpass)
+    twitter$click(css = login, n_clicks = 1)
+    Sys.sleep(2)
+    mailtext <- "#layers > div> div > div > div > div > div > div > div > div > div > div > div > div > div > div > label > div > div > div > span"
+    email_address <- tryCatch({rvest::html_text(twitter$html_elements(css = mailtext))}, error = function(e) {e$message
+      return(NULL)
+    })
+    mailbox <- "#layers > div > div > div > div > div > div > div > div > div > div > div > div > div > div > div > label > div > div > div > input"
+    nextx2 <- "#layers > div > div > div > div > div > div > div > div > div > div > div > div > div > div > div > div > button > div"
+    if (!is.null(email_address)) {
+      twitter$type(css = mailbox, text = mailx)
+      twitter$click(css = nextx2, n_clicks = 1)
+    }
+    Sys.sleep(2)
   }
-  Sys.sleep(2)
+  
   fech <- "div > div > div > a > time"
   user1 <- "div.css-175oi2r.r-18u37iz.r-1wbh5a2.r-1ez5h0i > div > div.css-175oi2r.r-1wbh5a2.r-dnmrzs > a > div > span"
   tweet <- "#react-root > div > div > div.css-175oi2r.r-1f2l425.r-13qz1uu.r-417010.r-18u37iz > main > div > div > div > div > div > div:nth-child(3) > div > div > section > div > div > div > div > div > article > div > div > div.css-175oi2r.r-18u37iz > div.css-175oi2r.r-1iusvr4.r-16y2uox.r-1777fci.r-kzbkwu > div:nth-child(2)"

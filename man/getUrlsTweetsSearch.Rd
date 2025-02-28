@@ -7,6 +7,7 @@
 getUrlsTweetsSearch(
   search = "#RStats",
   n_urls = 100,
+  open = FALSE,
   xuser = Sys.getenv("USER"),
   xpass = Sys.getenv("PASS"),
   max_retries = 3,
@@ -18,6 +19,8 @@ getUrlsTweetsSearch(
 \item{search}{La consulta de búsqueda para usar en la recuperación de tweets. Por defecto es "#RStats".}
 
 \item{n_urls}{El número máximo de URLs de tweets a recuperar. Por defecto es 100.}
+
+\item{open}{Indica si se debe realizar el proceso de autenticación (por defecto FALSE).}
 
 \item{xuser}{Nombre de usuarix de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.}
 
@@ -38,7 +41,7 @@ Un vector que contiene las URLs de tweets recuperadas.
 Esta función recupera URLs de tweets basados en una consulta de búsqueda especifica en Twitter.
 Utiliza el buscador de Twitter para encontrar tweets que coincidan con el término de búsqueda proporcionado,
 enfocándose en los tweets destacados que aparecen en la plataforma.
-La función inicia sesión en Twitter usando las credenciales proporcionadas, realiza la búsqueda, y
+Opcionalmente puede iniciar sesión en Twitter usando las credenciales proporcionadas si open=TRUE, realiza la búsqueda, y
 recolecta las URLs de los tweets que corresponden a la consulta.
 
 La recolección se detiene cuando se ha alcanzado el número especificado de URLs o cuando no se encuentran
@@ -47,7 +50,11 @@ especificado si el parámetro 'save' es TRUE, y también se devuelven como un ve
 }
 \examples{
 \dontrun{
+# Sin autenticación
 getUrlsTweetsSearch(search = "#RStats", n_urls = 200)
+
+# Con autenticación
+getUrlsTweetsSearch(search = "#RStats", n_urls = 200, open = TRUE)
 
 # Sin guardar los resultados
 getUrlsTweetsSearch(search = "#RStats", n_urls = 200, save = FALSE)

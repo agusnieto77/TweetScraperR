@@ -10,6 +10,7 @@ getTweetsHistoricalHashtagFor(
   n_tweets,
   since,
   until,
+  interval_unit = "days",
   xuser = Sys.getenv("USER"),
   xpass = Sys.getenv("PASS"),
   dir = getwd(),
@@ -21,13 +22,15 @@ getTweetsHistoricalHashtagFor(
 \arguments{
 \item{iterations}{Número de iteraciones a realizar.}
 
-\item{hashtag}{Hashtag específico para buscar en los tweets (sin el símbolo #).}
+\item{hashtag}{Hashtag específico para buscar en los tweets.}
 
 \item{n_tweets}{Número de tweets a recolectar por iteración.}
 
-\item{since}{Fecha de inicio para la búsqueda (formato: "YYYY-MM-DD").}
+\item{since}{Fecha y hora de inicio para la búsqueda (formato: "YYYY-MM-DD_HH:MM:SS_UTC").}
 
-\item{until}{Número de días a avanzar en cada iteración.}
+\item{until}{Número de unidades de tiempo a avanzar en cada iteración.}
+
+\item{interval_unit}{Unidad de tiempo para el intervalo ("days", "hours", o "minutes").}
 
 \item{xuser}{Nombre de usuario de Twitter para autenticación (por defecto: variable de entorno del sistema "USER").}
 
@@ -48,14 +51,15 @@ No devuelve un valor explícito, pero guarda los tweets recolectados en el direc
 \if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}
 
 Esta función realiza búsquedas históricas de tweets con hashtags específicos de forma iterativa,
-permitiendo recolectar tweets en intervalos de tiempo específicos.
+permitiendo recolectar tweets en intervalos de tiempo específicos (días, horas o minutos).
 }
 \details{
 La función realiza las siguientes operaciones:
 \enumerate{
-\item Verifica e instala los paquetes necesarios (rvest, dplyr, tibble, lubridate).
+\item Valida el formato de la fecha y hora de inicio.
 \item Crea el directorio de destino si no existe.
 \item Ejecuta búsquedas históricas de tweets con el hashtag especificado de forma iterativa.
+\item Calcula la fecha y hora de finalización para cada iteración basándose en el intervalo especificado.
 \item Cierra el navegador después de cada iteración si kill_system es TRUE.
 \item Espera un tiempo especificado entre iteraciones.
 }
@@ -66,8 +70,23 @@ getTweetsHistoricalHashtagFor(
   iterations = 5,
   hashtag = "#8M",
   n_tweets = 500,
-  since = "2023-03-01",
+  since = "2023-03-01_00:00:00_UTC",
   until = 3,
+  interval_unit = "days",
+  dir = "./datos/tweets",
+  system = "windows",
+  kill_system = FALSE,
+  sleep_time = 300
+)
+
+# Usando intervalos de horas
+getTweetsHistoricalHashtagFor(
+  iterations = 12,
+  hashtag = "#8M",
+  n_tweets = 500,
+  since = "2023-03-01_00:00:00_UTC",
+  until = 2,
+  interval_unit = "hours",
   dir = "./datos/tweets",
   system = "windows",
   kill_system = FALSE,

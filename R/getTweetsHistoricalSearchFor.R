@@ -80,6 +80,48 @@ getTweetsHistoricalSearchFor <- function(
     }
   }
   
+  # Función para convertir el formato UTC a datetime
+  parse_datetime <- function(datetime_str) {
+    # Remover "_UTC" y reemplazar "_" por " "
+    clean_str <- gsub("_UTC$", "", datetime_str)
+    clean_str <- gsub("_", " ", clean_str)
+    # Parsear la fecha
+    lubridate::ymd_hms(clean_str)
+  }
+  
+  # Función para formatear datetime al formato UTC
+  format_datetime <- function(datetime) {
+    paste0(gsub(" ", "_", format(datetime, "%Y-%m-%d_%H:%M:%S")), "_UTC")
+  }
+  
+  # Función para calcular la fecha/hora final según la unidad de intervalo
+  calculate_untilok <- function(since, until, interval_unit) {
+    tryCatch({
+      # Parsear la fecha de inicio
+      since_datetime <- parse_datetime(since)
+      
+      # Calcular la nueva fecha según el intervalo
+      if (interval_unit == "days") {
+        untilok <- since_datetime + lubridate::days(until)
+      } else if (interval_unit == "hours") {
+        untilok <- since_datetime + lubridate::hours(until)
+      } else if (interval_unit == "minutes") {
+        untilok <- since_datetime + lubridate::minutes(until)
+      } else {
+        stop("interval_unit debe ser 'days', 'hours' o 'minutes'")
+      }
+      
+      # Formatear la fecha resultante
+      format_datetime(untilok)
+    }, error = function(e) {
+      warning("Error al calcular la fecha: ", e$message)
+      return(NULL)
+    })
+  }
+  
+  # Validar el formato de la fecha inicial
+  validate_datetime(since)
+  
   # Crear el directorio si no existe
   if (!dir.exists(dir)) {
     dir.create(dir, recursive = TRUE)
@@ -98,24 +140,22 @@ getTweetsHistoricalSearchFor <- function(
     }
   }
   
-  calculate_untilok <- function(since, until, interval_unit) {
-    since_datetime <- lubridate::ymd_hms(since)
-    if (interval_unit == "days") {
-      untilok <- since_datetime + lubridate::days(until)
-    } else if (interval_unit == "hours") {
-      untilok <- since_datetime + lubridate::hours(until)
-    } else if (interval_unit == "minutes") {
-      untilok <- since_datetime + lubridate::minutes(until)
-    } else {
-      stop("interval_unit debe ser 'days', 'hours' o 'minutes'")
-    }
-    paste0(gsub(" ", "_", as.character(untilok)), "_UTC")
-  }
-  
   # Bucle principal
   for (i in 1:iterations) {
     cat("Iteración:", i, "\n")
+    
+    # Calcular la fecha final para esta iteración
     untilok <- calculate_untilok(since, until, interval_unit)
+    
+    # Verificar si se calculó correctamente la fecha
+    if (is.null(untilok)) {
+      cat("Error al calcular la fecha. Deteniendo el proceso.\n")
+      break
+    }
+    
+    # Mostrar el rango de fechas que se procesará
+    cat("Procesando período:", since, "->", untilok, "\n")
+    
     tryCatch({
       TweetScraperR::getTweetsHistoricalSearch(
         search = search, 
@@ -127,22 +167,25 @@ getTweetsHistoricalSearchFor <- function(
         xpass = xpass,
         dir = dir
       )
+      
+      # Actualizar la fecha de inicio para la siguiente iteración
+      since <- untilok
+      
+      # Solo cerrar el navegador si kill_system es TRUE
+      if (kill_system) {
+        close_browser(system)
+      }
+      
+      if (i < iterations) {  # No esperar después de la última iteración
+        Sys.sleep(3)
+        cat("Esperando", sleep_time, "segundos antes de la próxima iteración...\n")
+        Sys.sleep(sleep_time-3)
+      }
+      
     }, error = function(e) {
       warning("Error en la iteración ", i, ": ", conditionMessage(e))
+      # No actualizamos 'since' si hay un error para reintentar el mismo período
     })
-    
-    since = untilok
-    
-    # Solo cerrar el navegador si kill_system es TRUE
-    if (kill_system) {
-      close_browser(system)
-    }
-    
-    if (i < iterations) {  # No esperar después de la última iteración
-      Sys.sleep(3)
-      cat("Esperando", sleep_time, "segundos antes de la próxima iteración...\n")
-      Sys.sleep(sleep_time-3)
-    }
   }
   
   cat("Recolección de tweets completada.\n")

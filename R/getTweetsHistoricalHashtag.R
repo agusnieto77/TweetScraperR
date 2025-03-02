@@ -124,7 +124,7 @@ getTweetsHistoricalHashtag <- function(
         historicalok$scroll_by(top = 4000, left = 0)
         message("Tweets recolectados: ", length(articles))
         Sys.sleep(timeout)
-        if (new_tweets == 0) {
+        if (new_tweets <= 1) {
           attempts <- attempts + 1
         } else {
           attempts <- 0

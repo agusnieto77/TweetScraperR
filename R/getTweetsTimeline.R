@@ -131,9 +131,8 @@ getTweetsTimeline <- function(
     message("Tweets recolectados: ", nrow(tweets_udb))
     Sys.sleep(2.5)
   }
-  timeline$session$close()
-  TweetScraperR::closeTwitter()
-  rm(timeline, envir = .GlobalEnv)
+  if (open) { timeline$session$close() }
+  if (open) { rm(timeline, envir = .GlobalEnv) }
   tweets_udb$url <- paste0("https://x.com", tweets_udb$url)
   tweets_udb$is_original <- tweets_udb$usern == paste0("@", username)
   tweets_udb$is_retweet <- !is.na(tweets_udb$usern) & tweets_udb$usern != paste0("@", username)

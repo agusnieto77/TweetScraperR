@@ -68,9 +68,9 @@
 
 extractTweetsData <- function(data) {
   
-  metrica_meg = '//*[contains(@aria-label, "Me gusta")]'
-  metrica_res = '//*[contains(@aria-label, "Respuesta") or contains(@aria-label, "Respuestas")]'
-  metrica_rep = '//*[contains(@aria-label, "Repostear")]'
+  metrica_meg = '//*[contains(@aria-label, "Me gusta") or contains(@aria-label, "like") or contains(@aria-label, "likes") or contains(@aria-label, "Like") or contains(@aria-label, "Likes")]'
+  metrica_res = '//*[contains(@aria-label, "Respuesta") or contains(@aria-label, "Respuestas") or contains(@aria-label, "Reply") or contains(@aria-label, "Replies")]'
+  metrica_rep = '//*[contains(@aria-label, "Repostear") or contains(@aria-label, "Repost") or contains(@aria-label, "repost") or contains(@aria-label, "Reposts") or contains(@aria-label, "reposts")]'
   pattern = "https?://(pbs|video)\\.twimg\\.com/(media|tweet_video_thumb|tweet_video|amplify_video_thumb)/[^\\s\"']+(?:\\?[^\\s\"']+)?"
   yt = "https?://t\\.co/[^\\s\"']+(?:\\?[^\\s\"']+)?"
   
@@ -118,6 +118,8 @@ extractTweetsData <- function(data) {
       metr <- rvest::html_attr(rvest::html_element(articulo, xpath = metrica_meg), "aria-label")
       resp <- rvest::html_attr(rvest::html_element(articulo, xpath = metrica_res), "aria-label")
       resp_ok <- if(grepl("[0-9]", resp)) as.integer(gsub("^(\\d+).*", "\\1", resp)) else as.integer(gsub("^(\\d+).*", "\\1", metr))
+      megus <- suppressWarnings(as.integer(gsub(".*?(\\d+)\\s*(?:Me gusta|likes|like).*", "\\1", metr)))
+      reprodu <- suppressWarnings(as.integer(gsub(".*?(\\d+)\\s*(?:reproducciones|views|reproduccion|view).*", "\\1", metr)))
       
       # Creación del tibble con los datos extraídos
       tibble::tibble(
@@ -131,8 +133,9 @@ extractTweetsData <- function(data) {
         links_img_post = list(unique(gsub("&amp;", "&", stringr::str_extract_all(as.character(articulo), pattern)[[1]]))),
         links_externos = list(unique(stringr::str_extract_all(as.character(articulo), yt)[[1]])),
         respuestas = resp_ok,
-        reposteos = as.integer(gsub("^(\\d+).*", "\\1", rvest::html_attr(rvest::html_element(articulo, xpath = metrica_rep), "aria-label"))),
-        megustas = as.integer(gsub(".*?(\\d+) Me gusta.*", "\\1", rvest::html_attr(rvest::html_element(articulo, xpath = metrica_meg), "aria-label"))),
+        reposteos = as.integer(gsub(".*?(\\d+)\\s*(?:Repostear|repost|reposts).*", "\\1", rvest::html_attr(rvest::html_element(articulo, xpath = metrica_rep), "aria-label"))),
+        megustas = if(!is.na(megus)) megus else 0,
+        reproducciones = if(!is.na(reprodu)) reprodu else 0,
         metricas = metr,
         urls = list(urls_tw),
         hilo = resp_ok,

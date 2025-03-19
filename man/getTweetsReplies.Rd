@@ -12,7 +12,8 @@ getTweetsReplies(
   xpass = Sys.getenv("PASS"),
   view = FALSE,
   dir = getwd(),
-  save = TRUE
+  save = TRUE,
+  open = FALSE
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ getTweetsReplies(
 \item{dir}{Directorio donde se guardará el archivo RDS con los datos recolectados. Por defecto es el directorio de trabajo actual.}
 
 \item{save}{Lógico. Indica si se debe guardar el resultado en un archivo RDS (por defecto TRUE).}
+
+\item{open}{Lógico. Indica si se debe abrir una nueva sesión de login en Twitter (por defecto FALSE).}
 }
 \value{
 Un data frame que contiene información sobre las respuestas al tweet especificado, incluyendo usuario, texto, fecha, URL y fecha de captura.
@@ -45,7 +48,7 @@ y recolectar la información de las respuestas al tweet.
 
 El proceso incluye:
 \enumerate{
-\item Iniciar sesión en Twitter usando las credenciales proporcionadas.
+\item Iniciar sesión en Twitter usando las credenciales proporcionadas (si open=TRUE).
 \item Navegar a la URL del tweet especificado.
 \item Extraer la información de las respuestas mediante scraping.
 \item Continuar scrolling y recolectando datos hasta alcanzar el número deseado o no encontrar nuevas respuestas.
@@ -63,6 +66,9 @@ getTweetsReplies(url = "https://x.com/Picanumeros/status/1610715405705789442", n
 
 # Sin guardar los resultados
 getTweetsReplies(url = "https://x.com/Picanumeros/status/1610715405705789442", n_tweets = 130, save = FALSE)
+
+# Sin abrir una nueva sesión de login
+getTweetsReplies(url = "https://x.com/Picanumeros/status/1610715405705789442", n_tweets = 130, open = TRUE)
 }
 
 }

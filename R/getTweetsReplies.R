@@ -10,7 +10,7 @@
 #' y recolectar la información de las respuestas al tweet.
 #' 
 #' El proceso incluye:
-#' 1. Iniciar sesión en Twitter usando las credenciales proporcionadas.
+#' 1. Iniciar sesión en Twitter usando las credenciales proporcionadas (si open=TRUE).
 #' 2. Navegar a la URL del tweet especificado.
 #' 3. Extraer la información de las respuestas mediante scraping.
 #' 4. Continuar scrolling y recolectando datos hasta alcanzar el número deseado o no encontrar nuevas respuestas.
@@ -26,6 +26,7 @@
 #' @param view Ver el navegador. Por defecto es FALSE.
 #' @param dir Directorio donde se guardará el archivo RDS con los datos recolectados. Por defecto es el directorio de trabajo actual.
 #' @param save Lógico. Indica si se debe guardar el resultado en un archivo RDS (por defecto TRUE).
+#' @param open Lógico. Indica si se debe abrir una nueva sesión de login en Twitter (por defecto FALSE).
 #'
 #' @return Un data frame que contiene información sobre las respuestas al tweet especificado, incluyendo usuario, texto, fecha, URL y fecha de captura.
 #' @export
@@ -36,6 +37,9 @@
 #' 
 #' # Sin guardar los resultados
 #' getTweetsReplies(url = "https://x.com/Picanumeros/status/1610715405705789442", n_tweets = 130, save = FALSE)
+#' 
+#' # Sin abrir una nueva sesión de login
+#' getTweetsReplies(url = "https://x.com/Picanumeros/status/1610715405705789442", n_tweets = 130, open = TRUE)
 #' }
 #'
 #' @references
@@ -58,7 +62,8 @@ getTweetsReplies <- function(
     xpass = Sys.getenv("PASS"),
     view = FALSE,
     dir = getwd(),
-    save = TRUE
+    save = TRUE,
+    open = FALSE
 ) {
   # Iniciar sesión en Twitter
   success <- FALSE
@@ -67,34 +72,36 @@ getTweetsReplies <- function(
   
   while (retry_count < max_retries && !success) {
     tryCatch({
-      # Intentar iniciar sesión
-      success2 <- FALSE
-      while (!success2) {
-        tryCatch({
-          twitter <- rvest::read_html_live("https://x.com/i/flow/login")
-          success2 <- TRUE
-        }, error = function(e) {
-          if (grepl("loadEventFired", e$message)) {
-            message("Error de tiempo de espera, reintentando...")
-            Sys.sleep(5)
-          } else {
-            stop(e)
-          }
-        })
+      # Intentar iniciar sesión solo si open es TRUE
+      if (open) {
+        success2 <- FALSE
+        while (!success2) {
+          tryCatch({
+            twitter <- rvest::read_html_live("https://x.com/i/flow/login")
+            success2 <- TRUE
+          }, error = function(e) {
+            if (grepl("loadEventFired", e$message)) {
+              message("Error de tiempo de espera, reintentando...")
+              Sys.sleep(5)
+            } else {
+              stop(e)
+            }
+          })
+        }
+        
+        Sys.sleep(5)
+        userx <- "#layers > div > div > div > div > div > div > div.css-175oi2r > div.css-175oi2r > div > div > div.css-175oi2r > div.css-175oi2r > div > div > div > div.css-175oi2r > label > div > div.css-175oi2r > div > input"
+        nextx <- "#layers div > div > div > button:nth-child(6) > div"
+        passx <- "#layers > div > div > div > div > div > div > div > div > div > div > div > div > div > div > div > div > div > label > div > div > div > input"
+        login <- "#layers > div > div > div > div > div > div > div.css-175oi2r > div.css-175oi2r > div > div > div.css-175oi2r > div.css-175oi2r.r-16y2uox > div.css-175oi2r > div > div.css-175oi2r > div > div > button"
+        
+        twitter$type(css = userx, text = xuser)
+        twitter$click(css = nextx, n_clicks = 1)
+        Sys.sleep(1)
+        twitter$type(css = passx, text = xpass)
+        twitter$click(css = login, n_clicks = 1)
+        Sys.sleep(1)
       }
-      
-      Sys.sleep(5)
-      userx <- "#layers > div > div > div > div > div > div > div.css-175oi2r > div.css-175oi2r > div > div > div.css-175oi2r > div.css-175oi2r > div > div > div > div.css-175oi2r > label > div > div.css-175oi2r > div > input"
-      nextx <- "#layers div > div > div > button:nth-child(6) > div"
-      passx <- "#layers > div > div > div > div > div > div > div > div > div > div > div > div > div > div > div > div > div > label > div > div > div > input"
-      login <- "#layers > div > div > div > div > div > div > div.css-175oi2r > div.css-175oi2r > div > div > div.css-175oi2r > div.css-175oi2r.r-16y2uox > div.css-175oi2r > div > div.css-175oi2r > div > div > button"
-      
-      twitter$type(css = userx, text = xuser)
-      twitter$click(css = nextx, n_clicks = 1)
-      Sys.sleep(1)
-      twitter$type(css = passx, text = xpass)
-      twitter$click(css = login, n_clicks = 1)
-      Sys.sleep(1)
       
       # Navegar a la URL del tweet
       success3 <- FALSE
@@ -238,7 +245,7 @@ getTweetsReplies <- function(
     
     # Cerrar sesiones
     if (exists("urlok") && !is.null(urlok)) urlok$session$close()
-    if (exists("twitter") && !is.null(twitter)) twitter$session$close()
+    if (open && exists("twitter") && !is.null(twitter)) twitter$session$close()
     
     # Devolver el data frame
     return(tweets_recolectados)
@@ -247,7 +254,7 @@ getTweetsReplies <- function(
     
     # Cerrar sesiones
     if (exists("urlok") && !is.null(urlok)) urlok$session$close()
-    if (exists("twitter") && !is.null(twitter)) twitter$session$close()
+    if (open && exists("twitter") && !is.null(twitter)) twitter$session$close()
     
     return(NULL)
   }

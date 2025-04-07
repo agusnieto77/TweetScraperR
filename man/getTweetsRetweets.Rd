@@ -2,11 +2,11 @@
 % Please edit documentation in R/getTweetsRetweets.R
 \name{getTweetsRetweets}
 \alias{getTweetsRetweets}
-\title{Get Tweets Retweets with Data}
+\title{Get Users Retweets with Data}
 \usage{
 getTweetsRetweets(
-  url = "https://x.com/Picanumeros/status/1610715405705789442",
-  n_tweets = 100,
+  url = "https://x.com/tipsder/status/1672311054922293254",
+  n_users = 100,
   timeout = 2.5,
   xuser = Sys.getenv("USER"),
   xpass = Sys.getenv("PASS"),
@@ -17,9 +17,9 @@ getTweetsRetweets(
 )
 }
 \arguments{
-\item{url}{URL del tweet del cual se quieren obtener los retweets. Por defecto es "https://x.com/Picanumeros/status/1610715405705789442".}
+\item{url}{URL del tweet del cual se quieren obtener los retweets. Por defecto es "https://x.com/tipsder/status/1672311054922293254".}
 
-\item{n_tweets}{El número máximo de tweets de citas a recuperar. Por defecto es 100.}
+\item{n_users}{El número máximo de users a recuperar. Por defecto es 100.}
 
 \item{timeout}{Tiempo de espera entre scrolls en segundos. Por defecto es 2.5.}
 
@@ -62,13 +62,13 @@ Esta función utiliza web scraping y puede ser sensible a cambios en la estructu
 }
 \examples{
 \dontrun{
-getTweetsRetweets(url = "https://x.com/tipsder/status/1672311054922293254", n_tweets = 20)
+getTweetsRetweets(url = "https://x.com/tipsder/status/1672311054922293254", n_users = 20)
 
 # Sin guardar los resultados
-getTweetsRetweets(url = "https://x.com/tipsder/status/1672311054922293254", n_tweets = 20, save = FALSE)
+getTweetsRetweets(url = "https://x.com/tipsder/status/1672311054922293254", n_users = 20, save = FALSE)
 
 # Sin abrir una nueva sesión de login
-getTweetsRetweets(url = "https://x.com/tipsder/status/1672311054922293254", n_tweets = 20, open = TRUE)
+getTweetsRetweets(url = "https://x.com/tipsder/status/1672311054922293254", n_users = 20, open = TRUE)
 }
 
 }

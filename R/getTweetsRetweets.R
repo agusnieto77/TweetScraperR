@@ -1,4 +1,4 @@
-#' Get Tweets Retweets with Data
+#' Get Users Retweets with Data
 #'
 #' @description
 #' 
@@ -18,8 +18,8 @@
 #' La función guarda los datos recolectados en un archivo RDS en el directorio especificado si el parámetro 'save' es TRUE,
 #' y los devuelve como un data frame.
 #'
-#' @param url URL del tweet del cual se quieren obtener los retweets. Por defecto es "https://x.com/Picanumeros/status/1610715405705789442".
-#' @param n_tweets El número máximo de tweets de citas a recuperar. Por defecto es 100.
+#' @param url URL del tweet del cual se quieren obtener los retweets. Por defecto es "https://x.com/tipsder/status/1672311054922293254".
+#' @param n_users El número máximo de users a recuperar. Por defecto es 100.
 #' @param timeout Tiempo de espera entre scrolls en segundos. Por defecto es 2.5.
 #' @param xuser Nombre de usuario de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.
 #' @param xpass Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.
@@ -33,13 +33,13 @@
 #'
 #' @examples
 #' \dontrun{
-#' getTweetsRetweets(url = "https://x.com/tipsder/status/1672311054922293254", n_tweets = 20)
+#' getTweetsRetweets(url = "https://x.com/tipsder/status/1672311054922293254", n_users = 20)
 #' 
 #' # Sin guardar los resultados
-#' getTweetsRetweets(url = "https://x.com/tipsder/status/1672311054922293254", n_tweets = 20, save = FALSE)
+#' getTweetsRetweets(url = "https://x.com/tipsder/status/1672311054922293254", n_users = 20, save = FALSE)
 #' 
 #' # Sin abrir una nueva sesión de login
-#' getTweetsRetweets(url = "https://x.com/tipsder/status/1672311054922293254", n_tweets = 20, open = TRUE)
+#' getTweetsRetweets(url = "https://x.com/tipsder/status/1672311054922293254", n_users = 20, open = TRUE)
 #' }
 #'
 #' @references
@@ -55,8 +55,8 @@
 #' Esta función utiliza web scraping y puede ser sensible a cambios en la estructura de la página de Twitter.
 
 getTweetsRetweets <- function(
-    url = "https://x.com/Picanumeros/status/1610715405705789442",
-    n_tweets = 100,
+    url = "https://x.com/tipsder/status/1672311054922293254",
+    n_users = 100,
     timeout = 2.5,
     xuser = Sys.getenv("USER"),
     xpass = Sys.getenv("PASS"),
@@ -126,15 +126,15 @@ getTweetsRetweets <- function(
       Sys.sleep(3)
       
       # XPath para los artículos de citas
-      articles <- list()
+      users <- list()
       attempts <- 0
       max_attempts <- 3
       
-      cat("Inició la recolección de tweets de citas.\n")
+      cat("Inició la recolección de users.\n")
       
       while (TRUE) {
-        if (length(articles) >= n_tweets || attempts >= max_attempts) {
-          cat("Finalizó la recolección de tweets de citas.\n")
+        if (length(users) >= n_users || attempts >= max_attempts) {
+          cat("Finalizó la recolección de users.\n")
           cat("Procesando datos...\n")
           break
         }
@@ -144,23 +144,23 @@ getTweetsRetweets <- function(
           
           # Recolectar artículos de citas
           tryCatch({
-            nuevos_articles <- as.character(urlok$html_elements(css = "article"))
+            nuevos_users <- as.character(urlok$html_elements(css = "article"))
           }, error = function(e) {
             message("Error al procesar artículos: ", e$message)
-            nuevos_articles <- character(0)
+            nuevos_users <- character(0)
           })
           
           # Añadir nuevos artículos a la lista
-          new_tweets <- length(unique(nuevos_articles[!nuevos_articles %in% articles]))
-          articles <- unique(append(articles, nuevos_articles))
-          articles <- articles[!is.na(articles)]
+          new_users <- length(unique(nuevos_users[!nuevos_users %in% users]))
+          users <- unique(append(users, nuevos_users))
+          users <- users[!is.na(users)]
           
           # Scroll para cargar más citas
           urlok$scroll_by(top = 4000, left = 0)
-          message("Tweets recolectados: ", length(articles))
+          message("Users recolectados: ", length(users))
           
-          # Verificar si se encontraron nuevos tweets
-          if (new_tweets <= 1) {
+          # Verificar si se encontraron nuevos users
+          if (new_users <= 1) {
             attempts <- attempts + 1
           } else {
             attempts <- 0
@@ -186,70 +186,59 @@ getTweetsRetweets <- function(
   }
   
   # Procesar los artículos recolectados
-  if (length(articles) > 0) {
+  if (length(users) > 0) {
     # Crear un data frame para almacenar los datos
-    tweets_recolectados <- tibble::tibble(
-      art_html = articles,
-      fecha = lubridate::as_datetime("2008-11-09 09:12:30 UTC"),
+    users_recolectados <- tibble::tibble(
+      art_html = users,
+      user_name = "",
       user = "",
-      tweet = "",
-      url = "",
+      url_user = "",
+      url_rt = url,
       fecha_captura = Sys.time()
     )
     
-    # URL selector para los enlaces de tweets
-    url_tweet <- "div.css-175oi2r > div > div.css-175oi2r > a.css-146c3p1.r-bcqeeo.r-1ttztb7.r-qvutc0.r-37j5jr.r-a023e6"
+    user_name <- "span.css-1jxf684.r-bcqeeo.r-1ttztb7.r-qvutc0.r-poiln3"
+    user      <- "div.css-146c3p1.r-dnmrzs.r-1udh08x.r-1udbk01.r-3s2u2q.r-bcqeeo.r-1ttztb7.r-qvutc0.r-37j5jr.r-a023e6.r-rjixqe.r-16dba41.r-18u37iz.r-1wvb978 span.css-1jxf684.r-bcqeeo.r-1ttztb7.r-qvutc0.r-poiln3"
+    url_user  <- "div.css-175oi2r.r-1wbh5a2.r-dnmrzs a"
     
     # Extraer información de cada artículo
-    for (i in 1:length(tweets_recolectados$art_html)) {
+    for (i in 1:length(users_recolectados$art_html)) {
       tryCatch({
-        # Extraer fecha
-        fechas <- lubridate::as_datetime(rvest::html_attr(rvest::html_elements(rvest::read_html(articles[[i]]), css = "time"), "datetime"))
-        fechas <- fechas[order(fechas, decreasing = TRUE)][1]
-        if (lubridate::is.POSIXct(fechas)) {
-          max_fecha <- fechas
-        } else {
-          max_fecha <- NA
-        }
-        tweets_recolectados$fecha[i] <- max_fecha
-        
+
         # Extraer usuario
-        tweets_recolectados$user[i] <- rvest::html_text(rvest::html_element(rvest::read_html(articles[[i]]), 
-                                                                            css = "div.css-175oi2r.r-18u37iz.r-1wbh5a2.r-1ez5h0i > div > div.css-175oi2r.r-1wbh5a2.r-dnmrzs > a > div > span"))
+        users_recolectados$user_name[i] <- rvest::html_text(rvest::html_element(rvest::read_html(users[[i]]), css = user_name))
         
         # Extraer texto del tweet
-        tweets_recolectados$tweet[i] <- rvest::html_text(rvest::html_element(rvest::read_html(articles[[i]]), 
-                                                                             css = "div[data-testid='tweetText']"))
+        users_recolectados$user[i] <- rvest::html_text(rvest::html_element(rvest::read_html(users[[i]]), css = user))
         
         # Extraer URL
-        tweets_recolectados$url[i] <- paste0("https://x.com", rvest::html_attr(rvest::html_element(rvest::read_html(articles[[i]]), 
-                                                                                                   css = url_tweet), "href"))
+        users_recolectados$url_user[i] <- paste0("https://x.com", rvest::html_attr(rvest::html_element(rvest::read_html(users[[i]]), css = url_tweet), "href"))
       }, error = function(e) {
         message("Error al procesar el artículo ", i, ": ", e$message)
       })
     }
     
     # Eliminar duplicados y filas con fechas NA
-    tweets_recolectados <- dplyr::distinct(tweets_recolectados, url, .keep_all = TRUE)
-    tweets_recolectados <- tweets_recolectados[!is.na(tweets_recolectados$fecha), ]
+    users_recolectados <- dplyr::distinct(users_recolectados, url, .keep_all = TRUE)
+    users_recolectados <- users_recolectados[!is.na(users_recolectados$fecha), ]
     
     # Guardar resultados si save es TRUE
     if (save) {
-      saveRDS(tweets_recolectados, paste0(dir, "/rt_", sub("https://x.com/(.*)/status/(.*)", "\\1_\\2", url), "_", 
+      saveRDS(users_recolectados, paste0(dir, "/rt_", sub("https://x.com/(.*)/status/(.*)", "\\1_\\2", url), "_", 
                                           gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
       cat("Datos procesados y guardados.\n")
     } else {
       cat("Datos procesados. No se han guardado en un archivo RDS.\n")
     }
     
-    cat("Tweets de citas únicos recolectados:", length(tweets_recolectados$url), "\n")
+    cat("Users únicos recolectados:", length(users_recolectados$url), "\n")
     
     # Cerrar sesiones
     if (exists("urlok") && !is.null(urlok)) urlok$session$close()
     if (open && exists("twitter") && !is.null(twitter)) twitter$session$close()
     
     # Devolver el data frame
-    return(tweets_recolectados)
+    return(users_recolectados)
   } else {
     cat("No hay artículos para procesar.\n")
     

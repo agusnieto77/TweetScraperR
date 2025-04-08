@@ -5,7 +5,7 @@
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
 #' 
 #' Esta función recupera los retweets a un tweet específico en Twitter (ahora X),
-#' incluyendo datos como el texto del tweet, usuario, fecha, y URL.
+#' incluyendo datos como el user name, name y URL.
 #' Utiliza web scraping para acceder a la página del tweet, iniciar sesión con las credenciales proporcionadas,
 #' y recolectar la información de los retweets al tweet.
 #' 
@@ -28,7 +28,7 @@
 #' @param save Lógico. Indica si se debe guardar el resultado en un archivo RDS (por defecto TRUE).
 #' @param open Lógico. Indica si se debe abrir una nueva sesión de login en Twitter (por defecto FALSE).
 #'
-#' @return Un data frame que contiene información sobre los retweets al tweet especificado, incluyendo usuario, texto, fecha, URL y fecha de captura.
+#' @return Un data frame que contiene información sobre los users que rt el tweet especificado, incluyendo usuario, URL y fecha de captura.
 #' @export
 #'
 #' @examples
@@ -220,9 +220,8 @@ getTweetsRetweets <- function(
       })
     }
     
-    # Eliminar duplicados y filas con fechas NA
+    # Eliminar duplicados
     users_recolectados <- dplyr::distinct(users_recolectados, url_user, .keep_all = TRUE)
-    users_recolectados <- users_recolectados[!is.na(users_recolectados$fecha), ]
     
     # Guardar resultados si save es TRUE
     if (save) {

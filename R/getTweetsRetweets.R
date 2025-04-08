@@ -214,7 +214,7 @@ getTweetsRetweets <- function(
         users_recolectados$user[i] <- rvest::html_text(rvest::html_element(rvest::read_html(users[[i]]), css = user))
         
         # Extraer URL
-        users_recolectados$url_user[i] <- paste0("https://x.com", rvest::html_attr(rvest::html_element(rvest::read_html(users[[i]]), css = url_tweet), "href"))
+        users_recolectados$url_user[i] <- paste0("https://x.com", rvest::html_attr(rvest::html_element(rvest::read_html(users[[i]]), css = url_user), "href"))
       }, error = function(e) {
         message("Error al procesar el artículo ", i, ": ", e$message)
       })

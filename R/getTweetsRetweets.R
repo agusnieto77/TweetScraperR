@@ -130,6 +130,8 @@ getTweetsRetweets <- function(
       attempts <- 0
       max_attempts <- 3
       
+      html_rt <- '//*[@id="react-root"]/div/div/div[2]/main/div/div/div/div[1]/div/section/div/div/div'
+      
       cat("Inició la recolección de users.\n")
       
       while (TRUE) {
@@ -144,7 +146,7 @@ getTweetsRetweets <- function(
           
           # Recolectar artículos de citas
           tryCatch({
-            nuevos_users <- as.character(urlok$html_elements(css = "article"))
+            nuevos_users <- as.character(urlok$html_elements(xpath = html_rt))
           }, error = function(e) {
             message("Error al procesar artículos: ", e$message)
             nuevos_users <- character(0)

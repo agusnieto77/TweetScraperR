@@ -221,7 +221,7 @@ getTweetsRetweets <- function(
     }
     
     # Eliminar duplicados y filas con fechas NA
-    users_recolectados <- dplyr::distinct(users_recolectados, url, .keep_all = TRUE)
+    users_recolectados <- dplyr::distinct(users_recolectados, url_user, .keep_all = TRUE)
     users_recolectados <- users_recolectados[!is.na(users_recolectados$fecha), ]
     
     # Guardar resultados si save es TRUE

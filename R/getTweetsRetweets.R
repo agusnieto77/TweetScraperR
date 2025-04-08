@@ -232,7 +232,7 @@ getTweetsRetweets <- function(
       cat("Datos procesados. No se han guardado en un archivo RDS.\n")
     }
     
-    cat("Users únicos recolectados:", length(users_recolectados$url), "\n")
+    cat("Users únicos recolectados:", length(users_recolectados$url_user), "\n")
     
     # Cerrar sesiones
     if (exists("urlok") && !is.null(urlok)) urlok$session$close()

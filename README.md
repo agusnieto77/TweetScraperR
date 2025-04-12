@@ -69,6 +69,7 @@ devtools::install_github("agusnieto77/TweetScraperR")
 | `getTweetsImages()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Descarga las imágenes posteadas en los tweets. |
 | `getTweetsImagesAnalysis()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Analiza las imágenes posteadas en los tweets. |
 | `getTweetsReplies()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Recupera las respuesta a un tweet desde su URL. |
+| `getTweetsRetweets()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Recupera los usuarios que rt un tweet desde su URL. |
 | `getTweetsSearchStreaming()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Recupera tweets en tiempo real. |
 | `getTweetsSearchStreamingFor()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Itera la recuperación de tweets en tiempo real. |
 | `getTweetsSentiments()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Analizador de sentimientos. |

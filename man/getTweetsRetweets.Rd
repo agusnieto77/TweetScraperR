@@ -36,13 +36,13 @@ getTweetsRetweets(
 \item{open}{Lógico. Indica si se debe abrir una nueva sesión de login en Twitter (por defecto FALSE).}
 }
 \value{
-Un data frame que contiene información sobre los retweets al tweet especificado, incluyendo usuario, texto, fecha, URL y fecha de captura.
+Un data frame que contiene información sobre los users que rt el tweet especificado, incluyendo usuario, URL y fecha de captura.
 }
 \description{
 \if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}
 
 Esta función recupera los retweets a un tweet específico en Twitter (ahora X),
-incluyendo datos como el texto del tweet, usuario, fecha, y URL.
+incluyendo datos como el user name, name y URL.
 Utiliza web scraping para acceder a la página del tweet, iniciar sesión con las credenciales proporcionadas,
 y recolectar la información de los retweets al tweet.
 

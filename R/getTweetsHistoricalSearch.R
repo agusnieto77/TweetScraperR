@@ -102,6 +102,7 @@ getTweetsHistoricalSearch <- function(
       message("Se inició la recolección de datos...")
     })
     url_tweet <- "div.css-175oi2r > div > div.css-175oi2r > a.css-146c3p1.r-bcqeeo.r-1ttztb7.r-qvutc0.r-37j5jr.r-a023e6"
+    search <- gsub("#", "%23", search)
     term_search <- if(live) {
       paste0("https://x.com/search?f=live&q=", search, "%20since%3A", since, "%20until%3A", until, "&src=typed_query")
     } else {

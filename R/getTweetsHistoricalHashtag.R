@@ -88,7 +88,7 @@ getTweetsHistoricalHashtag <- function(
       message("Se inició la recolección de datos...")
     })
     url_tweet <- "div.css-175oi2r > div > div.css-175oi2r > a.css-146c3p1.r-bcqeeo.r-1ttztb7.r-qvutc0.r-37j5jr.r-a023e6"
-    hashtagsearch <- paste0("https://x.com/search?q=(%23", gsub("#", "", hashtag), "%20until%3A", until, "%20since%3A", since, "&src=typed_query&f=live")
+    hashtagsearch <- paste0("https://x.com/search?q=(%23", gsub("#", "", hashtag), ")%20until%3A", until, "%20since%3A", since, "&src=typed_query&f=live")
     success3 <- FALSE
     while (!success3) {
       tryCatch({

@@ -6,7 +6,7 @@
 <!-- badges: start -->
 
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
-[![](https://img.shields.io/badge/devel%20version-0.2.0.054-blue.svg)](https://github.com/agusnieto77/TweetScraperR)
+[![](https://img.shields.io/badge/devel%20version-0.2.1.9000-blue.svg)](https://github.com/agusnieto77/TweetScraperR)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://cran.r-project.org/web/licenses/MIT)
 [![](https://img.shields.io/github/languages/code-size/agusnieto77/TweetScraperR.svg)](https://github.com/agusnieto77/TweetScraperR)
 [![](https://img.shields.io/badge/Lifecycle-Experimental-ff7f2a)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
@@ -71,7 +71,9 @@ devtools::install_github("agusnieto77/TweetScraperR")
 | `getTweetsReplies()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Recupera las respuesta a un tweet desde su URL. |
 | `getTweetsRetweets()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Recupera los usuarios que rt un tweet desde su URL. |
 | `getTweetsSearchStreaming()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Recupera tweets en tiempo real. |
+| `getTweetsSearchStreaming2()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Recupera tweets en tiempo real. |
 | `getTweetsSearchStreamingFor()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Itera la recuperación de tweets en tiempo real. |
+| `getTweetsSearchStreamingFor2()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Itera la recuperación de tweets en tiempo real. |
 | `getTweetsSentiments()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Analizador de sentimientos. |
 | `getTweetsTimeline()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Recupera tweets de un timeline. |
 | `getUrlsHistoricalTimeline()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Recupera URLs de tweets históricos de un timeline. |

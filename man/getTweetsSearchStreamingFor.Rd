@@ -8,6 +8,7 @@ getTweetsSearchStreamingFor(
   iterations,
   search,
   n_tweets,
+  sleep,
   dir,
   system = "unix",
   kill_system = FALSE,
@@ -21,13 +22,15 @@ getTweetsSearchStreamingFor(
 
 \item{n_tweets}{Número de tweets a recolectar en cada iteración}
 
+\item{sleep}{Tiempo de espera para la carga de tweets. Por defecto este valor es de 3 segundos.}
+
 \item{dir}{Directorio donde se guardarán los tweets}
 
 \item{system}{Sistema operativo ('windows', 'unix', 'macOS')}
 
 \item{kill_system}{Booleano que indica si se debe cerrar el navegador después de cada iteración (por defecto: FALSE)}
 
-\item{sleep_time}{Tiempo de espera entre iteraciones en segundos}
+\item{sleep_time}{Tiempo de espera entre iteraciones en segundos. Por defecto este valor es de 300 segundos.}
 }
 \value{
 No devuelve un valor, pero guarda los tweets en el directorio especificado

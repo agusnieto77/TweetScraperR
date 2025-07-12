@@ -8,6 +8,7 @@ getTweetsSearchStreaming(
   search = "#RStats",
   timeout = 10,
   n_tweets = 100,
+  sleep = 3,
   xuser = Sys.getenv("USER"),
   xpass = Sys.getenv("PASS"),
   dir = getwd(),
@@ -20,6 +21,8 @@ getTweetsSearchStreaming(
 \item{timeout}{Tiempo de espera.}
 
 \item{n_tweets}{El número máximo de tweets a recuperar. Por defecto es 100.}
+
+\item{sleep}{Tiempo de espera para la carga de tweets. Por defecto este valor es de 3 segundos.}
 
 \item{xuser}{Nombre de usuario de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.}
 

@@ -10,10 +10,11 @@
 #' @param iterations Número de iteraciones a realizar
 #' @param search Término de búsqueda para los tweets
 #' @param n_tweets Número de tweets a recolectar en cada iteración
+#' @param sleep Tiempo de espera para la carga de tweets. Por defecto este valor es de 3 segundos.
 #' @param dir Directorio donde se guardarán los tweets
 #' @param system Sistema operativo ('windows', 'unix', 'macOS')
 #' @param kill_system Booleano que indica si se debe cerrar el navegador después de cada iteración (por defecto: FALSE)
-#' @param sleep_time Tiempo de espera entre iteraciones en segundos
+#' @param sleep_time Tiempo de espera entre iteraciones en segundos. Por defecto este valor es de 300 segundos.
 #'
 #' @return No devuelve un valor, pero guarda los tweets en el directorio especificado
 #' @export
@@ -35,6 +36,7 @@ getTweetsSearchStreamingFor <- function(
     iterations, 
     search, 
     n_tweets, 
+    sleep,
     dir, 
     system = "unix", 
     kill_system = FALSE,
@@ -63,7 +65,7 @@ getTweetsSearchStreamingFor <- function(
     cat("Iteración:", i, "\n")
     
     tryCatch({
-      TweetScraperR::getTweetsSearchStreaming(search = search, n_tweets = n_tweets, dir = dir)
+      TweetScraperR::getTweetsSearchStreaming(search = search, n_tweets = n_tweets, sleep = sleep, dir = dir)
     }, error = function(e) {
       warning("Error en la iteración ", i, ": ", conditionMessage(e))
     })

@@ -21,6 +21,7 @@
 #' 
 #' @param search La consulta de búsqueda para recuperar tweets. Por defecto es "#RStats".
 #' @param n_tweets El número máximo de tweets a recuperar. Por defecto es 100.
+#' @param sleep Tiempo de espera para la carga de tweets. Por defecto este valor es de 3 segundos.
 #' @param xuser Nombre de usuario de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.
 #' @param xpass Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.
 #' @param dir Directorio para guardar el archivo RDS con las URLs recolectadas.
@@ -52,6 +53,7 @@ getTweetsSearchStreaming <- function(
     search = "#RStats",
     timeout = 10,
     n_tweets = 100,
+    sleep = 3,
     xuser = Sys.getenv("USER"),
     xpass = Sys.getenv("PASS"),
     dir = getwd(),
@@ -113,7 +115,7 @@ getTweetsSearchStreaming <- function(
         })
       }
       tryCatch({
-        Sys.sleep(1.5)
+        Sys.sleep(sleep)
         nuevos_articles <- as.character(historicalok$html_elements(css = "article"))
         urls_tweets <- nuevos_articles
         new_tweets <- length(unique(urls_tweets[!urls_tweets %in% articles]))

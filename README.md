@@ -6,7 +6,7 @@
 <!-- badges: start -->
 
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
-[![](https://img.shields.io/badge/devel%20version-0.2.1.9000-blue.svg)](https://github.com/agusnieto77/TweetScraperR)
+[![](https://img.shields.io/badge/devel%20version-0.2.1-9000-blue.svg)](https://github.com/agusnieto77/TweetScraperR)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://cran.r-project.org/web/licenses/MIT)
 [![](https://img.shields.io/github/languages/code-size/agusnieto77/TweetScraperR.svg)](https://github.com/agusnieto77/TweetScraperR)
 [![](https://img.shields.io/badge/Lifecycle-Experimental-ff7f2a)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
@@ -58,6 +58,7 @@ devtools::install_github("agusnieto77/TweetScraperR")
 | `getScrollExtractUrls()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Scrolea y extrae URLs de tweets. |
 | `getTweetsCites()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Recupera las citas de un tweet a partir de su URL. |
 | `getTweetsData()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Recupera datos de tweets a partir de URLs. |
+| `getTweetsData2()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Recupera datos de tweets a partir de URLs. |
 | `getTweetsFullSearch()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Recupera tweets desde la búsqueda avanzada. |
 | `getTweetsHashtags()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Recupera los hashtags de la columna 'texto'. |
 | `getTweetsHistoricalHashtag()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Recupera tweets históricos con un hashtag específico. |

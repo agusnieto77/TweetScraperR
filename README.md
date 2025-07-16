@@ -6,7 +6,7 @@
 <!-- badges: start -->
 
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
-[![](https://img.shields.io/badge/devel%20version-0.2.2.9000-blue.svg)](https://github.com/agusnieto77/TweetScraperR)
+[![](https://img.shields.io/badge/devel%20version-0.2.3.9000-blue.svg)](https://github.com/agusnieto77/TweetScraperR)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://cran.r-project.org/web/licenses/MIT)
 [![](https://img.shields.io/github/languages/code-size/agusnieto77/TweetScraperR.svg)](https://github.com/agusnieto77/TweetScraperR)
 [![](https://img.shields.io/badge/Lifecycle-Experimental-ff7f2a)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
@@ -88,10 +88,12 @@ devtools::install_github("agusnieto77/TweetScraperR")
 | `HTMLImgReport()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Crea una visualización HTML interactiva de imágenes analizadas. |
 | `openTimeline()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Accede al Timeline de un/a usuario/a. |
 | `openTwitter()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Inicio de sesión. |
+| `passTwitter()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Función de login, completa el campo pass. |
 | `plotEmojis()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Hace un gráfico de barras en base a la columna 'emoticones'. |
 | `plotEmojisPNG()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Hace un gráfico de barras en base a la columna 'emoticones' con los PNG de los emojis. |
 | `plotTime()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Hace un gráfico de líneas en base a la columna 'texto'. |
 | `plotWords()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Hace una nube de palabras en base a la columna 'texto'. |
+| `userTwitter()` | ![](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg) | Función de login, completa el campo user. |
 
 ### Uso de las funciones del paquete {TweetScraperR}
 

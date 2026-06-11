@@ -3,7 +3,8 @@
 #' @description
 #'
 #' Consulta el endpoint de busqueda de tweets de Xquik y devuelve una tabla
-#' compatible con los flujos del paquete. Requiere una clave de API en
+#' compatible con los flujos del paquete. Deduplica tweets por id o URL,
+#' respeta el maximo solicitado por `n_tweets` y requiere una clave de API en
 #' `XQUIK_API_KEY` o en el argumento `api_key`.
 #'
 #' @param search La consulta de busqueda para recuperar tweets. Por defecto es "#RStats".
@@ -55,6 +56,8 @@ getTweetsXquikSearch <- function(
   target_count <- as.integer(n_tweets)
   request_url <- paste0(sub("/+$", "", base_url), "/api/v1/x/tweets/search")
   tweets <- list()
+  seen_tweets <- character()
+  seen_cursors <- character()
   captured_at <- Sys.time()
   cursor <- NULL
 
@@ -94,15 +97,34 @@ getTweetsXquikSearch <- function(
       stop("Unexpected Xquik response. Tweets must be a list.", call. = FALSE)
     }
 
-    tweets <- c(tweets, page_tweets)
+    for (tweet in page_tweets) {
+      tweet_key <- xquik_tweet_key(tweet)
+      if (!tweet_key %in% seen_tweets) {
+        tweets[[length(tweets) + 1L]] <- tweet
+        seen_tweets <- c(seen_tweets, tweet_key)
+      }
+      if (length(tweets) >= target_count) {
+        break
+      }
+    }
+    if (length(tweets) >= target_count) {
+      break
+    }
+
     if (!isTRUE(xquik_field_bool(payload, c("hasNextPage", "has_next_page")))) {
       break
     }
 
     next_cursor <- xquik_field_chr_any(payload, c("nextCursor", "next_cursor"))
-    if (is.na(next_cursor) || !nzchar(next_cursor) || identical(next_cursor, cursor)) {
+    if (
+      is.na(next_cursor) ||
+      !nzchar(next_cursor) ||
+      identical(next_cursor, cursor) ||
+      next_cursor %in% seen_cursors
+    ) {
       break
     }
+    seen_cursors <- c(seen_cursors, next_cursor)
     cursor <- next_cursor
   }
 
@@ -111,7 +133,11 @@ getTweetsXquikSearch <- function(
   }
 
   rows <- lapply(tweets, xquik_tweet_row, captured_at = captured_at)
-  dplyr::bind_rows(rows)
+  result <- dplyr::bind_rows(rows)
+  if (nrow(result) > target_count) {
+    result <- result[seq_len(target_count), , drop = FALSE]
+  }
+  result
 }
 
 xquik_tweet_row <- function(tweet, captured_at) {
@@ -123,38 +149,53 @@ xquik_tweet_row <- function(tweet, captured_at) {
   }
 
   tibble::tibble(
-    id = xquik_field_chr(tweet, "id"),
+    art_html = NA_character_,
     fecha = fecha,
     user = xquik_author_chr(tweet, "username"),
-    name = xquik_author_chr(tweet, "name"),
     tweet = xquik_field_chr(tweet, "text"),
     url = xquik_field_chr(tweet, "url"),
+    fecha_captura = captured_at,
+    id = xquik_field_chr(tweet, "id"),
+    name = xquik_author_chr(tweet, "name"),
     lang = xquik_field_chr(tweet, "lang"),
     like_count = xquik_field_num_any(tweet, c("likeCount", "like_count")),
     retweet_count = xquik_field_num_any(tweet, c("retweetCount", "retweet_count")),
     reply_count = xquik_field_num_any(tweet, c("replyCount", "reply_count")),
     quote_count = xquik_field_num_any(tweet, c("quoteCount", "quote_count")),
-    view_count = xquik_field_num_any(tweet, c("viewCount", "view_count")),
-    fecha_captura = captured_at
+    view_count = xquik_field_num_any(tweet, c("viewCount", "view_count"))
   )
 }
 
 xquik_empty_tweets <- function() {
   tibble::tibble(
-    id = character(),
+    art_html = character(),
     fecha = as.POSIXct(character(), tz = "UTC"),
     user = character(),
-    name = character(),
     tweet = character(),
     url = character(),
+    fecha_captura = as.POSIXct(character(), tz = "UTC"),
+    id = character(),
+    name = character(),
     lang = character(),
     like_count = numeric(),
     retweet_count = numeric(),
     reply_count = numeric(),
     quote_count = numeric(),
-    view_count = numeric(),
-    fecha_captura = as.POSIXct(character(), tz = "UTC")
+    view_count = numeric()
   )
+}
+
+xquik_tweet_key <- function(tweet) {
+  for (field in c("id", "url")) {
+    value <- xquik_field_chr(tweet, field)
+    if (!is.na(value) && nzchar(value)) {
+      return(paste(field, value, sep = ":"))
+    }
+  }
+
+  created <- xquik_field_chr_any(tweet, c("createdAt", "created"))
+  text <- xquik_field_chr(tweet, "text")
+  paste("fallback", created, text, sep = ":")
 }
 
 xquik_author_chr <- function(record, field) {

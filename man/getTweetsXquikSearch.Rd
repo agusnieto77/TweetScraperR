@@ -31,7 +31,8 @@ Un tibble con tweets recuperados desde Xquik.
 }
 \description{
 Consulta el endpoint de busqueda de tweets de Xquik y devuelve una tabla
-compatible con los flujos del paquete. Requiere una clave de API en
+compatible con los flujos del paquete. Deduplica tweets por id o URL,
+respeta el maximo solicitado por \code{n_tweets} y requiere una clave de API en
 \code{XQUIK_API_KEY} o en el argumento \code{api_key}.
 }
 \examples{

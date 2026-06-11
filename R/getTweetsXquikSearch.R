@@ -52,36 +52,62 @@ getTweetsXquikSearch <- function(
   xquik_check_positive_number(n_tweets, "n_tweets")
   xquik_check_positive_number(timeout, "timeout")
 
-  limit <- min(200L, as.integer(n_tweets))
+  target_count <- as.integer(n_tweets)
   request_url <- paste0(sub("/+$", "", base_url), "/api/v1/x/tweets/search")
-  response <- httr::GET(
-    request_url,
-    httr::add_headers("X-API-Key" = api_key, Accept = "application/json"),
-    query = list(q = search, limit = limit, queryType = query_type),
-    httr::timeout(timeout)
-  )
-  response_text <- httr::content(response, as = "text", encoding = "UTF-8")
-
-  if (response$status_code >= 400) {
-    stop(
-      paste0(
-        "Xquik request failed with HTTP ",
-        response$status_code,
-        ". ",
-        xquik_error_message(response_text)
-      ),
-      call. = FALSE
-    )
-  }
-
-  payload <- jsonlite::fromJSON(response_text, simplifyVector = FALSE)
-  tweets <- payload$tweets
+  tweets <- list()
   captured_at <- Sys.time()
-  if (is.null(tweets) || length(tweets) == 0) {
-    return(xquik_empty_tweets())
+  cursor <- NULL
+
+  while (length(tweets) < target_count) {
+    limit <- min(200L, target_count - length(tweets))
+    query <- list(q = search, limit = limit, queryType = query_type)
+    if (!is.null(cursor) && nzchar(cursor)) {
+      query$cursor <- cursor
+    }
+
+    response <- httr::GET(
+      request_url,
+      httr::add_headers("X-API-Key" = api_key, Accept = "application/json"),
+      query = query,
+      httr::timeout(timeout)
+    )
+    response_text <- httr::content(response, as = "text", encoding = "UTF-8")
+
+    if (response$status_code >= 400) {
+      stop(
+        paste0(
+          "Xquik request failed with HTTP ",
+          response$status_code,
+          ". ",
+          xquik_error_message(response_text)
+        ),
+        call. = FALSE
+      )
+    }
+
+    payload <- jsonlite::fromJSON(response_text, simplifyVector = FALSE)
+    page_tweets <- payload$tweets
+    if (is.null(page_tweets) || length(page_tweets) == 0) {
+      break
+    }
+    if (!is.list(page_tweets)) {
+      stop("Unexpected Xquik response. Tweets must be a list.", call. = FALSE)
+    }
+
+    tweets <- c(tweets, page_tweets)
+    if (!isTRUE(xquik_field_bool(payload, c("hasNextPage", "has_next_page")))) {
+      break
+    }
+
+    next_cursor <- xquik_field_chr_any(payload, c("nextCursor", "next_cursor"))
+    if (is.na(next_cursor) || !nzchar(next_cursor) || identical(next_cursor, cursor)) {
+      break
+    }
+    cursor <- next_cursor
   }
-  if (!is.list(tweets)) {
-    stop("Unexpected Xquik response. Tweets must be a list.", call. = FALSE)
+
+  if (length(tweets) == 0) {
+    return(xquik_empty_tweets())
   }
 
   rows <- lapply(tweets, xquik_tweet_row, captured_at = captured_at)
@@ -89,7 +115,7 @@ getTweetsXquikSearch <- function(
 }
 
 xquik_tweet_row <- function(tweet, captured_at) {
-  created <- xquik_field_chr(tweet, "created")
+  created <- xquik_field_chr_any(tweet, c("createdAt", "created"))
   fecha <- if (is.na(created)) {
     lubridate::as_datetime(NA_character_)
   } else {
@@ -104,11 +130,11 @@ xquik_tweet_row <- function(tweet, captured_at) {
     tweet = xquik_field_chr(tweet, "text"),
     url = xquik_field_chr(tweet, "url"),
     lang = xquik_field_chr(tweet, "lang"),
-    like_count = xquik_field_num(tweet, "like_count"),
-    retweet_count = xquik_field_num(tweet, "retweet_count"),
-    reply_count = xquik_field_num(tweet, "reply_count"),
-    quote_count = xquik_field_num(tweet, "quote_count"),
-    view_count = xquik_field_num(tweet, "view_count"),
+    like_count = xquik_field_num_any(tweet, c("likeCount", "like_count")),
+    retweet_count = xquik_field_num_any(tweet, c("retweetCount", "retweet_count")),
+    reply_count = xquik_field_num_any(tweet, c("replyCount", "reply_count")),
+    quote_count = xquik_field_num_any(tweet, c("quoteCount", "quote_count")),
+    view_count = xquik_field_num_any(tweet, c("viewCount", "view_count")),
     fecha_captura = captured_at
   )
 }
@@ -151,6 +177,16 @@ xquik_field_chr <- function(record, field) {
   as.character(scalar)
 }
 
+xquik_field_chr_any <- function(record, fields) {
+  for (field in fields) {
+    value <- xquik_field_chr(record, field)
+    if (!is.na(value)) {
+      return(value)
+    }
+  }
+  NA_character_
+}
+
 xquik_field_num <- function(record, field) {
   value <- record[[field]]
   if (is.null(value) || is.list(value) || length(value) == 0) {
@@ -167,6 +203,26 @@ xquik_field_num <- function(record, field) {
     return(as.numeric(scalar))
   }
   NA_real_
+}
+
+xquik_field_num_any <- function(record, fields) {
+  for (field in fields) {
+    value <- xquik_field_num(record, field)
+    if (!is.na(value)) {
+      return(value)
+    }
+  }
+  NA_real_
+}
+
+xquik_field_bool <- function(record, fields) {
+  for (field in fields) {
+    value <- record[[field]]
+    if (is.logical(value) && length(value) == 1 && !is.na(value)) {
+      return(value)
+    }
+  }
+  FALSE
 }
 
 xquik_check_string <- function(value, name) {

@@ -68,10 +68,23 @@ Nota: Esta función depende de la estructura actual de la página web de Twitter
 }
 \examples{
 \dontrun{
-getTweetsHistoricalSearch(search = "R Project", n_tweets = 50, since = "2018-10-26", until = "2023-10-30", live = TRUE)
+getTweetsHistoricalSearch(
+  search = "R Project",
+  n_tweets = 50,
+  since = "2018-10-26",
+  until = "2023-10-30",
+  live = TRUE
+)
 
 # Sin guardar los resultados
-getTweetsHistoricalSearch(search = "R Project", n_tweets = 50, since = "2018-10-26", until = "2023-10-30", live = TRUE, save = FALSE)
+getTweetsHistoricalSearch(
+  search = "R Project",
+  n_tweets = 50,
+  since = "2018-10-26",
+  until = "2023-10-30",
+  live = TRUE,
+  save = FALSE
+)
 }
 
 }

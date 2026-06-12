@@ -4,8 +4,8 @@
 #' 
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
 #' 
-#' Esta función realiza una búsqueda avanzada de tweets en Twitter (X) utilizando
-#' varios criterios de búsqueda y recolecta los tweets que coinciden con estos criterios.
+#' Esta funci\u00f3n realiza una b\u00fasqueda avanzada de tweets en Twitter (X) utilizando
+#' varios criterios de b\u00fasqueda y recolecta los tweets que coinciden con estos criterios.
 #'
 #' @param search_all Cadena de texto. Busca tweets que contengan todas estas palabras (por defecto "R Project").
 #' @param search_exact Cadena de texto. Busca tweets que contengan esta frase exacta (por defecto NULL).
@@ -16,20 +16,20 @@
 #' @param from Cadena de texto. Busca tweets de estos usuarios (por defecto NULL).
 #' @param to Cadena de texto. Busca tweets dirigidos a estos usuarios (por defecto NULL).
 #' @param men Cadena de texto. Busca tweets que mencionan a estos usuarios (por defecto NULL).
-#' @param rep Número entero. Número mínimo de respuestas que debe tener un tweet (por defecto 0).
-#' @param fav Número entero. Número mínimo de favoritos que debe tener un tweet (por defecto 0).
-#' @param rt Número entero. Número mínimo de retweets que debe tener un tweet (por defecto 0).
-#' @param timeout Número entero. Tiempo de espera en segundos entre solicitudes (por defecto 10).
-#' @param n_tweets Número entero. Número máximo de tweets a recolectar (por defecto 100).
-#' @param since Fecha. Fecha de inicio para la búsqueda (por defecto 7 días antes de la fecha actual).
-#' @param until Fecha. Fecha de fin para la búsqueda (por defecto la fecha actual).
-#' @param xuser Cadena de texto. Nombre de usuario para la autenticación en Twitter (por defecto se toma de la variable de entorno USER).
-#' @param xpass Cadena de texto. Contraseña para la autenticación en Twitter (por defecto se toma de la variable de entorno PASS).
-#' @param dir Cadena de texto. Directorio donde se guardarán los resultados (por defecto el directorio de trabajo actual).
-#' @param save Lógico. Indica si se debe guardar el resultado en un archivo RDS (por defecto TRUE).
+#' @param rep N\u00famero entero. N\u00famero m\u00ednimo de respuestas que debe tener un tweet (por defecto 0).
+#' @param fav N\u00famero entero. N\u00famero m\u00ednimo de favoritos que debe tener un tweet (por defecto 0).
+#' @param rt N\u00famero entero. N\u00famero m\u00ednimo de retweets que debe tener un tweet (por defecto 0).
+#' @param timeout N\u00famero entero. Tiempo de espera en segundos entre solicitudes (por defecto 10).
+#' @param n_tweets N\u00famero entero. N\u00famero m\u00e1ximo de tweets a recolectar (por defecto 100).
+#' @param since Fecha. Fecha de inicio para la b\u00fasqueda (por defecto 7 d\u00edas antes de la fecha actual).
+#' @param until Fecha. Fecha de fin para la b\u00fasqueda (por defecto la fecha actual).
+#' @param xuser Cadena de texto. Nombre de usuario para la autenticaci\u00f3n en Twitter (por defecto se toma de la variable de entorno USER).
+#' @param xpass Cadena de texto. Contrase\u00f1a para la autenticaci\u00f3n en Twitter (por defecto se toma de la variable de entorno PASS).
+#' @param dir Cadena de texto. Directorio donde se guardar\u00e1n los resultados (por defecto el directorio de trabajo actual).
+#' @param save L\u00f3gico. Indica si se debe guardar el resultado en un archivo RDS (por defecto TRUE).
 #'
 #' @return Un tibble con los tweets recolectados, incluyendo las columnas:
-#'   \item{art_html}{HTML del artículo del tweet}
+#'   \item{art_html}{HTML del art\u00edculo del tweet}
 #'   \item{fecha}{Fecha y hora del tweet}
 #'   \item{user}{Nombre de usuario del autor del tweet}
 #'   \item{tweet}{Texto del tweet}
@@ -37,15 +37,15 @@
 #'   \item{fecha_captura}{Fecha y hora de la captura del tweet}
 #'
 #' @details
-#' La función primero intenta autenticarse en Twitter utilizando las credenciales proporcionadas.
-#' Luego, construye una URL de búsqueda basada en los parámetros proporcionados y realiza la búsqueda.
-#' Los tweets se recolectan iterativamente, scrolleando la página hasta que se alcance el número
+#' La funci\u00f3n primero intenta autenticarse en Twitter utilizando las credenciales proporcionadas.
+#' Luego, construye una URL de b\u00fasqueda basada en los par\u00e1metros proporcionados y realiza la b\u00fasqueda.
+#' Los tweets se recolectan iterativamente, scrolleando la p\u00e1gina hasta que se alcance el n\u00famero
 #' deseado de tweets o se agoten los intentos.
-#' Los tweets recolectados se procesan para extraer la información relevante y, si save es TRUE,
+#' Los tweets recolectados se procesan para extraer la informaci\u00f3n relevante y, si save es TRUE,
 #' se guardan en un archivo RDS.
 #'
 #' @note
-#' Esta función requiere una conexión a Internet y credenciales válidas de Twitter.
+#' Esta funci\u00f3n requiere una conexi\u00f3n a Internet y credenciales v\u00e1lidas de Twitter.
 #'
 #' @export
 #'
@@ -128,8 +128,8 @@ getTweetsFullSearch <- function(
       twitter$click(css = login, n_clicks = 1)
       Sys.sleep(1)
     }, error = function(e) {
-      message("La cuenta ya está autenticada o ha ocurrido un error.")
-      message("Se inició la recolección de datos...")
+      message("La cuenta ya est\u00e1 autenticada o ha ocurrido un error.")
+      message("Se inici\u00f3 la recolecci\u00f3n de datos...")
     })
     url_tweet <- "div.css-175oi2r > div > div.css-175oi2r > a.css-146c3p1.r-bcqeeo.r-1ttztb7.r-qvutc0.r-37j5jr.r-a023e6"
     search_all <- ifelse(nchar(search_all)<1, "", paste0(gsub(" ", "%20", search_all), "%20")) 
@@ -159,11 +159,11 @@ getTweetsFullSearch <- function(
     articles <- list()
     attempts <- 0
     max_attempts <- 3
-    cat("Inició la recolección de tweets.\n")
+    cat("Inici\u00f3 la recolecci\u00f3n de tweets.\n")
     success <- TRUE
     while (TRUE) {
       if (length(articles) >= n_tweets || attempts >= max_attempts) {
-        cat("Finalizó la recolección de tweets.\n")
+        cat("Finaliz\u00f3 la recolecci\u00f3n de tweets.\n")
         cat("Procesando datos...\n")
         break
       }
@@ -215,10 +215,10 @@ getTweetsFullSearch <- function(
         cat("Datos procesados. No se han guardado en un archivo RDS.\n")
       }
       
-      cat("Tweets únicos recolectados:", length(tweets_recolectados$url), "\n")
+      cat("Tweets \u00fanicos recolectados:", length(tweets_recolectados$url), "\n")
       return(tweets_recolectados)
     } else {
-      cat("No hay artículos para procesar.\n")
+      cat("No hay art\u00edculos para procesar.\n")
       return(NULL)
     }
     fullsearchok$session$close()

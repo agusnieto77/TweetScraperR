@@ -58,7 +58,11 @@ Esta función utiliza web scraping y puede ser sensible a cambios en la estructu
 getUrlsTweetsReplies(url = "https://x.com/Picanumeros/status/1610715405705789442", n_urls = 130)
 
 # Sin guardar los resultados
-getUrlsTweetsReplies(url = "https://x.com/Picanumeros/status/1610715405705789442", n_urls = 130, save = FALSE)
+getUrlsTweetsReplies(
+  url = "https://x.com/Picanumeros/status/1610715405705789442",
+  n_urls = 130,
+  save = FALSE
+)
 }
 
 }

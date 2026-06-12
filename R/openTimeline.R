@@ -4,31 +4,31 @@
 #' 
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
 #' 
-#' Esta función abre la línea de tiempo de un usuario específico de Twitter (X) y crea un objeto
-#' que contiene la información de la página. Intenta abrir la página hasta tres veces en caso de error.
+#' Esta funci\u00f3n abre la l\u00ednea de tiempo de un usuario espec\u00edfico de Twitter (X) y crea un objeto
+#' que contiene la informaci\u00f3n de la p\u00e1gina. Intenta abrir la p\u00e1gina hasta tres veces en caso de error.
 #'
-#' @param username Character. El nombre de usuario de Twitter cuya línea de tiempo se desea abrir.
+#' @param username Character. El nombre de usuario de Twitter cuya l\u00ednea de tiempo se desea abrir.
 #'                 Por defecto es "rstatstweet".
-#' @param view Logical. Si es TRUE (por defecto), muestra la vista de la página web.
+#' @param view Logical. Si es TRUE (por defecto), muestra la vista de la p\u00e1gina web.
 #'             Si es FALSE, solo crea el objeto sin mostrar la vista.
 #'
-#' @return Si view es TRUE, devuelve la vista de la página web.
+#' @return Si view es TRUE, devuelve la vista de la p\u00e1gina web.
 #'         Si view es FALSE, devuelve un mensaje indicando que se ha creado el objeto "timeline".
-#'         En caso de error después de tres intentos, devuelve NULL.
+#'         En caso de error despu\u00e9s de tres intentos, devuelve NULL.
 #'
 #' @details
-#' La función utiliza `rvest::read_html_live()` para leer la página web de la línea de tiempo
-#' del usuario especificado. Crea un objeto global llamado "timeline" que contiene la información
-#' de la página. Si ocurre un error al intentar abrir la página, la función reintentará hasta
+#' La funci\u00f3n utiliza `rvest::read_html_live()` para leer la p\u00e1gina web de la l\u00ednea de tiempo
+#' del usuario especificado. Crea un objeto global llamado "timeline" que contiene la informaci\u00f3n
+#' de la p\u00e1gina. Si ocurre un error al intentar abrir la p\u00e1gina, la funci\u00f3n reintentar\u00e1 hasta
 #' tres veces antes de fallar.
 #'
 #' @note
-#' Esta función requiere una conexión a Internet activa y puede estar sujeta a las limitaciones
+#' Esta funci\u00f3n requiere una conexi\u00f3n a Internet activa y puede estar sujeta a las limitaciones
 #' de acceso impuestas por Twitter (X).
 #'
 #' @examples
 #' \dontrun{
-#' # Abrir la línea de tiempo de un usuario específico y mostrar la vista
+#' # Abrir la l\u00ednea de tiempo de un usuario espec\u00edfico y mostrar la vista
 #' openTimeline("hadleywickham")
 #'
 #' # Crear el objeto timeline sin mostrar la vista
@@ -55,11 +55,11 @@ openTimeline <- function(username = "rstatstweet", view = TRUE) {
       }
     }, error = function(e) {
       if (attempts < max_attempts) {
-        message("Error al abrir la página de Twitter (intento ", attempts, " de ", max_attempts, "): ", e$message)
+        message("Error al abrir la p\u00e1gina de Twitter (intento ", attempts, " de ", max_attempts, "): ", e$message)
         message("Reintentando...")
         Sys.sleep(2)
       } else {
-        message("No se pudo abrir la página de Twitter luego de 3 intentos. Por favor, intente más tarde.")
+        message("No se pudo abrir la p\u00e1gina de Twitter luego de 3 intentos. Por favor, intente m\u00e1s tarde.")
         return(NULL)
       }
     })

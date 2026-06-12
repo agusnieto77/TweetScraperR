@@ -53,10 +53,21 @@ archivo con formato \code{.rds} en el directorio especificado por el parámetro 
 }
 \examples{
 \dontrun{
-getTweetsHistoricalHashtag(hashtag = "#rstats", n_tweets = 150, since = "2018-10-26", until = "2018-10-30")
+getTweetsHistoricalHashtag(
+  hashtag = "#rstats",
+  n_tweets = 150,
+  since = "2018-10-26",
+  until = "2018-10-30"
+)
 
 # Sin guardar los resultados
-getTweetsHistoricalHashtag(hashtag = "#rstats", n_tweets = 150, since = "2018-10-26", until = "2018-10-30", save = FALSE)
+getTweetsHistoricalHashtag(
+  hashtag = "#rstats",
+  n_tweets = 150,
+  since = "2018-10-26",
+  until = "2018-10-30",
+  save = FALSE
+)
 }
 
 }

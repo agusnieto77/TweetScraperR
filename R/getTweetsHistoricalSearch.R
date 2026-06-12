@@ -1,61 +1,61 @@
 #' Get Historical Tweets from a Specific Search
-#' 
+#'
 #' @description
-#' 
+#'
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
-#' 
-#' Esta función permite recuperar tweets históricos de Twitter (ahora X) que coinciden con una búsqueda específica. 
-#' Puedes especificar términos de búsqueda relevantes para tus necesidades de análisis, y la función recuperará 
-#' tweets antiguos que coincidan con esos criterios. Esto es útil para investigaciones históricas, análisis de 
-#' tendencias a lo largo del tiempo y cualquier otro análisis que requiera acceso a datos históricos de Twitter.
-#' 
-#' La función ahora incluye un proceso de autenticación automático y manejo de errores mejorado.
-#' 
-#' @param search Término de búsqueda para los tweets deseados. Por defecto es "R Project".
+#'
+#' Esta funci\u00f3n permite recuperar tweets hist\u00f3ricos de Twitter (ahora X) que coinciden con una b\u00fasqueda espec\u00edfica.
+#' Puedes especificar t\u00e9rminos de b\u00fasqueda relevantes para tus necesidades de an\u00e1lisis, y la funci\u00f3n recuperar\u00e1
+#' tweets antiguos que coincidan con esos criterios. Esto es \u00fatil para investigaciones hist\u00f3ricas, an\u00e1lisis de
+#' tendencias a lo largo del tiempo y cualquier otro an\u00e1lisis que requiera acceso a datos hist\u00f3ricos de Twitter.
+#'
+#' La funci\u00f3n ahora incluye un proceso de autenticaci\u00f3n autom\u00e1tico y manejo de errores mejorado.
+#'
+#' @param search T\u00e9rmino de b\u00fasqueda para los tweets deseados. Por defecto es "R Project".
 #' @param timeout Tiempo de espera entre solicitudes en segundos. Por defecto es 10.
-#' @param n_tweets El número máximo de tweets a recuperar. Por defecto es 100.
-#' @param since Fecha de inicio para la búsqueda de tweets (en formato "YYYY-MM-DD"). Por defecto es "2018-10-26".
-#' @param until Fecha de fin para la búsqueda de tweets (en formato "YYYY-MM-DD"). Por defecto es "2023-10-30".
-#' @param live Booleano que indica si se deben buscar tweets más recientes (TRUE) o destacados (FALSE). Por defecto es TRUE.
-#' @param xuser Nombre de usuarix de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.
-#' @param xpass Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.
+#' @param n_tweets El n\u00famero m\u00e1ximo de tweets a recuperar. Por defecto es 100.
+#' @param since Fecha de inicio para la b\u00fasqueda de tweets (en formato "YYYY-MM-DD"). Por defecto es "2018-10-26".
+#' @param until Fecha de fin para la b\u00fasqueda de tweets (en formato "YYYY-MM-DD"). Por defecto es "2023-10-30".
+#' @param live Booleano que indica si se deben buscar tweets m\u00e1s recientes (TRUE) o destacados (FALSE). Por defecto es TRUE.
+#' @param xuser Nombre de usuarix de Twitter para autenticaci\u00f3n. Por defecto es el valor de la variable de entorno del sistema USER.
+#' @param xpass Contrase\u00f1a de Twitter para autenticaci\u00f3n. Por defecto es el valor de la variable de entorno del sistema PASS.
 #' @param dir Directorio para guardar el archivo RDS con los tweets recolectados. Por defecto es el directorio de trabajo actual.
-#' @param save Lógico. Indica si se debe guardar el resultado en un archivo RDS (por defecto TRUE).
+#' @param save L\u00f3gico. Indica si se debe guardar el resultado en un archivo RDS (por defecto TRUE).
 #' @return Un tibble que contiene los datos de tweets recuperados, incluyendo la fecha, usuario, contenido del tweet, URL del tweet y fecha de captura.
 #'
 #' @examples
 #' \dontrun{
 #' getTweetsHistoricalSearch(search = "R Project", n_tweets = 50, since = "2018-10-26", until = "2023-10-30", live = TRUE)
-#' 
+#'
 #' # Sin guardar los resultados
 #' getTweetsHistoricalSearch(search = "R Project", n_tweets = 50, since = "2018-10-26", until = "2023-10-30", live = TRUE, save = FALSE)
 #' }
 #'
 #' @references
-#' Puedes encontrar más información sobre el paquete TweetScrapeR en:
+#' Puedes encontrar m\u00e1s informaci\u00f3n sobre el paquete TweetScrapeR en:
 #' <https://github.com/agusnieto77/TweetScraperR>
 #'
 #' @importFrom rvest read_html_live html_elements html_attr html_text html_element read_html
 #' @importFrom lubridate as_datetime is.POSIXct
 #' @importFrom tibble tibble
 #' @importFrom dplyr distinct
-#' 
+#'
 #' @details
-#' La función ahora incluye las siguientes mejoras y características:
-#' 
-#' 1. Autenticación automática: La función intenta autenticarse automáticamente en Twitter (X) usando las credenciales proporcionadas.
-#' 2. Manejo de errores mejorado: Se han implementado múltiples bloques try-catch para manejar diferentes tipos de errores que pueden ocurrir durante la ejecución.
-#' 3. Reintento automático: En caso de errores de tiempo de espera, la función reintentará automáticamente la operación.
-#' 4. Opción de búsqueda en vivo: Se ha añadido un parámetro `live` para permitir la búsqueda de tweets más recientes (TRUE) o destacados (FALSE).
-#' 5. Procesamiento de datos mejorado: Se ha mejorado el proceso de extracción y almacenamiento de datos de los tweets.
-#' 6. Límite de intentos: Se ha implementado un límite de intentos para evitar bucles infinitos en caso de problemas persistentes.
-#' 7. Feedback en tiempo real: La función ahora proporciona mensajes informativos sobre el progreso de la recolección de tweets.
-#' 8. Control de guardado: Se ha añadido un parámetro `save` para controlar si los resultados se guardan en un archivo RDS.
-#' 
-#' Nota: Esta función depende de la estructura actual de la página web de Twitter (X). Cambios en la estructura del sitio pueden afectar su funcionamiento.
-#' 
+#' La funci\u00f3n ahora incluye las siguientes mejoras y caracter\u00edsticas:
+#'
+#' 1. Autenticaci\u00f3n autom\u00e1tica: La funci\u00f3n intenta autenticarse autom\u00e1ticamente en Twitter (X) usando las credenciales proporcionadas.
+#' 2. Manejo de errores mejorado: Se han implementado m\u00faltiples bloques try-catch para manejar diferentes tipos de errores que pueden ocurrir durante la ejecuci\u00f3n.
+#' 3. Reintento autom\u00e1tico: En caso de errores de tiempo de espera, la funci\u00f3n reintentar\u00e1 autom\u00e1ticamente la operaci\u00f3n.
+#' 4. Opci\u00f3n de b\u00fasqueda en vivo: Se ha a\u00f1adido un par\u00e1metro `live` para permitir la b\u00fasqueda de tweets m\u00e1s recientes (TRUE) o destacados (FALSE).
+#' 5. Procesamiento de datos mejorado: Se ha mejorado el proceso de extracci\u00f3n y almacenamiento de datos de los tweets.
+#' 6. L\u00edmite de intentos: Se ha implementado un l\u00edmite de intentos para evitar bucles infinitos en caso de problemas persistentes.
+#' 7. Feedback en tiempo real: La funci\u00f3n ahora proporciona mensajes informativos sobre el progreso de la recolecci\u00f3n de tweets.
+#' 8. Control de guardado: Se ha a\u00f1adido un par\u00e1metro `save` para controlar si los resultados se guardan en un archivo RDS.
+#'
+#' Nota: Esta funci\u00f3n depende de la estructura actual de la p\u00e1gina web de Twitter (X). Cambios en la estructura del sitio pueden afectar su funcionamiento.
+#'
 #' @export
-#' 
+#'
 
 getTweetsHistoricalSearch <- function(
     search = "R Project",
@@ -98,8 +98,8 @@ getTweetsHistoricalSearch <- function(
       twitter$click(css = login, n_clicks = 1)
       Sys.sleep(1)
     }, error = function(e) {
-      message("La cuenta ya está autenticada o ha ocurrido un error.")
-      message("Se inició la recolección de datos...")
+      message("La cuenta ya est\u00e1 autenticada o ha ocurrido un error.")
+      message("Se inici\u00f3 la recolecci\u00f3n de datos...")
     })
     url_tweet <- "div.css-175oi2r > div > div.css-175oi2r > a.css-146c3p1.r-bcqeeo.r-1ttztb7.r-qvutc0.r-37j5jr.r-a023e6"
     search <- gsub("#", "%23", search)
@@ -125,11 +125,11 @@ getTweetsHistoricalSearch <- function(
     articles <- list()
     attempts <- 0
     max_attempts <- 3
-    cat("Inició la recolección de tweets.\n")
+    cat("Inici\u00f3 la recolecci\u00f3n de tweets.\n")
     success <- TRUE
     while (TRUE) {
       if (length(articles) >= n_tweets || attempts >= max_attempts) {
-        cat("Finalizó la recolección de tweets.\n")
+        cat("Finaliz\u00f3 la recolecci\u00f3n de tweets.\n")
         cat("Procesando datos...\n")
         break
       }
@@ -138,7 +138,7 @@ getTweetsHistoricalSearch <- function(
         tryCatch({
           nuevos_articles <- as.character(historicalok$html_elements(css = "article"))
         }, error = function(e) {
-          message("Error al procesar artículos: ", e$message)
+          message("Error al procesar art\u00edculos: ", e$message)
           nuevos_articles <- character(0)
         })
         urls_tweets <- nuevos_articles
@@ -184,10 +184,10 @@ getTweetsHistoricalSearch <- function(
       } else {
         cat("Datos procesados. No se han guardado en un archivo RDS.\n")
       }
-      cat("Tweets únicos recolectados:", length(tweets_recolectados$url), "\n")
+      cat("Tweets \u00fanicos recolectados:", length(tweets_recolectados$url), "\n")
       return(tweets_recolectados)
     } else {
-      cat("No hay artículos para procesar.\n")
+      cat("No hay art\u00edculos para procesar.\n")
       return(NULL)
     }
     historicalok$session$close()

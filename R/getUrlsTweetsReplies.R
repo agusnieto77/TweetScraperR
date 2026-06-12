@@ -4,26 +4,26 @@
 #' 
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
 #' 
-#' Esta función recupera las URLs de las respuestas a un tweet específico en Twitter (ahora X).
-#' Utiliza web scraping para acceder a la página del tweet, iniciar sesión con las credenciales proporcionadas,
+#' Esta funci\u00f3n recupera las URLs de las respuestas a un tweet espec\u00edfico en Twitter (ahora X).
+#' Utiliza web scraping para acceder a la p\u00e1gina del tweet, iniciar sesi\u00f3n con las credenciales proporcionadas,
 #' y recolectar las URLs de las respuestas al tweet.
 #' 
 #' El proceso incluye:
-#' 1. Iniciar sesión en Twitter usando las credenciales proporcionadas.
+#' 1. Iniciar sesi\u00f3n en Twitter usando las credenciales proporcionadas.
 #' 2. Navegar a la URL del tweet especificado.
 #' 3. Extraer las URLs de las respuestas mediante scraping.
-#' 4. Continuar scrolling y recolectando URLs hasta alcanzar el número deseado o no encontrar nuevas URLs.
+#' 4. Continuar scrolling y recolectando URLs hasta alcanzar el n\u00famero deseado o no encontrar nuevas URLs.
 #' 
-#' La función guarda las URLs recolectadas en un archivo RDS en el directorio especificado si el parámetro 'save' es TRUE,
+#' La funci\u00f3n guarda las URLs recolectadas en un archivo RDS en el directorio especificado si el par\u00e1metro 'save' es TRUE,
 #' y las devuelve como un vector de cadenas.
 #'
 #' @param url URL del tweet del cual se quieren obtener las respuestas. Por defecto es "https://x.com/Picanumeros/status/1610715405705789442".
-#' @param n_urls El número máximo de URLs de respuestas a recuperar. Por defecto es 100.
-#' @param xuser Nombre de usuario de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.
-#' @param xpass Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.
+#' @param n_urls El n\u00famero m\u00e1ximo de URLs de respuestas a recuperar. Por defecto es 100.
+#' @param xuser Nombre de usuario de Twitter para autenticaci\u00f3n. Por defecto es el valor de la variable de entorno del sistema USER.
+#' @param xpass Contrase\u00f1a de Twitter para autenticaci\u00f3n. Por defecto es el valor de la variable de entorno del sistema PASS.
 #' @param view Ver el navegador. Por defecto es FALSE.
-#' @param dir Directorio donde se guardará el archivo RDS con las URLs recolectadas. Por defecto es el directorio de trabajo actual.
-#' @param save Lógico. Indica si se debe guardar el resultado en un archivo RDS (por defecto TRUE).
+#' @param dir Directorio donde se guardar\u00e1 el archivo RDS con las URLs recolectadas. Por defecto es el directorio de trabajo actual.
+#' @param save L\u00f3gico. Indica si se debe guardar el resultado en un archivo RDS (por defecto TRUE).
 #'
 #' @return Un vector que contiene las URLs de las respuestas al tweet especificado.
 #' @export
@@ -37,13 +37,13 @@
 #' }
 #'
 #' @references
-#' Puedes encontrar más información sobre el paquete TweetScraperR en:
+#' Puedes encontrar m\u00e1s informaci\u00f3n sobre el paquete TweetScraperR en:
 #' <https://github.com/agusnieto77/TweetScraperR>
 #'
 #' @importFrom rvest read_html_live html_elements html_attr
 #'
 #' @note
-#' Esta función utiliza web scraping y puede ser sensible a cambios en la estructura de la página de Twitter.
+#' Esta funci\u00f3n utiliza web scraping y puede ser sensible a cambios en la estructura de la p\u00e1gina de Twitter.
 
 getUrlsTweetsReplies <- function(
     url = "https://x.com/Picanumeros/status/1610715405705789442",
@@ -69,11 +69,11 @@ getUrlsTweetsReplies <- function(
       i <- 1
       repetitions <- 0
       max_repetitions <- 2
-      cat("Inició la recolección de URLs.\n")
+      cat("Inici\u00f3 la recolecci\u00f3n de URLs.\n")
       while (TRUE) {
         urls_tweets <- rvest::html_attr(urlok$html_elements(xpath = url_tweet), "href")
         if (length(tweets_urls) > n_urls || repetitions >= max_repetitions) {
-          cat("Finalizó la recolección de URLs.\n")
+          cat("Finaliz\u00f3 la recolecci\u00f3n de URLs.\n")
           break
         }
         urls_tweets <- urls_tweets[grep("/status/", urls_tweets)]
@@ -100,7 +100,7 @@ getUrlsTweetsReplies <- function(
     })
   }
   if (!success) {
-    stop("No se pudo completar la operación después de ", max_retries, " intentos.")
+    stop("No se pudo completar la operaci\u00f3n despu\u00e9s de ", max_retries, " intentos.")
   }
   if (length(tweets_urls) > 0) {
     tweets_urls <- paste0("https://x.com", tweets_urls)

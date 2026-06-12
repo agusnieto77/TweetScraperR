@@ -1,48 +1,48 @@
 #' Get Historical Tweets with a Specific Hashtag
-#' 
+#'
 #' @description
-#' 
+#'
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
-#' 
-#'  Esta función recupera datos de los tweets que contienen un hashtag específico en Twitter, 
-#'  basado en un rango de fechas especificado. Utiliza autenticación en Twitter mediante el 
-#'  nombre de usuarix y la contraseña proporcionados, o los valores predeterminados de las 
-#'  variables de entorno del sistema. Después de autenticar al usuarix, la función realiza 
-#'  una búsqueda de tweets que contienen el hashtag especificado dentro del rango de fechas 
-#'  definido por los parámetros `since` y `until`. Las URLs de los tweets encontrados se recogen 
-#'  hasta alcanzar el número máximo de tweets especificado por el parámetro `n_tweets` o hasta que no 
-#'  se encuentren nuevos tweets en varios intentos consecutivos. Los resultados se guardan en un 
-#'  archivo con formato `.rds` en el directorio especificado por el parámetro `dir` si `save` es TRUE.
-#' 
-#' @param hashtag Hashtag de Twitter del cual se desean recuperar los tweets históricos. Por defecto es "#rstats".
+#'
+#'  Esta funci\u00f3n recupera datos de los tweets que contienen un hashtag espec\u00edfico en Twitter,
+#'  basado en un rango de fechas especificado. Utiliza autenticaci\u00f3n en Twitter mediante el
+#'  nombre de usuarix y la contrase\u00f1a proporcionados, o los valores predeterminados de las
+#'  variables de entorno del sistema. Despu\u00e9s de autenticar al usuarix, la funci\u00f3n realiza
+#'  una b\u00fasqueda de tweets que contienen el hashtag especificado dentro del rango de fechas
+#'  definido por los par\u00e1metros `since` y `until`. Las URLs de los tweets encontrados se recogen
+#'  hasta alcanzar el n\u00famero m\u00e1ximo de tweets especificado por el par\u00e1metro `n_tweets` o hasta que no
+#'  se encuentren nuevos tweets en varios intentos consecutivos. Los resultados se guardan en un
+#'  archivo con formato `.rds` en el directorio especificado por el par\u00e1metro `dir` si `save` es TRUE.
+#'
+#' @param hashtag Hashtag de Twitter del cual se desean recuperar los tweets hist\u00f3ricos. Por defecto es "#rstats".
 #' @param timeout Tiempo de espera entre solicitudes en segundos. Por defecto es 10.
-#' @param n_tweets El número máximo de tweets a recuperar. Por defecto es 100.
-#' @param since Fecha de inicio para la búsqueda de tweets (en formato "YYYY-MM-DD"). Por defecto es "2018-10-26".
-#' @param until Fecha de fin para la búsqueda de tweets (en formato "YYYY-MM-DD"). Por defecto es "2018-10-30".
-#' @param xuser Nombre de usuarix de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.
-#' @param xpass Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.
+#' @param n_tweets El n\u00famero m\u00e1ximo de tweets a recuperar. Por defecto es 100.
+#' @param since Fecha de inicio para la b\u00fasqueda de tweets (en formato "YYYY-MM-DD"). Por defecto es "2018-10-26".
+#' @param until Fecha de fin para la b\u00fasqueda de tweets (en formato "YYYY-MM-DD"). Por defecto es "2018-10-30".
+#' @param xuser Nombre de usuarix de Twitter para autenticaci\u00f3n. Por defecto es el valor de la variable de entorno del sistema USER.
+#' @param xpass Contrase\u00f1a de Twitter para autenticaci\u00f3n. Por defecto es el valor de la variable de entorno del sistema PASS.
 #' @param dir Directorio para guardar el archivo RDS con los datos de los tweets recolectados. Por defecto es el directorio de trabajo actual.
-#' @param save Lógico. Indica si se debe guardar el resultado en un archivo RDS (por defecto TRUE).
+#' @param save L\u00f3gico. Indica si se debe guardar el resultado en un archivo RDS (por defecto TRUE).
 #' @return Un tibble que contiene los datos de tweets recuperados, junto con la fecha, usuario, contenido del tweet y URL del tweet.
 #' @export
 #'
 #' @examples
 #' \dontrun{
 #' getTweetsHistoricalHashtag(hashtag = "#rstats", n_tweets = 150, since = "2018-10-26", until = "2018-10-30")
-#' 
+#'
 #' # Sin guardar los resultados
 #' getTweetsHistoricalHashtag(hashtag = "#rstats", n_tweets = 150, since = "2018-10-26", until = "2018-10-30", save = FALSE)
 #' }
 #'
 #' @references
-#' Puedes encontrar más información sobre el paquete TweetScrapeR en:
+#' Puedes encontrar m\u00e1s informaci\u00f3n sobre el paquete TweetScrapeR en:
 #' <https://github.com/agusnieto77/TweetScraperR>
-#' 
+#'
 #' @importFrom rvest read_html_live html_elements html_attr html_text html_element read_html
 #' @importFrom lubridate as_datetime is.POSIXct
 #' @importFrom tibble tibble
 #' @importFrom dplyr distinct
-#' 
+#'
 
 getTweetsHistoricalHashtag <- function(
     hashtag = "#rstats",
@@ -84,8 +84,8 @@ getTweetsHistoricalHashtag <- function(
       twitter$click(css = login, n_clicks = 1)
       Sys.sleep(1)
     }, error = function(e) {
-      message("La cuenta ya está autenticada o ha ocurrido un error.")
-      message("Se inició la recolección de datos...")
+      message("La cuenta ya est\u00e1 autenticada o ha ocurrido un error.")
+      message("Se inici\u00f3 la recolecci\u00f3n de datos...")
     })
     url_tweet <- "div.css-175oi2r > div > div.css-175oi2r > a.css-146c3p1.r-bcqeeo.r-1ttztb7.r-qvutc0.r-37j5jr.r-a023e6"
     hashtagsearch <- paste0("https://x.com/search?q=(%23", gsub("#", "", hashtag), ")%20until%3A", until, "%20since%3A", since, "&src=typed_query&f=live")
@@ -106,11 +106,11 @@ getTweetsHistoricalHashtag <- function(
     articles <- list()
     attempts <- 0
     max_attempts <- 3
-    cat("Inició la recolección de tweets.\n")
+    cat("Inici\u00f3 la recolecci\u00f3n de tweets.\n")
     success <- TRUE
     while (TRUE) {
       if (length(articles) >= n_tweets || attempts >= max_attempts) {
-        cat("Finalizó la recolección de tweets.\n")
+        cat("Finaliz\u00f3 la recolecci\u00f3n de tweets.\n")
         cat("Procesando datos...\n")
         break
       }
@@ -159,7 +159,7 @@ getTweetsHistoricalHashtag <- function(
       } else {
         cat("Datos procesados. No se han guardado en un archivo RDS.\n")
       }
-      cat("Tweets únicos recolectados:", length(tweets_recolectados$url), "\n")
+      cat("Tweets \u00fanicos recolectados:", length(tweets_recolectados$url), "\n")
       return(tweets_recolectados)
     } else {
       cat("No hay tweets para procesar.\n")

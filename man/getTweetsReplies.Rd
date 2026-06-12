@@ -65,10 +65,18 @@ Esta función utiliza web scraping y puede ser sensible a cambios en la estructu
 getTweetsReplies(url = "https://x.com/Picanumeros/status/1610715405705789442", n_tweets = 130)
 
 # Sin guardar los resultados
-getTweetsReplies(url = "https://x.com/Picanumeros/status/1610715405705789442", n_tweets = 130, save = FALSE)
+getTweetsReplies(
+  url = "https://x.com/Picanumeros/status/1610715405705789442",
+  n_tweets = 130,
+  save = FALSE
+)
 
 # Sin abrir una nueva sesión de login
-getTweetsReplies(url = "https://x.com/Picanumeros/status/1610715405705789442", n_tweets = 130, open = TRUE)
+getTweetsReplies(
+  url = "https://x.com/Picanumeros/status/1610715405705789442",
+  n_tweets = 130,
+  open = TRUE
+)
 }
 
 }

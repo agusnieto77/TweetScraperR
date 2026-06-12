@@ -25,8 +25,13 @@ Esta función toma un dataframe de tweets y crea un gráfico de barras
 mostrando la frecuencia de los emoticones en colores utilizados en los tweets.
 }
 \examples{
-
-df <- data.frame(emoticones = I(list(c("😊", "😂", "😂"), c("😊"), c("😂", "😍"), character(0))))
+\dontrun{
+df <- data.frame(emoticones = I(list(
+  c("\U0001F60A", "\U0001F602", "\U0001F602"),
+  c("\U0001F60A"),
+  c("\U0001F602", "\U0001F60D"),
+  character(0)
+)))
 plotEmojisPNG(df)
-
+}
 }

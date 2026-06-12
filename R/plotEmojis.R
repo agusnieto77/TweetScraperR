@@ -4,15 +4,15 @@
 #' 
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
 #' 
-#' Esta función toma un dataframe de tweets y crea un gráfico de barras
+#' Esta funci\u00f3n toma un dataframe de tweets y crea un gr\u00e1fico de barras
 #' mostrando la frecuencia de los emoticones utilizados en los tweets.
 #'
 #' @param df Un dataframe que contiene una columna 'emoticones' con listas de emoticones.
-#' @param top_n Número de emoticones más frecuentes a mostrar (por defecto 10).
-#' @param fill Color de las barras en el gráfico (por defecto "skyblue").
-#' @param color Color de los bordes de las barras en el gráfico (por defecto "grey30").
+#' @param top_n N\u00famero de emoticones m\u00e1s frecuentes a mostrar (por defecto 10).
+#' @param fill Color de las barras en el gr\u00e1fico (por defecto "skyblue").
+#' @param color Color de los bordes de las barras en el gr\u00e1fico (por defecto "grey30").
 #' 
-#' @return Un objeto ggplot con el gráfico de barras.
+#' @return Un objeto ggplot con el gr\u00e1fico de barras.
 #' 
 #' @importFrom ggplot2 ggplot aes geom_col coord_flip labs theme_minimal theme element_text
 #' @importFrom tidyr unnest
@@ -23,9 +23,15 @@
 #' @export
 #'
 #' @examples
-#' 
-#' df <- data.frame(emoticones = I(list(c("😊", "😂", "😂"), c("😊"), c("😂", "😍"), character(0))))
+#' \dontrun{
+#' df <- data.frame(emoticones = I(list(
+#'   c("\U0001F60A", "\U0001F602", "\U0001F602"),
+#'   c("\U0001F60A"),
+#'   c("\U0001F602", "\U0001F60D"),
+#'   character(0)
+#' )))
 #' plotEmojis(df)
+#' }
 #' 
 
 plotEmojis <- function(
@@ -38,7 +44,7 @@ plotEmojis <- function(
   # Lista de paquetes necesarios
   required_packages <- c("ggplot2", "tidyr", "dplyr")
   
-  # Función para instalar paquetes si no están instalados
+  # Funci\u00f3n para instalar paquetes si no est\u00e1n instalados
   install_if_missing <- function(package) {
     if (!requireNamespace(package, quietly = TRUE)) {
       utils::install.packages(package, dependencies = TRUE)
@@ -65,12 +71,12 @@ plotEmojis <- function(
     dplyr::count(emoticones, sort = TRUE) |>
     dplyr::slice_head(n = top_n)
   
-  # Crear el gráfico
+  # Crear el gr\u00e1fico
   p <- ggplot2::ggplot(emoji_counts, ggplot2::aes(x = stats::reorder(emoticones, n), y = n)) +
     ggplot2::geom_col(fill = fill, color = color) +
     ggplot2::coord_flip() +
     ggplot2::labs(
-      title = paste("Top", top_n, "emoticones más usados"),
+      title = paste("Top", top_n, "emoticones m\u00e1s usados"),
       x = "Emoticones",
       y = "Frecuencia"
     ) +

@@ -58,13 +58,30 @@ si el parámetro \code{save} es TRUE.
 \examples{
 \dontrun{
 # Sin autenticación
-getUrlsHistoricalTimeline(username = "rstatstweet", n_urls = 50, since = "2018-10-26", until = "2018-10-30")
+getUrlsHistoricalTimeline(
+  username = "rstatstweet",
+  n_urls = 50,
+  since = "2018-10-26",
+  until = "2018-10-30"
+)
 
 # Con autenticación
-getUrlsHistoricalTimeline(username = "rstatstweet", n_urls = 50, since = "2018-10-26", until = "2018-10-30", open = TRUE)
+getUrlsHistoricalTimeline(
+  username = "rstatstweet",
+  n_urls = 50,
+  since = "2018-10-26",
+  until = "2018-10-30",
+  open = TRUE
+)
 
 # Sin guardar los resultados
-getUrlsHistoricalTimeline(username = "rstatstweet", n_urls = 50, since = "2018-10-26", until = "2018-10-30", save = FALSE)
+getUrlsHistoricalTimeline(
+  username = "rstatstweet",
+  n_urls = 50,
+  since = "2018-10-26",
+  until = "2018-10-30",
+  save = FALSE
+)
 }
 
 }

@@ -19,10 +19,18 @@ Esta función toma un dataframe de tweets y extrae todos los hashtags
 del campo 'texto' o 'tweet', añadiéndolos como una nueva columna al dataframe.
 }
 \examples{
-df1 <- data.frame(texto = c("Este es un #tweet con #hashtags", "Este no tiene hashtags", "Otro #ejemplo"))
+df1 <- data.frame(texto = c(
+  "Este es un #tweet con #hashtags",
+  "Este no tiene hashtags",
+  "Otro #ejemplo"
+))
 getTweetsHashtags(df1)
 
-df2 <- data.frame(tweet = c("Este es un #tweet con #hashtags", "Este no tiene hashtags", "Otro #ejemplo"))
+df2 <- data.frame(tweet = c(
+  "Este es un #tweet con #hashtags",
+  "Este no tiene hashtags",
+  "Otro #ejemplo"
+))
 getTweetsHashtags(df2)
 
 }

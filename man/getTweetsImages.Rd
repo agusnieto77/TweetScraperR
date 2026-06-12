@@ -37,7 +37,10 @@ Si save = FALSE, la función descargará las imágenes pero no las guardará en 
 }
 \examples{
 \dontrun{
-urls <- c("https://x.com/AAS_Sociologia/status/1838907832927768645", "https://x.com/AAS_Sociologia/status/1841819590587822081")
+urls <- c(
+  "https://x.com/AAS_Sociologia/status/1838907832927768645",
+  "https://x.com/AAS_Sociologia/status/1841819590587822081"
+)
 getTweetsImages(urls)
 
 # Sin guardar las imágenes

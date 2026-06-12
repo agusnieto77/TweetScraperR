@@ -4,8 +4,8 @@
 #' 
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
 #' 
-#' Esta función toma un dataframe de tweets y extrae todos los hashtags
-#' del campo 'texto' o 'tweet', añadiéndolos como una nueva columna al dataframe.
+#' Esta funci\u00f3n toma un dataframe de tweets y extrae todos los hashtags
+#' del campo 'texto' o 'tweet', a\u00f1adi\u00e9ndolos como una nueva columna al dataframe.
 #'
 #' @param df Un dataframe que contiene una columna 'texto' o 'tweet' con el contenido de los tweets.
 #' @return Un dataframe con una nueva columna 'hashtags' que contiene una lista de hashtags para cada tweet.
@@ -28,12 +28,12 @@ getTweetsHashtags <- function(df) {
     stop("El dataframe debe contener una columna llamada 'texto' o 'tweet'")
   }
   
-  # Determinar qué columna usar
+  # Determinar qu\u00e9 columna usar
   text_col <- ifelse("texto" %in% colnames(df), "texto", "tweet")
   
-  # Función para extraer hashtags de un solo texto
+  # Funci\u00f3n para extraer hashtags de un solo texto
   extract_single <- function(text) {
-    # Usar expresión regular para encontrar hashtags
+    # Usar expresi\u00f3n regular para encontrar hashtags
     hashtags <- stringr::str_extract_all(text, "#\\w+")
     # Si no hay hashtags, devolver NA
     if (length(hashtags[[1]]) == 0) {
@@ -43,7 +43,7 @@ getTweetsHashtags <- function(df) {
     }
   }
   
-  # Aplicar la función a cada fila del dataframe
+  # Aplicar la funci\u00f3n a cada fila del dataframe
   df$hashtags <- lapply(df[[text_col]], extract_single)
   
   return(df)

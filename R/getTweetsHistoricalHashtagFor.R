@@ -4,33 +4,33 @@
 #' 
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
 #'
-#' Esta función realiza búsquedas históricas de tweets con hashtags específicos de forma iterativa,
-#' permitiendo recolectar tweets en intervalos de tiempo específicos (días, horas o minutos).
+#' Esta funci\u00f3n realiza b\u00fasquedas hist\u00f3ricas de tweets con hashtags espec\u00edficos de forma iterativa,
+#' permitiendo recolectar tweets en intervalos de tiempo espec\u00edficos (d\u00edas, horas o minutos).
 #'
-#' @param iterations Número de iteraciones a realizar.
-#' @param hashtag Hashtag específico para buscar en los tweets.
-#' @param n_tweets Número de tweets a recolectar por iteración.
-#' @param since Fecha y hora de inicio para la búsqueda (formato: "YYYY-MM-DD_HH:MM:SS_UTC").
-#' @param until Número de unidades de tiempo a avanzar en cada iteración.
+#' @param iterations N\u00famero de iteraciones a realizar.
+#' @param hashtag Hashtag espec\u00edfico para buscar en los tweets.
+#' @param n_tweets N\u00famero de tweets a recolectar por iteraci\u00f3n.
+#' @param since Fecha y hora de inicio para la b\u00fasqueda (formato: "YYYY-MM-DD_HH:MM:SS_UTC").
+#' @param until N\u00famero de unidades de tiempo a avanzar en cada iteraci\u00f3n.
 #' @param interval_unit Unidad de tiempo para el intervalo ("days", "hours", o "minutes").
-#' @param xuser Nombre de usuario de Twitter para autenticación (por defecto: variable de entorno del sistema "USER").
-#' @param xpass Contraseña de Twitter para autenticación (por defecto: variable de entorno del sistema "PASS").
+#' @param xuser Nombre de usuario de Twitter para autenticaci\u00f3n (por defecto: variable de entorno del sistema "USER").
+#' @param xpass Contrase\u00f1a de Twitter para autenticaci\u00f3n (por defecto: variable de entorno del sistema "PASS").
 #' @param dir Directorio para guardar los tweets recolectados (por defecto: directorio de trabajo actual).
 #' @param system Sistema operativo ("windows", "unix", o "mac").
-#' @param kill_system Booleano que indica si se debe cerrar el navegador después de cada iteración (por defecto: FALSE).
+#' @param kill_system Booleano que indica si se debe cerrar el navegador despu\u00e9s de cada iteraci\u00f3n (por defecto: FALSE).
 #' @param sleep_time Tiempo de espera entre iteraciones en segundos (por defecto: 300 segundos).
 #'
 #' @details
-#' La función realiza las siguientes operaciones:
+#' La funci\u00f3n realiza las siguientes operaciones:
 #' 1. Valida el formato de la fecha y hora de inicio.
 #' 2. Crea el directorio de destino si no existe.
-#' 3. Ejecuta búsquedas históricas de tweets con el hashtag especificado de forma iterativa.
-#' 4. Calcula la fecha y hora de finalización para cada iteración basándose en el intervalo especificado.
-#' 5. Cierra el navegador después de cada iteración si kill_system es TRUE.
+#' 3. Ejecuta b\u00fasquedas hist\u00f3ricas de tweets con el hashtag especificado de forma iterativa.
+#' 4. Calcula la fecha y hora de finalizaci\u00f3n para cada iteraci\u00f3n bas\u00e1ndose en el intervalo especificado.
+#' 5. Cierra el navegador despu\u00e9s de cada iteraci\u00f3n si kill_system es TRUE.
 #' 6. Espera un tiempo especificado entre iteraciones.
 #'
 #' @return
-#' No devuelve un valor explícito, pero guarda los tweets recolectados en el directorio especificado.
+#' No devuelve un valor expl\u00edcito, pero guarda los tweets recolectados en el directorio especificado.
 #'
 #' @examples
 #' \dontrun{
@@ -91,7 +91,7 @@ getTweetsHistoricalHashtagFor <- function(
     }
   }
   
-  # Función para convertir el formato UTC a datetime
+  # Funci\u00f3n para convertir el formato UTC a datetime
   parse_datetime <- function(datetime_str) {
     # Remover "_UTC" y reemplazar "_" por " "
     clean_str <- gsub("_UTC$", "", datetime_str)
@@ -100,18 +100,18 @@ getTweetsHistoricalHashtagFor <- function(
     lubridate::ymd_hms(clean_str)
   }
   
-  # Función para formatear datetime al formato UTC
+  # Funci\u00f3n para formatear datetime al formato UTC
   format_datetime <- function(datetime) {
     paste0(gsub(" ", "_", format(datetime, "%Y-%m-%d_%H:%M:%S")), "_UTC")
   }
   
-  # Función para calcular la fecha/hora final según la unidad de intervalo
+  # Funci\u00f3n para calcular la fecha/hora final seg\u00fan la unidad de intervalo
   calculate_untilok <- function(since, until, interval_unit) {
     tryCatch({
       # Parsear la fecha de inicio
       since_datetime <- parse_datetime(since)
       
-      # Calcular la nueva fecha según el intervalo
+      # Calcular la nueva fecha seg\u00fan el intervalo
       if (interval_unit == "days") {
         untilok <- since_datetime + lubridate::days(until)
       } else if (interval_unit == "hours") {
@@ -138,7 +138,7 @@ getTweetsHistoricalHashtagFor <- function(
     dir.create(dir, recursive = TRUE)
   }
   
-  # Función para cerrar el navegador según el sistema operativo
+  # Funci\u00f3n para cerrar el navegador seg\u00fan el sistema operativo
   close_browser <- function(system) {
     if (system == "windows") {
       system("taskkill /F /IM chrome.exe", intern = TRUE, ignore.stderr = TRUE)
@@ -147,25 +147,25 @@ getTweetsHistoricalHashtagFor <- function(
     } else if (system == "mac") {
       system("pkill -x 'Google Chrome'")
     } else {
-      warning("Sistema operativo no reconocido. No se cerrará el navegador.")
+      warning("Sistema operativo no reconocido. No se cerrar\u00e1 el navegador.")
     }
   }
   
   # Bucle principal
   for (i in 1:iterations) {
-    cat("Iteración:", i, "\n")
+    cat("Iteraci\u00f3n:", i, "\n")
     
-    # Calcular la fecha final para esta iteración
+    # Calcular la fecha final para esta iteraci\u00f3n
     untilok <- calculate_untilok(since, until, interval_unit)
     
-    # Verificar si se calculó correctamente la fecha
+    # Verificar si se calcul\u00f3 correctamente la fecha
     if (is.null(untilok)) {
       cat("Error al calcular la fecha. Deteniendo el proceso.\n")
       break
     }
     
-    # Mostrar el rango de fechas que se procesará
-    cat("Procesando período:", since, "->", untilok, "\n")
+    # Mostrar el rango de fechas que se procesar\u00e1
+    cat("Procesando per\u00edodo:", since, "->", untilok, "\n")
     
     tryCatch({
       TweetScraperR::getTweetsHistoricalHashtag(
@@ -178,7 +178,7 @@ getTweetsHistoricalHashtagFor <- function(
         dir = dir
       )
       
-      # Actualizar la fecha de inicio para la siguiente iteración
+      # Actualizar la fecha de inicio para la siguiente iteraci\u00f3n
       since <- untilok
       
       # Solo cerrar el navegador si kill_system es TRUE
@@ -186,17 +186,17 @@ getTweetsHistoricalHashtagFor <- function(
         close_browser(system)
       }
       
-      if (i < iterations) {  # No esperar después de la última iteración
+      if (i < iterations) {  # No esperar despu\u00e9s de la \u00faltima iteraci\u00f3n
         Sys.sleep(3)
-        cat("Esperando", sleep_time, "segundos antes de la próxima iteración...\n")
+        cat("Esperando", sleep_time, "segundos antes de la pr\u00f3xima iteraci\u00f3n...\n")
         Sys.sleep(sleep_time-3)
       }
       
     }, error = function(e) {
-      warning("Error en la iteración ", i, ": ", conditionMessage(e))
-      # No actualizamos 'since' si hay un error para reintentar el mismo período
+      warning("Error en la iteraci\u00f3n ", i, ": ", conditionMessage(e))
+      # No actualizamos 'since' si hay un error para reintentar el mismo per\u00edodo
     })
   }
   
-  cat("Recolección de tweets completada.\n")
+  cat("Recolecci\u00f3n de tweets completada.\n")
 }

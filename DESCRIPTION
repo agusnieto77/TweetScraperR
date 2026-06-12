@@ -2,14 +2,12 @@ Package: TweetScraperR
 Type: Package
 Title: Twitter Data Scraping Package
 Version: 0.2.3.9000
-Author: Agustín Nieto
-Maintainer: Agustín Nieto <agustin.nieto77@gmail.com>
 Description: 
     Este paquete proporciona funciones para extraer datos de X/Twitter, incluidos tweets, usuarixs y metadatos asociados.
     Permite realizar extracción de datos de X/Twitter y manejar la respuesta de manera conveniente en R.
     El paquete se enfoca en facilitar la tarea de recolección de datos para análisis y visualización.
 Depends: 
-    R (>= 3.5.0)
+    R (>= 4.1.0)
 Imports:
     rvest,
     dplyr,
@@ -33,9 +31,8 @@ Suggests:
     chromote,
     R6,
     binman
-AdditionalFiles: README.Rmd, Requisitos.md
+Authors@R: person(given = "Agustín", family = "Nieto", email = "agustin.nieto77@gmail.com", role = c("aut", "cre"))
 License: MIT + file LICENSE
 Encoding: UTF-8
-LazyData: true
 RoxygenNote: 7.3.2
 Roxygen: list(markdown = TRUE)

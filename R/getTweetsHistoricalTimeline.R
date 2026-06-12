@@ -1,44 +1,44 @@
 #' Get Historical Tweets from a User Timeline
-#' 
+#'
 #' @description
-#' 
+#'
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
-#' 
-#' Esta función permite recuperar tweets históricos de Twitter que coinciden con una búsqueda específica en el timeline de unx usuarix en particular. 
-#' Puedes especificar el nombre de usuarix de Twitter del que deseas obtener los tweets históricos. La función recupera los tweets antiguos publicados 
-#' por ese usuarix dentro del período de tiempo especificado. Es útil para investigaciones históricas, análisis de tendencias a lo largo del tiempo 
-#' y cualquier otro análisis que requiera acceso a los datos históricos de unx usuarix en particular en Twitter. Cabe destacar que esta función no 
+#'
+#' Esta funci\u00f3n permite recuperar tweets hist\u00f3ricos de Twitter que coinciden con una b\u00fasqueda espec\u00edfica en el timeline de unx usuarix en particular.
+#' Puedes especificar el nombre de usuarix de Twitter del que deseas obtener los tweets hist\u00f3ricos. La funci\u00f3n recupera los tweets antiguos publicados
+#' por ese usuarix dentro del per\u00edodo de tiempo especificado. Es \u00fatil para investigaciones hist\u00f3ricas, an\u00e1lisis de tendencias a lo largo del tiempo
+#' y cualquier otro an\u00e1lisis que requiera acceso a los datos hist\u00f3ricos de unx usuarix en particular en Twitter. Cabe destacar que esta funci\u00f3n no
 #' captura tweets de otras cuentas que han sido retuiteados por le usuarix especificadx.
-#' 
+#'
 #' @param username Nombre de usuario de Twitter del que se desean recuperar los tweets. Por defecto es "rstatstweet".
 #' @param timeout Tiempo de espera entre solicitudes en segundos. Por defecto es 10.
-#' @param n_tweets El número máximo de tweets a recuperar. Por defecto es 100.
-#' @param since Fecha de inicio para la búsqueda de tweets (en formato "YYYY-MM-DD"). Por defecto es "2018-10-26".
-#' @param until Fecha de fin para la búsqueda de tweets (en formato "YYYY-MM-DD"). Por defecto es "2023-10-30".
-#' @param xuser Nombre de usuarix de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.
-#' @param xpass Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.
+#' @param n_tweets El n\u00famero m\u00e1ximo de tweets a recuperar. Por defecto es 100.
+#' @param since Fecha de inicio para la b\u00fasqueda de tweets (en formato "YYYY-MM-DD"). Por defecto es "2018-10-26".
+#' @param until Fecha de fin para la b\u00fasqueda de tweets (en formato "YYYY-MM-DD"). Por defecto es "2023-10-30".
+#' @param xuser Nombre de usuarix de Twitter para autenticaci\u00f3n. Por defecto es el valor de la variable de entorno del sistema USER.
+#' @param xpass Contrase\u00f1a de Twitter para autenticaci\u00f3n. Por defecto es el valor de la variable de entorno del sistema PASS.
 #' @param dir Directorio para guardar el archivo RDS con las tweets recolectados. Por defecto es el directorio de trabajo actual.
-#' @param save Lógico. Indica si se debe guardar el resultado en un archivo RDS (por defecto TRUE).
+#' @param save L\u00f3gico. Indica si se debe guardar el resultado en un archivo RDS (por defecto TRUE).
 #' @return Un tibble que contiene los datos de tweets recuperados, junto con la fecha, usuario, contenido del tweet y URL del tweet.
 #' @export
 #'
 #' @examples
 #' \dontrun{
 #' getTweetsHistoricalTimeline(username = "rstatstweet", n_tweets = 50, since = "2018-10-26", until = "2023-10-30")
-#' 
+#'
 #' # Sin guardar los resultados
 #' getTweetsHistoricalTimeline(username = "rstatstweet", n_tweets = 50, since = "2018-10-26", until = "2023-10-30", save = FALSE)
 #' }
 #'
 #' @references
-#' Puedes encontrar más información sobre el paquete TweetScrapeR en:
+#' Puedes encontrar m\u00e1s informaci\u00f3n sobre el paquete TweetScrapeR en:
 #' <https://github.com/agusnieto77/TweetScraperR>
 #'
 #' @importFrom rvest read_html_live html_elements html_attr html_text html_element read_html
 #' @importFrom lubridate as_datetime is.POSIXct
 #' @importFrom tibble tibble
 #' @importFrom dplyr distinct
-#' 
+#'
 
 getTweetsHistoricalTimeline <- function(
     username = "rstatstweet",
@@ -80,8 +80,8 @@ getTweetsHistoricalTimeline <- function(
       twitter$click(css = login, n_clicks = 1)
       Sys.sleep(1)
     }, error = function(e) {
-      message("La cuenta ya está autenticada o ha ocurrido un error.")
-      message("Se inició la recolección de datos...")
+      message("La cuenta ya est\u00e1 autenticada o ha ocurrido un error.")
+      message("Se inici\u00f3 la recolecci\u00f3n de datos...")
     })
     url_tweet <- "div.css-175oi2r > div > div.css-175oi2r > a.css-146c3p1.r-bcqeeo.r-1ttztb7.r-qvutc0.r-37j5jr.r-a023e6"
     user_name <- paste0("https://x.com/search?f=live&q=%28from%3A", username, "%29+until%3A", until, "+since%3A", since, "&src=typed_query")
@@ -102,11 +102,11 @@ getTweetsHistoricalTimeline <- function(
     articles <- list()
     attempts <- 0
     max_attempts <- 3
-    cat("Inició la recolección de tweets.\n")
+    cat("Inici\u00f3 la recolecci\u00f3n de tweets.\n")
     success <- TRUE
     while (TRUE) {
       if (length(articles) >= n_tweets || attempts >= max_attempts) {
-        cat("Finalizó la recolección de tweets.\n")
+        cat("Finaliz\u00f3 la recolecci\u00f3n de tweets.\n")
         cat("Procesando datos...\n")
         break
       }
@@ -156,10 +156,10 @@ getTweetsHistoricalTimeline <- function(
       } else {
         cat("Datos procesados. No se han guardado en un archivo RDS.\n")
       }
-      cat("Tweets únicos recolectados:", length(tweets_recolectados$url), "\n")
+      cat("Tweets \u00fanicos recolectados:", length(tweets_recolectados$url), "\n")
       return(tweets_recolectados)
     } else {
-      cat("No hay artículos para procesar.\n")
+      cat("No hay art\u00edculos para procesar.\n")
       return(NULL)
     }
     historicalok$session$close()

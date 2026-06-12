@@ -1,35 +1,35 @@
 #' Get Users Data
 #'
 #' @description
-#' 
+#'
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
-#' 
-#' Esta función permite recuperar y procesar datos de usuarixs de Twitter a partir de un vector de URLs 
-#' proporcionadas. Opcionalmente puede realizar la autenticación en Twitter si open=TRUE utilizando las 
-#' credenciales proporcionadas. La función extrae información detallada de cada perfil de usuarix incluyendo 
-#' el nombre del usuarix, el username, la fecha de creación del perfil, el número de publicaciones, 
-#' seguidorxs y seguidxs. La función maneja posibles errores durante el proceso de recolección de datos y 
-#' realiza reintentos automáticos cuando es necesario. Los datos recopilados se devuelven en forma de un 
+#'
+#' Esta funci\u00f3n permite recuperar y procesar datos de usuarixs de Twitter a partir de un vector de URLs
+#' proporcionadas. Opcionalmente puede realizar la autenticaci\u00f3n en Twitter si open=TRUE utilizando las
+#' credenciales proporcionadas. La funci\u00f3n extrae informaci\u00f3n detallada de cada perfil de usuarix incluyendo
+#' el nombre del usuarix, el username, la fecha de creaci\u00f3n del perfil, el n\u00famero de publicaciones,
+#' seguidorxs y seguidxs. La funci\u00f3n maneja posibles errores durante el proceso de recolecci\u00f3n de datos y
+#' realiza reintentos autom\u00e1ticos cuando es necesario. Los datos recopilados se devuelven en forma de un
 #' tibble y, si se especifica, se guardan en un archivo RDS para su posterior uso.
 #'
 #' @param urls_users Vector de URLs de users de los cuales se desea obtener datos.
-#' @param open Indica si se debe realizar el proceso de autenticación (por defecto FALSE).
-#' @param xuser Nombre de usuarix de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.
-#' @param xpass Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.
-#' @param max_retries número máximo de intentos de conexión. Por defecto es 3.
-#' @param dir Directorio donde se guardará el archivo RDS con los datos recopilados. Por defecto es el directorio actual.
-#' @param save Lógico. Indica si se debe guardar el resultado en un archivo RDS (por defecto TRUE).
+#' @param open Indica si se debe realizar el proceso de autenticaci\u00f3n (por defecto FALSE).
+#' @param xuser Nombre de usuarix de Twitter para autenticaci\u00f3n. Por defecto es el valor de la variable de entorno del sistema USER.
+#' @param xpass Contrase\u00f1a de Twitter para autenticaci\u00f3n. Por defecto es el valor de la variable de entorno del sistema PASS.
+#' @param max_retries n\u00famero m\u00e1ximo de intentos de conexi\u00f3n. Por defecto es 3.
+#' @param dir Directorio donde se guardar\u00e1 el archivo RDS con los datos recopilados. Por defecto es el directorio actual.
+#' @param save L\u00f3gico. Indica si se debe guardar el resultado en un archivo RDS (por defecto TRUE).
 #' @return Un tibble que contiene los datos de los users recuperados.
 #' @export
 #'
 #' @examples
 #' \dontrun{
-#' # Sin autenticación
+#' # Sin autenticaci\u00f3n
 #' getUsersData(urls_users = "https://x.com/estacion_erre")
-#' 
-#' # Con autenticación
+#'
+#' # Con autenticaci\u00f3n
 #' getUsersData(urls_users = "https://x.com/estacion_erre", open = TRUE)
-#' 
+#'
 #' # Sin guardar los resultados
 #' getUsersData(urls_users = "https://x.com/estacion_erre", save = FALSE)
 #' }
@@ -38,7 +38,7 @@
 #' @importFrom lubridate dmy
 #' @importFrom tibble tibble
 #' @importFrom utils tail
-#' 
+#'
 
 getUsersData <- function(
     urls_users,
@@ -52,7 +52,7 @@ getUsersData <- function(
   global_retry_count <- 0
   success <- FALSE
   twitter <- NULL
-  
+
   while (global_retry_count < max_retries && !success) {
     tryCatch({
       if (open) {
@@ -69,7 +69,7 @@ getUsersData <- function(
         twitter$click(css = login, n_clicks = 1)
         Sys.sleep(2)
       }
-      
+
       todo <- "#react-root > div > div > div.css-175oi2r.r-1f2l425.r-13qz1uu.r-417010.r-18u37iz > main > div > div > div > div > div"
       name <- "h2"
       met_post <- "div.css-175oi2r.r-aqfbo4.r-gtdqiz.r-1gn8etr.r-1g40b8q > div:nth-child(1) > div > div > div > div > div > div.css-175oi2r.r-16y2uox.r-1wbh5a2.r-1pi2tsx.r-1777fci > div > div"
@@ -78,9 +78,9 @@ getUsersData <- function(
       met_siguiendo <- "div:nth-child(3) > div > div > div > div.css-175oi2r.r-3pj75a.r-ttdzmv.r-1ifxtd0 > div.css-175oi2r.r-13awgt0.r-18u37iz.r-1w6e6rj > div:nth-child(1)"
       met_seguidores <- "div:nth-child(3) > div > div > div > div.css-175oi2r.r-3pj75a.r-ttdzmv.r-1ifxtd0 > div.css-175oi2r.r-13awgt0.r-18u37iz.r-1w6e6rj > div:nth-child(2)"
       Sys.sleep(1)
-      
+
       users_db <- tibble::tibble()
-      
+
       # Procesa URLs iniciales
       for (i in urls_users) {
         users <- NULL
@@ -92,7 +92,7 @@ getUsersData <- function(
           users_db <- rbind(
             users_db,
             tibble::tibble(
-              fecha_inicio = lubridate::dmy(paste("01", gsub("^.*unió en |^.*ined ", "", tail(rvest::html_text(rvest::html_elements(nodo, css = fech)), 1)), collapse = " ")),
+              fecha_inicio = lubridate::dmy(paste("01", gsub("^.*uni\u00f3 en |^.*ined ", "", tail(rvest::html_text(rvest::html_elements(nodo, css = fech)), 1)), collapse = " ")),
               nombre = rvest::html_text2(rvest::html_elements(nodo, css = name))[1],
               username = sub("^https://twitter.com/(.*?)|^https://x.com/(.*?)", "\\1", i),
               n_post = gsub(" posts", "", rvest::html_text(rvest::html_elements(nodo, css = met_post))[1]),
@@ -109,12 +109,12 @@ getUsersData <- function(
           if (!is.null(users)) users$session$close()
         })
       }
-      
-      # Reprocesa URLs con fechas NA hasta que no queden más o se alcance el límite de reintentos
+
+      # Reprocesa URLs con fechas NA hasta que no queden m\u00e1s o se alcance el l\u00edmite de reintentos
       retry_count <- 0
       while (any(is.na(users_db$fecha_inicio)) && retry_count < max_retries) {
         urls_con_na <- users_db$url[is.na(users_db$fecha_inicio)]
-        
+
         for (i in urls_con_na) {
           users <- NULL
           tryCatch({
@@ -124,11 +124,11 @@ getUsersData <- function(
             Sys.sleep(2)
             fecha_inicio <- rvest::html_text(rvest::html_elements(nodo, css = fech))
             if (length(fecha_inicio) > 0) {
-              fecha_inicio <- lubridate::dmy(paste("01", gsub("^.*unió en |^.*ined ", "", tail(fecha_inicio, 1)), collapse = " "))
+              fecha_inicio <- lubridate::dmy(paste("01", gsub("^.*uni\u00f3 en |^.*ined ", "", tail(fecha_inicio, 1)), collapse = " "))
             } else {
               fecha_inicio <- NA
             }
-            
+
             idx <- which(users_db$url == i)
             if (is.na(users_db$fecha_inicio[idx])) {
               users_db$fecha_inicio[idx] <- fecha_inicio
@@ -138,7 +138,7 @@ getUsersData <- function(
               users_db$n_siguiendo[idx] <- gsub(" Siguiendo| Following", "", rvest::html_text(rvest::html_elements(nodo, css = met_siguiendo))[1])
               users_db$n_seguidorxs[idx] <- gsub(" Seguidores| Followers", "", rvest::html_text(rvest::html_elements(nodo, css = met_seguidores))[1])
             }
-            
+
             message("Datos actualizados usuarix: ", sub("^https://twitter.com/(.*?)|^https://x.com/(.*?)", "\\1", i))
           }, error = function(e) {
             message("Error al actualizar usuarix ", i, ": ", e$message)
@@ -148,9 +148,9 @@ getUsersData <- function(
         }
         retry_count <- retry_count + 1
       }
-      
+
       success <- TRUE
-      
+
     }, error = function(e) {
       message("Error general: ", e$message)
       global_retry_count <- global_retry_count + 1
@@ -158,17 +158,17 @@ getUsersData <- function(
       Sys.sleep(5)
     })
   }
-  
-  # Cerrar sesión de Twitter si está abierta
+
+  # Cerrar sesi\u00f3n de Twitter si est\u00e1 abierta
   if (!is.null(twitter)) {
     twitter$session$close()
   }
-  
+
   if (!success) {
-    stop("No se pudo completar la operación después de ", max_retries, " intentos.")
+    stop("No se pudo completar la operaci\u00f3n despu\u00e9s de ", max_retries, " intentos.")
   }
-  
-  # Convertir números con sufijos (K, M) a valores numéricos
+
+  # Convertir n\u00fameros con sufijos (K, M) a valores num\u00e9ricos
   convertir_numero <- function(x) {
     x <- as.character(x)  # Convertir a caracteres por si acaso
     if (grepl("mil|K", x)) {
@@ -179,18 +179,18 @@ getUsersData <- function(
       return(as.numeric(x))
     }
   }
-  
-  # Procesar los números
+
+  # Procesar los n\u00fameros
   users_db$n_post <- sapply(gsub(",", ".", gsub("\\.", "", users_db$n_post)), convertir_numero)
   users_db$n_siguiendo <- sapply(gsub(",", ".", gsub("\\.", "", users_db$n_siguiendo)), convertir_numero)
   users_db$n_seguidorxs <- sapply(gsub(",", ".", gsub("\\.", "", users_db$n_seguidorxs)), convertir_numero)
-  
+
   if (save) {
     saveRDS(users_db, paste0(dir, "/db_users_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
     cat("Datos procesados y guardados.\n")
   } else {
     cat("Datos procesados. No se han guardado en un archivo RDS.\n")
   }
-  
+
   return(users_db)
 }

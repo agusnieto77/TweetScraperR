@@ -4,16 +4,16 @@
 #' 
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
 #' 
-#' Esta función recolecta tweets de forma iterativa utilizando TweetScraperR,
-#' con la opción de cerrar el navegador entre iteraciones.
+#' Esta funci\u00f3n recolecta tweets de forma iterativa utilizando TweetScraperR,
+#' con la opci\u00f3n de cerrar el navegador entre iteraciones.
 #'
-#' @param iterations Número de iteraciones a realizar
-#' @param search Término de búsqueda para los tweets
-#' @param n_tweets Número de tweets a recolectar en cada iteración
+#' @param iterations N\u00famero de iteraciones a realizar
+#' @param search T\u00e9rmino de b\u00fasqueda para los tweets
+#' @param n_tweets N\u00famero de tweets a recolectar en cada iteraci\u00f3n
 #' @param sleep Tiempo de espera para la carga de tweets. Por defecto este valor es de 3 segundos.
-#' @param dir Directorio donde se guardarán los tweets
+#' @param dir Directorio donde se guardar\u00e1n los tweets
 #' @param system Sistema operativo ('windows', 'unix', 'macOS')
-#' @param kill_system Booleano que indica si se debe cerrar el navegador después de cada iteración (por defecto: FALSE)
+#' @param kill_system Booleano que indica si se debe cerrar el navegador despu\u00e9s de cada iteraci\u00f3n (por defecto: FALSE)
 #' @param sleep_time Tiempo de espera entre iteraciones en segundos. Por defecto este valor es de 300 segundos.
 #'
 #' @return No devuelve un valor, pero guarda los tweets en el directorio especificado
@@ -47,7 +47,7 @@ getTweetsSearchStreamingFor <- function(
     dir.create(dir, recursive = TRUE)
   }
   
-  # Función para cerrar el navegador según el sistema operativo
+  # Funci\u00f3n para cerrar el navegador seg\u00fan el sistema operativo
   close_browser <- function(system) {
     if (system == "windows") {
       system("taskkill /F /IM chrome.exe", intern = TRUE, ignore.stderr = TRUE)
@@ -56,18 +56,18 @@ getTweetsSearchStreamingFor <- function(
     } else if (system == "mac") {
       system("pkill -x 'Google Chrome'")
     } else {
-      warning("Sistema operativo no reconocido. No se cerrará el navegador.")
+      warning("Sistema operativo no reconocido. No se cerrar\u00e1 el navegador.")
     }
   }
   
   # Bucle principal
   for (i in 1:iterations) {
-    cat("Iteración:", i, "\n")
+    cat("Iteraci\u00f3n:", i, "\n")
     
     tryCatch({
       TweetScraperR::getTweetsSearchStreaming(search = search, n_tweets = n_tweets, sleep = sleep, dir = dir)
     }, error = function(e) {
-      warning("Error en la iteración ", i, ": ", conditionMessage(e))
+      warning("Error en la iteraci\u00f3n ", i, ": ", conditionMessage(e))
     })
     
     # Solo cerrar el navegador si kill_system es TRUE
@@ -75,11 +75,11 @@ getTweetsSearchStreamingFor <- function(
       close_browser(system)
     }
     
-    if (i < iterations) {  # No esperar después de la última iteración
-      cat("Esperando", sleep_time, "segundos antes de la próxima iteración...\n")
+    if (i < iterations) {  # No esperar despu\u00e9s de la \u00faltima iteraci\u00f3n
+      cat("Esperando", sleep_time, "segundos antes de la pr\u00f3xima iteraci\u00f3n...\n")
       Sys.sleep(sleep_time)
     }
   }
   
-  cat("Recolección de tweets completada.\n")
+  cat("Recolecci\u00f3n de tweets completada.\n")
 }

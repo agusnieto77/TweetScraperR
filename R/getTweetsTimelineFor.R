@@ -4,28 +4,28 @@
 #' 
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
 #'
-#' Esta función recolecta tweets de múltiples usuarios de X (Twitter) de forma iterativa,
+#' Esta funci\u00f3n recolecta tweets de m\u00faltiples usuarios de X (Twitter) de forma iterativa,
 #' permitiendo obtener un conjunto de datos combinado con tweets de todos los usuarios especificados.
 #'
 #' @param usernames Vector de caracteres con los nombres de usuario de X (Twitter) para recolectar tweets.
-#' @param n_tweets Número de tweets a recolectar por usuario (por defecto: 10).
+#' @param n_tweets N\u00famero de tweets a recolectar por usuario (por defecto: 10).
 #' @param save Booleano que indica si se deben guardar los resultados en un archivo (por defecto: FALSE).
 #' @param save_path Ruta del archivo donde guardar los resultados (por defecto: NULL).
 #' @param file_format Formato del archivo para guardar los resultados ("rds" o "csv", por defecto: "rds").
-#' @param include_user_column Booleano que indica si se debe añadir una columna con el nombre de usuario (por defecto: TRUE).
+#' @param include_user_column Booleano que indica si se debe a\u00f1adir una columna con el nombre de usuario (por defecto: TRUE).
 #' @param dir Directorio para guardar los tweets recolectados (por defecto: directorio de trabajo actual).
 #' @param system Sistema operativo ("windows", "unix", o "mac").
-#' @param kill_system Booleano que indica si se debe cerrar el navegador después de la recolección (por defecto: FALSE).
+#' @param kill_system Booleano que indica si se debe cerrar el navegador despu\u00e9s de la recolecci\u00f3n (por defecto: FALSE).
 #'
 #' @details
-#' La función realiza las siguientes operaciones:
-#' 1. Valida los parámetros de entrada.
+#' La funci\u00f3n realiza las siguientes operaciones:
+#' 1. Valida los par\u00e1metros de entrada.
 #' 2. Crea el directorio de destino si no existe y es necesario.
-#' 3. Abre la línea de tiempo de X (Twitter).
-#' 4. Itera a través de cada nombre de usuario especificado.
+#' 3. Abre la l\u00ednea de tiempo de X (Twitter).
+#' 4. Itera a trav\u00e9s de cada nombre de usuario especificado.
 #' 5. Recolecta los tweets de cada usuario utilizando getTweetsTimeline().
-#' 6. Añade una columna "cuenta" con el nombre de usuario a cada conjunto de datos.
-#' 7. Combina todos los resultados en un único dataframe.
+#' 6. A\u00f1ade una columna "cuenta" con el nombre de usuario a cada conjunto de datos.
+#' 7. Combina todos los resultados en un \u00fanico dataframe.
 #' 8. Guarda los resultados combinados si se especifica, en formato .rds (por defecto) o .csv.
 #'
 #' @return
@@ -34,7 +34,7 @@
 #' @examples
 #' \dontrun{
 #' 
-#' # Iniciar sesión
+#' # Iniciar sesi\u00f3n
 #' openTimeline()
 #' 
 #' # Recolectar 5 tweets de cada usuario
@@ -80,13 +80,13 @@ getTweetsTimelineFor <- function(
     kill_system = FALSE
 ) {
   
-  # Validación de parámetros
+  # Validaci\u00f3n de par\u00e1metros
   if (!is.character(usernames)) {
     stop("usernames debe ser un vector de caracteres")
   }
   
   if (!is.numeric(n_tweets) || n_tweets < 1) {
-    stop("n_tweets debe ser un número entero positivo")
+    stop("n_tweets debe ser un n\u00famero entero positivo")
   }
   
   if (!is.logical(save)) {
@@ -97,18 +97,18 @@ getTweetsTimelineFor <- function(
     stop("file_format debe ser 'rds' o 'csv'")
   }
   
-  # Determinar la extensión del archivo según el formato
+  # Determinar la extensi\u00f3n del archivo seg\u00fan el formato
   file_ext <- ifelse(file_format == "rds", ".rds", ".csv")
   
   if (save && is.null(save_path)) {
     default_filename <- paste0("tweets_data", file_ext)
-    warning(paste0("save es TRUE pero no se proporcionó save_path. Usando '", default_filename, "' por defecto"))
+    warning(paste0("save es TRUE pero no se proporcion\u00f3 save_path. Usando '", default_filename, "' por defecto"))
     save_path <- file.path(dir, default_filename)
   } else if (save) {
-    # Asegurarse de que el archivo tenga la extensión correcta
+    # Asegurarse de que el archivo tenga la extensi\u00f3n correcta
     if (!grepl(paste0(file_ext, "$"), save_path)) {
       save_path <- paste0(save_path, file_ext)
-      warning(paste0("Se ha añadido la extensión '", file_ext, "' al nombre del archivo"))
+      warning(paste0("Se ha a\u00f1adido la extensi\u00f3n '", file_ext, "' al nombre del archivo"))
     }
     save_path <- file.path(dir, save_path)
   }
@@ -118,7 +118,7 @@ getTweetsTimelineFor <- function(
     dir.create(dirname(save_path), recursive = TRUE)
   }
   
-  # Función para cerrar el navegador según el sistema operativo
+  # Funci\u00f3n para cerrar el navegador seg\u00fan el sistema operativo
   close_browser <- function(system) {
     if (system == "windows") {
       system("taskkill /F /IM chrome.exe", intern = TRUE, ignore.stderr = TRUE)
@@ -127,15 +127,15 @@ getTweetsTimelineFor <- function(
     } else if (system == "mac") {
       system("pkill -x 'Google Chrome'")
     } else {
-      warning("Sistema operativo no reconocido. No se cerrará el navegador.")
+      warning("Sistema operativo no reconocido. No se cerrar\u00e1 el navegador.")
     }
   }
   
-  # Inicializar dataframe vacío para almacenar resultados
+  # Inicializar dataframe vac\u00edo para almacenar resultados
   result_df <- data.frame()
   
-  # Iterar a través de cada nombre de usuario
-  cat("Iniciando recolección de tweets para", length(usernames), "usuarios\n")
+  # Iterar a trav\u00e9s de cada nombre de usuario
+  cat("Iniciando recolecci\u00f3n de tweets para", length(usernames), "usuarios\n")
   
   for (i in seq_along(usernames)) {
     username <- usernames[i]
@@ -149,7 +149,7 @@ getTweetsTimelineFor <- function(
         save = FALSE  # Manejaremos el guardado de los datos combinados
       )
       
-      # Añadir columna de nombre de usuario si se solicita
+      # A\u00f1adir columna de nombre de usuario si se solicita
       if (include_user_column) {
         user_tweets <- user_tweets |> dplyr::mutate(cuenta = username)
       }
@@ -181,7 +181,7 @@ getTweetsTimelineFor <- function(
     close_browser(system)
   }
   
-  cat("Recolección de tweets completada. Total de tweets:", nrow(result_df), "\n")
+  cat("Recolecci\u00f3n de tweets completada. Total de tweets:", nrow(result_df), "\n")
   
   return(result_df)
 }

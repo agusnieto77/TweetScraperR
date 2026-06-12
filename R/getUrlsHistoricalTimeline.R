@@ -1,51 +1,51 @@
 #' Get Historical Tweet URLs from a User Timeline
-#' 
+#'
 #' @description
-#' 
+#'
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
-#' 
-#' Esta función recupera URLs de tweets del timeline histórico de unx usuarix en Twitter, 
-#' basado en un rango de fechas especificado. Opcionalmente puede realizar la autenticación en Twitter 
-#' mediante el nombre de usuarix y la contraseña proporcionados, o los valores predeterminados de 
-#' las variables de entorno del sistema. Después de autenticar al usuarix (si open=TRUE), la función 
-#' realiza una búsqueda de tweets publicados por le usuarix especificadx dentro del rango 
-#' de fechas definido por los parámetros `since` y `until`. Las URLs de los tweets encontrados 
-#' se recogen hasta alcanzar el número máximo de URLs especificado por el parámetro `n_urls` o 
-#' hasta que no se encuentren nuevas URLs en varios intentos consecutivos. Los resultados se 
-#' guardan en un archivo con formato `.rds` en el directorio especificado por el parámetro `dir`
-#' si el parámetro `save` es TRUE.
-#' 
+#'
+#' Esta funci\u00f3n recupera URLs de tweets del timeline hist\u00f3rico de unx usuarix en Twitter,
+#' basado en un rango de fechas especificado. Opcionalmente puede realizar la autenticaci\u00f3n en Twitter
+#' mediante el nombre de usuarix y la contrase\u00f1a proporcionados, o los valores predeterminados de
+#' las variables de entorno del sistema. Despu\u00e9s de autenticar al usuarix (si open=TRUE), la funci\u00f3n
+#' realiza una b\u00fasqueda de tweets publicados por le usuarix especificadx dentro del rango
+#' de fechas definido por los par\u00e1metros `since` y `until`. Las URLs de los tweets encontrados
+#' se recogen hasta alcanzar el n\u00famero m\u00e1ximo de URLs especificado por el par\u00e1metro `n_urls` o
+#' hasta que no se encuentren nuevas URLs en varios intentos consecutivos. Los resultados se
+#' guardan en un archivo con formato `.rds` en el directorio especificado por el par\u00e1metro `dir`
+#' si el par\u00e1metro `save` es TRUE.
+#'
 #' @param username Nombre de usuarix de Twitter del que se desean recuperar los tweets. Por defecto es "rstatstweet".
 #' @param timeout Tiempo de espera entre solicitudes en segundos. Por defecto es 10.
-#' @param n_urls El número máximo de URLs de tweets a recuperar. Por defecto es 100.
-#' @param since Fecha de inicio para la búsqueda de tweets (en formato "YYYY-MM-DD"). Por defecto es "2018-10-26".
-#' @param until Fecha de fin para la búsqueda de tweets (en formato "YYYY-MM-DD"). Por defecto es "2018-10-30".
-#' @param open Indica si se debe realizar el proceso de autenticación (por defecto FALSE).
-#' @param xuser Nombre de usuarix de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.
-#' @param xpass Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.
+#' @param n_urls El n\u00famero m\u00e1ximo de URLs de tweets a recuperar. Por defecto es 100.
+#' @param since Fecha de inicio para la b\u00fasqueda de tweets (en formato "YYYY-MM-DD"). Por defecto es "2018-10-26".
+#' @param until Fecha de fin para la b\u00fasqueda de tweets (en formato "YYYY-MM-DD"). Por defecto es "2018-10-30".
+#' @param open Indica si se debe realizar el proceso de autenticaci\u00f3n (por defecto FALSE).
+#' @param xuser Nombre de usuarix de Twitter para autenticaci\u00f3n. Por defecto es el valor de la variable de entorno del sistema USER.
+#' @param xpass Contrase\u00f1a de Twitter para autenticaci\u00f3n. Por defecto es el valor de la variable de entorno del sistema PASS.
 #' @param dir Directorio para guardar el archivo RDS con las URLs recolectadas. Por defecto es el directorio de trabajo actual.
-#' @param save Lógico. Indica si se debe guardar el resultado en un archivo RDS (por defecto TRUE).
+#' @param save L\u00f3gico. Indica si se debe guardar el resultado en un archivo RDS (por defecto TRUE).
 #' @return Un vector que contiene las URLs de tweets recuperadas.
 #' @export
 #'
 #' @examples
 #' \dontrun{
-#' # Sin autenticación
+#' # Sin autenticaci\u00f3n
 #' getUrlsHistoricalTimeline(username = "rstatstweet", n_urls = 50, since = "2018-10-26", until = "2018-10-30")
-#' 
-#' # Con autenticación
+#'
+#' # Con autenticaci\u00f3n
 #' getUrlsHistoricalTimeline(username = "rstatstweet", n_urls = 50, since = "2018-10-26", until = "2018-10-30", open = TRUE)
-#' 
+#'
 #' # Sin guardar los resultados
 #' getUrlsHistoricalTimeline(username = "rstatstweet", n_urls = 50, since = "2018-10-26", until = "2018-10-30", save = FALSE)
 #' }
 #'
 #' @references
-#' Puedes encontrar más información sobre el paquete TweetScrapeR en:
+#' Puedes encontrar m\u00e1s informaci\u00f3n sobre el paquete TweetScrapeR en:
 #' <https://github.com/agusnieto77/TweetScraperR>
 #'
 #' @importFrom rvest read_html_live html_elements html_attr
-#' 
+#'
 
 getUrlsHistoricalTimeline <- function(
     username = "rstatstweet",
@@ -62,7 +62,7 @@ getUrlsHistoricalTimeline <- function(
   success <- FALSE
   while (!success) {
     twitter <- NULL
-    
+
     if (open) {
       tryCatch({
         success2 <- FALSE
@@ -91,10 +91,10 @@ getUrlsHistoricalTimeline <- function(
         twitter$click(css = login, n_clicks = 1)
         Sys.sleep(1)
       }, error = function(e) {
-        message("La cuenta ya está autenticada o ha ocurrido un error: ", e$message)
+        message("La cuenta ya est\u00e1 autenticada o ha ocurrido un error: ", e$message)
       })
     }
-    
+
     url_tweet <- "div.css-175oi2r > div > div.css-175oi2r > a.css-146c3p1.r-bcqeeo.r-1ttztb7.r-qvutc0.r-37j5jr.r-a023e6"
     usersearh <- paste0("https://x.com/search?f=live&q=%28from%3A", username, "%29+until%3A", until, "+since%3A", since, "&src=typed_query")
     success3 <- FALSE
@@ -117,7 +117,7 @@ getUrlsHistoricalTimeline <- function(
     success <- TRUE
     while (TRUE) {
       if (length(tweets_urls) >= n_urls || attempts >= max_attempts) {
-        cat("Finalizó la recolección de URLs.\n")
+        cat("Finaliz\u00f3 la recolecci\u00f3n de URLs.\n")
         break
       }
       tryCatch({

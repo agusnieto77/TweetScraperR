@@ -1,47 +1,47 @@
 #' Get Tweets from User Timeline
 #'
 #' @description
-#' 
+#'
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
-#' 
-#' Esta función recupera tweets del timeline de unx usuarix especificadx en Twitter. 
-#' La función inicia sesión en Twitter utilizando las credenciales proporcionadas, 
-#' navega al perfil de le usuarix especificadx, y recopila hasta `n_tweets` tweets. 
-#' El proceso de recolección se detiene si se alcanza el número máximo de tweets 
-#' especificado o después de alcanzar los 600 tweets con el desplazamiento (scroll).
+#'
+#' Esta funci\u00f3n recupera tweets del timeline de unx usuarix especificadx en Twitter.
+#' La funci\u00f3n inicia sesi\u00f3n en Twitter utilizando las credenciales proporcionadas,
+#' navega al perfil de le usuarix especificadx, y recopila hasta `n_tweets` tweets.
+#' El proceso de recolecci\u00f3n se detiene si se alcanza el n\u00famero m\u00e1ximo de tweets
+#' especificado o despu\u00e9s de alcanzar los 600 tweets con el desplazamiento (scroll).
 #'
 #' @param username El nombre de usuarix de Twitter del cual quieres obtener el timeline.
-#' @param n_tweets El número máximo de tweets a obtener. Por defecto es 100.
-#' @param view Mostrar una vista en vivo de Twitter/X TRUE o FALSE 
-#' @param open Indica si se debe realizar el proceso de autenticación (por defecto FALSE)
-#' @param xuser Nombre de usuarix de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.
-#' @param xpass Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.
-#' @param mailx Dirección de e-mail para la autenticación. Tiene que ser la misma que la usada en Twitter/X.
-#' @param dir El directorio donde se guardará el archivo de salida. Por defecto es el directorio de trabajo actual.
-#' @param save Lógico. Indica si se debe guardar el resultado en un archivo RDS (por defecto TRUE).
+#' @param n_tweets El n\u00famero m\u00e1ximo de tweets a obtener. Por defecto es 100.
+#' @param view Mostrar una vista en vivo de Twitter/X TRUE o FALSE
+#' @param open Indica si se debe realizar el proceso de autenticaci\u00f3n (por defecto FALSE)
+#' @param xuser Nombre de usuarix de Twitter para autenticaci\u00f3n. Por defecto es el valor de la variable de entorno del sistema USER.
+#' @param xpass Contrase\u00f1a de Twitter para autenticaci\u00f3n. Por defecto es el valor de la variable de entorno del sistema PASS.
+#' @param mailx Direcci\u00f3n de e-mail para la autenticaci\u00f3n. Tiene que ser la misma que la usada en Twitter/X.
+#' @param dir El directorio donde se guardar\u00e1 el archivo de salida. Por defecto es el directorio de trabajo actual.
+#' @param save L\u00f3gico. Indica si se debe guardar el resultado en un archivo RDS (por defecto TRUE).
 #' @return Un tibble que contiene los tweets obtenidos.
 #' @export
 #'
 #' @examples
 #' \dontrun{
 #' getTweetsTimeline(username = "rstatstweet", n_tweets = 200)
-#' 
-#' # Con autenticación
+#'
+#' # Con autenticaci\u00f3n
 #' getTweetsTimeline(username = "rstatstweet", n_tweets = 200, open = TRUE)
-#' 
+#'
 #' # Sin guardar los resultados
 #' getTweetsTimeline(username = "rstatstweet", n_tweets = 200, save = FALSE)
 #' }
 #'
 #' @references
-#' Puedes encontrar más información sobre el paquete TweetScrapeR en:
+#' Puedes encontrar m\u00e1s informaci\u00f3n sobre el paquete TweetScrapeR en:
 #' <https://github.com/agusnieto77/TweetScraperR>
 #'
 #' @importFrom rvest read_html_live html_elements html_attr html_text
 #' @importFrom tibble tibble
 #' @importFrom lubridate as_datetime
 #' @importFrom dplyr distinct
-#' 
+#'
 
 getTweetsTimeline <- function(
     username = "rstatstweet",
@@ -79,33 +79,33 @@ getTweetsTimeline <- function(
     }
     Sys.sleep(2)
   }
-  
+
   fech <- "div > div > div > a > time"
   user1 <- "div.css-175oi2r.r-18u37iz.r-1wbh5a2.r-1ez5h0i > div > div.css-175oi2r.r-1wbh5a2.r-dnmrzs > a > div > span"
   tweet <- "#react-root > div > div > div.css-175oi2r.r-1f2l425.r-13qz1uu.r-417010.r-18u37iz > main > div > div > div > div > div > div:nth-child(3) > div > div > section > div > div > div > div > div > article > div > div > div.css-175oi2r.r-18u37iz > div.css-175oi2r.r-1iusvr4.r-16y2uox.r-1777fci.r-kzbkwu > div:nth-child(2)"
   url_tweet <- "div.css-175oi2r.r-18u37iz.r-1wbh5a2.r-1ez5h0i > div > div.css-175oi2r.r-18u37iz.r-1q142lx > a"
   user2 <- "div.css-175oi2r.r-18u37iz.r-1wbh5a2.r-1ez5h0i > div > div.css-175oi2r.r-18u37iz.r-1q142lx > div > a"
-  
+
   timeline <- rvest::read_html_live(paste0("https://x.com/", username))
-  
+
   assign("timeline", timeline, envir = .GlobalEnv)
-  
+
   if (view) {
     timeline$view()
   } else {
     timeline
   }
-  
+
   Sys.sleep(3)
   tweets_udb <- tibble::tibble()
   i <- 1
   repetitions <- 0
   max_repetitions <- 3
   prev_count <- -1
-  cat("Inició la recolección de tweets.\n")
+  cat("Inici\u00f3 la recolecci\u00f3n de tweets.\n")
   while (TRUE) {
     if (nrow(tweets_udb) > n_tweets || repetitions >= max_repetitions) {
-      cat("Finalizó la recolección de tweets.\n")
+      cat("Finaliz\u00f3 la recolecci\u00f3n de tweets.\n")
       break
     }
     i_tweets <- tibble::tibble(
@@ -122,7 +122,7 @@ getTweetsTimeline <- function(
       repetitions <- 0
     }
     if (repetitions >= max_repetitions) {
-      cat("Finalizó la recolección de tweets.")
+      cat("Finaliz\u00f3 la recolecci\u00f3n de tweets.")
       break
     }
     tweets_udb <- dplyr::distinct(rbind(tweets_udb, i_tweets), url, .keep_all = TRUE)

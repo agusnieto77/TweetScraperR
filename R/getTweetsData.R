@@ -1,33 +1,33 @@
 #' Get Tweets Data
 #'
 #' @description
-#' 
+#'
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
-#' 
-#' Esta función permite recuperar y procesar datos de tweets a partir de un vector de URLs 
-#' de tweets proporcionadas. Utilizando las credenciales de unx usuarix de Twitter, la función 
-#' realiza la autenticación en Twitter y extrae información detallada de cada tweet. Los datos 
-#' extraídos incluyen la fecha del tweet, el nombre de usuarix que lo publicó, el texto del tweet, 
-#' las respuestas, reposts, me gusta, URLs asociadas, y otra información relevante.
-#' La función también maneja tweets borrados y errores durante el proceso de recolección, y 
-#' clasifica las URLs de los tweets en tres categorías: tweets recuperados, tweets borrados, y 
-#' tweets que necesitan ser reprocesados. Si el parámetro 'save' es TRUE, los datos recopilados 
+#'
+#' Esta funci\u00f3n permite recuperar y procesar datos de tweets a partir de un vector de URLs
+#' de tweets proporcionadas. Utilizando las credenciales de unx usuarix de Twitter, la funci\u00f3n
+#' realiza la autenticaci\u00f3n en Twitter y extrae informaci\u00f3n detallada de cada tweet. Los datos
+#' extra\u00eddos incluyen la fecha del tweet, el nombre de usuarix que lo public\u00f3, el texto del tweet,
+#' las respuestas, reposts, me gusta, URLs asociadas, y otra informaci\u00f3n relevante.
+#' La funci\u00f3n tambi\u00e9n maneja tweets borrados y errores durante el proceso de recolecci\u00f3n, y
+#' clasifica las URLs de los tweets en tres categor\u00edas: tweets recuperados, tweets borrados, y
+#' tweets que necesitan ser reprocesados. Si el par\u00e1metro 'save' es TRUE, los datos recopilados
 #' se guardan en un archivo RDS en el directorio especificado por le usuarix.
 #'
 #' @param urls_tweets Vector de URLs de tweets de los cuales se desea obtener datos.
-#' @param xuser Nombre de usuarix de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.
-#' @param xpass Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.
+#' @param xuser Nombre de usuarix de Twitter para autenticaci\u00f3n. Por defecto es el valor de la variable de entorno del sistema USER.
+#' @param xpass Contrase\u00f1a de Twitter para autenticaci\u00f3n. Por defecto es el valor de la variable de entorno del sistema PASS.
 #' @param dir directorio para guardar el RDS con las URLs recolectadas
 #' @param save Logical. Indica si se debe guardar el resultado en un archivo RDS. Por defecto es TRUE.
 #' @return Un tibble que contiene los datos de los tweets recuperados.
-#' 
+#'
 #' \itemize{
 #'   \item \code{tweets_recuperados}: Un tibble con los datos de los tweets recuperados, incluyendo la fecha, nombre de usuario, texto, respuestas, reposts, me gusta, URLs asociadas y otras informaciones recopiladas.
 #'   \item \code{tweets_borrados}: Un vector con las URLs de los tweets que fueron detectados como borrados.
 #'   \item \code{tweets_a_reprocesar}: Un vector con las URLs de los tweets que no pudieron ser procesados exitosamente y necesitan ser reprocesados.
-#'   \item \code{errores}: Un vector con los mensajes de error recopilados durante el proceso de recolección de datos.
+#'   \item \code{errores}: Un vector con los mensajes de error recopilados durante el proceso de recolecci\u00f3n de datos.
 #' }
-#' 
+#'
 #' @export
 #'
 #' @examples
@@ -40,7 +40,7 @@
 #' @importFrom lubridate as_datetime is.POSIXct
 #' @importFrom tibble tibble
 #' @importFrom stringr str_extract_all
-#' 
+#'
 
 getTweetsData <- function(
     urls_tweets,
@@ -79,7 +79,7 @@ getTweetsData <- function(
       Sys.sleep(1)
       success <- TRUE
     }, error = function(e) {
-      message("La cuenta ya está autenticada")
+      message("La cuenta ya est\u00e1 autenticada")
     })
     metrica_res <- '//*[contains(@aria-label, "Respuesta") or contains(@aria-label, "Respuestas")]'
     metrica_rep <- '//*[contains(@aria-label, "Repostear")]'
@@ -90,7 +90,7 @@ getTweetsData <- function(
     borrados <- c()
     errores <- c()
     contador <- 0
-    cat("Inicio de la recolección de datos.\n\n")
+    cat("Inicio de la recolecci\u00f3n de datos.\n\n")
     for (i in urls_tweets) {
       contador <- contador + 1
       tryCatch({
@@ -113,7 +113,7 @@ getTweetsData <- function(
         tuit_out   <- tweets$html_elements(xpath = paste0('//article[.//a[contains(@href, ', '"', raiz, '"', ')]]'))
         if (grepl("i/communities/", i) || length(tuit_out) == 0) {
           borrados <- append(borrados, i)
-          cat("El tweet", gsub("https://twitter.com/.*/status/|https://x.com/.*/status/|https://x.com/i/communities/", "", i),"fue BORRADO o se encuentra momentáneamente INACCESIBLE.\n")
+          cat("El tweet", gsub("https://twitter.com/.*/status/|https://x.com/.*/status/|https://x.com/i/communities/", "", i),"fue BORRADO o se encuentra moment\u00e1neamente INACCESIBLE.\n")
           tweets$session$close()
         } else {
           articulo <- tweets$html_elements(xpath = paste0('//article[.//a[contains(@href, ', '"', raiz, '"', ')]]'))
@@ -163,10 +163,10 @@ getTweetsData <- function(
       tweets_db_c <- tweets_db[!is.na(tweets_db$fecha), ]
       urls_tweets_r <- setdiff(urls_tweets, borrados)
       urls_tweets_n <- setdiff(urls_tweets_r, tweets_db_c$url)
-      
+
       if (save) {
-        saveRDS(list(tweets_recuperados = tweets_db_c, 
-                     tweets_borrados_o_inaccesibles = borrados, 
+        saveRDS(list(tweets_recuperados = tweets_db_c,
+                     tweets_borrados_o_inaccesibles = borrados,
                      tweets_a_reprocesar = urls_tweets_n,
                      errores = errores),
                 paste0(dir, "/tweets_data_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
@@ -174,7 +174,7 @@ getTweetsData <- function(
       } else {
         cat("\nLos datos de los tweets no se han guardado en un archivo RDS.\n")
       }
-      
+
       cat("\nTerminando el proceso.
       \nTweets recuperados:",
           length(tweets_db_c$url),
@@ -188,9 +188,9 @@ getTweetsData <- function(
       return(tweets_db_c)
     } else {
       urls_tweets_n <- setdiff(urls_tweets, borrados)
-      
+
       if (save) {
-        saveRDS(list(tweets_borrados = borrados, 
+        saveRDS(list(tweets_borrados = borrados,
                      tweets_a_reprocesar = urls_tweets_n,
                      errores = errores),
                 paste0(dir, "/tweets_data_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
@@ -198,7 +198,7 @@ getTweetsData <- function(
       } else {
         cat("\nLos datos de los tweets no se han guardado en un archivo RDS.\n")
       }
-      
+
       cat("\nTerminando el proceso.
       \nTweets recuperados:",
           0,

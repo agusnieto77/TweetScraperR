@@ -65,10 +65,18 @@ Esta función utiliza web scraping y puede ser sensible a cambios en la estructu
 getTweetsRetweets(url = "https://x.com/tipsder/status/1672311054922293254", n_users = 20)
 
 # Sin guardar los resultados
-getTweetsRetweets(url = "https://x.com/tipsder/status/1672311054922293254", n_users = 20, save = FALSE)
+getTweetsRetweets(
+  url = "https://x.com/tipsder/status/1672311054922293254",
+  n_users = 20,
+  save = FALSE
+)
 
 # Sin abrir una nueva sesión de login
-getTweetsRetweets(url = "https://x.com/tipsder/status/1672311054922293254", n_users = 20, open = TRUE)
+getTweetsRetweets(
+  url = "https://x.com/tipsder/status/1672311054922293254",
+  n_users = 20,
+  open = TRUE
+)
 }
 
 }

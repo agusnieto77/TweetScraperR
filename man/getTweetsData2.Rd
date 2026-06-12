@@ -38,7 +38,10 @@ se guardan en un archivo RDS en el directorio especificado por le usuarix.
 \examples{
 \dontrun{
 getTweetsData(urls_tweets = "https://twitter.com/estacion_erre/status/1788929978811232537")
-getTweetsData(urls_tweets = "https://twitter.com/estacion_erre/status/1788929978811232537", save = FALSE)
+getTweetsData(
+  urls_tweets = "https://twitter.com/estacion_erre/status/1788929978811232537",
+  save = FALSE
+)
 }
 
 }

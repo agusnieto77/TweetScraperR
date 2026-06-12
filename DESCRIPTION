@@ -1,7 +1,7 @@
 Package: TweetScraperR
 Type: Package
 Title: Twitter Data Scraping Package
-Version: 0.2.3.9000
+Version: 0.2.4
 Description: 
     Este paquete proporciona funciones para extraer datos de X/Twitter, incluidos tweets, usuarixs y metadatos asociados.
     Permite realizar extracción de datos de X/Twitter y manejar la respuesta de manera conveniente en R.

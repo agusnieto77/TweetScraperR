@@ -104,6 +104,25 @@
   .pw_call("collect", params, timeout = 600)
 }
 
+#' Consulta GraphQL de bajo nivel via motor Node (reusa storageState, sin re-login)
+#'
+#' Ejecuta una operacion de la API GraphQL interna de X desde el navegador
+#' autenticado y devuelve la respuesta JSON ya parseada (lista anidada).
+#' @noRd
+.pw_graphql <- function(op, variables, features, state = .pw_state_path()) {
+  res <- .pw_call("graphql", list(
+    storageStatePath = state, opId = op$id, opName = op$name,
+    variables = variables, features = features
+  ), timeout = 120)
+  if (isTRUE(res$reason == "not_logged_in")) {
+    stop("No hay una sesi\u00f3n activa de X. Import\u00e1 tu sesi\u00f3n con importSessionX(auth_token, ct0).")
+  }
+  if (!isTRUE(res$ok)) {
+    stop("La consulta GraphQL fall\u00f3 (HTTP ", .pw_or(res$status, "?"), "). ", .pw_or(res$error, ""))
+  }
+  jsonlite::fromJSON(res$body, simplifyVector = FALSE)
+}
+
 #' Comprobar que el motor Node/Playwright esta instalado y operativo
 #'
 #' Ejecuta el comando `doctor` del motor y devuelve la informacion de versiones.

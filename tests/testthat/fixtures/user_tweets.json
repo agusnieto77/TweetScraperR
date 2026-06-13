@@ -1,0 +1,103 @@
+{
+ "data": {
+  "user": {
+   "result": {
+    "timeline": {
+     "timeline": {
+      "instructions": [
+       {
+        "type": "TimelineClearCache"
+       },
+       {
+        "type": "TimelineAddEntries",
+        "entries": [
+         {
+          "entryId": "tweet-1001",
+          "content": {
+           "itemContent": {
+            "tweet_results": {
+             "result": {
+              "__typename": "Tweet",
+              "rest_id": "1001",
+              "core": {
+               "user_results": {
+                "result": {
+                 "core": {
+                  "screen_name": "NASA"
+                 }
+                }
+               }
+              },
+              "views": {
+               "count": "470857"
+              },
+              "legacy": {
+               "created_at": "Fri Jun 12 21:22:33 +0000 2026",
+               "full_text": "Texto completo de prueba uno.",
+               "reply_count": 12,
+               "retweet_count": 1194,
+               "quote_count": 5,
+               "favorite_count": 7203,
+               "id_str": "1001",
+               "is_quote_status": false
+              }
+             }
+            }
+           }
+          }
+         },
+         {
+          "entryId": "tweet-1002",
+          "content": {
+           "itemContent": {
+            "tweet_results": {
+             "result": {
+              "__typename": "TweetWithVisibilityResults",
+              "tweet": {
+               "__typename": "Tweet",
+               "rest_id": "1002",
+               "core": {
+                "user_results": {
+                 "result": {
+                  "legacy": {
+                   "screen_name": "NASA"
+                  }
+                 }
+                }
+               },
+               "views": {
+                "count": "470857"
+               },
+               "legacy": {
+                "created_at": "Fri Jun 12 21:22:33 +0000 2026",
+                "full_text": "Cita de prueba.",
+                "reply_count": 12,
+                "retweet_count": 1194,
+                "quote_count": 5,
+                "favorite_count": 7203,
+                "id_str": "1002",
+                "is_quote_status": true
+               }
+              }
+             }
+            }
+           }
+          }
+         },
+         {
+          "entryId": "cursor-bottom-9",
+          "content": {
+           "entryType": "TimelineTimelineCursor",
+           "value": "CURSOR_ABC",
+           "cursorType": "Bottom"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    }
+   }
+  }
+ }
+}

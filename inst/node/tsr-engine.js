@@ -346,6 +346,71 @@ async function manualLogin(p) {
   }
 }
 
+// Bearer token publico del cliente web de X (constante conocida, no secreta).
+const X_BEARER =
+  'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA';
+const GQL_BASE = 'https://x.com/i/api/graphql';
+
+// Ejecuta una consulta GraphQL contra la API interna de X, desde el contexto
+// de la pagina autenticada (reusa storageState). El fetch same-origin incluye
+// las cookies; agregamos el bearer publico y x-csrf-token (=ct0). Devuelve el
+// status HTTP y el body crudo para que R lo parsee.
+async function graphql(p) {
+  const { storageStatePath, opId, opName, variables, features } = p;
+  if (!storageStatePath) throw new Error('falta storageStatePath');
+  if (!opId || !opName) throw new Error('faltan opId/opName');
+  const headless = p.headless !== false;
+  const proxy = parseProxy(p.proxy);
+
+  const browser = await chromium.launch(proxy ? { headless, proxy } : { headless });
+  const context = await browser.newContext(ctxOpts({ storageState: storageStatePath }));
+  const page = await context.newPage();
+  try {
+    await page.goto('https://x.com/home', { waitUntil: 'domcontentloaded', timeout: 60000 });
+    await page.waitForTimeout(2500);
+    if (isLoginUrl(page.url())) {
+      return { ok: false, reason: 'not_logged_in', url: page.url() };
+    }
+    const cookies = await context.cookies();
+    const ct0 = (cookies.find((c) => c.name === 'ct0') || {}).value || '';
+
+    const qs =
+      'variables=' +
+      encodeURIComponent(JSON.stringify(variables || {})) +
+      '&features=' +
+      encodeURIComponent(JSON.stringify(features || {}));
+    const url = GQL_BASE + '/' + opId + '/' + opName + '?' + qs;
+
+    const res = await page.evaluate(
+      async ({ url, bearer, ct0 }) => {
+        try {
+          const r = await fetch(url, {
+            method: 'GET',
+            headers: {
+              authorization: bearer,
+              'x-csrf-token': ct0,
+              'x-twitter-active-user': 'yes',
+              'x-twitter-auth-type': 'OAuth2Session',
+              'x-twitter-client-language': 'en',
+              'content-type': 'application/json',
+            },
+            credentials: 'include',
+          });
+          const text = await r.text();
+          return { status: r.status, body: text };
+        } catch (e) {
+          return { status: -1, body: String(e) };
+        }
+      },
+      { url, bearer: X_BEARER, ct0 }
+    );
+    elog('graphql', opName + ' -> HTTP ' + res.status + ' (' + res.body.length + ' bytes)');
+    return { ok: res.status === 200, status: res.status, body: res.body };
+  } finally {
+    await browser.close().catch(() => {});
+  }
+}
+
 async function collect(p) {
   const { storageStatePath, url } = p;
   const mode = p.mode || 'articles';
@@ -434,6 +499,7 @@ async function collect(p) {
     if (cmd === 'doctor') out = await doctor(params);
     else if (cmd === 'login') out = await login(params);
     else if (cmd === 'manualLogin') out = await manualLogin(params);
+    else if (cmd === 'graphql') out = await graphql(params);
     else if (cmd === 'collect') out = await collect(params);
     else throw new Error('comando desconocido: ' + cmd);
     process.stdout.write(JSON.stringify(out));

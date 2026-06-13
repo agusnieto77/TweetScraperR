@@ -25,21 +25,6 @@
   )
 }
 
-#' Resuelve el rest_id (ID numerico) de un usuario por su screen name
-#' @noRd
-.x_user_rest_id <- function(username, state = .pw_state_path()) {
-  d <- .pw_graphql(
-    .gql_ops$UserByScreenName,
-    list(screen_name = username, withSafetyModeUserFields = TRUE),
-    .gql_features_user, state = state
-  )
-  rid <- d$data$user$result$rest_id
-  if (is.null(rid)) {
-    stop("No se encontr\u00f3 el usuario @", username, " (\u00bfexiste? \u00bfsesi\u00f3n v\u00e1lida?).")
-  }
-  rid
-}
-
 #' Encuentra recursivamente la primera lista "instructions" en la respuesta
 #'
 #' La ruta del timeline difiere por endpoint (UserTweets vs SearchTimeline,
@@ -154,32 +139,24 @@
 #' tw <- getUserTweetsAPI("NASA", n_tweets = 100)
 #' }
 getUserTweetsAPI <- function(username = "NASA", n_tweets = 40, dir = getwd(), save = TRUE) {
-  state <- .pw_state_path()
-  cat("Resolviendo @", username, "...\n", sep = "")
-  uid <- .x_user_rest_id(username, state)
+  if (!nzchar(username)) stop("Necesito un nombre de usuarix.")
+  url <- paste0("https://x.com/", username)
+  cat("Recolectando timeline de @", username, "...\n", sep = "")
+  scrolls <- max(3L, as.integer(ceiling(n_tweets / 15) + 3L))
+  docs <- .pw_harvest(url, "UserTweets", max_scrolls = scrolls)
 
-  acc <- list()
-  cursor <- NULL
-  got <- 0L
-  repeat {
-    vars <- list(
-      userId = uid, count = 40L, includePromotedContent = TRUE,
-      withQuickPromoteEligibilityTweetFields = TRUE, withVoice = TRUE,
-      withV2Timeline = TRUE
-    )
-    if (!is.null(cursor)) vars$cursor <- cursor
-    d <- .pw_graphql(.gql_ops$UserTweets, vars, .gql_features, state = state)
-    parsed <- .parse_timeline_tweets(d)
-    if (is.null(parsed$tweets)) break
-    acc[[length(acc) + 1L]] <- parsed$tweets
-    got <- got + nrow(parsed$tweets)
-    cat("Recolectados", got, "tweets...\n")
-    if (got >= n_tweets) break
-    if (is.na(parsed$cursor) || identical(parsed$cursor, cursor)) break
-    cursor <- parsed$cursor
+  rows <- list()
+  for (d in docs) {
+    p <- .parse_timeline_tweets(d)
+    if (!is.null(p$tweets)) rows[[length(rows) + 1L]] <- p$tweets
   }
-
-  tweets <- if (length(acc)) utils::head(dplyr::bind_rows(acc), n_tweets) else tibble::tibble()
+  tweets <- if (length(rows)) {
+    dplyr::distinct(dplyr::bind_rows(rows), tweet_id, .keep_all = TRUE)
+  } else {
+    tibble::tibble()
+  }
+  if (nrow(tweets) > n_tweets) tweets <- utils::head(tweets, n_tweets)
+  cat("Tweets \u00fanicos recolectados:", nrow(tweets), "\n")
   .save_rds(tweets, dir, paste0("api_timeline_", username), save = save)
   tweets
 }

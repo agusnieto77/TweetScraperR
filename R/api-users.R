@@ -99,17 +99,16 @@
 #' }
 getUsersDataAPI <- function(usernames, dir = getwd(), save = TRUE) {
   if (missing(usernames) || !length(usernames)) stop("Necesito al menos un nombre de usuarix.")
-  state <- .pw_state_path()
+  # Una sola sesion de navegador para TODOS los perfiles (batch).
+  grupos <- .pw_harvest_batch(paste0("https://x.com/", usernames), "UserByScreenName", max_scrolls = 2)
   rows <- list()
-  for (u in usernames) {
-    cat("Resolviendo @", u, "...\n", sep = "")
-    d <- .pw_graphql(
-      .gql_ops$UserByScreenName,
-      list(screen_name = u, withSafetyModeUserFields = TRUE),
-      .gql_features_user, state = state
-    )
-    row <- .user_row(d$data$user$result)
-    if (!is.null(row)) rows[[length(rows) + 1L]] <- row else warning("No se encontr\u00f3 @", u)
+  for (k in seq_along(grupos)) {
+    row <- NULL
+    for (d in grupos[[k]]) {
+      row <- .user_row(d$data$user$result)
+      if (!is.null(row)) break
+    }
+    if (!is.null(row)) rows[[length(rows) + 1L]] <- row else warning("No se encontr\u00f3 @", usernames[k])
   }
   users <- if (length(rows)) dplyr::bind_rows(rows) else tibble::tibble()
   .save_rds(users, dir, "api_users", save = save)

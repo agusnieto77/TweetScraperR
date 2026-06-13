@@ -346,122 +346,82 @@ async function manualLogin(p) {
   }
 }
 
-// Bearer token publico del cliente web de X (constante conocida, no secreta).
-const X_BEARER =
-  'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA';
-const GQL_BASE = 'https://x.com/i/api/graphql';
-
-// Ejecuta una consulta GraphQL contra la API interna de X, desde el contexto
-// de la pagina autenticada (reusa storageState). El fetch same-origin incluye
-// las cookies; agregamos el bearer publico y x-csrf-token (=ct0). Devuelve el
-// status HTTP y el body crudo para que R lo parsee.
-async function graphql(p) {
-  const { storageStatePath, opId, opName, variables, features } = p;
-  if (!storageStatePath) throw new Error('falta storageStatePath');
-  if (!opId || !opName) throw new Error('faltan opId/opName');
-  const headless = p.headless !== false;
-  const proxy = parseProxy(p.proxy);
-
-  const browser = await chromium.launch(proxy ? { headless, proxy } : { headless });
-  const context = await browser.newContext(ctxOpts({ storageState: storageStatePath }));
-  const page = await context.newPage();
-  try {
-    await page.goto('https://x.com/home', { waitUntil: 'domcontentloaded', timeout: 60000 });
-    await page.waitForTimeout(2500);
-    if (isLoginUrl(page.url())) {
-      return { ok: false, reason: 'not_logged_in', url: page.url() };
-    }
-    const cookies = await context.cookies();
-    const ct0 = (cookies.find((c) => c.name === 'ct0') || {}).value || '';
-
-    const qs =
-      'variables=' +
-      encodeURIComponent(JSON.stringify(variables || {})) +
-      '&features=' +
-      encodeURIComponent(JSON.stringify(features || {}));
-    const url = GQL_BASE + '/' + opId + '/' + opName + '?' + qs;
-
-    const res = await page.evaluate(
-      async ({ url, bearer, ct0 }) => {
-        try {
-          const r = await fetch(url, {
-            method: 'GET',
-            headers: {
-              authorization: bearer,
-              'x-csrf-token': ct0,
-              'x-twitter-active-user': 'yes',
-              'x-twitter-auth-type': 'OAuth2Session',
-              'x-twitter-client-language': 'en',
-              'content-type': 'application/json',
-            },
-            credentials: 'include',
-          });
-          const text = await r.text();
-          return { status: r.status, body: text };
-        } catch (e) {
-          return { status: -1, body: String(e) };
-        }
-      },
-      { url, bearer: X_BEARER, ct0 }
-    );
-    elog('graphql', opName + ' -> HTTP ' + res.status + ' (' + res.body.length + ' bytes)');
-    return { ok: res.status === 200, status: res.status, body: res.body };
-  } finally {
-    await browser.close().catch(() => {});
-  }
-}
-
 // "Ride-along": navega a una pagina de X y COSECHA las respuestas JSON de la
 // API GraphQL que la propia app dispara (que ya traen el x-client-transaction-id
 // que ciertos endpoints, como SearchTimeline, exigen). Scrollea para gatillar
 // mas paginas. Devuelve los bodies JSON crudos para que R los parsee.
 async function harvest(p) {
-  const { storageStatePath, url } = p;
+  const { storageStatePath } = p;
+  const urls = p.urls && p.urls.length ? p.urls : p.url ? [p.url] : [];
   const opNames = p.opNames || [];
   const maxScrolls = p.maxScrolls || 25;
   const waitMs = p.waitMs || 2500;
   const scrollPx = p.scrollPx || 4000;
   const headless = p.headless !== false;
   if (!storageStatePath) throw new Error('falta storageStatePath');
-  if (!url) throw new Error('falta url');
+  if (!urls.length) throw new Error('falta url/urls');
   const proxy = parseProxy(p.proxy);
-
-  const browser = await chromium.launch(proxy ? { headless, proxy } : { headless });
-  const context = await browser.newContext(ctxOpts({ storageState: storageStatePath }));
-  const page = await context.newPage();
-  const bodies = [];
   const matches = (u) =>
     u.includes('/i/api/graphql/') && opNames.some((n) => u.indexOf('/' + n) !== -1);
-  page.on('response', async (resp) => {
-    if (!matches(resp.url())) return;
-    try {
-      const t = await resp.text();
-      if (t) bodies.push(t);
-    } catch (e) {
-      /* respuesta ya consumida o navegacion */
-    }
-  });
+
+  // Un solo navegador/contexto reutilizado para TODAS las urls (evita el costo
+  // de arranque de Chromium por llamada).
+  const browser = await chromium.launch(proxy ? { headless, proxy } : { headless });
+  const context = await browser.newContext(ctxOpts({ storageState: storageStatePath }));
+  const results = [];
+  let rateLimit = { remaining: null, reset: null };
+  let expired = false;
 
   try {
-    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
-    await page.waitForTimeout(4500);
-    if (isLoginUrl(page.url())) {
-      return { ok: false, reason: 'not_logged_in', url: page.url(), count: 0, bodies: [] };
-    }
-    let stable = 0;
-    for (let i = 0; i < maxScrolls; i++) {
-      const before = bodies.length;
-      await page.mouse.wheel(0, scrollPx);
-      await page.waitForTimeout(waitMs);
-      if (bodies.length === before) {
-        stable++;
-        if (stable >= 3) break;
-      } else {
-        stable = 0;
+    for (const url of urls) {
+      const page = await context.newPage();
+      const bodies = [];
+      page.on('response', async (resp) => {
+        if (!matches(resp.url())) return;
+        const h = resp.headers();
+        if (h['x-rate-limit-remaining'] != null) {
+          rateLimit = {
+            remaining: parseInt(h['x-rate-limit-remaining'], 10),
+            reset: parseInt(h['x-rate-limit-reset'], 10),
+          };
+        }
+        if (resp.status() === 401 || resp.status() === 403) expired = true;
+        try {
+          const t = await resp.text();
+          if (t) {
+            bodies.push(t);
+            // codigo 32 = "Could not authenticate you" -> sesion expirada
+            if (t.indexOf('"code":32') !== -1) expired = true;
+          }
+        } catch (e) {
+          /* respuesta ya consumida o navegacion */
+        }
+      });
+
+      await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
+      await page.waitForTimeout(4500);
+      if (isLoginUrl(page.url())) {
+        await page.close().catch(() => {});
+        return { ok: false, reason: 'not_logged_in', url: page.url(), results: [] };
       }
+      let stable = 0;
+      for (let i = 0; i < maxScrolls; i++) {
+        const before = bodies.length;
+        await page.mouse.wheel(0, scrollPx);
+        await page.waitForTimeout(waitMs);
+        if (bodies.length === before) {
+          stable++;
+          if (stable >= 3) break;
+        } else {
+          stable = 0;
+        }
+      }
+      results.push({ url, bodies });
+      await page.close().catch(() => {});
     }
-    elog('harvest', 'cosechadas ' + bodies.length + ' respuestas (' + opNames.join('/') + ')');
-    return { ok: true, count: bodies.length, bodies };
+    const total = results.reduce((a, r) => a + r.bodies.length, 0);
+    elog('harvest', 'cosechadas ' + total + ' respuestas de ' + urls.length + ' url(s) (' + opNames.join('/') + ')');
+    return { ok: true, count: total, results, rateLimit, expired };
   } finally {
     await browser.close().catch(() => {});
   }
@@ -555,7 +515,6 @@ async function collect(p) {
     if (cmd === 'doctor') out = await doctor(params);
     else if (cmd === 'login') out = await login(params);
     else if (cmd === 'manualLogin') out = await manualLogin(params);
-    else if (cmd === 'graphql') out = await graphql(params);
     else if (cmd === 'harvest') out = await harvest(params);
     else if (cmd === 'collect') out = await collect(params);
     else throw new Error('comando desconocido: ' + cmd);

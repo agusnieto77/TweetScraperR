@@ -31,15 +31,17 @@ getTweetsDataAPI <- function(urls_tweets, dir = getwd(), save = TRUE) {
   if (missing(urls_tweets) || !length(urls_tweets)) {
     stop("Necesito al menos una URL de tweet.")
   }
+  ids <- sub("^.*/status/([0-9]+).*$", "\\1", urls_tweets)
+  # Una sola sesion de navegador para TODAS las URLs (batch).
+  grupos <- .pw_harvest_batch(urls_tweets, "TweetDetail", max_scrolls = 1)
+
   rows <- list()
-  for (u in urls_tweets) {
-    id <- sub("^.*/status/([0-9]+).*$", "\\1", u)
-    docs <- .pw_harvest(u, "TweetDetail", max_scrolls = 1)
+  for (k in seq_along(grupos)) {
     focal <- NULL
-    for (d in docs) {
+    for (d in grupos[[k]]) {
       p <- .parse_timeline_tweets(d)
       if (!is.null(p$tweets)) {
-        hit <- p$tweets[!is.na(p$tweets$tweet_id) & p$tweets$tweet_id == id, , drop = FALSE]
+        hit <- p$tweets[!is.na(p$tweets$tweet_id) & p$tweets$tweet_id == ids[k], , drop = FALSE]
         if (nrow(hit)) {
           focal <- hit[1, ]
           break
@@ -49,9 +51,9 @@ getTweetsDataAPI <- function(urls_tweets, dir = getwd(), save = TRUE) {
     if (!is.null(focal)) {
       rows[[length(rows) + 1L]] <- focal
     } else {
-      warning("No se pudo recuperar el tweet: ", u)
+      warning("No se pudo recuperar el tweet: ", urls_tweets[k])
     }
-    cat("Procesado:", u, "\n")
+    cat("Procesado:", urls_tweets[k], "\n")
   }
   tweets <- if (length(rows)) dplyr::bind_rows(rows) else tibble::tibble()
   .save_rds(tweets, dir, "api_tweets_data", save = save)

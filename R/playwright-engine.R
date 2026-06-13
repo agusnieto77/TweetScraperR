@@ -50,7 +50,7 @@
 #'
 #' @return Lista con el JSON de respuesta del motor mas `.stderr` y `.exit`.
 #' @noRd
-.pw_call <- function(cmd, params = list(), timeout = 300) {
+.pw_call <- function(cmd, params = list(), timeout = 300, simplify = TRUE) {
   script <- file.path(.pw_engine_dir(), "tsr-engine.js")
   json <- jsonlite::toJSON(params, auto_unbox = TRUE, null = "null")
   errfile <- tempfile(fileext = ".log")
@@ -66,7 +66,7 @@
   status <- attr(out, "status")
   txt <- paste(out, collapse = "\n")
   res <- tryCatch(
-    jsonlite::fromJSON(txt, simplifyVector = TRUE),
+    jsonlite::fromJSON(txt, simplifyVector = simplify),
     error = function(e) list(ok = FALSE, error = paste0("salida no-JSON del motor: ", substr(txt, 1, 300)))
   )
   if (!is.list(res)) res <- list(ok = FALSE, error = "respuesta inesperada del motor")
@@ -104,45 +104,50 @@
   .pw_call("collect", params, timeout = 600)
 }
 
-#' Consulta GraphQL de bajo nivel via motor Node (reusa storageState, sin re-login)
+#' Cosecha cruda: invoca el motor para 1+ urls y devuelve los resultados por url
 #'
-#' Ejecuta una operacion de la API GraphQL interna de X desde el navegador
-#' autenticado y devuelve la respuesta JSON ya parseada (lista anidada).
+#' Reusa UN solo navegador para todas las `urls` (batch). Maneja sesion no
+#' iniciada / expirada y avisa si el rate-limit de X esta bajo. Devuelve la lista
+#' `results` del motor (un elemento por url, cada uno con `url` y `bodies`).
 #' @noRd
-.pw_graphql <- function(op, variables, features, state = .pw_state_path()) {
-  res <- .pw_call("graphql", list(
-    storageStatePath = state, opId = op$id, opName = op$name,
-    variables = variables, features = features
-  ), timeout = 120)
-  if (isTRUE(res$reason == "not_logged_in")) {
-    stop("No hay una sesi\u00f3n activa de X. Import\u00e1 tu sesi\u00f3n con importSessionX(auth_token, ct0).")
-  }
-  if (!isTRUE(res$ok)) {
-    stop("La consulta GraphQL fall\u00f3 (HTTP ", .pw_or(res$status, "?"), "). ", .pw_or(res$error, ""))
-  }
-  jsonlite::fromJSON(res$body, simplifyVector = FALSE)
-}
-
-#' Cosecha ("ride-along") de respuestas GraphQL que dispara la app de X
-#'
-#' Navega a `url` y captura las respuestas JSON de las operaciones GraphQL en
-#' `op_names` que la propia app de X dispara (con su x-client-transaction-id
-#' nativo, que algunos endpoints exigen). Scrollea para gatillar mas paginas.
-#' Devuelve una lista de respuestas JSON ya parseadas (listas anidadas).
-#' @noRd
-.pw_harvest <- function(url, op_names, max_scrolls = 25, state = .pw_state_path()) {
+.pw_harvest_raw <- function(urls, op_names, max_scrolls = 25, state = .pw_state_path()) {
   res <- .pw_call("harvest", list(
-    storageStatePath = state, url = url,
+    storageStatePath = state, urls = as.list(urls),
     opNames = as.list(op_names), maxScrolls = max_scrolls
-  ), timeout = 600)
+  ), timeout = 900, simplify = FALSE)
   if (isTRUE(res$reason == "not_logged_in")) {
     stop("No hay una sesi\u00f3n activa de X. Import\u00e1 tu sesi\u00f3n con importSessionX(auth_token, ct0).")
+  }
+  if (isTRUE(res$expired)) {
+    stop("Tu sesi\u00f3n de X parece haber expirado. Reimportala con importSessionX(auth_token, ct0).")
   }
   if (!isTRUE(res$ok)) {
     stop("La cosecha de la API fall\u00f3: ", .pw_or(res$error, .pw_or(res$reason, "error desconocido")))
   }
-  bodies <- if (is.null(res$bodies)) character(0) else res$bodies
+  rl <- res$rateLimit
+  if (!is.null(rl$remaining) && !is.na(rl$remaining) && rl$remaining < 10) {
+    warning("Rate-limit de X bajo: quedan ", rl$remaining,
+            " consultas para este endpoint antes de un corte temporal.")
+  }
+  if (is.null(res$results)) list() else res$results
+}
+
+#' Cosecha de UNA url -> lista de respuestas JSON parseadas (listas anidadas)
+#' @noRd
+.pw_harvest <- function(url, op_names, max_scrolls = 25, state = .pw_state_path()) {
+  results <- .pw_harvest_raw(url, op_names, max_scrolls, state)
+  if (!length(results)) return(list())
+  bodies <- results[[1]]$bodies
   lapply(bodies, function(b) jsonlite::fromJSON(b, simplifyVector = FALSE))
+}
+
+#' Cosecha de VARIAS urls en un solo navegador -> lista (por url) de respuestas
+#' @noRd
+.pw_harvest_batch <- function(urls, op_names, max_scrolls = 25, state = .pw_state_path()) {
+  results <- .pw_harvest_raw(urls, op_names, max_scrolls, state)
+  lapply(results, function(rr) {
+    lapply(rr$bodies, function(b) jsonlite::fromJSON(b, simplifyVector = FALSE))
+  })
 }
 
 #' Comprobar que el motor Node/Playwright esta instalado y operativo

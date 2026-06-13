@@ -13,6 +13,9 @@
   - `getTweetsRetweetsAPI()` — usuarixs que repostearon un tweet.
   - `getUserFollowersAPI()` / `getUserFollowingAPI()` — redes de usuarixs.
   - `getUsersDataAPI()` — datos de perfil.
+  - `getUserMediaAPI()` — tweets con media de unx usuarix.
+  - `getTweetsDataAPI()` — datos de tweets a partir de sus URLs (reemplazo de
+    `getTweetsData()`).
 * Internamente, los endpoints que exigen el header anti-bot
   `x-client-transaction-id` (p.ej. búsqueda, replies, followers) se resuelven
   "cosechando" las respuestas JSON que dispara la propia app de X al navegar la

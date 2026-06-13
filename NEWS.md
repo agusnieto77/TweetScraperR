@@ -1,3 +1,23 @@
+# TweetScraperR 0.3.0.9000 (en desarrollo, rumbo a 0.4.0)
+
+## Nueva capa de scraping vía API GraphQL/JSON (experimental)
+
+* Familia de funciones `*API()` que consultan la **API GraphQL interna de X** y
+  devuelven datos estructurados desde JSON (texto completo sin truncar, fecha
+  exacta y métricas: respuestas, retweets, citas, me gusta, vistas), en lugar
+  de parsear HTML con selectores CSS frágiles. Todas reusan la sesión importada
+  con `importSessionX()`.
+  - `getUserTweetsAPI()` — timeline de unx usuarix.
+  - `getTweetsSearchAPI()` — búsqueda (con `product` Latest/Top/Media).
+  - `getTweetsRepliesAPI()` — tweet y sus respuestas (hilo).
+  - `getTweetsRetweetsAPI()` — usuarixs que repostearon un tweet.
+  - `getUserFollowersAPI()` / `getUserFollowingAPI()` — redes de usuarixs.
+  - `getUsersDataAPI()` — datos de perfil.
+* Internamente, los endpoints que exigen el header anti-bot
+  `x-client-transaction-id` (p.ej. búsqueda, replies, followers) se resuelven
+  "cosechando" las respuestas JSON que dispara la propia app de X al navegar la
+  página (la app genera ese header de forma nativa), evitando reproducirlo.
+
 # TweetScraperR 0.3.0
 
 ## Cambio mayor: nuevo motor de scraping (Node.js + Playwright + stealth)

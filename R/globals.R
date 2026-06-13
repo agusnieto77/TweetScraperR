@@ -8,7 +8,8 @@ utils::globalVariables(c(
   "freq",
   "timeline",
   "tweet_id",
-  "twitter"
+  "twitter",
+  "user_id"
 ))
 
 # Entorno interno del paquete para las sesiones de navegador (twitter/timeline)

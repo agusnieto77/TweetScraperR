@@ -68,3 +68,14 @@ test_that(".parse_timeline_tweets parsea el JSON de SearchTimeline (otro path)",
   expect_equal(res$tweets$url, "https://x.com/RosanaFerrero/status/3001")
   expect_equal(res$cursor, "SEARCH_CURSOR")
 })
+
+# TweetDetail: hilos de conversacion (conversationthread) --------------------
+
+test_that(".parse_timeline_tweets desarma conversationthread (tweet + respuestas)", {
+  d <- jsonlite::fromJSON(testthat::test_path("fixtures", "tweet_detail.json"), simplifyVector = FALSE)
+  res <- TweetScraperR:::.parse_timeline_tweets(d)
+  # 1 tweet directo + 2 respuestas anidadas en items
+  expect_equal(nrow(res$tweets), 3)
+  expect_setequal(res$tweets$tweet_id, c("5000", "5001", "5002"))
+  expect_equal(res$cursor, "TDCURSOR")
+})

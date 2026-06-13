@@ -57,7 +57,50 @@
   NULL
 }
 
+#' Construye una fila-tibble de tweet a partir de un objeto tweet_results$result
+#' @noRd
+.tweet_row <- function(tr) {
+  if (is.null(tr)) return(NULL)
+  if (identical(tr$`__typename`, "TweetWithVisibilityResults")) tr <- tr$tweet
+  lg <- tr$legacy
+  if (is.null(lg$full_text)) return(NULL)
+  core <- tr$core$user_results$result
+  handle <- .or_null(core$core$screen_name, core$legacy$screen_name)
+  tid <- .or_null(tr$rest_id, lg$id_str)
+  tibble::tibble(
+    fecha       = .x_parse_twitter_date(lg$created_at),
+    user        = if (is.null(handle)) NA_character_ else paste0("@", handle),
+    texto       = lg$full_text,
+    respuestas  = as.integer(.or_null(lg$reply_count, NA)),
+    retweets    = as.integer(.or_null(lg$retweet_count, NA)),
+    citas       = as.integer(.or_null(lg$quote_count, NA)),
+    megustas    = as.integer(.or_null(lg$favorite_count, NA)),
+    views       = suppressWarnings(as.integer(.or_null(tr$views$count, NA))),
+    es_retweet  = !is.null(lg$retweeted_status_result),
+    es_cita     = isTRUE(lg$is_quote_status),
+    url         = if (is.null(handle)) NA_character_ else paste0("https://x.com/", handle, "/status/", tid),
+    tweet_id    = .or_null(tid, NA_character_)
+  )
+}
+
+#' Junta los tweet_results de un entry: directo o anidado en conversationthread
+#' @noRd
+.entry_tweet_results <- function(e) {
+  res <- list()
+  tr <- e$content$itemContent$tweet_results$result
+  if (!is.null(tr)) res[[length(res) + 1L]] <- tr
+  for (it in .or_null(e$content$items, list())) {
+    tr2 <- it$item$itemContent$tweet_results$result
+    if (!is.null(tr2)) res[[length(res) + 1L]] <- tr2
+  }
+  res
+}
+
 #' Extrae los tweets y el cursor de una respuesta de timeline GraphQL
+#'
+#' Funciona para timelines simples (UserTweets, SearchTimeline) y para hilos de
+#' conversacion (TweetDetail), donde cada entry `conversationthread-*` agrupa
+#' varias respuestas en `content$items`.
 #' @noRd
 .parse_timeline_tweets <- function(d) {
   insts <- .find_instructions(d)
@@ -71,32 +114,10 @@
         cursor <- .or_null(e$content$value, cursor)
         next
       }
-      tr <- e$content$itemContent$tweet_results$result
-      if (is.null(tr)) next
-      if (identical(tr$`__typename`, "TweetWithVisibilityResults")) tr <- tr$tweet
-      lg <- tr$legacy
-      if (is.null(lg$full_text)) next
-      core <- tr$core$user_results$result
-      handle <- .or_null(core$core$screen_name, core$legacy$screen_name)
-      tid <- .or_null(tr$rest_id, lg$id_str)
-      # Calcular como variables locales (no dentro de tibble(), donde el
-      # data-masking haria que `url` referencie la columna `user` ya con "@").
-      user_col <- if (is.null(handle)) NA_character_ else paste0("@", handle)
-      url_col  <- if (is.null(handle)) NA_character_ else paste0("https://x.com/", handle, "/status/", tid)
-      rows[[length(rows) + 1L]] <- tibble::tibble(
-        fecha       = .x_parse_twitter_date(lg$created_at),
-        user        = user_col,
-        texto       = lg$full_text,
-        respuestas  = as.integer(.or_null(lg$reply_count, NA)),
-        retweets    = as.integer(.or_null(lg$retweet_count, NA)),
-        citas       = as.integer(.or_null(lg$quote_count, NA)),
-        megustas    = as.integer(.or_null(lg$favorite_count, NA)),
-        views       = suppressWarnings(as.integer(.or_null(tr$views$count, NA))),
-        es_retweet  = !is.null(lg$retweeted_status_result),
-        es_cita     = isTRUE(lg$is_quote_status),
-        url         = url_col,
-        tweet_id    = .or_null(tid, NA_character_)
-      )
+      for (tr in .entry_tweet_results(e)) {
+        row <- .tweet_row(tr)
+        if (!is.null(row)) rows[[length(rows) + 1L]] <- row
+      }
     }
   }
   list(

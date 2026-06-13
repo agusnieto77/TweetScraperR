@@ -1,0 +1,130 @@
+{
+ "data": {
+  "threaded_conversation_with_injections_v2": {
+   "instructions": [
+    {
+     "type": "TimelineAddEntries",
+     "entries": [
+      {
+       "entryId": "tweet-5000",
+       "content": {
+        "itemContent": {
+         "tweet_results": {
+          "result": {
+           "__typename": "Tweet",
+           "rest_id": "5000",
+           "core": {
+            "user_results": {
+             "result": {
+              "core": {
+               "screen_name": "NASA"
+              }
+             }
+            }
+           },
+           "views": {
+            "count": "100"
+           },
+           "legacy": {
+            "created_at": "Fri Jun 13 06:00:23 +0000 2026",
+            "full_text": "Tweet original",
+            "reply_count": 1,
+            "retweet_count": 0,
+            "quote_count": 0,
+            "favorite_count": 3,
+            "id_str": "5000",
+            "is_quote_status": false
+           }
+          }
+         }
+        }
+       }
+      },
+      {
+       "entryId": "conversationthread-1",
+       "content": {
+        "items": [
+         {
+          "item": {
+           "itemContent": {
+            "tweet_results": {
+             "result": {
+              "__typename": "Tweet",
+              "rest_id": "5001",
+              "core": {
+               "user_results": {
+                "result": {
+                 "core": {
+                  "screen_name": "NASA"
+                 }
+                }
+               }
+              },
+              "views": {
+               "count": "100"
+              },
+              "legacy": {
+               "created_at": "Fri Jun 13 06:00:23 +0000 2026",
+               "full_text": "Respuesta uno",
+               "reply_count": 1,
+               "retweet_count": 0,
+               "quote_count": 0,
+               "favorite_count": 3,
+               "id_str": "5001",
+               "is_quote_status": false
+              }
+             }
+            }
+           }
+          }
+         },
+         {
+          "item": {
+           "itemContent": {
+            "tweet_results": {
+             "result": {
+              "__typename": "Tweet",
+              "rest_id": "5002",
+              "core": {
+               "user_results": {
+                "result": {
+                 "core": {
+                  "screen_name": "NASA"
+                 }
+                }
+               }
+              },
+              "views": {
+               "count": "100"
+              },
+              "legacy": {
+               "created_at": "Fri Jun 13 06:00:23 +0000 2026",
+               "full_text": "Respuesta dos",
+               "reply_count": 1,
+               "retweet_count": 0,
+               "quote_count": 0,
+               "favorite_count": 3,
+               "id_str": "5002",
+               "is_quote_status": false
+              }
+             }
+            }
+           }
+          }
+         }
+        ]
+       }
+      },
+      {
+       "entryId": "cursor-bottom-1",
+       "content": {
+        "value": "TDCURSOR",
+        "cursorType": "Bottom"
+       }
+      }
+     ]
+    }
+   ]
+  }
+ }
+}

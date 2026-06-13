@@ -114,6 +114,30 @@ sesión (persistida como `storageState`) sin necesidad de volver a loguearte.
 > `auth_token` y `ct0` desde el navegador y reimportalas con
 > `importSessionX()`.
 
+### Scraping vía API GraphQL/JSON (experimental)
+
+Además del scraping por HTML, el paquete incorpora una familia de funciones
+`*API()` que consultan la **API GraphQL interna de X** y devuelven datos
+estructurados directamente del JSON (texto completo sin truncar, fecha exacta y
+métricas: respuestas, retweets, citas, me gusta y vistas), sin selectores CSS
+frágiles. Todas reusan la sesión importada con `importSessionX()`.
+
+| Función | Qué recupera |
+|---|---|
+| `getUserTweetsAPI()` | Timeline de unx usuarix |
+| `getTweetsSearchAPI()` | Búsqueda (`product = "Latest"/"Top"/"Media"`) |
+| `getTweetsRepliesAPI()` | Tweet y sus respuestas (hilo) |
+| `getTweetsRetweetsAPI()` | Usuarixs que repostearon un tweet |
+| `getUserFollowersAPI()` | Seguidorxs de unx usuarix |
+| `getUserFollowingAPI()` | Cuentas que sigue unx usuarix |
+| `getUsersDataAPI()` | Datos de perfil de usuarixs |
+
+``` r
+library(TweetScraperR)
+importSessionX(auth_token = "tu_auth_token", ct0 = "tu_ct0")
+tw <- getTweetsSearchAPI("#RStats", n_tweets = 100, product = "Latest")
+```
+
 ### Uso responsable / Aviso legal
 
 - El scraping autenticado de X/Twitter puede violar sus [Términos de

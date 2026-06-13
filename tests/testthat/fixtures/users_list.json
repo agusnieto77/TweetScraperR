@@ -1,0 +1,86 @@
+{
+ "data": {
+  "user": {
+   "result": {
+    "timeline": {
+     "timeline": {
+      "instructions": [
+       {
+        "type": "TimelineAddEntries",
+        "entries": [
+         {
+          "entryId": "user-2001",
+          "content": {
+           "itemContent": {
+            "user_results": {
+             "result": {
+              "__typename": "User",
+              "rest_id": "2001",
+              "core": {
+               "screen_name": "RosanaFerrero",
+               "name": "Rosana",
+               "created_at": "Fri Jun 13 06:00:23 +0000 2026"
+              },
+              "is_blue_verified": true,
+              "location": {
+               "location": "Buenos Aires"
+              },
+              "legacy": {
+               "description": "bio de RosanaFerrero",
+               "followers_count": 1200,
+               "friends_count": 10,
+               "statuses_count": 500,
+               "favourites_count": 20,
+               "verified": false
+              }
+             }
+            }
+           }
+          }
+         },
+         {
+          "entryId": "user-2002",
+          "content": {
+           "itemContent": {
+            "user_results": {
+             "result": {
+              "__typename": "User",
+              "rest_id": "2002",
+              "core": {
+               "screen_name": "DataSciencetut",
+               "name": "DS Tut",
+               "created_at": "Fri Jun 13 06:00:23 +0000 2026"
+              },
+              "is_blue_verified": true,
+              "location": {
+               "location": "Buenos Aires"
+              },
+              "legacy": {
+               "description": "bio de DataSciencetut",
+               "followers_count": 800,
+               "friends_count": 10,
+               "statuses_count": 500,
+               "favourites_count": 20,
+               "verified": false
+              }
+             }
+            }
+           }
+          }
+         },
+         {
+          "entryId": "cursor-bottom-1",
+          "content": {
+           "value": "UCURSOR",
+           "cursorType": "Bottom"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    }
+   }
+  }
+ }
+}

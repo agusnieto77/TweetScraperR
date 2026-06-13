@@ -1,0 +1,19 @@
+{
+  "name": "tweetscraperr-engine",
+  "version": "0.3.0",
+  "private": true,
+  "description": "Motor de scraping de X/Twitter para el paquete R TweetScraperR (Playwright + stealth)",
+  "type": "commonjs",
+  "main": "tsr-engine.js",
+  "scripts": {
+    "postinstall": "playwright install chromium"
+  },
+  "dependencies": {
+    "playwright": "^1.49.0",
+    "playwright-extra": "^4.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

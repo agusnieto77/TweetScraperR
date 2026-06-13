@@ -40,10 +40,28 @@
   rid
 }
 
+#' Encuentra recursivamente la primera lista "instructions" en la respuesta
+#'
+#' La ruta del timeline difiere por endpoint (UserTweets vs SearchTimeline,
+#' etc.); esta busqueda en profundidad la ubica sin hardcodear el path.
+#' @noRd
+.find_instructions <- function(x) {
+  if (!is.list(x)) return(NULL)
+  if (!is.null(x[["instructions"]]) && is.list(x[["instructions"]])) {
+    return(x[["instructions"]])
+  }
+  for (el in x) {
+    r <- .find_instructions(el)
+    if (!is.null(r)) return(r)
+  }
+  NULL
+}
+
 #' Extrae los tweets y el cursor de una respuesta de timeline GraphQL
 #' @noRd
 .parse_timeline_tweets <- function(d) {
-  insts <- d$data$user$result$timeline$timeline$instructions
+  insts <- .find_instructions(d)
+  if (is.null(insts)) return(list(tweets = NULL, cursor = NA_character_))
   rows <- list()
   cursor <- NA_character_
   for (ins in insts) {

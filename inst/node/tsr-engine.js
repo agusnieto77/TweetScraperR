@@ -411,6 +411,62 @@ async function graphql(p) {
   }
 }
 
+// "Ride-along": navega a una pagina de X y COSECHA las respuestas JSON de la
+// API GraphQL que la propia app dispara (que ya traen el x-client-transaction-id
+// que ciertos endpoints, como SearchTimeline, exigen). Scrollea para gatillar
+// mas paginas. Devuelve los bodies JSON crudos para que R los parsee.
+async function harvest(p) {
+  const { storageStatePath, url } = p;
+  const opNames = p.opNames || [];
+  const maxScrolls = p.maxScrolls || 25;
+  const waitMs = p.waitMs || 2500;
+  const scrollPx = p.scrollPx || 4000;
+  const headless = p.headless !== false;
+  if (!storageStatePath) throw new Error('falta storageStatePath');
+  if (!url) throw new Error('falta url');
+  const proxy = parseProxy(p.proxy);
+
+  const browser = await chromium.launch(proxy ? { headless, proxy } : { headless });
+  const context = await browser.newContext(ctxOpts({ storageState: storageStatePath }));
+  const page = await context.newPage();
+  const bodies = [];
+  const matches = (u) =>
+    u.includes('/i/api/graphql/') && opNames.some((n) => u.indexOf('/' + n) !== -1);
+  page.on('response', async (resp) => {
+    if (!matches(resp.url())) return;
+    try {
+      const t = await resp.text();
+      if (t) bodies.push(t);
+    } catch (e) {
+      /* respuesta ya consumida o navegacion */
+    }
+  });
+
+  try {
+    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
+    await page.waitForTimeout(4500);
+    if (isLoginUrl(page.url())) {
+      return { ok: false, reason: 'not_logged_in', url: page.url(), count: 0, bodies: [] };
+    }
+    let stable = 0;
+    for (let i = 0; i < maxScrolls; i++) {
+      const before = bodies.length;
+      await page.mouse.wheel(0, scrollPx);
+      await page.waitForTimeout(waitMs);
+      if (bodies.length === before) {
+        stable++;
+        if (stable >= 3) break;
+      } else {
+        stable = 0;
+      }
+    }
+    elog('harvest', 'cosechadas ' + bodies.length + ' respuestas (' + opNames.join('/') + ')');
+    return { ok: true, count: bodies.length, bodies };
+  } finally {
+    await browser.close().catch(() => {});
+  }
+}
+
 async function collect(p) {
   const { storageStatePath, url } = p;
   const mode = p.mode || 'articles';
@@ -500,6 +556,7 @@ async function collect(p) {
     else if (cmd === 'login') out = await login(params);
     else if (cmd === 'manualLogin') out = await manualLogin(params);
     else if (cmd === 'graphql') out = await graphql(params);
+    else if (cmd === 'harvest') out = await harvest(params);
     else if (cmd === 'collect') out = await collect(params);
     else throw new Error('comando desconocido: ' + cmd);
     process.stdout.write(JSON.stringify(out));

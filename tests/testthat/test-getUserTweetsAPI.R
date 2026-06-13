@@ -49,3 +49,22 @@ test_that(".parse_timeline_tweets devuelve NULL en tweets si no hay entradas", {
   res <- TweetScraperR:::.parse_timeline_tweets(vacio)
   expect_null(res$tweets)
 })
+
+# .find_instructions: ubicar el path correcto segun el endpoint --------------
+
+test_that(".find_instructions encuentra las instructions en ambos paths (UserTweets y Search)", {
+  ut <- jsonlite::fromJSON(testthat::test_path("fixtures", "user_tweets.json"), simplifyVector = FALSE)
+  se <- jsonlite::fromJSON(testthat::test_path("fixtures", "search_timeline.json"), simplifyVector = FALSE)
+  expect_type(TweetScraperR:::.find_instructions(ut), "list")
+  expect_type(TweetScraperR:::.find_instructions(se), "list")
+  expect_null(TweetScraperR:::.find_instructions(list(a = 1, b = "x")))
+})
+
+test_that(".parse_timeline_tweets parsea el JSON de SearchTimeline (otro path)", {
+  se <- jsonlite::fromJSON(testthat::test_path("fixtures", "search_timeline.json"), simplifyVector = FALSE)
+  res <- TweetScraperR:::.parse_timeline_tweets(se)
+  expect_equal(nrow(res$tweets), 1)
+  expect_equal(res$tweets$user, "@RosanaFerrero")
+  expect_equal(res$tweets$url, "https://x.com/RosanaFerrero/status/3001")
+  expect_equal(res$cursor, "SEARCH_CURSOR")
+})

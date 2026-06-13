@@ -7,6 +7,7 @@ utils::globalVariables(c(
   "fecha",
   "freq",
   "timeline",
+  "tweet_id",
   "twitter"
 ))
 

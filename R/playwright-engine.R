@@ -123,6 +123,28 @@
   jsonlite::fromJSON(res$body, simplifyVector = FALSE)
 }
 
+#' Cosecha ("ride-along") de respuestas GraphQL que dispara la app de X
+#'
+#' Navega a `url` y captura las respuestas JSON de las operaciones GraphQL en
+#' `op_names` que la propia app de X dispara (con su x-client-transaction-id
+#' nativo, que algunos endpoints exigen). Scrollea para gatillar mas paginas.
+#' Devuelve una lista de respuestas JSON ya parseadas (listas anidadas).
+#' @noRd
+.pw_harvest <- function(url, op_names, max_scrolls = 25, state = .pw_state_path()) {
+  res <- .pw_call("harvest", list(
+    storageStatePath = state, url = url,
+    opNames = as.list(op_names), maxScrolls = max_scrolls
+  ), timeout = 600)
+  if (isTRUE(res$reason == "not_logged_in")) {
+    stop("No hay una sesi\u00f3n activa de X. Import\u00e1 tu sesi\u00f3n con importSessionX(auth_token, ct0).")
+  }
+  if (!isTRUE(res$ok)) {
+    stop("La cosecha de la API fall\u00f3: ", .pw_or(res$error, .pw_or(res$reason, "error desconocido")))
+  }
+  bodies <- if (is.null(res$bodies)) character(0) else res$bodies
+  lapply(bodies, function(b) jsonlite::fromJSON(b, simplifyVector = FALSE))
+}
+
 #' Comprobar que el motor Node/Playwright esta instalado y operativo
 #'
 #' Ejecuta el comando `doctor` del motor y devuelve la informacion de versiones.

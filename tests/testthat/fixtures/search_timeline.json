@@ -1,0 +1,59 @@
+{
+ "data": {
+  "search_by_raw_query": {
+   "search_timeline": {
+    "timeline": {
+     "instructions": [
+      {
+       "type": "TimelineAddEntries",
+       "entries": [
+        {
+         "entryId": "tweet-3001",
+         "content": {
+          "itemContent": {
+           "tweet_results": {
+            "result": {
+             "__typename": "Tweet",
+             "rest_id": "3001",
+             "core": {
+              "user_results": {
+               "result": {
+                "core": {
+                 "screen_name": "RosanaFerrero"
+                }
+               }
+              }
+             },
+             "views": {
+              "count": "1234"
+             },
+             "legacy": {
+              "created_at": "Fri Jun 13 06:00:23 +0000 2026",
+              "full_text": "Resultado de busqueda uno #RStats",
+              "reply_count": 1,
+              "retweet_count": 2,
+              "quote_count": 0,
+              "favorite_count": 4,
+              "id_str": "3001",
+              "is_quote_status": false
+             }
+            }
+           }
+          }
+         }
+        },
+        {
+         "entryId": "cursor-bottom-1",
+         "content": {
+          "value": "SEARCH_CURSOR",
+          "cursorType": "Bottom"
+         }
+        }
+       ]
+      }
+     ]
+    }
+   }
+  }
+ }
+}

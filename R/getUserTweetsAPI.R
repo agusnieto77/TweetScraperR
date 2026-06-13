@@ -42,6 +42,41 @@
   NULL
 }
 
+#' Extrae un campo de cada item de una lista de entidades como vector character
+#' @noRd
+.entity_vec <- function(items, field) {
+  if (is.null(items) || !length(items)) return(character(0))
+  out <- vapply(items, function(x) .or_null(x[[field]], NA_character_), character(1))
+  out[!is.na(out)]
+}
+
+#' Extrae URLs y tipos de media de un objeto legacy (fotos y videos/gifs)
+#' @noRd
+.extract_media <- function(lg) {
+  media <- lg$extended_entities$media
+  if (is.null(media)) media <- lg$entities$media
+  if (is.null(media) || !length(media)) return(list(urls = character(0), tipos = character(0)))
+  urls <- character(0)
+  tipos <- character(0)
+  for (m in media) {
+    tipo <- .or_null(m$type, "photo")
+    if (tipo %in% c("video", "animated_gif") && length(m$video_info$variants)) {
+      mp4 <- Filter(function(v) identical(v$content_type, "video/mp4"), m$video_info$variants)
+      if (length(mp4)) {
+        br <- vapply(mp4, function(v) as.numeric(.or_null(v$bitrate, 0)), numeric(1))
+        url <- mp4[[which.max(br)]]$url
+      } else {
+        url <- .or_null(m$media_url_https, NA_character_)
+      }
+    } else {
+      url <- .or_null(m$media_url_https, NA_character_)
+    }
+    urls <- c(urls, url)
+    tipos <- c(tipos, tipo)
+  }
+  list(urls = urls, tipos = tipos)
+}
+
 #' Construye una fila-tibble de tweet a partir de un objeto tweet_results$result
 #' @noRd
 .tweet_row <- function(tr) {
@@ -52,19 +87,31 @@
   core <- tr$core$user_results$result
   handle <- .or_null(core$core$screen_name, core$legacy$screen_name)
   tid <- .or_null(tr$rest_id, lg$id_str)
+  ent <- lg$entities
+  med <- .extract_media(lg)
+  qr <- tr$quoted_status_result$result
+  if (identical(qr$`__typename`, "TweetWithVisibilityResults")) qr <- qr$tweet
   tibble::tibble(
-    fecha       = .x_parse_twitter_date(lg$created_at),
-    user        = if (is.null(handle)) NA_character_ else paste0("@", handle),
-    texto       = lg$full_text,
-    respuestas  = as.integer(.or_null(lg$reply_count, NA)),
-    retweets    = as.integer(.or_null(lg$retweet_count, NA)),
-    citas       = as.integer(.or_null(lg$quote_count, NA)),
-    megustas    = as.integer(.or_null(lg$favorite_count, NA)),
-    views       = suppressWarnings(as.integer(.or_null(tr$views$count, NA))),
-    es_retweet  = !is.null(lg$retweeted_status_result),
-    es_cita     = isTRUE(lg$is_quote_status),
-    url         = if (is.null(handle)) NA_character_ else paste0("https://x.com/", handle, "/status/", tid),
-    tweet_id    = .or_null(tid, NA_character_)
+    fecha           = .x_parse_twitter_date(lg$created_at),
+    user            = if (is.null(handle)) NA_character_ else paste0("@", handle),
+    texto           = lg$full_text,
+    idioma          = .or_null(lg$lang, NA_character_),
+    respuestas      = as.integer(.or_null(lg$reply_count, NA)),
+    retweets        = as.integer(.or_null(lg$retweet_count, NA)),
+    citas           = as.integer(.or_null(lg$quote_count, NA)),
+    megustas        = as.integer(.or_null(lg$favorite_count, NA)),
+    views           = suppressWarnings(as.integer(.or_null(tr$views$count, NA))),
+    hashtags        = list(.entity_vec(ent$hashtags, "text")),
+    menciones       = list(.entity_vec(ent$user_mentions, "screen_name")),
+    urls_externas   = list(.entity_vec(ent$urls, "expanded_url")),
+    media           = list(med$urls),
+    media_tipo      = list(med$tipos),
+    es_retweet      = !is.null(lg$retweeted_status_result),
+    es_cita         = isTRUE(lg$is_quote_status),
+    tweet_citado_id = .or_null(qr$rest_id, NA_character_),
+    conversation_id = .or_null(lg$conversation_id_str, NA_character_),
+    url             = if (is.null(handle)) NA_character_ else paste0("https://x.com/", handle, "/status/", tid),
+    tweet_id        = .or_null(tid, NA_character_)
   )
 }
 
@@ -128,9 +175,11 @@
 #' @param dir Directorio de destino del RDS. Por defecto el de trabajo.
 #' @param save Logico. Si TRUE (por defecto) guarda el resultado en un RDS.
 #'
-#' @return Un tibble con un tweet por fila y columnas fecha, user, texto,
-#'   respuestas, retweets, citas, megustas, views, es_retweet, es_cita, url,
-#'   tweet_id.
+#' @return Un tibble con un tweet por fila y columnas: fecha, user, texto,
+#'   idioma, respuestas, retweets, citas, megustas, views, hashtags (lista),
+#'   menciones (lista), urls_externas (lista), media (lista de URLs),
+#'   media_tipo (lista: photo/video/animated_gif), es_retweet, es_cita,
+#'   tweet_citado_id, conversation_id, url y tweet_id.
 #' @export
 #'
 #' @examples

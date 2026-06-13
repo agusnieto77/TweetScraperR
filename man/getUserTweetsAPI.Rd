@@ -16,9 +16,11 @@ getUserTweetsAPI(username = "NASA", n_tweets = 40, dir = getwd(), save = TRUE)
 \item{save}{Logico. Si TRUE (por defecto) guarda el resultado en un RDS.}
 }
 \value{
-Un tibble con un tweet por fila y columnas fecha, user, texto,
-respuestas, retweets, citas, megustas, views, es_retweet, es_cita, url,
-tweet_id.
+Un tibble con un tweet por fila y columnas: fecha, user, texto,
+idioma, respuestas, retweets, citas, megustas, views, hashtags (lista),
+menciones (lista), urls_externas (lista), media (lista de URLs),
+media_tipo (lista: photo/video/animated_gif), es_retweet, es_cita,
+tweet_citado_id, conversation_id, url y tweet_id.
 }
 \description{
 \if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}

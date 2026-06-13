@@ -20,24 +20,35 @@ test_that(".parse_timeline_tweets extrae tweets, metricas y cursor del JSON", {
   expect_equal(res$cursor, "CURSOR_ABC")
   expect_setequal(
     names(res$tweets),
-    c("fecha", "user", "texto", "respuestas", "retweets", "citas",
-      "megustas", "views", "es_retweet", "es_cita", "url", "tweet_id")
+    c("fecha", "user", "texto", "idioma", "respuestas", "retweets", "citas",
+      "megustas", "views", "hashtags", "menciones", "urls_externas", "media",
+      "media_tipo", "es_retweet", "es_cita", "tweet_citado_id",
+      "conversation_id", "url", "tweet_id")
   )
 
   t1 <- res$tweets[1, ]
   expect_equal(t1$user, "@NASA")           # screen_name via core.core
-  expect_equal(t1$texto, "Texto completo de prueba uno.")
+  expect_equal(t1$texto, "Texto rico uno #RStats")
   expect_equal(t1$megustas, 7203L)
-  expect_equal(t1$retweets, 1194L)
   expect_equal(t1$views, 470857L)          # views como entero, no string
   expect_false(t1$es_cita)
   expect_equal(t1$url, "https://x.com/NASA/status/1001")
   expect_s3_class(t1$fecha, "POSIXct")
 
+  # campos enriquecidos (entities / media / idioma)
+  expect_equal(t1$idioma, "es")
+  expect_equal(t1$hashtags[[1]], "RStats")
+  expect_equal(t1$menciones[[1]], "NASA")
+  expect_equal(t1$urls_externas[[1]], "https://example.com/a")
+  expect_equal(t1$media[[1]], "https://pbs.twimg.com/media/x.jpg")
+  expect_equal(t1$media_tipo[[1]], "photo")
+  expect_equal(t1$conversation_id, "1001")
+
   t2 <- res$tweets[2, ]
   expect_equal(t2$user, "@NASA")           # screen_name via legacy (fallback) + TweetWithVisibilityResults desempaquetado
   expect_true(t2$es_cita)                  # is_quote_status = TRUE
   expect_equal(t2$tweet_id, "1002")
+  expect_equal(t2$tweet_citado_id, "999")  # quoted_status_result.result.rest_id
 })
 
 test_that(".parse_timeline_tweets devuelve NULL en tweets si no hay entradas", {

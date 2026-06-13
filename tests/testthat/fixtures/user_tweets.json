@@ -33,13 +33,40 @@
               },
               "legacy": {
                "created_at": "Fri Jun 12 21:22:33 +0000 2026",
-               "full_text": "Texto completo de prueba uno.",
+               "full_text": "Texto rico uno #RStats",
                "reply_count": 12,
                "retweet_count": 1194,
                "quote_count": 5,
                "favorite_count": 7203,
                "id_str": "1001",
-               "is_quote_status": false
+               "is_quote_status": false,
+               "lang": "es",
+               "conversation_id_str": "1001",
+               "entities": {
+                "hashtags": [
+                 {
+                  "text": "RStats"
+                 }
+                ],
+                "user_mentions": [
+                 {
+                  "screen_name": "NASA"
+                 }
+                ],
+                "urls": [
+                 {
+                  "expanded_url": "https://example.com/a"
+                 }
+                ]
+               },
+               "extended_entities": {
+                "media": [
+                 {
+                  "type": "photo",
+                  "media_url_https": "https://pbs.twimg.com/media/x.jpg"
+                 }
+                ]
+               }
               }
              }
             }
@@ -70,13 +97,22 @@
                },
                "legacy": {
                 "created_at": "Fri Jun 12 21:22:33 +0000 2026",
-                "full_text": "Cita de prueba.",
+                "full_text": "Cita.",
                 "reply_count": 12,
                 "retweet_count": 1194,
                 "quote_count": 5,
                 "favorite_count": 7203,
                 "id_str": "1002",
-                "is_quote_status": true
+                "is_quote_status": true,
+                "lang": "en",
+                "conversation_id_str": "1002"
+               },
+               "quoted_status_result": {
+                "result": {
+                 "__typename": "Tweet",
+                 "rest_id": "999",
+                 "legacy": {}
+                }
                }
               }
              }

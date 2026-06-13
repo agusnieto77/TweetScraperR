@@ -17,9 +17,8 @@ Por defecto 40.}
 \item{save}{Logico. Si TRUE (por defecto) guarda el resultado en un RDS.}
 }
 \value{
-Un tibble con un tweet por fila (el tweet original y sus respuestas),
-con columnas fecha, user, texto, respuestas, retweets, citas, megustas,
-views, es_retweet, es_cita, url, tweet_id.
+Un tibble con un tweet por fila (mismas columnas que
+\code{\link[=getUserTweetsAPI]{getUserTweetsAPI()}}, incluyendo media, hashtags, menciones, etc.).
 }
 \description{
 \if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}

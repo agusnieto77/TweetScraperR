@@ -24,9 +24,8 @@
 #' @param dir Directorio de destino del RDS. Por defecto el de trabajo.
 #' @param save Logico. Si TRUE (por defecto) guarda el resultado en un RDS.
 #'
-#' @return Un tibble con un tweet por fila y columnas fecha, user, texto,
-#'   respuestas, retweets, citas, megustas, views, es_retweet, es_cita, url,
-#'   tweet_id.
+#' @return Un tibble con un tweet por fila (mismas columnas que
+#'   [getUserTweetsAPI()], incluyendo media, hashtags, menciones, etc.).
 #' @export
 #'
 #' @examples

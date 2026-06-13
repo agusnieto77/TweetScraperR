@@ -1,16 +1,24 @@
 Package: TweetScraperR
 Type: Package
-Title: Twitter Data Scraping Package
-Version: 0.2.4
-Description: 
-    Este paquete proporciona funciones para extraer datos de X/Twitter, incluidos tweets, usuarixs y metadatos asociados.
-    Permite realizar extracción de datos de X/Twitter y manejar la respuesta de manera conveniente en R.
-    El paquete se enfoca en facilitar la tarea de recolección de datos para análisis y visualización.
-Depends: 
+Title: Scrape Posts and User Data from X Twitter
+Version: 0.3.0
+Description:
+    Provides functions to extract data from X/Twitter, including posts
+    (tweets), users, and associated metadata, without using the official
+    APIs. It allows collecting data from X/Twitter and handling the
+    responses conveniently in R, with a focus on easing data collection
+    for analysis and visualization. Este paquete proporciona funciones
+    para extraer datos de X/Twitter (publicaciones, usuarixs y metadatos
+    asociados) y facilita la recolección de datos para análisis y
+    visualización.
+URL: https://github.com/agusnieto77/TweetScraperR
+BugReports: https://github.com/agusnieto77/TweetScraperR/issues
+Depends:
     R (>= 4.1.0)
 Imports:
-    rvest,
-    dplyr,
+    rvest (>= 1.0.4),
+    chromote,
+    dplyr (>= 1.0.0),
     tidyr,
     lubridate,
     tibble,
@@ -19,7 +27,7 @@ Imports:
     ggplot2,
     ggimage,
     stringr,
-    purrr,
+    purrr (>= 1.0.0),
     httr,
     xml2,
     utils,
@@ -27,12 +35,12 @@ Imports:
     jsonlite,
     htmltools,
     tools
-Suggests: 
-    chromote,
-    R6,
-    binman
+Suggests:
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
 Authors@R: person(given = "Agustín", family = "Nieto", email = "agustin.nieto77@gmail.com", role = c("aut", "cre"))
 License: MIT + file LICENSE
 Encoding: UTF-8
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Roxygen: list(markdown = TRUE)
+SystemRequirements: Node.js (>= 18) and a Chromium-based browser; the Playwright engine is installed with installPlaywrightEngine()

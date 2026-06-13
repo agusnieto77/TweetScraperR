@@ -1,7 +1,7 @@
 Package: TweetScraperR
 Type: Package
 Title: Scrape Posts and User Data from X Twitter
-Version: 0.3.0.9000
+Version: 0.4.0
 Description:
     Provides functions to extract data from X/Twitter, including posts
     (tweets), users, and associated metadata, without using the official

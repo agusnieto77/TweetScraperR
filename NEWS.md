@@ -1,4 +1,4 @@
-# TweetScraperR 0.3.0.9000 (en desarrollo, rumbo a 0.4.0)
+# TweetScraperR 0.4.0
 
 ## Nueva capa de scraping vía API GraphQL/JSON (experimental)
 

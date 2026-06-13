@@ -26,9 +26,9 @@ getTweetsSearchStreamingFor(
 
 \item{dir}{Directorio donde se guardarán los tweets}
 
-\item{system}{Sistema operativo ('windows', 'unix', 'macOS')}
+\item{system}{Sistema operativo ('windows', 'unix', 'macOS'). Se mantiene por compatibilidad; el cierre del navegador ya no depende del sistema operativo.}
 
-\item{kill_system}{Booleano que indica si se debe cerrar el navegador después de cada iteración (por defecto: FALSE)}
+\item{kill_system}{Booleano que indica si se debe cerrar el navegador (solo las sesiones propias del paquete) después de cada iteración (por defecto: FALSE)}
 
 \item{sleep_time}{Tiempo de espera entre iteraciones en segundos. Por defecto este valor es de 300 segundos.}
 }

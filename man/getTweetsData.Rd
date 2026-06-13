@@ -6,8 +6,8 @@
 \usage{
 getTweetsData(
   urls_tweets,
-  xuser = Sys.getenv("USER"),
-  xpass = Sys.getenv("PASS"),
+  xuser = Sys.getenv("TWITTER_USER", Sys.getenv("USER")),
+  xpass = Sys.getenv("TWITTER_PASS", Sys.getenv("PASS")),
   dir = getwd(),
   save = TRUE
 )
@@ -15,9 +15,9 @@ getTweetsData(
 \arguments{
 \item{urls_tweets}{Vector de URLs de tweets de los cuales se desea obtener datos.}
 
-\item{xuser}{Nombre de usuarix de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.}
+\item{xuser}{Nombre de usuarix de Twitter para autenticación. Por defecto es el valor de la variable de entorno TWITTER_USER y, si esta no está definida, el de la variable de entorno del sistema USER.}
 
-\item{xpass}{Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.}
+\item{xpass}{Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno TWITTER_PASS y, si esta no está definida, el de la variable de entorno del sistema PASS.}
 
 \item{dir}{directorio para guardar el RDS con las URLs recolectadas}
 
@@ -25,13 +25,6 @@ getTweetsData(
 }
 \value{
 Un tibble que contiene los datos de los tweets recuperados.
-
-\itemize{
-\item \code{tweets_recuperados}: Un tibble con los datos de los tweets recuperados, incluyendo la fecha, nombre de usuario, texto, respuestas, reposts, me gusta, URLs asociadas y otras informaciones recopiladas.
-\item \code{tweets_borrados}: Un vector con las URLs de los tweets que fueron detectados como borrados.
-\item \code{tweets_a_reprocesar}: Un vector con las URLs de los tweets que no pudieron ser procesados exitosamente y necesitan ser reprocesados.
-\item \code{errores}: Un vector con los mensajes de error recopilados durante el proceso de recolección de datos.
-}
 }
 \description{
 \if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}
@@ -45,6 +38,16 @@ La función también maneja tweets borrados y errores durante el proceso de reco
 clasifica las URLs de los tweets en tres categorías: tweets recuperados, tweets borrados, y
 tweets que necesitan ser reprocesados. Si el parámetro 'save' es TRUE, los datos recopilados
 se guardan en un archivo RDS en el directorio especificado por le usuarix.
+}
+\details{
+Cuando save = TRUE, se guarda un archivo RDS con una lista que contiene:
+
+\itemize{
+\item \code{tweets_recuperados}: Un tibble con los datos de los tweets recuperados, incluyendo la fecha, nombre de usuario, texto, respuestas, reposts, me gusta, URLs asociadas y otras informaciones recopiladas.
+\item \code{tweets_borrados}: Un vector con las URLs de los tweets que fueron detectados como borrados.
+\item \code{tweets_a_reprocesar}: Un vector con las URLs de los tweets que no pudieron ser procesados exitosamente y necesitan ser reprocesados.
+\item \code{errores}: Un vector con los mensajes de error recopilados durante el proceso de recolección de datos.
+}
 }
 \examples{
 \dontrun{

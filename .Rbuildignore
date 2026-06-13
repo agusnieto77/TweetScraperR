@@ -2,3 +2,7 @@
 ^\.github$
 ^old_versions$
 ^Requisitos\.md$
+^\.atl$
+^\.gitignore$
+^.*\.Rproj$
+^\.Rproj\.user$

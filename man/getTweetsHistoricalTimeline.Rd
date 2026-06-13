@@ -10,8 +10,8 @@ getTweetsHistoricalTimeline(
   n_tweets = 100,
   since = "2018-10-26",
   until = "2018-10-30",
-  xuser = Sys.getenv("USER"),
-  xpass = Sys.getenv("PASS"),
+  xuser = Sys.getenv("TWITTER_USER", Sys.getenv("USER")),
+  xpass = Sys.getenv("TWITTER_PASS", Sys.getenv("PASS")),
   dir = getwd(),
   save = TRUE
 )
@@ -27,9 +27,9 @@ getTweetsHistoricalTimeline(
 
 \item{until}{Fecha de fin para la búsqueda de tweets (en formato "YYYY-MM-DD"). Por defecto es "2023-10-30".}
 
-\item{xuser}{Nombre de usuarix de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.}
+\item{xuser}{Nombre de usuarix de Twitter para autenticación. Por defecto es el valor de la variable de entorno TWITTER_USER (o, en su defecto, USER).}
 
-\item{xpass}{Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.}
+\item{xpass}{Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno TWITTER_PASS (o, en su defecto, PASS).}
 
 \item{dir}{Directorio para guardar el archivo RDS con las tweets recolectados. Por defecto es el directorio de trabajo actual.}
 
@@ -50,18 +50,14 @@ captura tweets de otras cuentas que han sido retuiteados por le usuarix especifi
 \examples{
 \dontrun{
 getTweetsHistoricalTimeline(
-  username = "rstatstweet",
-  n_tweets = 50,
-  since = "2018-10-26",
-  until = "2023-10-30"
+  username = "rstatstweet", n_tweets = 50,
+  since = "2018-10-26", until = "2023-10-30"
 )
 
 # Sin guardar los resultados
 getTweetsHistoricalTimeline(
-  username = "rstatstweet",
-  n_tweets = 50,
-  since = "2018-10-26",
-  until = "2023-10-30",
+  username = "rstatstweet", n_tweets = 50,
+  since = "2018-10-26", until = "2023-10-30",
   save = FALSE
 )
 }

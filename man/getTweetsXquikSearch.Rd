@@ -35,6 +35,11 @@ compatible con los flujos del paquete. Deduplica tweets por id o URL,
 respeta el maximo solicitado por \code{n_tweets} y requiere una clave de API en
 \code{XQUIK_API_KEY} o en el argumento \code{api_key}.
 }
+\note{
+Xquik es un servicio comercial externo de terceros: esta funcion envia la
+consulta de busqueda y la clave de API configurada a los servidores de
+xquik.com.
+}
 \examples{
 \dontrun{
 getTweetsXquikSearch(search = "#RStats", n_tweets = 50)
@@ -45,6 +50,7 @@ getTweetsXquikSearch(
   api_key = Sys.getenv("XQUIK_API_KEY")
 )
 }
+
 }
 \references{
 Puedes encontrar mas informacion sobre Xquik en:

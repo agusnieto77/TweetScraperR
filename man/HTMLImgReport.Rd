@@ -4,7 +4,7 @@
 \alias{HTMLImgReport}
 \title{Generate HTML visualization of analyzed images}
 \usage{
-HTMLImgReport(results)
+HTMLImgReport(results, output_file = "visualizacion_imagenes.html")
 }
 \arguments{
 \item{results}{Un data frame o tibble que contiene los resultados del análisis de imágenes de la función \code{getTweetsImagesAnalysis}.
@@ -21,10 +21,14 @@ Debe incluir las siguientes columnas:
 \item contenido_inapropiado: Indica si hay contenido inapropiado (logical)
 \item img: La ruta o URL de la imagen (character)
 }}
+
+\item{output_file}{Una cadena de caracteres con el nombre (o la ruta) del archivo
+HTML de salida. Por defecto es "visualizacion_imagenes.html" en el directorio
+de trabajo actual.}
 }
 \value{
-Esta función no devuelve ningún valor. Genera un archivo HTML llamado
-"visualizacion_imagenes.html" en el directorio de trabajo actual y muestra
+Esta función no devuelve ningún valor. Genera un archivo HTML (por defecto
+"visualizacion_imagenes.html" en el directorio de trabajo actual) y muestra
 un mensaje de confirmación.
 }
 \description{

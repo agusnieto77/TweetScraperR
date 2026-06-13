@@ -8,7 +8,8 @@ getTweetsImagesAnalysis(
   img_sources,
   modelo = "gpt-4o-mini",
   api_key = Sys.getenv("OPENAI_API_KEY"),
-  dir = getwd()
+  dir = getwd(),
+  save = TRUE
 )
 }
 \arguments{
@@ -21,6 +22,9 @@ Por defecto es \code{Sys.getenv("OPENAI_API_KEY")}.}
 
 \item{dir}{Una cadena de caracteres que especifica el directorio donde se
 guardarán los resultados. Por defecto es \code{getwd()}.}
+
+\item{save}{Lógico. Indica si se deben guardar los resultados (totales y
+parciales) en archivos RDS dentro de \code{dir}. Por defecto es \code{TRUE}.}
 }
 \value{
 Un tibble con las siguientes columnas:
@@ -71,6 +75,8 @@ El análisis de la imagen incluye:
 Esta función requiere una conexión a internet activa y una clave de API de OpenAI válida para funcionar correctamente.
 La función está diseñada para manejar errores y continuar procesando otras imágenes si una falla.
 El tiempo de espera para las solicitudes HTTP está configurado en 300 segundos (5 minutos).
+Tenga en cuenta que las imágenes analizadas (sus URLs o su contenido codificado
+en base64) se transmiten a la API de OpenAI (un servicio de terceros).
 }
 \examples{
 \dontrun{

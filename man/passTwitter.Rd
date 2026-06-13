@@ -4,11 +4,12 @@
 \alias{passTwitter}
 \title{Input Twitter Password for Authentication}
 \usage{
-passTwitter(xpass = Sys.getenv("PASS"))
+passTwitter(xpass = Sys.getenv("TWITTER_PASS", Sys.getenv("PASS")))
 }
 \arguments{
 \item{xpass}{Contraseña de Twitter/X para autenticación. Por defecto es el valor
-de la variable de entorno del sistema PASS obtenido mediante \code{Sys.getenv("PASS")}.}
+de la variable de entorno TWITTER_PASS y, si no está definida, el de la variable de
+entorno del sistema PASS, obtenido mediante \code{Sys.getenv("TWITTER_PASS", Sys.getenv("PASS"))}.}
 }
 \value{
 La función no retorna ningún valor. Su propósito es realizar acciones de automatización
@@ -17,6 +18,9 @@ de autenticación.
 }
 \description{
 \if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}
+
+\strong{Obsoleta}: el login automatizado por navegador ya no funciona porque X lo bloquea por fingerprint.
+Usá \code{importSessionX(auth_token, ct0)} para cargar tu sesión desde el navegador.
 
 Esta función automatiza el segundo paso del proceso de autenticación en Twitter/X al ingresar
 la contraseña en el campo correspondiente de la interfaz de login. La función localiza
@@ -44,11 +48,11 @@ para encontrar el campo de entrada de texto de la contraseña.
 }
 
 \strong{Consideraciones de seguridad}: Para proteger las credenciales, se recomienda configurar
-la variable de entorno PASS en lugar de pasar la contraseña directamente como parámetro.
+la variable de entorno TWITTER_PASS en lugar de pasar la contraseña directamente como parámetro.
 }
 \examples{
 \dontrun{
-# Usar la contraseña de la variable de entorno del sistema
+# Usar la contraseña de la variable de entorno TWITTER_PASS (o PASS)
 passTwitter()
 
 # Especificar una contraseña personalizada (NO recomendado para producción)
@@ -56,11 +60,11 @@ passTwitter(xpass = "mi_contraseña_segura")
 
 # Ejemplo de flujo completo de autenticación
 userTwitter(xuser = "mi_usuario")
-passTwitter(xpass = Sys.getenv("PASS"))
+passTwitter(xpass = Sys.getenv("TWITTER_PASS"))
 
 # Configurar variables de entorno previamente (recomendado)
-Sys.setenv(USER = "mi_usuario")
-Sys.setenv(PASS = "mi_contraseña")
+Sys.setenv(TWITTER_USER = "mi_usuario")
+Sys.setenv(TWITTER_PASS = "mi_contraseña")
 userTwitter()
 passTwitter()
 }

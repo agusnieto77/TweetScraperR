@@ -2,7 +2,7 @@
 % Please edit documentation in R/getScrollExtractUrls.R
 \name{getScrollExtractUrls}
 \alias{getScrollExtractUrls}
-\title{Extraer las urls de los tweets de una línea de tiempo de Twitter mediante desplazamiento}
+\title{Extract Tweet URLs from a Timeline by Scrolling}
 \usage{
 getScrollExtractUrls(
   objeto = timeline,

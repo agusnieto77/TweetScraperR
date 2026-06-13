@@ -21,8 +21,8 @@ getTweetsFullSearch(
   n_tweets = 100,
   since = Sys.Date() - 7,
   until = Sys.Date(),
-  xuser = Sys.getenv("USER"),
-  xpass = Sys.getenv("PASS"),
+  xuser = Sys.getenv("TWITTER_USER", Sys.getenv("USER")),
+  xpass = Sys.getenv("TWITTER_PASS", Sys.getenv("PASS")),
   dir = getwd(),
   save = TRUE
 )
@@ -60,9 +60,9 @@ getTweetsFullSearch(
 
 \item{until}{Fecha. Fecha de fin para la búsqueda (por defecto la fecha actual).}
 
-\item{xuser}{Cadena de texto. Nombre de usuario para la autenticación en Twitter (por defecto se toma de la variable de entorno USER).}
+\item{xuser}{Cadena de texto. Nombre de usuario para la autenticación en Twitter (por defecto se toma de la variable de entorno TWITTER_USER o, en su defecto, USER).}
 
-\item{xpass}{Cadena de texto. Contraseña para la autenticación en Twitter (por defecto se toma de la variable de entorno PASS).}
+\item{xpass}{Cadena de texto. Contraseña para la autenticación en Twitter (por defecto se toma de la variable de entorno TWITTER_PASS o, en su defecto, PASS).}
 
 \item{dir}{Cadena de texto. Directorio donde se guardarán los resultados (por defecto el directorio de trabajo actual).}
 

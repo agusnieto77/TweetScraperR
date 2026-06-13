@@ -15,13 +15,6 @@ getTweetsData2(urls_tweets, dir = getwd(), save = TRUE)
 }
 \value{
 Un tibble que contiene los datos de los tweets recuperados.
-
-\itemize{
-\item \code{tweets_recuperados}: Un tibble con los datos de los tweets recuperados, incluyendo la fecha, nombre de usuario, texto, respuestas, reposts, me gusta, URLs asociadas y otras informaciones recopiladas.
-\item \code{tweets_borrados}: Un vector con las URLs de los tweets que fueron detectados como borrados.
-\item \code{tweets_a_reprocesar}: Un vector con las URLs de los tweets que no pudieron ser procesados exitosamente y necesitan ser reprocesados.
-\item \code{errores}: Un vector con los mensajes de error recopilados durante el proceso de recolección de datos.
-}
 }
 \description{
 \if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}
@@ -30,15 +23,27 @@ Esta función permite recuperar y procesar datos de tweets a partir de un vector
 de tweets proporcionadas. Los datos extraídos incluyen la fecha del tweet,
 el nombre de usuarix que lo publicó, el texto del tweet,
 las respuestas, reposts, me gusta, URLs asociadas, y otra información relevante.
+A diferencia de getTweetsData(), esta función no realiza el proceso de
+autenticación en Twitter: asume que ya existe una sesión autenticada en el navegador.
 La función también maneja tweets borrados y errores durante el proceso de recolección, y
 clasifica las URLs de los tweets en tres categorías: tweets recuperados, tweets borrados, y
 tweets que necesitan ser reprocesados. Si el parámetro 'save' es TRUE, los datos recopilados
 se guardan en un archivo RDS en el directorio especificado por le usuarix.
 }
+\details{
+Cuando save = TRUE, se guarda un archivo RDS con una lista que contiene:
+
+\itemize{
+\item \code{tweets_recuperados}: Un tibble con los datos de los tweets recuperados, incluyendo la fecha, nombre de usuario, texto, respuestas, reposts, me gusta, URLs asociadas y otras informaciones recopiladas.
+\item \code{tweets_borrados}: Un vector con las URLs de los tweets que fueron detectados como borrados.
+\item \code{tweets_a_reprocesar}: Un vector con las URLs de los tweets que no pudieron ser procesados exitosamente y necesitan ser reprocesados.
+\item \code{errores}: Un vector con los mensajes de error recopilados durante el proceso de recolección de datos.
+}
+}
 \examples{
 \dontrun{
-getTweetsData(urls_tweets = "https://twitter.com/estacion_erre/status/1788929978811232537")
-getTweetsData(
+getTweetsData2(urls_tweets = "https://twitter.com/estacion_erre/status/1788929978811232537")
+getTweetsData2(
   urls_tweets = "https://twitter.com/estacion_erre/status/1788929978811232537",
   save = FALSE
 )

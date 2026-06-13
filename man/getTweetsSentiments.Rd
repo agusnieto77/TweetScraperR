@@ -8,7 +8,8 @@ getTweetsSentiments(
   tweets,
   api_key = Sys.getenv("OPENAI_API_KEY"),
   model = "gpt-4o-mini",
-  dir = getwd()
+  dir = getwd(),
+  save = TRUE
 )
 }
 \arguments{
@@ -22,6 +23,9 @@ Por defecto es "gpt-4o-mini".}
 
 \item{dir}{Una cadena de caracteres que especifica el directorio donde se guardarán
 los archivos RDS con los resultados. Por defecto es el directorio de trabajo actual.}
+
+\item{save}{Lógico. Indica si se deben guardar los resultados (totales y parciales)
+en archivos RDS dentro de \code{dir}. Por defecto es TRUE.}
 }
 \value{
 Un tibble con los resultados del análisis para cada tweet. Cada fila
@@ -51,9 +55,17 @@ La función realiza las siguientes operaciones:
 La función utiliza la API de OpenAI para realizar el análisis de sentimiento,
 por lo que requiere una conexión a Internet y una clave de API válida.
 }
+\note{
+Esta función transmite el contenido de los tweets analizados a la API de
+OpenAI (un servicio de terceros). Tenga en cuenta esta transferencia de
+datos al trabajar con contenido de terceros o datos personales.
+}
 \examples{
 \dontrun{
-tweets <- c("¡Qué día tan maravilloso! 😊", "Odio este producto, nunca lo compren. 😠")
+tweets <- c(
+  "¡Qué día tan maravilloso! \U0001f60a",
+  "Odio este producto, nunca lo compren. \U0001f620"
+)
 resultados <- getTweetsSentiments(tweets)
 print(resultados)
 }

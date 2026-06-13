@@ -9,8 +9,8 @@ getTweetsSearchStreaming(
   timeout = 10,
   n_tweets = 100,
   sleep = 3,
-  xuser = Sys.getenv("USER"),
-  xpass = Sys.getenv("PASS"),
+  xuser = Sys.getenv("TWITTER_USER", Sys.getenv("USER")),
+  xpass = Sys.getenv("TWITTER_PASS", Sys.getenv("PASS")),
   dir = getwd(),
   save = TRUE
 )
@@ -24,9 +24,9 @@ getTweetsSearchStreaming(
 
 \item{sleep}{Tiempo de espera para la carga de tweets. Por defecto este valor es de 3 segundos.}
 
-\item{xuser}{Nombre de usuario de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.}
+\item{xuser}{Nombre de usuario de Twitter para autenticación. Por defecto es el valor de la variable de entorno TWITTER_USER (o USER si no está definida).}
 
-\item{xpass}{Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.}
+\item{xpass}{Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno TWITTER_PASS (o PASS si no está definida).}
 
 \item{dir}{Directorio para guardar el archivo RDS con las URLs recolectadas.}
 

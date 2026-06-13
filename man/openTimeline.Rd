@@ -21,6 +21,9 @@ En caso de error después de tres intentos, devuelve NULL.
 \description{
 \if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}
 
+\strong{Obsoleta}: el login automatizado por navegador ya no funciona porque X lo bloquea por fingerprint.
+Usá \code{importSessionX(auth_token, ct0)} para cargar tu sesión desde el navegador.
+
 Esta función abre la línea de tiempo de un usuario específico de Twitter (X) y crea un objeto
 que contiene la información de la página. Intenta abrir la página hasta tres veces en caso de error.
 }

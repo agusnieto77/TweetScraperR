@@ -13,6 +13,9 @@ de la operación.
 \description{
 \if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}
 
+\strong{Obsoleta}: el login automatizado por navegador ya no funciona porque X lo bloquea por fingerprint.
+Usá \code{importSessionX(auth_token, ct0)} para cargar tu sesión desde el navegador.
+
 Esta función cierra la sesión de la línea de tiempo de Twitter previamente abierta
 con la función \code{openTimeline()}. Intenta cerrar la sesión del navegador y elimina
 el objeto 'timeline' del entorno global.

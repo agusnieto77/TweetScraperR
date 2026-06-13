@@ -8,8 +8,8 @@ getTweetsRetweets(
   url = "https://x.com/tipsder/status/1672311054922293254",
   n_users = 100,
   timeout = 2.5,
-  xuser = Sys.getenv("USER"),
-  xpass = Sys.getenv("PASS"),
+  xuser = Sys.getenv("TWITTER_USER", Sys.getenv("USER")),
+  xpass = Sys.getenv("TWITTER_PASS", Sys.getenv("PASS")),
   view = FALSE,
   dir = getwd(),
   save = TRUE,
@@ -23,9 +23,9 @@ getTweetsRetweets(
 
 \item{timeout}{Tiempo de espera entre scrolls en segundos. Por defecto es 2.5.}
 
-\item{xuser}{Nombre de usuario de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.}
+\item{xuser}{Nombre de usuario de Twitter para autenticación. Por defecto es el valor de la variable de entorno TWITTER_USER y, si no está definida, el de la variable de entorno del sistema USER.}
 
-\item{xpass}{Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.}
+\item{xpass}{Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno TWITTER_PASS y, si no está definida, el de la variable de entorno del sistema PASS.}
 
 \item{view}{Ver el navegador. Por defecto es FALSE.}
 

@@ -10,8 +10,8 @@ getTweetsHistoricalHashtag(
   n_tweets = 100,
   since = "2018-10-26",
   until = "2018-10-30",
-  xuser = Sys.getenv("USER"),
-  xpass = Sys.getenv("PASS"),
+  xuser = Sys.getenv("TWITTER_USER", Sys.getenv("USER")),
+  xpass = Sys.getenv("TWITTER_PASS", Sys.getenv("PASS")),
   dir = getwd(),
   save = TRUE
 )
@@ -27,9 +27,9 @@ getTweetsHistoricalHashtag(
 
 \item{until}{Fecha de fin para la búsqueda de tweets (en formato "YYYY-MM-DD"). Por defecto es "2018-10-30".}
 
-\item{xuser}{Nombre de usuarix de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.}
+\item{xuser}{Nombre de usuarix de Twitter para autenticación. Por defecto es el valor de la variable de entorno TWITTER_USER (o, en su defecto, USER).}
 
-\item{xpass}{Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.}
+\item{xpass}{Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno TWITTER_PASS (o, en su defecto, PASS).}
 
 \item{dir}{Directorio para guardar el archivo RDS con los datos de los tweets recolectados. Por defecto es el directorio de trabajo actual.}
 
@@ -54,18 +54,14 @@ archivo con formato \code{.rds} en el directorio especificado por el parámetro 
 \examples{
 \dontrun{
 getTweetsHistoricalHashtag(
-  hashtag = "#rstats",
-  n_tweets = 150,
-  since = "2018-10-26",
-  until = "2018-10-30"
+  hashtag = "#rstats", n_tweets = 150,
+  since = "2018-10-26", until = "2018-10-30"
 )
 
 # Sin guardar los resultados
 getTweetsHistoricalHashtag(
-  hashtag = "#rstats",
-  n_tweets = 150,
-  since = "2018-10-26",
-  until = "2018-10-30",
+  hashtag = "#rstats", n_tweets = 150,
+  since = "2018-10-26", until = "2018-10-30",
   save = FALSE
 )
 }

@@ -31,9 +31,9 @@ getTweetsTimelineFor(
 
 \item{dir}{Directorio para guardar los tweets recolectados (por defecto: directorio de trabajo actual).}
 
-\item{system}{Sistema operativo ("windows", "unix", o "mac").}
+\item{system}{Sistema operativo ("windows", "unix", o "mac"). Se mantiene por compatibilidad; el cierre del navegador ya no depende del sistema operativo.}
 
-\item{kill_system}{Booleano que indica si se debe cerrar el navegador después de la recolección (por defecto: FALSE).}
+\item{kill_system}{Booleano que indica si se debe cerrar el navegador (solo las sesiones propias del paquete) después de la recolección (por defecto: FALSE).}
 }
 \value{
 Un dataframe que contiene los tweets de todos los usuarios especificados.

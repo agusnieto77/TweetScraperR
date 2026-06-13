@@ -34,4 +34,5 @@ df <- data.frame(emoticones = I(list(
 )))
 plotEmojis(df)
 }
+
 }

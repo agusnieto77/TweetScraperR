@@ -2,7 +2,7 @@
 % Please edit documentation in R/getScrollExtract.R
 \name{getScrollExtract}
 \alias{getScrollExtract}
-\title{Extraer tweets de una línea de tiempo de Twitter mediante desplazamiento}
+\title{Extract Tweets from a Timeline by Scrolling}
 \usage{
 getScrollExtract(
   objeto = timeline,

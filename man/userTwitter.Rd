@@ -4,11 +4,12 @@
 \alias{userTwitter}
 \title{Input Twitter Username for Authentication}
 \usage{
-userTwitter(xuser = Sys.getenv("USER"))
+userTwitter(xuser = Sys.getenv("TWITTER_USER", Sys.getenv("USER")))
 }
 \arguments{
 \item{xuser}{Nombre de usuario de Twitter/X para autenticación. Por defecto es el valor
-de la variable de entorno del sistema USER obtenido mediante \code{Sys.getenv("USER")}.}
+de la variable de entorno TWITTER_USER y, si no está definida, el de la variable de
+entorno del sistema USER, obtenido mediante \code{Sys.getenv("TWITTER_USER", Sys.getenv("USER"))}.}
 }
 \value{
 La función no retorna ningún valor. Su propósito es realizar acciones de automatización
@@ -16,6 +17,9 @@ en el navegador web para completar el paso de ingreso de usuario en el proceso d
 }
 \description{
 \if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}
+
+\strong{Obsoleta}: el login automatizado por navegador ya no funciona porque X lo bloquea por fingerprint.
+Usá \code{importSessionX(auth_token, ct0)} para cargar tu sesión desde el navegador.
 
 Esta función automatiza el primer paso del proceso de autenticación en Twitter/X al ingresar
 el nombre de usuario en el campo correspondiente de la interfaz de login. La función localiza
@@ -43,7 +47,7 @@ para encontrar el campo de entrada de texto del nombre de usuario.
 }
 \examples{
 \dontrun{
-# Usar el nombre de usuario del sistema operativo
+# Usar el nombre de usuario de la variable de entorno TWITTER_USER (o USER)
 userTwitter()
 
 # Especificar un nombre de usuario personalizado

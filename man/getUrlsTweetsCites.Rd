@@ -7,8 +7,8 @@
 getUrlsTweetsCites(
   url = "https://x.com/Picanumeros/status/1610715405705789442",
   n_urls = 100,
-  xuser = Sys.getenv("USER"),
-  xpass = Sys.getenv("PASS"),
+  xuser = Sys.getenv("TWITTER_USER", Sys.getenv("USER")),
+  xpass = Sys.getenv("TWITTER_PASS", Sys.getenv("PASS")),
   view = FALSE,
   dir = getwd(),
   save = TRUE
@@ -19,9 +19,9 @@ getUrlsTweetsCites(
 
 \item{n_urls}{El número máximo de URLs de citas a recuperar. Por defecto es 100.}
 
-\item{xuser}{Nombre de usuario de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.}
+\item{xuser}{Nombre de usuario de Twitter para autenticación. Por defecto es el valor de la variable de entorno TWITTER_USER y, si no está definida, el de la variable de entorno del sistema USER.}
 
-\item{xpass}{Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.}
+\item{xpass}{Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno TWITTER_PASS y, si no está definida, el de la variable de entorno del sistema PASS.}
 
 \item{view}{Ver el navegador. Por defecto es FALSE.}
 

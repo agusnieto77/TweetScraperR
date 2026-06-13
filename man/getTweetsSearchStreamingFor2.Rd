@@ -9,8 +9,8 @@ getTweetsSearchStreamingFor2(
   search,
   n_tweets,
   sleep = 15,
-  xuser = Sys.getenv("USER"),
-  xpass = Sys.getenv("PASS"),
+  xuser = Sys.getenv("TWITTER_USER", Sys.getenv("USER")),
+  xpass = Sys.getenv("TWITTER_PASS", Sys.getenv("PASS")),
   dir = getwd(),
   system = "unix",
   kill_system = FALSE,
@@ -33,15 +33,15 @@ getTweetsSearchStreamingFor2(
 
 \item{sleep}{Tiempo de espera para la carga de tweets. Por defecto este valor es de 15 segundos.}
 
-\item{xuser}{Nombre de usuario de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.}
+\item{xuser}{Nombre de usuario de Twitter para autenticación. Por defecto es el valor de la variable de entorno TWITTER_USER (o USER si no está definida).}
 
-\item{xpass}{Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.}
+\item{xpass}{Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno TWITTER_PASS (o PASS si no está definida).}
 
 \item{dir}{Directorio donde se guardarán los tweets}
 
-\item{system}{Sistema operativo ('windows', 'unix', 'macOS')}
+\item{system}{Sistema operativo ('windows', 'unix', 'macOS'). Se mantiene por compatibilidad; el cierre del navegador ya no depende del sistema operativo.}
 
-\item{kill_system}{Booleano que indica si se debe cerrar el navegador después de cada iteración (por defecto: FALSE)}
+\item{kill_system}{Booleano que indica si se debe cerrar el navegador (solo las sesiones propias del paquete) después de cada iteración (por defecto: FALSE)}
 
 \item{sleep_time}{Tiempo de espera entre iteraciones en segundos. Por defecto este valor es de 300 segundos.}
 
@@ -55,9 +55,9 @@ getTweetsSearchStreamingFor2(
 
 \item{verbose}{Booleano para mostrar mensajes detallados (por defecto: TRUE)}
 
-\item{progress_file}{Archivo para guardar el progreso de la recolección (por defecto: NULL)}
+\item{progress_file}{Archivo para guardar el progreso de la recolección (por defecto: NULL). Si el archivo ya existe, la recolección se reanuda automáticamente desde la iteración siguiente a la última completada, reutilizando el directorio de salida de la sesión anterior.}
 
-\item{resume_from}{Iteración desde la cual resumir la recolección (por defecto: 1)}
+\item{resume_from}{Iteración desde la cual resumir la recolección (por defecto: 1). Si se indica explícitamente, tiene prioridad sobre el progreso guardado en progress_file.}
 }
 \value{
 Lista con estadísticas de la recolección y ruta del archivo unificado (si aplica)

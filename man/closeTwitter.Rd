@@ -13,6 +13,9 @@ y elimina la variable \code{twitter} del entorno global.
 \description{
 \if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}
 
+\strong{Obsoleta}: el login automatizado por navegador ya no funciona porque X lo bloquea por fingerprint.
+Usá \code{importSessionX(auth_token, ct0)} para cargar tu sesión desde el navegador.
+
 Esta función cierra la sesión activa de Twitter y elimina la variable global \code{twitter} del entorno.
 Es útil para liberar recursos y limpiar el entorno después de haber realizado operaciones de recolección
 de datos en Twitter.

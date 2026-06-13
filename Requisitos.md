@@ -5,16 +5,16 @@
 
 ### Software necesario:
 - **Instalación de R**: Asegúrate de tener R instalado en tu ordenador.
-- **RStudio**: Instala RStudio para facilitar el desarrollo en R.
-- **Instalación de Java**: Asegúrate de tener Java instalado en tu ordenador.
-- **Controlador de Chrome**: Instala el controlador **chromedriver.exe** en tu sistema operativo para realizar tareas de scraping.
+- **RStudio** (opcional): Instala RStudio para facilitar el desarrollo en R.
+- **Node.js (>= 18)**: El motor de scraping está basado en **Node.js + Playwright + stealth**. Se instala una sola vez con `installPlaywrightEngine()`.
+- **Chrome o Chromium**: Navegador basado en Chromium requerido por el motor de Playwright. **No** necesitas instalar Java ni chromedriver.
 
 ### Librerías de R:
 Asegúrate de tener instaladas las siguientes librerías en R:
 
 - `tidyverse`
 
-- `rvest` (última versión 1.0.4)
+- `rvest` (versión mínima 1.0.4)
 
 - `chromote`
 

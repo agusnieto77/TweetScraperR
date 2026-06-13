@@ -6,8 +6,8 @@
 \usage{
 getUsersFullData(
   urls_users,
-  xuser = Sys.getenv("USER"),
-  xpass = Sys.getenv("PASS"),
+  xuser = Sys.getenv("TWITTER_USER", Sys.getenv("USER")),
+  xpass = Sys.getenv("TWITTER_PASS", Sys.getenv("PASS")),
   dir = getwd(),
   save = TRUE
 )
@@ -15,9 +15,9 @@ getUsersFullData(
 \arguments{
 \item{urls_users}{Vector de URLs de users de los cuales se desea obtener datos.}
 
-\item{xuser}{Nombre de usuarix de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.}
+\item{xuser}{Nombre de usuarix de Twitter para autenticación. Por defecto es el valor de la variable de entorno TWITTER_USER (o, si no está definida, USER).}
 
-\item{xpass}{Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.}
+\item{xpass}{Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno TWITTER_PASS (o, si no está definida, PASS).}
 
 \item{dir}{Directorio donde se guardará el archivo RDS con los datos recopilados. Por defecto es el directorio actual.}
 

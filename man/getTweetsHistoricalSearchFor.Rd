@@ -12,8 +12,8 @@ getTweetsHistoricalSearchFor(
   until,
   interval_unit = "days",
   live = TRUE,
-  xuser = Sys.getenv("USER"),
-  xpass = Sys.getenv("PASS"),
+  xuser = Sys.getenv("TWITTER_USER", Sys.getenv("USER")),
+  xpass = Sys.getenv("TWITTER_PASS", Sys.getenv("PASS")),
   dir = getwd(),
   system = "windows",
   kill_system = FALSE,
@@ -35,15 +35,15 @@ getTweetsHistoricalSearchFor(
 
 \item{live}{Booleano que indica si se debe realizar una búsqueda en vivo (por defecto: TRUE).}
 
-\item{xuser}{Nombre de usuario de Twitter para autenticación (por defecto: variable de entorno del sistema "USER").}
+\item{xuser}{Nombre de usuario de Twitter para autenticación (por defecto: variable de entorno TWITTER_USER o, en su defecto, USER).}
 
-\item{xpass}{Contraseña de Twitter para autenticación (por defecto: variable de entorno del sistema "PASS").}
+\item{xpass}{Contraseña de Twitter para autenticación (por defecto: variable de entorno TWITTER_PASS o, en su defecto, PASS).}
 
 \item{dir}{Directorio para guardar los tweets recolectados (por defecto: directorio de trabajo actual).}
 
-\item{system}{Sistema operativo ("windows", "unix", o "mac").}
+\item{system}{Sistema operativo ("windows", "unix", o "mac"). Se mantiene por compatibilidad; el cierre del navegador ya no depende del sistema operativo.}
 
-\item{kill_system}{Booleano que indica si se debe cerrar el navegador después de cada iteración (por defecto: FALSE).}
+\item{kill_system}{Booleano que indica si se debe cerrar el navegador (solo las sesiones propias del paquete) después de cada iteración (por defecto: FALSE).}
 
 \item{sleep_time}{Tiempo de espera entre iteraciones en segundos (por defecto: 300 segundos).}
 }

@@ -9,8 +9,8 @@ getTweetsTimeline(
   n_tweets = 100,
   view = FALSE,
   open = FALSE,
-  xuser = Sys.getenv("USER"),
-  xpass = Sys.getenv("PASS"),
+  xuser = Sys.getenv("TWITTER_USER", Sys.getenv("USER")),
+  xpass = Sys.getenv("TWITTER_PASS", Sys.getenv("PASS")),
   mailx = NULL,
   dir = getwd(),
   save = TRUE
@@ -25,9 +25,9 @@ getTweetsTimeline(
 
 \item{open}{Indica si se debe realizar el proceso de autenticación (por defecto FALSE)}
 
-\item{xuser}{Nombre de usuarix de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema USER.}
+\item{xuser}{Nombre de usuarix de Twitter para autenticación. Por defecto es el valor de la variable de entorno TWITTER_USER y, si no está definida, el de la variable de entorno del sistema USER.}
 
-\item{xpass}{Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno del sistema PASS.}
+\item{xpass}{Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno TWITTER_PASS y, si no está definida, el de la variable de entorno del sistema PASS.}
 
 \item{mailx}{Dirección de e-mail para la autenticación. Tiene que ser la misma que la usada en Twitter/X.}
 

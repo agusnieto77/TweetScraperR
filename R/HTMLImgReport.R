@@ -4,42 +4,45 @@
 #'
 #' #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
 #'
-#' Esta funci\u00f3n crea una visualizaci\u00f3n HTML interactiva de im\u00e1genes analizadas,
-#' mostrando cada imagen junto con su clasificaci\u00f3n, descripci\u00f3n, palabras clave
-#' y banderas de contenido en un dise\u00f1o responsivo con un carrusel y miniaturas.
+#' Esta función crea una visualización HTML interactiva de imágenes analizadas,
+#' mostrando cada imagen junto con su clasificación, descripción, palabras clave
+#' y banderas de contenido en un diseño responsivo con un carrusel y miniaturas.
 #'
-#' @param results Un data frame o tibble que contiene los resultados del an\u00e1lisis de im\u00e1genes de la funci\u00f3n `getTweetsImagesAnalysis`.
+#' @param results Un data frame o tibble que contiene los resultados del análisis de imágenes de la función `getTweetsImagesAnalysis`.
 #'   Debe incluir las siguientes columnas:
 #'   \itemize{
-#'     \item clasificacion: La clasificaci\u00f3n de la imagen (character)
-#'     \item descripcion: Una descripci\u00f3n detallada de la imagen (character)
+#'     \item clasificacion: La clasificación de la imagen (character)
+#'     \item descripcion: Una descripción detallada de la imagen (character)
 #'     \item palabras_clave: Palabras clave que describen la imagen (character)
 #'     \item contiene_texto: Indica si la imagen contiene texto (logical)
 #'     \item texto_contenido: El texto contenido en la imagen, si lo hay (character)
 #'     \item contenido_discriminatorio: Indica si hay contenido discriminatorio (logical)
 #'     \item contenido_violento: Indica si hay contenido violento (logical)
-#'     \item contenido_pornografico: Indica si hay contenido pornogr\u00e1fico (logical)
+#'     \item contenido_pornografico: Indica si hay contenido pornográfico (logical)
 #'     \item contenido_inapropiado: Indica si hay contenido inapropiado (logical)
 #'     \item img: La ruta o URL de la imagen (character)
 #'   }
+#' @param output_file Una cadena de caracteres con el nombre (o la ruta) del archivo
+#'   HTML de salida. Por defecto es "visualizacion_imagenes.html" en el directorio
+#'   de trabajo actual.
 #'
-#' @return Esta funci\u00f3n no devuelve ning\u00fan valor. Genera un archivo HTML llamado
-#'   "visualizacion_imagenes.html" en el directorio de trabajo actual y muestra
-#'   un mensaje de confirmaci\u00f3n.
+#' @return Esta función no devuelve ningún valor. Genera un archivo HTML (por defecto
+#'   "visualizacion_imagenes.html" en el directorio de trabajo actual) y muestra
+#'   un mensaje de confirmación.
 #'
 #' @details
-#' La funci\u00f3n crea una p\u00e1gina HTML responsiva utilizando Bootstrap para el dise\u00f1o.
-#' Cada imagen se presenta en una tarjeta que incluye la imagen, su clasificaci\u00f3n,
-#' descripci\u00f3n, palabras clave y banderas de contenido potencialmente problem\u00e1tico.
-#' El dise\u00f1o se ajusta autom\u00e1ticamente a diferentes tama\u00f1os de pantalla.
+#' La función crea una página HTML responsiva utilizando Bootstrap para el diseño.
+#' Cada imagen se presenta en una tarjeta que incluye la imagen, su clasificación,
+#' descripción, palabras clave y banderas de contenido potencialmente problemático.
+#' El diseño se ajusta automáticamente a diferentes tamaños de pantalla.
 #'
-#' La visualizaci\u00f3n incluye:
+#' La visualización incluye:
 #' \itemize{
-#'   \item Un t\u00edtulo centrado que menciona la funci\u00f3n getTweetsImagesAnalysis
-#'   \item Un carrusel de tarjetas de im\u00e1genes
-#'   \item Una vista de miniaturas de todas las im\u00e1genes
-#'   \item Banderas de colores para contenido problem\u00e1tico
-#'   \item Estilos CSS personalizados para mejorar la presentaci\u00f3n
+#'   \item Un título centrado que menciona la función getTweetsImagesAnalysis
+#'   \item Un carrusel de tarjetas de imágenes
+#'   \item Una vista de miniaturas de todas las imágenes
+#'   \item Banderas de colores para contenido problemático
+#'   \item Estilos CSS personalizados para mejorar la presentación
 #' }
 #'
 #' @examples
@@ -53,8 +56,13 @@
 #' @export
 #'
 
-HTMLImgReport <- function(results) {
-  # Funci\u00f3n para crear una tarjeta para cada imagen
+HTMLImgReport <- function(results, output_file = "visualizacion_imagenes.html") {
+  # Verificar que 'results' contiene al menos una fila
+  if (nrow(results) == 0) {
+    stop("El data frame 'results' no contiene filas.")
+  }
+
+  # Función para crear una tarjeta para cada imagen
   create_image_card <- function(row) {
     htmltools::div(
       class = "col",
@@ -88,7 +96,7 @@ HTMLImgReport <- function(results) {
             class = "image-text-section",
             htmltools::p(class = "card-text",
                          htmltools::strong("Texto en la imagen: "),
-                         htmltools::span(if(row$contiene_texto) row$texto_contenido else "No contiene texto")
+                         htmltools::span(if(isTRUE(row$contiene_texto)) row$texto_contenido else "No contiene texto")
             )
           )
         ),
@@ -96,17 +104,17 @@ HTMLImgReport <- function(results) {
           class = "card-footer",
           htmltools::div(
             class = "content-tags",
-            if(row$contenido_discriminatorio) htmltools::span(class = "tag discriminatorio", "Discriminatorio"),
-            if(row$contenido_violento) htmltools::span(class = "tag violento", "Violento"),
-            if(row$contenido_pornografico) htmltools::span(class = "tag pornografico", "Pornogr\u00e1fico"),
-            if(row$contenido_inapropiado) htmltools::span(class = "tag inapropiado", "Inapropiado")
+            if(isTRUE(row$contenido_discriminatorio)) htmltools::span(class = "tag discriminatorio", "Discriminatorio"),
+            if(isTRUE(row$contenido_violento)) htmltools::span(class = "tag violento", "Violento"),
+            if(isTRUE(row$contenido_pornografico)) htmltools::span(class = "tag pornografico", "Pornogr\u00e1fico"),
+            if(isTRUE(row$contenido_inapropiado)) htmltools::span(class = "tag inapropiado", "Inapropiado")
           )
         )
       )
     )
   }
 
-  # Funci\u00f3n para crear una tarjeta para cada imagen (versi\u00f3n miniatura)
+  # Función para crear una tarjeta para cada imagen (versión miniatura)
   create_thumbnail_card <- function(row) {
     htmltools::div(
       class = "thumbnail-card d-flex",
@@ -127,20 +135,20 @@ HTMLImgReport <- function(results) {
         ),
         htmltools::p(class = "card-text",
                      htmltools::strong("Texto en la imagen: "),
-                     htmltools::span(if(row$contiene_texto) row$texto_contenido else "No contiene texto")
+                     htmltools::span(if(isTRUE(row$contiene_texto)) row$texto_contenido else "No contiene texto")
         ),
         htmltools::div(
           class = "content-tags-thumb",
-          if(row$contenido_discriminatorio) htmltools::span(class = "tag discriminatorio", "Discriminatorio"),
-          if(row$contenido_violento) htmltools::span(class = "tag violento", "Violento"),
-          if(row$contenido_pornografico) htmltools::span(class = "tag pornografico", "Pornogr\u00e1fico"),
-          if(row$contenido_inapropiado) htmltools::span(class = "tag inapropiado", "Inapropiado")
+          if(isTRUE(row$contenido_discriminatorio)) htmltools::span(class = "tag discriminatorio", "Discriminatorio"),
+          if(isTRUE(row$contenido_violento)) htmltools::span(class = "tag violento", "Violento"),
+          if(isTRUE(row$contenido_pornografico)) htmltools::span(class = "tag pornografico", "Pornogr\u00e1fico"),
+          if(isTRUE(row$contenido_inapropiado)) htmltools::span(class = "tag inapropiado", "Inapropiado")
         )
       )
     )
   }
 
-  # Funci\u00f3n para crear el encabezado
+  # Función para crear el encabezado
   create_header <- function() {
     htmltools::div(
       class = "header",
@@ -155,7 +163,7 @@ HTMLImgReport <- function(results) {
       )
   }
 
-  # Funci\u00f3n para crear el pie de p\u00e1gina
+  # Función para crear el pie de página
   create_footer <- function() {
     htmltools::div(
       class = "footer",
@@ -233,7 +241,7 @@ HTMLImgReport <- function(results) {
           htmltools::tags$span(class = "visually-hidden", "Next")
         )
       ),
-      # Nueva secci\u00f3n de miniaturas
+      # Nueva sección de miniaturas
       htmltools::div(
         class = "thumbnail-container",
         lapply(seq_len(nrow(results)), function(i) {
@@ -670,9 +678,8 @@ HTMLImgReport <- function(results) {
   )
 
   # Guardar el HTML en un archivo
-  output_file <- "visualizacion_imagenes.html"
   htmltools::save_html(html_content, file = output_file)
-  file_name <- paste0(getwd(), "/", output_file)
+  file_name <- if (basename(output_file) == output_file) paste0(getwd(), "/", output_file) else output_file
 
   message("Visualizaci\u00f3n HTML generada y guardada en: ", file_name)
 }

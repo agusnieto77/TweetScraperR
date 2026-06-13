@@ -4,62 +4,66 @@
 #'
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
 #'
-#' Esta funci\u00f3n analiza im\u00e1genes asociadas con tweets. Procesa un vector de URLs de im\u00e1genes o rutas de archivos locales,
-#' env\u00eda estas im\u00e1genes a la API de OpenAI para su an\u00e1lisis y devuelve un informe detallado sobre
+#' Esta función analiza imágenes asociadas con tweets. Procesa un vector de URLs de imágenes o rutas de archivos locales,
+#' envía estas imágenes a la API de OpenAI para su análisis y devuelve un informe detallado sobre
 #' el contenido de cada imagen.
 #'
-#' @param img_sources Un vector de caracteres que contiene las URLs de las im\u00e1genes o rutas de archivos locales a analizar.
+#' @param img_sources Un vector de caracteres que contiene las URLs de las imágenes o rutas de archivos locales a analizar.
 #' @param modelo Una cadena de caracteres que contiene el modelo de OpenAI. Por defecto es "gpt-4o-mini".
 #' @param api_key Una cadena de caracteres que contiene la clave de API de OpenAI.
 #'   Por defecto es `Sys.getenv("OPENAI_API_KEY")`.
 #' @param dir Una cadena de caracteres que especifica el directorio donde se
-#'   guardar\u00e1n los resultados. Por defecto es `getwd()`.
+#'   guardarán los resultados. Por defecto es `getwd()`.
+#' @param save Lógico. Indica si se deben guardar los resultados (totales y
+#'   parciales) en archivos RDS dentro de `dir`. Por defecto es `TRUE`.
 #'
 #' @return Un tibble con las siguientes columnas:
-#'   \item{clasificacion}{La clasificaci\u00f3n de la imagen}
+#'   \item{clasificacion}{La clasificación de la imagen}
 #'   \item{contiene_texto}{Un booleano que indica si la imagen contiene texto}
 #'   \item{texto_contenido}{El contenido de texto de la imagen (si lo hay, limitado a 10 palabras)}
 #'   \item{contenido_discriminatorio}{Un booleano que indica la presencia de contenido discriminatorio}
 #'   \item{contenido_violento}{Un booleano que indica la presencia de contenido violento}
-#'   \item{contenido_pornografico}{Un booleano que indica la presencia de contenido pornogr\u00e1fico}
+#'   \item{contenido_pornografico}{Un booleano que indica la presencia de contenido pornográfico}
 #'   \item{contenido_inapropiado}{Un booleano que indica la presencia de contenido inapropiado}
-#'   \item{descripcion}{Una descripci\u00f3n detallada de la imagen}
+#'   \item{descripcion}{Una descripción detallada de la imagen}
 #'   \item{palabras_clave}{Una cadena de texto con 2 a 4 palabras clave separadas por punto y coma}
 #'   \item{img}{La URL o nombre del archivo de la imagen analizada}
 #'
 #' @details
-#' La funci\u00f3n realiza los siguientes pasos:
+#' La función realiza los siguientes pasos:
 #' \enumerate{
-#'   \item Verifica la presencia de una clave de API v\u00e1lida.
-#'   \item Procesa el vector de URLs de im\u00e1genes o rutas de archivos locales, eliminando valores NA.
+#'   \item Verifica la presencia de una clave de API válida.
+#'   \item Procesa el vector de URLs de imágenes o rutas de archivos locales, eliminando valores NA.
 #'   \item Convierte los archivos locales a formato base64 si es necesario.
-#'   \item Define un prompt de sistema detallado para la API de OpenAI, instruy\u00e9ndola sobre c\u00f3mo analizar las im\u00e1genes.
+#'   \item Define un prompt de sistema detallado para la API de OpenAI, instruyéndola sobre cómo analizar las imágenes.
 #'   \item Para cada imagen:
 #'     \itemize{
-#'       \item Env\u00eda una solicitud a la API de OpenAI con la URL de la imagen o los datos base64.
-#'       \item Procesa la respuesta de la API para extraer los resultados del an\u00e1lisis.
+#'       \item Envía una solicitud a la API de OpenAI con la URL de la imagen o los datos base64.
+#'       \item Procesa la respuesta de la API para extraer los resultados del análisis.
 #'     }
 #'   \item Combina todos los resultados en un solo tibble.
-#'   \item Guarda los resultados como archivos RDS en el directorio especificado, con resultados parciales cada 7 im\u00e1genes si el total es mayor a 7.
+#'   \item Guarda los resultados como archivos RDS en el directorio especificado, con resultados parciales cada 7 imágenes si el total es mayor a 7.
 #' }
 #'
-#' El an\u00e1lisis de la imagen incluye:
+#' El análisis de la imagen incluye:
 #' \itemize{
-#'   \item Clasificaci\u00f3n del tipo de imagen (por ejemplo, foto, meme, captura de pantalla)
-#'   \item Detecci\u00f3n de texto en la imagen (limitado a 10 palabras si es extenso)
-#'   \item Identificaci\u00f3n de contenido discriminatorio, violento, pornogr\u00e1fico o inapropiado
-#'   \item Una descripci\u00f3n detallada del contenido de la imagen
-#'   \item Generaci\u00f3n de palabras clave descriptivas
+#'   \item Clasificación del tipo de imagen (por ejemplo, foto, meme, captura de pantalla)
+#'   \item Detección de texto en la imagen (limitado a 10 palabras si es extenso)
+#'   \item Identificación de contenido discriminatorio, violento, pornográfico o inapropiado
+#'   \item Una descripción detallada del contenido de la imagen
+#'   \item Generación de palabras clave descriptivas
 #' }
 #'
 #' @note
-#' Esta funci\u00f3n requiere una conexi\u00f3n a internet activa y una clave de API de OpenAI v\u00e1lida para funcionar correctamente.
-#' La funci\u00f3n est\u00e1 dise\u00f1ada para manejar errores y continuar procesando otras im\u00e1genes si una falla.
-#' El tiempo de espera para las solicitudes HTTP est\u00e1 configurado en 300 segundos (5 minutos).
+#' Esta función requiere una conexión a internet activa y una clave de API de OpenAI válida para funcionar correctamente.
+#' La función está diseñada para manejar errores y continuar procesando otras imágenes si una falla.
+#' El tiempo de espera para las solicitudes HTTP está configurado en 300 segundos (5 minutos).
+#' Tenga en cuenta que las imágenes analizadas (sus URLs o su contenido codificado
+#' en base64) se transmiten a la API de OpenAI (un servicio de terceros).
 #'
 #' @examples
 #' \dontrun{
-#' # Ejemplo de uso con un vector de URLs de im\u00e1genes
+#' # Ejemplo de uso con un vector de URLs de imágenes
 #' urls <- c("https://ejemplo.com/imagen1.jpg", "https://ejemplo.com/imagen2.jpg")
 #' resultados <- getTweetsImagesAnalysis(urls)
 #'
@@ -68,8 +72,8 @@
 #' resultados_locales <- getTweetsImagesAnalysis(archivos_locales)
 #' }
 #'
-#' @importFrom httr POST add_headers content HEAD timeout
-#' @importFrom jsonlite fromJSON toJSON base64_enc
+#' @importFrom httr HEAD timeout
+#' @importFrom jsonlite fromJSON base64_enc
 #' @importFrom purrr map_dfr
 #' @importFrom dplyr mutate
 #' @importFrom tibble as_tibble
@@ -77,7 +81,7 @@
 #' @export
 #'
 
-getTweetsImagesAnalysis <- function(img_sources, modelo = "gpt-4o-mini", api_key = Sys.getenv("OPENAI_API_KEY"), dir = getwd()) {
+getTweetsImagesAnalysis <- function(img_sources, modelo = "gpt-4o-mini", api_key = Sys.getenv("OPENAI_API_KEY"), dir = getwd(), save = TRUE) {
   if (api_key == "") {
     stop("Se requiere una clave de API de OpenAI. Por favor, proporci\u00f3nela como argumento o configure la variable de entorno OPENAI_API_KEY.")
   }
@@ -258,29 +262,14 @@ getTweetsImagesAnalysis <- function(img_sources, modelo = "gpt-4o-mini", api_key
         frequency_penalty = 0,
         presence_penalty = 0
       )
-      response <- httr::POST(
-        url = "https://api.openai.com/v1/chat/completions",
-        httr::add_headers(
-          Authorization = paste("Bearer", api_key),
-          "Content-Type" = "application/json"
-        ),
-        body = jsonlite::toJSON(body, auto_unbox = TRUE),
-        encode = "json",
-        httr::timeout(timeout)
-      )
+      content <- .openai_chat(body, api_key, timeout = timeout)
 
-      if (httr::status_code(response) != 200) {
-        error_content <- httr::content(response, "parsed")
-        stop("Error en la solicitud a la API: ",
-             httr::status_code(response), " - ",
-             if (!is.null(error_content$error$message)) error_content$error$message else "Error desconocido")
+      if (is.null(content)) {
+        stop("Error en la solicitud a la API de OpenAI")
       }
 
-      content <- httr::content(response, "text", encoding = "UTF-8")
-      parsed_content <- jsonlite::fromJSON(content, simplifyVector = FALSE)
-
       result_json <- tryCatch({
-        jsonlite::fromJSON(parsed_content$choices[[1]]$message$content, simplifyVector = TRUE)
+        jsonlite::fromJSON(content, simplifyVector = TRUE)
       }, error = function(e) {
         message(paste("Error al analizar JSON para la imagen:", img_source$img, "-", e$message))
         return(list(
@@ -329,16 +318,20 @@ getTweetsImagesAnalysis <- function(img_sources, modelo = "gpt-4o-mini", api_key
       batch_results <- purrr::map_dfr(img_sources[i:end], analyzeImage, .progress = TRUE)
       results[[length(results) + 1]] <- batch_results
 
-      # Guardar resultados parciales cada 50 im\u00e1genes
-      partial <- batch_results
-      saveRDS(partial, paste0(dir, "/partial_results_images_analyze_", format(Sys.time(), "%Y_%m_%d_%H_%M_%S"), ".rds"))
+      # Guardar resultados parciales cada 50 imágenes
+      if (save) {
+        partial <- batch_results
+        saveRDS(partial, paste0(dir, "/partial_results_images_analyze_", format(Sys.time(), "%Y_%m_%d_%H_%M_%S"), ".rds"))
+      }
 
       message(paste("Procesadas", end, "de", total_images, "im\u00e1genes"))
     }
     results <- do.call(rbind, results)
   } else {
     results <- purrr::map_dfr(img_sources, analyzeImage, .progress = TRUE)
-    saveRDS(results, paste0(dir, "/results_images_analyze_", format(Sys.time(), "%Y_%m_%d_%H_%M_%S"), ".rds"))
+    if (save) {
+      saveRDS(results, paste0(dir, "/results_images_analyze_", format(Sys.time(), "%Y_%m_%d_%H_%M_%S"), ".rds"))
+    }
   }
 
   message("\nEl an\u00e1lisis de im\u00e1genes ha finalizado.\n")

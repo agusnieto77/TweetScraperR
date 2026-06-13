@@ -4,25 +4,25 @@
 #'
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
 #'
-#' Esta funci\u00f3n recupera tweets basados en una consulta de b\u00fasqueda en tiempo real en Twitter.
-#' Utiliza autenticaci\u00f3n en Twitter mediante el nombre de usuario y la contrase\u00f1a proporcionados,
-#' o los valores predeterminados de las variables de entorno del sistema. Versi\u00f3n optimizada con
-#' mejor manejo de errores, procesamiento vectorizado y gesti\u00f3n eficiente de memoria.
-#' Optimizaci\u00f3n realizada con asistencia de Claude Sonnet 4 (Anthropic).
+#' Esta función recupera tweets basados en una consulta de búsqueda en tiempo real en Twitter.
+#' Utiliza autenticación en Twitter mediante el nombre de usuario y la contraseña proporcionados,
+#' o los valores predeterminados de las variables de entorno del sistema. Versión optimizada con
+#' mejor manejo de errores, procesamiento vectorizado y gestión eficiente de memoria.
+#' Optimización realizada con asistencia de Claude Sonnet 4 (Anthropic).
 #'
-#' @param search La consulta de b\u00fasqueda para recuperar tweets. Por defecto es "#RStats".
-#' @param n_tweets El n\u00famero m\u00e1ximo de tweets a recuperar. Por defecto es 100.
+#' @param search La consulta de búsqueda para recuperar tweets. Por defecto es "#RStats".
+#' @param n_tweets El número máximo de tweets a recuperar. Por defecto es 100.
 #' @param sleep Tiempo de espera para la carga de tweets. Por defecto este valor es de 15 segundos.
-#' @param xuser Nombre de usuario de Twitter para autenticaci\u00f3n. Por defecto es el valor de la variable de entorno del sistema USER.
-#' @param xpass Contrase\u00f1a de Twitter para autenticaci\u00f3n. Por defecto es el valor de la variable de entorno del sistema PASS.
+#' @param xuser Nombre de usuario de Twitter para autenticación. Por defecto es el valor de la variable de entorno TWITTER_USER (o USER si no está definida).
+#' @param xpass Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno TWITTER_PASS (o PASS si no está definida).
 #' @param dir Directorio para guardar el archivo RDS con las URLs recolectadas.
-#' @param save L\u00f3gico. Indica si se debe guardar el resultado en un archivo RDS (por defecto TRUE).
-#' @param max_login_attempts N\u00famero m\u00e1ximo de intentos de login (por defecto 3).
-#' @param max_collect_attempts N\u00famero m\u00e1ximo de intentos consecutivos sin tweets nuevos (por defecto 5).
+#' @param save Lógico. Indica si se debe guardar el resultado en un archivo RDS (por defecto TRUE).
+#' @param max_login_attempts Número máximo de intentos de login (por defecto 3).
+#' @param max_collect_attempts Número máximo de intentos consecutivos sin tweets nuevos (por defecto 5).
 #' @param backoff_factor Factor de backoff exponencial para reintentos (por defecto 1.5).
-#' @param verbose L\u00f3gico. Mostrar mensajes detallados (por defecto TRUE).
+#' @param verbose Lógico. Mostrar mensajes detallados (por defecto TRUE).
 #'
-#' @return Un tibble que contiene los tweets recuperados con informaci\u00f3n completa.
+#' @return Un tibble que contiene los tweets recuperados con información completa.
 #' @export
 #'
 #' @examples
@@ -32,7 +32,7 @@
 #' # Sin guardar los resultados
 #' getTweetsSearchStreaming2(search = "#RStats", n_tweets = 200, save = FALSE)
 #'
-#' # Con configuraci\u00f3n personalizada
+#' # Con configuración personalizada
 #' getTweetsSearchStreaming2(
 #'   search = "#datascience",
 #'   n_tweets = 500,
@@ -43,10 +43,10 @@
 #' }
 #'
 #' @references
-#' Puedes encontrar m\u00e1s informaci\u00f3n sobre el paquete TweetScrapeR en:
+#' Puedes encontrar más información sobre el paquete TweetScrapeR en:
 #' <https://github.com/agusnieto77/TweetScraperR>
 #'
-#' @importFrom rvest read_html_live html_elements html_attr html_text html_element read_html
+#' @importFrom rvest read_html_live html_elements html_attr html_text html_element
 #' @importFrom dplyr distinct bind_rows
 #' @importFrom tibble tibble
 #' @importFrom lubridate as_datetime is.POSIXct
@@ -56,8 +56,8 @@ getTweetsSearchStreaming2 <- function(
     search = "#RStats",
     n_tweets = 100,
     sleep = 15,
-    xuser = Sys.getenv("USER"),
-    xpass = Sys.getenv("PASS"),
+    xuser = Sys.getenv("TWITTER_USER", Sys.getenv("USER")),
+    xpass = Sys.getenv("TWITTER_PASS", Sys.getenv("PASS")),
     dir = getwd(),
     save = TRUE,
     max_login_attempts = 3,
@@ -65,17 +65,6 @@ getTweetsSearchStreaming2 <- function(
     backoff_factor = 1.5,
     verbose = TRUE
 ) {
-
-  .SELECTORS <- list(
-    login_user = "#layers > div > div > div > div > div > div > div.css-175oi2r > div.css-175oi2r > div > div > div.css-175oi2r > div.css-175oi2r > div > div > div > div.css-175oi2r > label > div > div.css-175oi2r > div > input",
-    login_next = "#layers div > div > div > button:nth-child(6) > div",
-    login_pass = "#layers > div > div > div > div > div > div > div > div > div > div > div > div > div > div > div > div > div > label > div > div > div > input",
-    login_button = "#layers > div > div > div > div > div > div > div.css-175oi2r > div.css-175oi2r > div > div > div.css-175oi2r > div.css-175oi2r.r-16y2uox > div.css-175oi2r > div > div.css-175oi2r > div > div > button",
-    tweet_url = "div.css-175oi2r > div > div.css-175oi2r > a.css-146c3p1.r-bcqeeo.r-1ttztb7.r-qvutc0.r-37j5jr.r-a023e6",
-    tweet_time = "time",
-    tweet_user = "div.css-175oi2r.r-18u37iz.r-1wbh5a2.r-1ez5h0i > div > div.css-175oi2r.r-1wbh5a2.r-dnmrzs > a > div > span",
-    tweet_text = "div[data-testid='tweetText']"
-  )
 
   .validate_params <- function(search, n_tweets, sleep, max_login_attempts, max_collect_attempts, backoff_factor) {
     if (!is.character(search) || length(search) != 1 || nchar(search) == 0) {
@@ -104,126 +93,6 @@ getTweetsSearchStreaming2 <- function(
     }
   }
 
-  .authenticate_twitter <- function(xuser, xpass, max_attempts = 3, backoff_factor = 1.5, verbose = TRUE) {
-    .log_message("Iniciando proceso de autenticaci\u00f3n...", verbose)
-
-    for (attempt in 1:max_attempts) {
-      tryCatch({
-        .log_message(paste("Intento de autenticaci\u00f3n", attempt, "de", max_attempts), verbose)
-
-        twitter <- NULL
-        login_attempts <- 0
-        while (is.null(twitter) && login_attempts < 3) {
-          tryCatch({
-            twitter <- rvest::read_html_live("https://x.com/i/flow/login")
-          }, error = function(e) {
-            login_attempts <<- login_attempts + 1
-            if (grepl("loadEventFired", e$message)) {
-              .log_message(paste("Error de timeout en conexi\u00f3n, reintentando en", login_attempts * 2, "segundos..."), verbose)
-              Sys.sleep(login_attempts * 2)
-            } else {
-              stop(e)
-            }
-          })
-        }
-
-        if (is.null(twitter)) {
-          stop("No se pudo conectar a la p\u00e1gina de login despu\u00e9s de 3 intentos")
-        }
-
-        Sys.sleep(3)
-
-        twitter$type(css = .SELECTORS$login_user, text = xuser)
-        Sys.sleep(1)
-        twitter$click(css = .SELECTORS$login_next, n_clicks = 1)
-        Sys.sleep(2)
-        twitter$type(css = .SELECTORS$login_pass, text = xpass)
-        Sys.sleep(1)
-        twitter$click(css = .SELECTORS$login_button, n_clicks = 1)
-        Sys.sleep(3)
-
-        .log_message("Autenticaci\u00f3n exitosa", verbose)
-        return(twitter)
-
-      }, error = function(e) {
-        .log_message(paste("Error en intento de autenticaci\u00f3n", attempt, ":", e$message), verbose)
-        if (attempt < max_attempts) {
-          wait_time <- ceiling(backoff_factor^attempt)
-          .log_message(paste("Esperando", wait_time, "segundos antes del siguiente intento..."), verbose)
-          Sys.sleep(wait_time)
-        }
-      })
-    }
-
-    .log_message("Asumiendo que la cuenta ya est\u00e1 autenticada", verbose)
-    return(NULL)
-  }
-
-  .extract_tweet_data <- function(articles_html, verbose = TRUE) {
-    .log_message("Extrayendo datos de tweets...", verbose)
-
-    n_articles <- length(articles_html)
-    if (n_articles == 0) return(tibble::tibble())
-
-    fechas <- vector("list", n_articles)
-    usuarios <- character(n_articles)
-    textos <- character(n_articles)
-    urls <- character(n_articles)
-
-    for (i in seq_len(n_articles)) {
-      tryCatch({
-        post_html <- rvest::read_html(articles_html[i])
-
-        time_elements <- rvest::html_elements(post_html, css = .SELECTORS$tweet_time)
-        if (length(time_elements) > 0) {
-          datetime_attrs <- rvest::html_attr(time_elements, "datetime")
-          valid_dates <- lubridate::as_datetime(datetime_attrs[!is.na(datetime_attrs)])
-          if (length(valid_dates) > 0) {
-            fechas[[i]] <- max(valid_dates)
-          }
-        }
-
-        user_element <- rvest::html_element(post_html, css = .SELECTORS$tweet_user)
-        if (!is.na(user_element)) {
-          usuarios[i] <- rvest::html_text(user_element)
-        }
-
-        text_element <- rvest::html_element(post_html, css = .SELECTORS$tweet_text)
-        if (!is.na(text_element)) {
-          textos[i] <- rvest::html_text(text_element)
-        }
-
-        url_element <- rvest::html_element(post_html, css = .SELECTORS$tweet_url)
-        if (!is.na(url_element)) {
-          href <- rvest::html_attr(url_element, "href")
-          if (!is.na(href)) {
-            urls[i] <- paste0("https://x.com", href)
-          }
-        }
-
-      }, error = function(e) {
-        .log_message(paste("Error procesando tweet", i, ":", e$message), verbose)
-      })
-    }
-
-    fechas_processed <- do.call(c, lapply(fechas, function(x) if (is.null(x)) as.POSIXct(NA) else x))
-
-    result <- tibble::tibble(
-      art_html = articles_html,
-      fecha = fechas_processed,
-      user = usuarios,
-      tweet = textos,
-      url = urls,
-      fecha_captura = Sys.time()
-    )
-
-    result <- result[!is.na(result$fecha) & !is.na(result$url) & result$url != "https://x.com", ]
-
-    .log_message(paste("Procesados", nrow(result), "tweets v\u00e1lidos de", n_articles, "art\u00edculos"), verbose)
-    return(result)
-  }
-
-
   .validate_params(search, n_tweets, sleep, max_login_attempts, max_collect_attempts, backoff_factor)
 
   .log_message("=== Iniciando getTweetsSearchStreaming2 ===", verbose)
@@ -233,32 +102,22 @@ getTweetsSearchStreaming2 <- function(
   url_x <- paste0("https://x.com/search?q=", gsub("#", "%23", search), "&src=typed_query&f=live")
   .log_message(paste("URL de b\u00fasqueda:", url_x), verbose)
 
-  twitter <- .authenticate_twitter(xuser, xpass, max_login_attempts, backoff_factor, verbose)
+  twitter <- NULL
+  historicalok <- NULL
+  on.exit(.close_sessions(historicalok, twitter), add = TRUE)
+
+  .log_message("Iniciando proceso de autenticaci\u00f3n...", verbose)
+  twitter <- tryCatch({
+    .x_login(xuser, xpass, max_attempts = max_login_attempts)
+  }, error = function(e) {
+    .log_message(paste("Error en intento de autenticaci\u00f3n:", conditionMessage(e)), verbose)
+    .log_message("Asumiendo que la cuenta ya est\u00e1 autenticada", verbose)
+    NULL
+  })
 
   .log_message("Conectando a la p\u00e1gina de b\u00fasqueda...", verbose)
-  historicalok <- NULL
-  search_attempts <- 0
-  max_search_attempts <- 3
-
-  while (is.null(historicalok) && search_attempts < max_search_attempts) {
-    tryCatch({
-      historicalok <- rvest::read_html_live(url_x)
-      Sys.sleep(sleep)
-    }, error = function(e) {
-      search_attempts <<- search_attempts + 1
-      if (grepl("loadEventFired", e$message)) {
-        wait_time <- search_attempts * 2
-        .log_message(paste("Error de timeout, reintentando en", wait_time, "segundos..."), verbose)
-        Sys.sleep(wait_time)
-      } else {
-        stop(e)
-      }
-    })
-  }
-
-  if (is.null(historicalok)) {
-    stop("No se pudo conectar a la p\u00e1gina de b\u00fasqueda despu\u00e9s de", max_search_attempts, "intentos")
-  }
+  historicalok <- .read_html_live_retry(url_x, max_tries = 3)
+  Sys.sleep(sleep)
 
   .log_message("Iniciando recolecci\u00f3n de tweets...", verbose)
 
@@ -270,29 +129,32 @@ getTweetsSearchStreaming2 <- function(
     total_iterations <- total_iterations + 1
     .log_message(paste("Iteraci\u00f3n", total_iterations, "- Tweets actuales:", nrow(all_tweets)), verbose)
 
-    tryCatch({
+    ok <- tryCatch({
 
       html <- historicalok$session$DOM$getDocument()
       html_content <- historicalok$session$DOM$getOuterHTML(nodeId = html$root$nodeId)$outerHTML
 
-      articles_html <- as.character(rvest::html_elements(rvest::read_html(html_content), css = "article"))
+      articles_html <- as.character(rvest::html_elements(rvest::read_html(html_content), css = .sel$article))
 
       if (length(articles_html) == 0) {
         .log_message("No se encontraron art\u00edculos en esta iteraci\u00f3n", verbose)
         consecutive_failures <- consecutive_failures + 1
       } else {
 
-        new_tweets <- .extract_tweet_data(articles_html, verbose)
+        .log_message("Extrayendo datos de tweets...", verbose)
+        new_tweets <- .extract_tweet_data(articles_html)
+        .log_message(paste("Procesados", nrow(new_tweets), "tweets v\u00e1lidos de", length(articles_html), "art\u00edculos"), verbose)
 
         if (nrow(new_tweets) > 0) {
 
+          count_before <- nrow(all_tweets)
           all_tweets <- dplyr::bind_rows(all_tweets, new_tweets)
           all_tweets <- dplyr::distinct(all_tweets, url, .keep_all = TRUE)
 
           new_count <- nrow(all_tweets)
           .log_message(paste("Tweets \u00fanicos recolectados:", new_count), verbose)
 
-          if (new_count > nrow(all_tweets) - nrow(new_tweets)) {
+          if (new_count > count_before) {
             consecutive_failures <- 0
           } else {
             consecutive_failures <- consecutive_failures + 1
@@ -307,22 +169,21 @@ getTweetsSearchStreaming2 <- function(
         historicalok$session$Page$reload()
         Sys.sleep(sleep)
       }
+      TRUE
 
     }, error = function(e) {
       .log_message(paste("Error en iteraci\u00f3n", total_iterations, ":", e$message), verbose)
+      FALSE
+    })
+    if (!ok) {
       consecutive_failures <- consecutive_failures + 1
       Sys.sleep(backoff_factor^consecutive_failures)
-    })
+    }
   }
 
   .log_message("Finalizando recolecci\u00f3n de tweets...", verbose)
 
-  tryCatch({
-    if (!is.null(historicalok)) historicalok$session$close()
-    if (!is.null(twitter)) twitter$session$close()
-  }, error = function(e) {
-    .log_message(paste("Error cerrando sesiones:", e$message), verbose)
-  })
+  .close_sessions(historicalok, twitter)
 
   if (nrow(all_tweets) > 0) {
 

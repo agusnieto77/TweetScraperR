@@ -15,6 +15,12 @@
 #' @param timeout Tiempo de espera de la peticion en segundos.
 #'
 #' @return Un tibble con tweets recuperados desde Xquik.
+#'
+#' @note
+#' Xquik es un servicio comercial externo de terceros: esta funcion envia la
+#' consulta de busqueda y la clave de API configurada a los servidores de
+#' xquik.com.
+#'
 #' @export
 #'
 #' @examples
@@ -56,7 +62,7 @@ getTweetsXquikSearch <- function(
   target_count <- as.integer(n_tweets)
   request_url <- paste0(sub("/+$", "", base_url), "/api/v1/x/tweets/search")
   tweets <- list()
-  seen_tweets <- character()
+  seen_tweets <- new.env(parent = emptyenv())
   seen_cursors <- character()
   captured_at <- Sys.time()
   cursor <- NULL
@@ -99,9 +105,9 @@ getTweetsXquikSearch <- function(
 
     for (tweet in page_tweets) {
       tweet_key <- xquik_tweet_key(tweet)
-      if (!tweet_key %in% seen_tweets) {
+      if (!exists(tweet_key, envir = seen_tweets, inherits = FALSE)) {
         tweets[[length(tweets) + 1L]] <- tweet
-        seen_tweets <- c(seen_tweets, tweet_key)
+        assign(tweet_key, TRUE, envir = seen_tweets)
       }
       if (length(tweets) >= target_count) {
         break

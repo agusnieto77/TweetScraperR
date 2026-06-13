@@ -4,28 +4,28 @@
 #'
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
 #'
-#' Esta funci\u00f3n recupera URLs de tweets basados en una consulta de b\u00fasqueda en tiempo real en Twitter.
-#' Utiliza autenticaci\u00f3n en Twitter mediante el nombre de usuario y la contrase\u00f1a proporcionados,
-#' o los valores predeterminados de las variables de entorno del sistema. Despu\u00e9s de autenticar al usuario,
-#' la funci\u00f3n realiza la b\u00fasqueda especificada por el par\u00e1metro `search` y recoge las URLs de los tweets que
+#' Esta función recupera URLs de tweets basados en una consulta de búsqueda en tiempo real en Twitter.
+#' Utiliza autenticación en Twitter mediante el nombre de usuario y la contraseña proporcionados,
+#' o los valores predeterminados de las variables de entorno del sistema. Después de autenticar al usuario,
+#' la función realiza la búsqueda especificada por el parámetro `search` y recoge las URLs de los tweets que
 #' coinciden con la consulta.
-#' El proceso de recolecci\u00f3n de URLs se ejecuta en un bucle que contin\u00faa hasta que se alcanza el n\u00famero m\u00e1ximo
-#' de URLs especificado por el par\u00e1metro `n_urls` o hasta que se realizan varios intentos consecutivos sin
-#' encontrar nuevas URLs, indicando que no hay m\u00e1s resultados disponibles en ese momento. La funci\u00f3n incorpora
-#' mecanismos de manejo de errores y tiempos de espera para asegurar que las conexiones y b\u00fasquedas se realicen
+#' El proceso de recolección de URLs se ejecuta en un bucle que continúa hasta que se alcanza el número máximo
+#' de URLs especificado por el parámetro `n_urls` o hasta que se realizan varios intentos consecutivos sin
+#' encontrar nuevas URLs, indicando que no hay más resultados disponibles en ese momento. La función incorpora
+#' mecanismos de manejo de errores y tiempos de espera para asegurar que las conexiones y búsquedas se realicen
 #' de manera robusta y continua.
-#' Las URLs de los tweets recolectados se almacenan en un vector y, si el par\u00e1metro `save` es TRUE, se guardan
-#' en un archivo con formato `.rds` en el directorio especificado por el par\u00e1metro `dir`. Este archivo se nombra
-#' de manera \u00fanica utilizando la consulta de b\u00fasqueda y la marca de tiempo del momento en que se realiza la
-#' recolecci\u00f3n, asegurando que no se sobrescriban archivos anteriores.
+#' Las URLs de los tweets recolectados se almacenan en un vector y, si el parámetro `save` es TRUE, se guardan
+#' en un archivo con formato `.rds` en el directorio especificado por el parámetro `dir`. Este archivo se nombra
+#' de manera única utilizando la consulta de búsqueda y la marca de tiempo del momento en que se realiza la
+#' recolección, asegurando que no se sobrescriban archivos anteriores.
 #'
-#' @param search La consulta de b\u00fasqueda para recuperar tweets. Por defecto es "#RStats".
-#' @param n_urls El n\u00famero m\u00e1ximo de URLs de tweets a recuperar. Por defecto es 100.
-#' @param xuser Nombre de usuario de Twitter para autenticaci\u00f3n. Por defecto es el valor de la variable de entorno del sistema USER.
-#' @param xpass Contrase\u00f1a de Twitter para autenticaci\u00f3n. Por defecto es el valor de la variable de entorno del sistema PASS.
+#' @param search La consulta de búsqueda para recuperar tweets. Por defecto es "#RStats".
+#' @param n_urls El número máximo de URLs de tweets a recuperar. Por defecto es 100.
+#' @param xuser Nombre de usuario de Twitter para autenticación. Por defecto es el valor de la variable de entorno TWITTER_USER (o USER si no está definida).
+#' @param xpass Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno TWITTER_PASS (o PASS si no está definida).
 #' @param dir Directorio para guardar el archivo RDS con las URLs recolectadas.
 #' @param timeout Tiempo de espera entre solicitudes en segundos. Por defecto es 10.
-#' @param save L\u00f3gico. Indica si se debe guardar el resultado en un archivo RDS (por defecto TRUE).
+#' @param save Lógico. Indica si se debe guardar el resultado en un archivo RDS (por defecto TRUE).
 #'
 #' @return Un vector que contiene las URLs de tweets recuperadas.
 #' @export
@@ -39,7 +39,7 @@
 #' }
 #'
 #' @references
-#' Puedes encontrar m\u00e1s informaci\u00f3n sobre el paquete TweetScrapeR en:
+#' Puedes encontrar más información sobre el paquete TweetScrapeR en:
 #' <https://github.com/agusnieto77/TweetScraperR>
 #'
 #' @importFrom rvest read_html_live html_elements html_attr
@@ -49,93 +49,65 @@ getUrlsSearchStreaming <- function(
     search = "#RStats",
     timeout = 10,
     n_urls = 100,
-    xuser = Sys.getenv("USER"),
-    xpass = Sys.getenv("PASS"),
+    xuser = Sys.getenv("TWITTER_USER", Sys.getenv("USER")),
+    xpass = Sys.getenv("TWITTER_PASS", Sys.getenv("PASS")),
     dir = getwd(),
     save = TRUE
 ) {
-  success <- FALSE
-  while (!success) {
-    tryCatch({
-      success2 <- FALSE
-      while (!success2) {
-        tryCatch({
-          twitter <- rvest::read_html_live("https://x.com/i/flow/login")
-          success2 <- TRUE
-        }, error = function(e) {
-          if (grepl("loadEventFired", e$message)) {
-            message("Error de tiempo de espera, reintentando...")
-            Sys.sleep(5)
-          } else {
-            stop(e)
-          }
-        })
-      }
-      Sys.sleep(5)
-      userx <- "#layers > div > div > div > div > div > div > div.css-175oi2r > div.css-175oi2r > div > div > div.css-175oi2r > div.css-175oi2r > div > div > div > div.css-175oi2r > label > div > div.css-175oi2r > div > input"
-      nextx <- "#layers div > div > div > button:nth-child(6) > div"
-      passx <- "#layers > div > div > div > div > div > div > div > div > div > div > div > div > div > div > div > div > div > label > div > div > div > input"
-      login <- "#layers > div > div > div > div > div > div > div.css-175oi2r > div.css-175oi2r > div > div > div.css-175oi2r > div.css-175oi2r.r-16y2uox > div.css-175oi2r > div > div.css-175oi2r > div > div > button"
-      twitter$type(css = userx, text = xuser)
-      twitter$click(css = nextx, n_clicks = 1)
-      Sys.sleep(1)
-      twitter$type(css = passx, text = xpass)
-      twitter$click(css = login, n_clicks = 1)
-      Sys.sleep(1)
-    }, error = function(e) {
-      message("La cuenta ya est\u00e1 autenticada")
-    })
-    tweets_urls <- c()
-    attempts <- 0
-    max_attempts <- 3
-    cat("Inici\u00f3 la recolecci\u00f3n de URLs.\n")
-    success <- TRUE
-    while (TRUE) {
-      if (length(tweets_urls) > n_urls || attempts >= max_attempts) {
-        cat("Finaliz\u00f3 la recolecci\u00f3n de URLs.\n")
-        break
-      }
-      url_tweet <- "div.css-175oi2r > div > div.css-175oi2r > a.css-146c3p1.r-bcqeeo.r-1ttztb7.r-qvutc0.r-37j5jr.r-a023e6"
-      try({
-        success3 <- FALSE
-        while (!success3) {
-          tryCatch({
-            searchok <- rvest::read_html_live(paste0("https://x.com/search?q=", gsub("#", "%23", search), "&src=typed_query&f=live"))
-            success3 <- TRUE
-          }, error = function(e) {
-            if (grepl("loadEventFired", e$message)) {
-              message("Error de tiempo de espera, reintentando...")
-              Sys.sleep(5)
-            } else {
-              stop(e)
-            }
-          })
-        }
-        Sys.sleep(1.5)
-        urls_tweets <- rvest::html_attr(searchok$html_elements(css = url_tweet), "href")
-        urls_tweets <- urls_tweets[grep("/status/", urls_tweets)]
-        new_tweets <- unique(urls_tweets[!urls_tweets %in% tweets_urls])
-        tweets_urls <- unique(append(tweets_urls, new_tweets))
-        tweets_urls <- tweets_urls[!is.na(tweets_urls)]
-        message("URLs recolectadas: ", length(tweets_urls))
-        searchok$session$close()
-        Sys.sleep(timeout)
-        if (length(new_tweets) == 0) {
-          attempts <- attempts + 1
-        } else {
-          attempts <- 0
-        }
-      }, silent = TRUE)
+  twitter <- NULL
+  searchok <- NULL
+  on.exit(.close_sessions(searchok, twitter), add = TRUE)
+  twitter <- tryCatch({
+    .x_login(xuser, xpass)
+  }, error = function(e) {
+    message("La cuenta ya est\u00e1 autenticada. ", conditionMessage(e))
+    NULL
+  })
+  tweets_urls <- c()
+  attempts <- 0
+  max_attempts <- 3
+  cat("Inici\u00f3 la recolecci\u00f3n de URLs.\n")
+  searchok <- .read_html_live_retry(paste0("https://x.com/search?q=", gsub("#", "%23", search), "&src=typed_query&f=live"))
+  primera_pasada <- TRUE
+  while (TRUE) {
+    if (length(tweets_urls) > n_urls || attempts >= max_attempts) {
+      cat("Finaliz\u00f3 la recolecci\u00f3n de URLs.\n")
+      break
     }
-    twitter$session$close()
+    ok <- tryCatch({
+      if (primera_pasada) {
+        primera_pasada <- FALSE
+      } else {
+        searchok$session$Page$reload()
+      }
+      Sys.sleep(1.5)
+      urls_tweets <- rvest::html_attr(searchok$html_elements(css = .sel$tweet_url), "href")
+      urls_tweets <- urls_tweets[grep("/status/", urls_tweets)]
+      new_tweets <- unique(urls_tweets[!urls_tweets %in% tweets_urls])
+      tweets_urls <- unique(append(tweets_urls, new_tweets))
+      tweets_urls <- tweets_urls[!is.na(tweets_urls)]
+      message("URLs recolectadas: ", length(tweets_urls))
+      Sys.sleep(timeout)
+      if (length(new_tweets) == 0) {
+        attempts <- attempts + 1
+      } else {
+        attempts <- 0
+      }
+      TRUE
+    }, error = function(e) {
+      message("Error al recolectar URLs: ", conditionMessage(e))
+      FALSE
+    })
+    if (!ok) {
+      attempts <- attempts + 1
+    }
+  }
+  if (length(tweets_urls) > 0) {
     tweets_urls <- tweets_urls[1:min(length(tweets_urls), n_urls)]
     tweets_urls <- paste0("https://x.com", tweets_urls)
-    if (save) {
-      saveRDS(tweets_urls, paste0(dir, "/search_live_", gsub("#", "hashtag_", search), "_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
-      cat("URLs procesadas y guardadas.\n")
-    } else {
-      cat("URLs procesadas. No se han guardado en un archivo RDS.\n")
-    }
-    return(tweets_urls)
+    .save_rds(tweets_urls, dir, paste0("search_live_", gsub("#", "hashtag_", search)), save = save, label = "URLs")
+  } else {
+    warning("No se encontraron URLs de tweets.")
   }
+  return(tweets_urls)
 }

@@ -4,16 +4,16 @@
 #' 
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
 #' 
-#' Esta funci\u00f3n recolecta tweets de forma iterativa utilizando TweetScraperR,
-#' con la opci\u00f3n de cerrar el navegador entre iteraciones.
+#' Esta función recolecta tweets de forma iterativa utilizando TweetScraperR,
+#' con la opción de cerrar el navegador entre iteraciones.
 #'
-#' @param iterations N\u00famero de iteraciones a realizar
-#' @param search T\u00e9rmino de b\u00fasqueda para los tweets
-#' @param n_tweets N\u00famero de tweets a recolectar en cada iteraci\u00f3n
+#' @param iterations Número de iteraciones a realizar
+#' @param search Término de búsqueda para los tweets
+#' @param n_tweets Número de tweets a recolectar en cada iteración
 #' @param sleep Tiempo de espera para la carga de tweets. Por defecto este valor es de 3 segundos.
-#' @param dir Directorio donde se guardar\u00e1n los tweets
-#' @param system Sistema operativo ('windows', 'unix', 'macOS')
-#' @param kill_system Booleano que indica si se debe cerrar el navegador despu\u00e9s de cada iteraci\u00f3n (por defecto: FALSE)
+#' @param dir Directorio donde se guardarán los tweets
+#' @param system Sistema operativo ('windows', 'unix', 'macOS'). Se mantiene por compatibilidad; el cierre del navegador ya no depende del sistema operativo.
+#' @param kill_system Booleano que indica si se debe cerrar el navegador (solo las sesiones propias del paquete) después de cada iteración (por defecto: FALSE)
 #' @param sleep_time Tiempo de espera entre iteraciones en segundos. Por defecto este valor es de 300 segundos.
 #'
 #' @return No devuelve un valor, pero guarda los tweets en el directorio especificado
@@ -47,19 +47,6 @@ getTweetsSearchStreamingFor <- function(
     dir.create(dir, recursive = TRUE)
   }
   
-  # Funci\u00f3n para cerrar el navegador seg\u00fan el sistema operativo
-  close_browser <- function(system) {
-    if (system == "windows") {
-      system("taskkill /F /IM chrome.exe", intern = TRUE, ignore.stderr = TRUE)
-    } else if (system == "unix") {
-      system("pkill chrome")
-    } else if (system == "mac") {
-      system("pkill -x 'Google Chrome'")
-    } else {
-      warning("Sistema operativo no reconocido. No se cerrar\u00e1 el navegador.")
-    }
-  }
-  
   # Bucle principal
   for (i in 1:iterations) {
     cat("Iteraci\u00f3n:", i, "\n")
@@ -70,9 +57,9 @@ getTweetsSearchStreamingFor <- function(
       warning("Error en la iteraci\u00f3n ", i, ": ", conditionMessage(e))
     })
     
-    # Solo cerrar el navegador si kill_system es TRUE
+    # Solo cerrar el navegador (sesiones propias del paquete) si kill_system es TRUE
     if (kill_system) {
-      close_browser(system)
+      .close_browser_scoped()
     }
     
     if (i < iterations) {  # No esperar despu\u00e9s de la \u00faltima iteraci\u00f3n

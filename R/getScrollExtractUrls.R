@@ -1,40 +1,40 @@
-#' Extraer las urls de los tweets de una l\u00ednea de tiempo de Twitter mediante desplazamiento
+#' Extract Tweet URLs from a Timeline by Scrolling
 #'
 #' @description
 #' 
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
 #' 
-#' Esta funci\u00f3n extrae las urls de los tweets de una l\u00ednea de tiempo de Twitter previamente abierta,
-#' desplaz\u00e1ndose por la p\u00e1gina para recopilar la informaci\u00f3n deseada.
+#' Esta función extrae las urls de los tweets de una línea de tiempo de Twitter previamente abierta,
+#' desplazándose por la página para recopilar la información deseada.
 #'
-#' @param objeto Un objeto de sesi\u00f3n de navegador web, por defecto 'timeline'.
-#' @param username Character. El nombre de usuario de Twitter cuya l\u00ednea de tiempo se est\u00e1 extrayendo.
-#' @param n_tweets Numeric. El n\u00famero m\u00e1ximo de tweets a extraer. Por defecto es 100.
-#' @param dir Character. El directorio donde se guardar\u00e1 el archivo RDS con los tweets extra\u00eddos.
+#' @param objeto Un objeto de sesión de navegador web, por defecto 'timeline'.
+#' @param username Character. El nombre de usuario de Twitter cuya línea de tiempo se está extrayendo.
+#' @param n_tweets Numeric. El número máximo de tweets a extraer. Por defecto es 100.
+#' @param dir Character. El directorio donde se guardará el archivo RDS con los tweets extraídos.
 #'             Por defecto es el directorio de trabajo actual.
 #' @param save Logical. Indica si se debe guardar el resultado en un archivo RDS. Por defecto es TRUE.
 #'
-#' @return Un vector con las urls extra\u00eddas
+#' @return Un vector con las urls extraídas
 #'
 #' @details
-#' La funci\u00f3n realiza las siguientes acciones:
-#' 1. Inicia la extracci\u00f3n de tweets de la l\u00ednea de tiempo.
-#' 2. Desplaza la p\u00e1gina hacia abajo para cargar m\u00e1s tweets.
+#' La función realiza las siguientes acciones:
+#' 1. Inicia la extracción de tweets de la línea de tiempo.
+#' 2. Desplaza la página hacia abajo para cargar más tweets.
 #' 3. Extrae las urls de los tweets visibles.
-#' 4. Contin\u00faa el proceso hasta alcanzar el n\u00famero deseado de urls o hasta que no se carguen m\u00e1s tweets nuevos.
-#' 5. Si save es TRUE, guarda las urls extra\u00eddas en un archivo RDS en el directorio especificado.
+#' 4. Continúa el proceso hasta alcanzar el número deseado de urls o hasta que no se carguen más tweets nuevos.
+#' 5. Si save es TRUE, guarda las urls extraídas en un archivo RDS en el directorio especificado.
 #'
-#' La funci\u00f3n utiliza selectores CSS espec\u00edficos para extraer la url de los tweets.
-#' Si la extracci\u00f3n se detiene antes de alcanzar el n\u00famero deseado de tweets, puede ser debido a
-#' limitaciones en la carga de tweets por parte de Twitter o problemas de conexi\u00f3n.
+#' La función utiliza selectores CSS específicos para extraer la url de los tweets.
+#' Si la extracción se detiene antes de alcanzar el número deseado de tweets, puede ser debido a
+#' limitaciones en la carga de tweets por parte de Twitter o problemas de conexión.
 #'
 #' @note
-#' Esta funci\u00f3n asume que ya se ha abierto una sesi\u00f3n de navegador con la l\u00ednea de tiempo de Twitter
-#' utilizando la funci\u00f3n `openTimeline()` u otra funci\u00f3n similar.
+#' Esta función asume que ya se ha abierto una sesión de navegador con la línea de tiempo de Twitter
+#' utilizando la función `openTimeline()` u otra función similar.
 #'
 #' @examples
 #' \dontrun{
-#' # Primero, abrir una l\u00ednea de tiempo
+#' # Primero, abrir una línea de tiempo
 #' openTimeline("rstatstweet")
 #' 
 #' # Luego, extraer tweets y guardar el resultado
@@ -43,67 +43,46 @@
 #' # Extraer tweets sin guardar el resultado
 #' urls_extraidas <- getScrollExtractUrls(timeline, "rstatstweet", n_tweets = 200, save = FALSE)
 #' 
-#' # Cerrar la l\u00ednea de tiempo despu\u00e9s de la extracci\u00f3n
+#' # Cerrar la línea de tiempo después de la extracción
 #' closeTimeline()
 #' }
 #'
 #' @seealso 
-#' \code{\link{openTimeline}} para abrir una l\u00ednea de tiempo de Twitter.
-#' \code{\link{closeTimeline}} para cerrar la sesi\u00f3n del navegador despu\u00e9s de la extracci\u00f3n.
+#' \code{\link{openTimeline}} para abrir una línea de tiempo de Twitter.
+#' \code{\link{closeTimeline}} para cerrar la sesión del navegador después de la extracción.
 #'
 #' @importFrom rvest html_attr html_text html_elements
 #'
 #' @export
 #' 
 
-getScrollExtractUrls <- function(objeto = timeline, 
-                                 username = "rstatstweet", 
-                                 n_tweets = 100, 
-                                 dir = getwd(), 
+getScrollExtractUrls <- function(objeto = timeline,
+                                 username = "rstatstweet",
+                                 n_tweets = 100,
+                                 dir = getwd(),
                                  save = TRUE) {
-  fech <- "div > div > div > a > time"
-  user1 <- "div.css-175oi2r.r-18u37iz.r-1wbh5a2.r-1ez5h0i > div > div.css-175oi2r.r-1wbh5a2.r-dnmrzs > a > div > span"
-  tweet <- "#react-root > div > div > div.css-175oi2r.r-1f2l425.r-13qz1uu.r-417010.r-18u37iz > main > div > div > div > div > div > div:nth-child(3) > div > div > section > div > div > div > div > div > article > div > div > div.css-175oi2r.r-18u37iz > div.css-175oi2r.r-1iusvr4.r-16y2uox.r-1777fci.r-kzbkwu > div:nth-child(2)"
-  url_tweet <- "div.css-175oi2r.r-18u37iz.r-1wbh5a2.r-1ez5h0i > div > div.css-175oi2r.r-18u37iz.r-1q142lx > a"
-  user2 <- "div.css-175oi2r.r-18u37iz.r-1wbh5a2.r-1ez5h0i > div > div.css-175oi2r.r-18u37iz.r-1q142lx > div > a"
   nom_ob <- deparse(substitute(objeto))
-  tweets_udb <- c()
-  i <- 1
-  repetitions <- 0
-  max_repetitions <- 3
-  prev_count <- -1
+  url <- paste0("https://x.com/", username)
   cat("Inici\u00f3 la recolecci\u00f3n de tweets.\n")
-  while (TRUE) {
-    if (length(tweets_udb) > n_tweets || repetitions >= max_repetitions) {
-      cat("Finaliz\u00f3 la recolecci\u00f3n de tweets.\n")
-      break
-    }
-    i_tweets <- rvest::html_attr(objeto$html_elements(css = paste(url_tweet, user2, sep = ", ")), "href")
-    new_count <- length(i_tweets)
-    if (new_count == prev_count) {
-      repetitions <- repetitions + 1
-    }
-    else {
-      repetitions <- 0
-    }
-    if (repetitions >= max_repetitions) {
-      cat("Finaliz\u00f3 la recolecci\u00f3n de tweets.")
-      break
-    }
-    tweets_udb <- unique(append(tweets_udb, i_tweets))
-    prev_count <- new_count
-    objeto$scroll_by(top = 4000, left = 0)
-    message("Tweets recolectados: ", length(tweets_udb))
-    Sys.sleep(2.5)
+
+  res <- .pw_collect(url, mode = "urls", n_max = n_tweets, max_attempts = 3)
+  if (isTRUE(res$reason == "not_logged_in")) {
+    stop("No hay una sesi\u00f3n activa de X. Import\u00e1 tu sesi\u00f3n con importSessionX(auth_token, ct0) antes de scrapear.")
   }
-  tweets_udb <- paste0("https://x.com", tweets_udb)
-  
-  if (save) {
-    saveRDS(tweets_udb, paste0(dir, "/", nom_ob, "_", username, "_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
-    cat("Los tweets se han guardado en un archivo RDS.\n")
+  if (!isTRUE(res$ok)) {
+    stop("No se pudo completar la operaci\u00f3n: ", .pw_or(res$error, .pw_or(res$reason, "error desconocido")))
+  }
+  cat("Finaliz\u00f3 la recolecci\u00f3n de tweets.\n")
+
+  tweets_udb <- res$items
+  tweets_udb <- tweets_udb[grep("/status/", tweets_udb)]
+  if (length(tweets_udb) > 0) {
+    tweets_udb <- utils::head(tweets_udb, n_tweets)
+    tweets_udb <- ifelse(grepl("^https?://", tweets_udb), tweets_udb, paste0("https://x.com", tweets_udb))
+    .save_rds(tweets_udb, dir, paste0(nom_ob, "_", username), save = save, label = "URLs")
   } else {
-    cat("Los tweets no se han guardado en un archivo RDS.\n")
+    warning("No se encontraron URLs de tweets.")
   }
-  
+
   return(tweets_udb)
 }

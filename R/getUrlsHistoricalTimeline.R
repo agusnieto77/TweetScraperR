@@ -4,47 +4,58 @@
 #'
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
 #'
-#' Esta funci\u00f3n recupera URLs de tweets del timeline hist\u00f3rico de unx usuarix en Twitter,
-#' basado en un rango de fechas especificado. Opcionalmente puede realizar la autenticaci\u00f3n en Twitter
-#' mediante el nombre de usuarix y la contrase\u00f1a proporcionados, o los valores predeterminados de
-#' las variables de entorno del sistema. Despu\u00e9s de autenticar al usuarix (si open=TRUE), la funci\u00f3n
-#' realiza una b\u00fasqueda de tweets publicados por le usuarix especificadx dentro del rango
-#' de fechas definido por los par\u00e1metros `since` y `until`. Las URLs de los tweets encontrados
-#' se recogen hasta alcanzar el n\u00famero m\u00e1ximo de URLs especificado por el par\u00e1metro `n_urls` o
+#' Esta función recupera URLs de tweets del timeline histórico de unx usuarix en Twitter,
+#' basado en un rango de fechas especificado. Opcionalmente puede realizar la autenticación en Twitter
+#' mediante el nombre de usuarix y la contraseña proporcionados, o los valores predeterminados de
+#' las variables de entorno del sistema. Después de autenticar al usuarix (si open=TRUE), la función
+#' realiza una búsqueda de tweets publicados por le usuarix especificadx dentro del rango
+#' de fechas definido por los parámetros `since` y `until`. Las URLs de los tweets encontrados
+#' se recogen hasta alcanzar el número máximo de URLs especificado por el parámetro `n_urls` o
 #' hasta que no se encuentren nuevas URLs en varios intentos consecutivos. Los resultados se
-#' guardan en un archivo con formato `.rds` en el directorio especificado por el par\u00e1metro `dir`
-#' si el par\u00e1metro `save` es TRUE.
+#' guardan en un archivo con formato `.rds` en el directorio especificado por el parámetro `dir`
+#' si el parámetro `save` es TRUE.
 #'
 #' @param username Nombre de usuarix de Twitter del que se desean recuperar los tweets. Por defecto es "rstatstweet".
 #' @param timeout Tiempo de espera entre solicitudes en segundos. Por defecto es 10.
-#' @param n_urls El n\u00famero m\u00e1ximo de URLs de tweets a recuperar. Por defecto es 100.
-#' @param since Fecha de inicio para la b\u00fasqueda de tweets (en formato "YYYY-MM-DD"). Por defecto es "2018-10-26".
-#' @param until Fecha de fin para la b\u00fasqueda de tweets (en formato "YYYY-MM-DD"). Por defecto es "2018-10-30".
-#' @param open Indica si se debe realizar el proceso de autenticaci\u00f3n (por defecto FALSE).
-#' @param xuser Nombre de usuarix de Twitter para autenticaci\u00f3n. Por defecto es el valor de la variable de entorno del sistema USER.
-#' @param xpass Contrase\u00f1a de Twitter para autenticaci\u00f3n. Por defecto es el valor de la variable de entorno del sistema PASS.
+#' @param n_urls El número máximo de URLs de tweets a recuperar. Por defecto es 100.
+#' @param since Fecha de inicio para la búsqueda de tweets (en formato "YYYY-MM-DD"). Por defecto es "2018-10-26".
+#' @param until Fecha de fin para la búsqueda de tweets (en formato "YYYY-MM-DD"). Por defecto es "2018-10-30".
+#' @param open Indica si se debe realizar el proceso de autenticación (por defecto FALSE).
+#' @param xuser Nombre de usuarix de Twitter para autenticación. Por defecto es el valor de la variable de entorno TWITTER_USER (o, si no está definida, USER).
+#' @param xpass Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno TWITTER_PASS (o, si no está definida, PASS).
 #' @param dir Directorio para guardar el archivo RDS con las URLs recolectadas. Por defecto es el directorio de trabajo actual.
-#' @param save L\u00f3gico. Indica si se debe guardar el resultado en un archivo RDS (por defecto TRUE).
+#' @param save Lógico. Indica si se debe guardar el resultado en un archivo RDS (por defecto TRUE).
 #' @return Un vector que contiene las URLs de tweets recuperadas.
 #' @export
 #'
 #' @examples
 #' \dontrun{
-#' # Sin autenticaci\u00f3n
-#' getUrlsHistoricalTimeline(username = "rstatstweet", n_urls = 50, since = "2018-10-26", until = "2018-10-30")
+#' # Sin autenticación
+#' getUrlsHistoricalTimeline(
+#'   username = "rstatstweet", n_urls = 50,
+#'   since = "2018-10-26", until = "2018-10-30"
+#' )
 #'
-#' # Con autenticaci\u00f3n
-#' getUrlsHistoricalTimeline(username = "rstatstweet", n_urls = 50, since = "2018-10-26", until = "2018-10-30", open = TRUE)
+#' # Con autenticación
+#' getUrlsHistoricalTimeline(
+#'   username = "rstatstweet", n_urls = 50,
+#'   since = "2018-10-26", until = "2018-10-30",
+#'   open = TRUE
+#' )
 #'
 #' # Sin guardar los resultados
-#' getUrlsHistoricalTimeline(username = "rstatstweet", n_urls = 50, since = "2018-10-26", until = "2018-10-30", save = FALSE)
+#' getUrlsHistoricalTimeline(
+#'   username = "rstatstweet", n_urls = 50,
+#'   since = "2018-10-26", until = "2018-10-30",
+#'   save = FALSE
+#' )
 #' }
 #'
 #' @references
-#' Puedes encontrar m\u00e1s informaci\u00f3n sobre el paquete TweetScrapeR en:
+#' Puedes encontrar más información sobre el paquete TweetScrapeR en:
 #' <https://github.com/agusnieto77/TweetScraperR>
 #'
-#' @importFrom rvest read_html_live html_elements html_attr
+#' @importFrom rvest html_elements html_attr
 #'
 
 getUrlsHistoricalTimeline <- function(
@@ -54,104 +65,31 @@ getUrlsHistoricalTimeline <- function(
     since = "2018-10-26",
     until = "2018-10-30",
     open = FALSE,
-    xuser = Sys.getenv("USER"),
-    xpass = Sys.getenv("PASS"),
+    xuser = Sys.getenv("TWITTER_USER", Sys.getenv("USER")),
+    xpass = Sys.getenv("TWITTER_PASS", Sys.getenv("PASS")),
     dir = getwd(),
     save = TRUE
 ) {
-  success <- FALSE
-  while (!success) {
-    twitter <- NULL
+  usersearh <- paste0("https://x.com/search?f=live&q=%28from%3A", username, "%29+until%3A", until, "+since%3A", since, "&src=typed_query")
+  cat("Inici\u00f3 la recolecci\u00f3n de URLs.\n")
 
-    if (open) {
-      tryCatch({
-        success2 <- FALSE
-        while (!success2) {
-          tryCatch({
-            twitter <- rvest::read_html_live("https://x.com/i/flow/login")
-            success2 <- TRUE
-          }, error = function(e) {
-            if (grepl("loadEventFired", e$message)) {
-              message("Error de tiempo de espera, reintentando...")
-              Sys.sleep(5)
-            } else {
-              stop(e)
-            }
-          })
-        }
-        Sys.sleep(5)
-        userx <- "#layers > div > div > div > div > div > div > div.css-175oi2r > div.css-175oi2r > div > div > div.css-175oi2r > div.css-175oi2r > div > div > div > div.css-175oi2r > label > div > div.css-175oi2r > div > input"
-        nextx <- "#layers div > div > div > button:nth-child(6) > div"
-        passx <- "#layers > div > div > div > div > div > div > div > div > div > div > div > div > div > div > div > div > div > label > div > div > div > input"
-        login <- "#layers > div > div > div > div > div > div > div.css-175oi2r > div.css-175oi2r > div > div > div.css-175oi2r > div.css-175oi2r.r-16y2uox > div.css-175oi2r > div > div.css-175oi2r > div > div > button"
-        twitter$type(css = userx, text = xuser)
-        twitter$click(css = nextx, n_clicks = 1)
-        Sys.sleep(1)
-        twitter$type(css = passx, text = xpass)
-        twitter$click(css = login, n_clicks = 1)
-        Sys.sleep(1)
-      }, error = function(e) {
-        message("La cuenta ya est\u00e1 autenticada o ha ocurrido un error: ", e$message)
-      })
-    }
-
-    url_tweet <- "div.css-175oi2r > div > div.css-175oi2r > a.css-146c3p1.r-bcqeeo.r-1ttztb7.r-qvutc0.r-37j5jr.r-a023e6"
-    usersearh <- paste0("https://x.com/search?f=live&q=%28from%3A", username, "%29+until%3A", until, "+since%3A", since, "&src=typed_query")
-    success3 <- FALSE
-    while (!success3) {
-      tryCatch({
-        historicalok <- rvest::read_html_live(usersearh)
-        success3 <- TRUE
-      }, error = function(e) {
-        if (grepl("loadEventFired", e$message)) {
-          message("Error de tiempo de espera, reintentando...")
-          Sys.sleep(5)
-        } else {
-          stop(e)
-        }
-      })
-    }
-    tweets_urls <- c()
-    attempts <- 0
-    max_attempts <- 3
-    success <- TRUE
-    while (TRUE) {
-      if (length(tweets_urls) >= n_urls || attempts >= max_attempts) {
-        cat("Finaliz\u00f3 la recolecci\u00f3n de URLs.\n")
-        break
-      }
-      tryCatch({
-        Sys.sleep(1.5)
-        urls_tweets <- rvest::html_attr(historicalok$html_elements(css = url_tweet), "href")
-        urls_tweets <- urls_tweets[grep("/status/", urls_tweets)]
-        new_tweets <- unique(urls_tweets[!urls_tweets %in% tweets_urls])
-        tweets_urls <- unique(c(tweets_urls, new_tweets))
-        tweets_urls <- tweets_urls[!is.na(tweets_urls)]
-        historicalok$scroll_by(top = 4000, left = 0)
-        message("URLs recolectadas: ", length(tweets_urls))
-        Sys.sleep(timeout)
-        if (length(new_tweets) == 0) {
-          attempts <- attempts + 1
-        } else {
-          attempts <- 0
-        }
-      }, error = function(e) {
-        message("Error al recolectar URLs: ", e$message)
-        attempts <- attempts + 1
-      })
-    }
-    historicalok$session$close()
-    if (!is.null(twitter)) {
-      twitter$session$close()
-    }
-    tweets_urls <- tweets_urls[1:min(length(tweets_urls), n_urls)]
-    tweets_urls <- paste0("https://x.com", tweets_urls)
-    if (save) {
-      saveRDS(tweets_urls, paste0(dir, "/urls_historical_timeline_", username, "_", gsub("-|:|\\.", "_", format(Sys.time(), "%Y_%m_%d_%X")), ".rds"))
-      cat("URLs procesadas y guardadas.\n")
-    } else {
-      cat("URLs procesadas. No se han guardado en un archivo RDS.\n")
-    }
-    return(tweets_urls)
+  res <- .pw_collect(usersearh, mode = "urls", n_max = n_urls, max_attempts = 3)
+  if (isTRUE(res$reason == "not_logged_in")) {
+    stop("No hay una sesi\u00f3n activa de X. Import\u00e1 tu sesi\u00f3n con importSessionX(auth_token, ct0) antes de scrapear.")
   }
+  if (!isTRUE(res$ok)) {
+    stop("No se pudo completar la operaci\u00f3n: ", .pw_or(res$error, .pw_or(res$reason, "error desconocido")))
+  }
+  cat("Finaliz\u00f3 la recolecci\u00f3n de URLs.\n")
+
+  tweets_urls <- res$items
+  tweets_urls <- tweets_urls[grep("/status/", tweets_urls)]
+  if (length(tweets_urls) > 0) {
+    tweets_urls <- utils::head(tweets_urls, n_urls)
+    tweets_urls <- ifelse(grepl("^https?://", tweets_urls), tweets_urls, paste0("https://x.com", tweets_urls))
+    .save_rds(tweets_urls, dir, paste0("urls_historical_timeline_", username), save = save, label = "URLs")
+  } else {
+    warning("No se encontraron URLs de tweets.")
+  }
+  return(tweets_urls)
 }

@@ -4,35 +4,35 @@
 #' 
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
 #' 
-#' Esta funci\u00f3n recolecta tweets de forma iterativa utilizando la funci\u00f3n optimizada
+#' Esta función recolecta tweets de forma iterativa utilizando la función optimizada
 #' getTweetsSearchStreaming2, con manejo robusto de errores, seguimiento de progreso,
-#' unificaci\u00f3n de datos y gesti\u00f3n eficiente de recursos del sistema.
-#' Optimizaci\u00f3n realizada con asistencia de Claude Sonnet 4 (Anthropic).
+#' unificación de datos y gestión eficiente de recursos del sistema.
+#' Optimización realizada con asistencia de Claude Sonnet 4 (Anthropic).
 #'
-#' @param iterations N\u00famero de iteraciones a realizar
-#' @param search T\u00e9rmino de b\u00fasqueda para los tweets
-#' @param n_tweets N\u00famero de tweets a recolectar en cada iteraci\u00f3n
+#' @param iterations Número de iteraciones a realizar
+#' @param search Término de búsqueda para los tweets
+#' @param n_tweets Número de tweets a recolectar en cada iteración
 #' @param sleep Tiempo de espera para la carga de tweets. Por defecto este valor es de 15 segundos.
-#' @param xuser Nombre de usuario de Twitter para autenticaci\u00f3n. Por defecto es el valor de la variable de entorno del sistema USER.
-#' @param xpass Contrase\u00f1a de Twitter para autenticaci\u00f3n. Por defecto es el valor de la variable de entorno del sistema PASS.
-#' @param dir Directorio donde se guardar\u00e1n los tweets
-#' @param system Sistema operativo ('windows', 'unix', 'macOS')
-#' @param kill_system Booleano que indica si se debe cerrar el navegador despu\u00e9s de cada iteraci\u00f3n (por defecto: FALSE)
+#' @param xuser Nombre de usuario de Twitter para autenticación. Por defecto es el valor de la variable de entorno TWITTER_USER (o USER si no está definida).
+#' @param xpass Contraseña de Twitter para autenticación. Por defecto es el valor de la variable de entorno TWITTER_PASS (o PASS si no está definida).
+#' @param dir Directorio donde se guardarán los tweets
+#' @param system Sistema operativo ('windows', 'unix', 'macOS'). Se mantiene por compatibilidad; el cierre del navegador ya no depende del sistema operativo.
+#' @param kill_system Booleano que indica si se debe cerrar el navegador (solo las sesiones propias del paquete) después de cada iteración (por defecto: FALSE)
 #' @param sleep_time Tiempo de espera entre iteraciones en segundos. Por defecto este valor es de 300 segundos.
-#' @param max_retries N\u00famero m\u00e1ximo de reintentos por iteraci\u00f3n (por defecto: 3)
+#' @param max_retries Número máximo de reintentos por iteración (por defecto: 3)
 #' @param backoff_factor Factor de backoff exponencial entre reintentos (por defecto: 2)
-#' @param consolidate_data Booleano para unificar todos los datos en un \u00fanico archivo al final (por defecto: TRUE)
-#' @param cleanup_individual Booleano para eliminar archivos individuales despu\u00e9s de unificar (por defecto: FALSE)
+#' @param consolidate_data Booleano para unificar todos los datos en un único archivo al final (por defecto: TRUE)
+#' @param cleanup_individual Booleano para eliminar archivos individuales después de unificar (por defecto: FALSE)
 #' @param verbose Booleano para mostrar mensajes detallados (por defecto: TRUE)
-#' @param progress_file Archivo para guardar el progreso de la recolecci\u00f3n (por defecto: NULL)
-#' @param resume_from Iteraci\u00f3n desde la cual resumir la recolecci\u00f3n (por defecto: 1)
+#' @param progress_file Archivo para guardar el progreso de la recolección (por defecto: NULL). Si el archivo ya existe, la recolección se reanuda automáticamente desde la iteración siguiente a la última completada, reutilizando el directorio de salida de la sesión anterior.
+#' @param resume_from Iteración desde la cual resumir la recolección (por defecto: 1). Si se indica explícitamente, tiene prioridad sobre el progreso guardado en progress_file.
 #'
-#' @return Lista con estad\u00edsticas de la recolecci\u00f3n y ruta del archivo unificado (si aplica)
+#' @return Lista con estadísticas de la recolección y ruta del archivo unificado (si aplica)
 #' @export
 #'
 #' @examples
 #' \dontrun{
-#' # Uso b\u00e1sico
+#' # Uso básico
 #' result <- getTweetsSearchStreamingFor2(
 #'   iterations = 5,
 #'   search = "Milei",
@@ -40,7 +40,7 @@
 #'   dir = "./data/tweets"
 #' )
 #' 
-#' # Uso avanzado con opciones de recuperaci\u00f3n
+#' # Uso avanzado con opciones de recuperación
 #' result <- getTweetsSearchStreamingFor2(
 #'   iterations = 10,
 #'   search = "#datascience",
@@ -56,7 +56,7 @@
 #'   verbose = TRUE
 #' )
 #' 
-#' # Resumir recolecci\u00f3n desde iteraci\u00f3n espec\u00edfica
+#' # Resumir recolección desde iteración específica
 #' result <- getTweetsSearchStreamingFor2(
 #'   iterations = 10,
 #'   search = "#RStats",
@@ -68,12 +68,12 @@
 #' }
 #'
 #' @references
-#' Puedes encontrar m\u00e1s informaci\u00f3n sobre el paquete TweetScrapeR en:
+#' Puedes encontrar más información sobre el paquete TweetScrapeR en:
 #' <https://github.com/agusnieto77/TweetScraperR>
 #' 
-#' Funci\u00f3n optimizada con asistencia de Claude Sonnet 4 (Anthropic, 2025).
+#' Función optimizada con asistencia de Claude Sonnet 4 (Anthropic, 2025).
 #' Optimizaciones incluyen: manejo robusto de errores, seguimiento de progreso,
-#' unificaci\u00f3n de datos, y gesti\u00f3n eficiente de recursos del sistema.
+#' unificación de datos, y gestión eficiente de recursos del sistema.
 #'
 #' @importFrom dplyr bind_rows distinct
 #' @importFrom tibble tibble
@@ -85,8 +85,8 @@ getTweetsSearchStreamingFor2 <- function(
     search,
     n_tweets,
     sleep = 15,
-    xuser = Sys.getenv("USER"),
-    xpass = Sys.getenv("PASS"),
+    xuser = Sys.getenv("TWITTER_USER", Sys.getenv("USER")),
+    xpass = Sys.getenv("TWITTER_PASS", Sys.getenv("PASS")),
     dir = getwd(),
     system = "unix",
     kill_system = FALSE,
@@ -153,27 +153,12 @@ getTweetsSearchStreamingFor2 <- function(
     .log_iterative("Cerrando navegador...", verbose)
     
     tryCatch({
-      if (system == "windows") {
-
-        system("taskkill /F /IM chrome.exe 2>NUL", intern = FALSE, ignore.stderr = TRUE)
-        system("taskkill /F /IM msedge.exe 2>NUL", intern = FALSE, ignore.stderr = TRUE)
-        system("taskkill /F /IM chromedriver.exe 2>NUL", intern = FALSE, ignore.stderr = TRUE)
-      } else if (system == "unix") {
-
-        system("pkill -f chrome 2>/dev/null || true")
-        system("pkill -f chromium 2>/dev/null || true")
-        system("pkill -f chromedriver 2>/dev/null || true")
-      } else if (system == "macOS" || system == "mac") {
-
-        system("pkill -x 'Google Chrome' 2>/dev/null || true")
-        system("pkill -x 'Chromium' 2>/dev/null || true")
-        system("pkill -f chromedriver 2>/dev/null || true")
-      } else {
-        .log_iterative("Sistema operativo no reconocido. No se cerrar\u00e1 el navegador.", verbose, "WARN")
-        return(FALSE)
-      }
+      # Cierre acotado: solo las sesiones chromote propias del paquete,
+      # sin tocar otros navegadores del usuario (el parámetro 'system'
+      # se conserva por compatibilidad)
+      .close_browser_scoped()
       
-      Sys.sleep(2)  
+      Sys.sleep(2)
       .log_iterative("Navegador cerrado exitosamente", verbose)
       return(TRUE)
       
@@ -183,7 +168,7 @@ getTweetsSearchStreamingFor2 <- function(
     })
   }
   
-  .save_progress <- function(progress_file, iteration, total_iterations, collected_tweets, failed_iterations, verbose = TRUE) {
+  .save_progress <- function(progress_file, iteration, total_iterations, collected_tweets, failed_iterations, output_directory, verbose = TRUE) {
     if (!is.null(progress_file)) {
       tryCatch({
         progress_data <- list(
@@ -192,6 +177,7 @@ getTweetsSearchStreamingFor2 <- function(
           total_iterations = total_iterations,
           collected_tweets = collected_tweets,
           failed_iterations = failed_iterations,
+          output_directory = output_directory,
           completion_percentage = round((iteration / total_iterations) * 100, 2)
         )
         saveRDS(progress_data, progress_file)
@@ -296,21 +282,36 @@ getTweetsSearchStreamingFor2 <- function(
   .log_iterative("=== Iniciando getTweetsSearchStreamingFor2 ===", verbose)
   .log_iterative(paste("Configuraci\u00f3n: Iteraciones:", iterations, "| B\u00fasqueda:", search, "| Tweets por iteraci\u00f3n:", n_tweets), verbose)
   
-  session_timestamp <- format(Sys.time(), "%Y_%m_%d_%H_%M_%S")
+  # El archivo de progreso se respeta tal como lo indicó el usuario (no se
+  # reubica dentro del directorio de sesión) para que sobreviva entre sesiones
+  previous_progress <- .load_progress(progress_file, verbose)
   
-  safe_dir_name <- .create_safe_directory_name(search, session_timestamp)
-  full_dir_path <- file.path(dir, safe_dir_name)
+  if (!is.null(previous_progress) &&
+      !is.null(previous_progress$output_directory) &&
+      dir.exists(previous_progress$output_directory)) {
+    # Reanudación: reutilizar el directorio de la sesión anterior para que
+    # la consolidación también incluya los datos ya recolectados
+    full_dir_path <- previous_progress$output_directory
+    safe_dir_name <- basename(full_dir_path)
+    .log_iterative(paste("Reutilizando directorio de la sesi\u00f3n anterior:", full_dir_path), verbose)
+  } else {
+    session_timestamp <- format(Sys.time(), "%Y_%m_%d_%H_%M_%S")
+    safe_dir_name <- .create_safe_directory_name(search, session_timestamp)
+    full_dir_path <- file.path(dir, safe_dir_name)
+  }
   
   if (!dir.exists(full_dir_path)) {
     dir.create(full_dir_path, recursive = TRUE)
     .log_iterative(paste("Directorio creado:", full_dir_path), verbose)
   }
   
-  if (!is.null(progress_file)) {
-    progress_file <- file.path(full_dir_path, basename(progress_file))
+  # Determinar la iteración inicial: un resume_from explícito tiene prioridad;
+  # si hay progreso guardado, continuar desde la iteración siguiente
+  start_iteration <- resume_from
+  if (!is.null(previous_progress) && missing(resume_from)) {
+    start_iteration <- min(previous_progress$current_iteration + 1, iterations)
+    .log_iterative(paste("Reanudando desde la iteraci\u00f3n", start_iteration, "seg\u00fan el progreso guardado"), verbose)
   }
-  
-  previous_progress <- .load_progress(progress_file, verbose)
   
   start_time <- Sys.time()
   successful_iterations <- 0
@@ -324,7 +325,7 @@ getTweetsSearchStreamingFor2 <- function(
     error_message = character()
   )
   
-  for (i in resume_from:iterations) {
+  for (i in start_iteration:iterations) {
     iteration_start <- Sys.time()
     .log_iterative(paste("=== ITERACI\u00d3N", i, "de", iterations, "==="), verbose)
     
@@ -390,7 +391,7 @@ getTweetsSearchStreamingFor2 <- function(
       .close_browser_system(system, verbose)
     }
     
-    .save_progress(progress_file, i, iterations, total_tweets_collected, failed_iterations, verbose)
+    .save_progress(progress_file, i, iterations, total_tweets_collected, failed_iterations, full_dir_path, verbose)
     
     if (i < iterations) {
       .log_iterative(paste("Esperando", sleep_time, "segundos antes de la pr\u00f3xima iteraci\u00f3n..."), verbose)
@@ -417,7 +418,7 @@ getTweetsSearchStreamingFor2 <- function(
     consolidated_result <- .consolidate_tweet_data(full_dir_path, search, cleanup_individual, verbose)
   }
   
-  if (!is.null(progress_file) && file.exists(progress_file) && resume_from == 1) {
+  if (!is.null(progress_file) && file.exists(progress_file)) {
     tryCatch({
       file.remove(progress_file)
       .log_iterative("Archivo de progreso eliminado tras completar recolecci\u00f3n", verbose)

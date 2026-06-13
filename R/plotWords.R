@@ -4,15 +4,15 @@
 #' 
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
 #' 
-#' Esta funci\u00f3n toma un dataframe de tweets y crea una nube de palabras
+#' Esta función toma un dataframe de tweets y crea una nube de palabras
 #' basada en el contenido de la columna 'texto' o 'tweet'.
 #'
 #' @param df Un dataframe que contiene una columna 'texto' o 'tweet' con el contenido de los tweets.
-#' @param min_freq Frecuencia m\u00ednima de palabras para incluir en la nube (por defecto 3).
-#' @param max_words N\u00famero m\u00e1ximo de palabras a incluir en la nube (por defecto 100).
+#' @param min_freq Frecuencia mínima de palabras para incluir en la nube (por defecto 3).
+#' @param max_words Número máximo de palabras a incluir en la nube (por defecto 100).
 #' @param random_order Booleano, si las palabras deben ordenarse aleatoriamente (por defecto FALSE).
 #' @param colors Vector de colores para las palabras (por defecto 'random-dark').
-#' @param size Tama\u00f1o de la fuente (por defecto 0.3).
+#' @param size Tamaño de la fuente (por defecto 0.3).
 #' @param lang idioma para las stopwords 'es', 'en', 'de', 'pt', etc. (por defecto 'es').
 #' @param sw vector de palabras extras para sumar a la lista de stopwords (por defecto NULL).
 #' 
@@ -21,8 +21,7 @@
 #' @importFrom wordcloud2 wordcloud2
 #' @importFrom quanteda corpus tokens tokens_remove tokens_tolower dfm topfeatures stopwords
 #' @importFrom dplyr filter slice_head
-#' @importFrom utils install.packages
-#' 
+#'
 #' @export
 #'
 #' @examples
@@ -40,20 +39,7 @@ plotWords <- function(
     lang = "es",
     sw = NULL
     ) {
-  
-  # Lista de paquetes necesarios
-  required_packages <- c("quanteda", "dplyr", "wordcloud2")
-  
-  # Funci\u00f3n para instalar paquetes si no est\u00e1n instalados
-  install_if_missing <- function(package) {
-    if (!requireNamespace(package, quietly = TRUE)) {
-      utils::install.packages(package, dependencies = TRUE)
-    }
-  }
-  
-  # Instalar paquetes necesarios
-  sapply(required_packages, install_if_missing)
-  
+
   # Verificar que el dataframe tiene una columna 'texto' o 'tweet'
   if ("texto" %in% colnames(df)) {
     text_column <- "texto"
@@ -63,7 +49,7 @@ plotWords <- function(
     stop("El dataframe debe contener una columna llamada 'texto' o 'tweet'")
   }
   
-  # Comprobaci\u00f3n para sw
+  # Comprobación para sw
   if (!is.null(sw)) {
     if (!is.character(sw)) {
       stop("'sw' debe ser una cadena de texto o un vector de cadenas de texto")
@@ -85,14 +71,14 @@ plotWords <- function(
     quanteda::tokens_remove(pattern = stop_words) |>
     quanteda::tokens_tolower()
   
-  # Crear una matriz de frecuencia de t\u00e9rminos
+  # Crear una matriz de frecuencia de términos
   dfm <- quanteda::dfm(tokens)
   
   # Convertir la matriz a un dataframe
   word_freq <- quanteda::topfeatures(dfm, n = Inf)
   df_word_freq <- data.frame(word = names(word_freq), freq = unname(word_freq))
   
-  # Filtrar palabras por frecuencia m\u00ednima y n\u00famero m\u00e1ximo de palabras
+  # Filtrar palabras por frecuencia mínima y número máximo de palabras
   df_word_freq <- df_word_freq |>
     dplyr::filter(freq >= min_freq) |>
     dplyr::slice_head(n = max_words)

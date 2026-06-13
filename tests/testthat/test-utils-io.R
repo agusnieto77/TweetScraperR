@@ -21,7 +21,11 @@ test_that(".save_rds con save=TRUE crea el archivo con el formato de nombre espe
   path <- res$value
 
   expect_true(file.exists(path))
-  expect_equal(dirname(path), d)
+  # Normalizar separadores: en Windows dirname() devuelve "/" y d puede tener "\"
+  expect_equal(
+    normalizePath(dirname(path), winslash = "/", mustWork = FALSE),
+    normalizePath(d, winslash = "/", mustWork = FALSE)
+  )
   # prefijo + timestamp %Y_%m_%d_%H_%M_%S + .rds
   expect_match(
     basename(path),

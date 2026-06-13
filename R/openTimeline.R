@@ -52,7 +52,7 @@ openTimeline <- function(username = "rstatstweet", view = TRUE) {
     attempts <- attempts + 1
     tryCatch({
       timeline <- rvest::read_html_live(paste0("https://x.com/", username))
-      assign("timeline", timeline, envir = .GlobalEnv)
+      assign("timeline", timeline, envir = .tsr_env)
       if (view) {
         return(timeline$view())
       } else {

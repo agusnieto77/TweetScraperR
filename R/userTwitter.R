@@ -67,6 +67,7 @@
 
 userTwitter <- function(xuser = Sys.getenv("TWITTER_USER", Sys.getenv("USER"))) {
   .Deprecated(msg = "userTwitter() qued\u00f3 obsoleta: X bloquea el login automatizado. Us\u00e1 importSessionX(auth_token, ct0) para cargar tu sesi\u00f3n desde el navegador. Ver ?importSessionX.")
+  twitter <- get0("twitter", envir = .tsr_env)
   .x_fill(twitter, .sel$login_user, xuser)
   Sys.sleep(1)
   .x_click_text(twitter, c("Continuar", "Siguiente", "Next"))

@@ -29,9 +29,10 @@
 closeTwitter <- function() {
   .Deprecated(msg = "closeTwitter() qued\u00f3 obsoleta: X bloquea el login automatizado. Us\u00e1 importSessionX(auth_token, ct0) para cargar tu sesi\u00f3n desde el navegador. Ver ?importSessionX.")
   tryCatch({
+    twitter <- get0("twitter", envir = .tsr_env)
     print(twitter$session$close())  # Intenta cerrar la sesi\u00f3n
     Sys.sleep(1)
-    rm(twitter, envir = .GlobalEnv)  # Elimina el objeto twitter del entorno global
+    if (exists("twitter", envir = .tsr_env)) rm("twitter", envir = .tsr_env)  # Elimina el objeto twitter
     message("Sesi\u00f3n de Twitter cerrada correctamente.")
   }, error = function(e) {
     message("Error al intentar cerrar la sesi\u00f3n de Twitter: ", e$message)

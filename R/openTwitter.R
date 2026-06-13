@@ -43,7 +43,7 @@ openTwitter <- function(view = TRUE) {
     attempts <- attempts + 1
     tryCatch({
       twitter <- rvest::read_html_live("https://x.com/i/flow/login")
-      assign("twitter", twitter, envir = .GlobalEnv)
+      assign("twitter", twitter, envir = .tsr_env)
       if (view) {
         return(twitter$view())
       } else {

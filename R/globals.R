@@ -9,3 +9,8 @@ utils::globalVariables(c(
   "timeline",
   "twitter"
 ))
+
+# Entorno interno del paquete para las sesiones de navegador (twitter/timeline)
+# de las funciones de login deprecadas. Evita escribir en .GlobalEnv, que viola
+# la politica de CRAN (los paquetes no deben modificar el workspace del usuario).
+.tsr_env <- new.env(parent = emptyenv())

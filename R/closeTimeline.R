@@ -47,9 +47,10 @@
 closeTimeline <- function() {
   .Deprecated(msg = "closeTimeline() qued\u00f3 obsoleta: X bloquea el login automatizado. Us\u00e1 importSessionX(auth_token, ct0) para cargar tu sesi\u00f3n desde el navegador. Ver ?importSessionX.")
   tryCatch({
+    timeline <- get0("timeline", envir = .tsr_env)
     print(timeline$session$close())  # Intenta cerrar la sesi\u00f3n
     Sys.sleep(1)
-    rm(timeline, envir = .GlobalEnv)  # Elimina el objeto timeline del entorno global
+    if (exists("timeline", envir = .tsr_env)) rm("timeline", envir = .tsr_env)  # Elimina el objeto timeline
     message("Timeline cerrado correctamente.")
   }, error = function(e) {
     message("Error al intentar cerrar el Timeline: ", e$message)

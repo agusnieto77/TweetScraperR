@@ -3,7 +3,10 @@
 #' @description
 #' 
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
-#' 
+#'
+#' @description
+#' **Obsoleta**: preférí getUserTweetsAPI(), basada en la API de X (datos del JSON, mas robusta).
+#'
 #' Esta función extrae tweets de una línea de tiempo de Twitter previamente abierta,
 #' desplazándose por la página para recopilar la información deseada.
 #'
@@ -75,6 +78,7 @@ getScrollExtract <- function(
     dir = getwd(),
     save = TRUE
 ) {
+  .Deprecated(msg = "getScrollExtract() est\u00e1 obsoleta: us\u00e1 getUserTweetsAPI() (basada en la API de X, datos estructurados del JSON, m\u00e1s robusta). Ver ?getUserTweetsAPI.")
   nom_ob <- deparse(substitute(objeto))
   url <- paste0("https://x.com/", username)
   cat("Inici\u00f3 la recolecci\u00f3n de tweets.\n")

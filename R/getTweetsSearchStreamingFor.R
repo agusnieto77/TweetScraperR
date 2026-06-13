@@ -3,7 +3,10 @@
 #' @description
 #' 
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
-#' 
+#'
+#' @description
+#' **Obsoleta**: preferí getTweetsSearchAPI(), basada en la API de X (datos del JSON, mas robusta).
+#'
 #' Esta función recolecta tweets de forma iterativa utilizando TweetScraperR,
 #' con la opción de cerrar el navegador entre iteraciones.
 #'
@@ -42,6 +45,7 @@ getTweetsSearchStreamingFor <- function(
     kill_system = FALSE,
     sleep_time = 300
 ) {
+  .Deprecated(msg = "getTweetsSearchStreamingFor() est\u00e1 obsoleta: us\u00e1 getTweetsSearchAPI() (basada en la API de X, datos estructurados del JSON, m\u00e1s robusta). Ver ?getTweetsSearchAPI.")
   # Crear el directorio si no existe
   if (!dir.exists(dir)) {
     dir.create(dir, recursive = TRUE)

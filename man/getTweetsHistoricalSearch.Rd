@@ -44,6 +44,8 @@ Un tibble que contiene los datos de tweets recuperados, incluyendo la fecha, usu
 \description{
 \if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}
 
+\strong{Obsoleta}: preférí getTweetsSearchAPI(), basada en la API de X (datos del JSON, mas robusta).
+
 Esta función permite recuperar tweets históricos de Twitter (ahora X) que coinciden con una búsqueda específica.
 Puedes especificar términos de búsqueda relevantes para tus necesidades de análisis, y la función recuperará
 tweets antiguos que coincidan con esos criterios. Esto es útil para investigaciones históricas, análisis de

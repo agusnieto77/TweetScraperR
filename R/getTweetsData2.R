@@ -4,6 +4,9 @@
 #'
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
 #'
+#' @description
+#' **Obsoleta**: preféri getTweetsDataAPI(), basada en la API de X (datos del JSON, mas robusta).
+#'
 #' Esta función permite recuperar y procesar datos de tweets a partir de un vector de URLs
 #' de tweets proporcionadas. Los datos extraídos incluyen la fecha del tweet,
 #' el nombre de usuarix que lo publicó, el texto del tweet,
@@ -52,5 +55,6 @@ getTweetsData2 <- function(
     dir = getwd(),
     save = TRUE
 ) {
+  .Deprecated(msg = "getTweetsData2() est\u00e1 obsoleta: us\u00e1 getTweetsDataAPI() (basada en la API de X, datos estructurados del JSON, m\u00e1s robusta). Ver ?getTweetsDataAPI.")
   .collect_tweets_data(urls_tweets, dir = dir, save = save, msg_borrado = "\nEl tweet")
 }

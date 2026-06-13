@@ -38,6 +38,8 @@ Un vector que contiene las URLs de tweets recuperadas.
 \description{
 \if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}
 
+\strong{Obsoleta}: preférí getTweetsSearchAPI(), basada en la API de X (datos del JSON, mas robusta).
+
 Esta función recupera URLs de tweets basados en una consulta de búsqueda especifica en Twitter.
 Utiliza el buscador de Twitter para encontrar tweets que coincidan con el término de búsqueda proporcionado,
 enfocándose en los tweets destacados que aparecen en la plataforma.

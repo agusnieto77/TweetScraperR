@@ -35,6 +35,8 @@ Un vector que contiene las URLs de las respuestas al tweet especificado.
 \description{
 \if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}
 
+\strong{Obsoleta}: preférí getTweetsRepliesAPI(), basada en la API de X (datos del JSON, mas robusta).
+
 Esta función recupera las URLs de las respuestas a un tweet específico en Twitter (ahora X).
 Utiliza web scraping para acceder a la página del tweet, iniciar sesión con las credenciales proporcionadas,
 y recolectar las URLs de las respuestas al tweet.

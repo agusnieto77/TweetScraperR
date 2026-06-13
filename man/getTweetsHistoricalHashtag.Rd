@@ -41,6 +41,8 @@ Un tibble que contiene los datos de tweets recuperados, junto con la fecha, usua
 \description{
 \if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}
 
+\strong{Obsoleta}: preférí getTweetsSearchAPI(), basada en la API de X (datos del JSON, mas robusta).
+
 Esta función recupera datos de los tweets que contienen un hashtag específico en Twitter,
 basado en un rango de fechas especificado. Utiliza autenticación en Twitter mediante el
 nombre de usuarix y la contraseña proporcionados, o los valores predeterminados de las

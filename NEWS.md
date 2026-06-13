@@ -21,6 +21,17 @@
   "cosechando" las respuestas JSON que dispara la propia app de X al navegar la
   página (la app genera ese header de forma nativa), evitando reproducirlo.
 
+## Deprecaciones y documentación
+
+* Las funciones de scraping por **HTML** (`getTweetsTimeline()`,
+  `getTweetsHistoricalSearch()`, `getTweetsData()`, `getUsersData()`, la familia
+  `getUrls*()`, las variantes `*For()`, etc.) quedan **deprecadas** en favor de
+  sus equivalentes `*API()`, más robustas. Siguen funcionando pero emiten una
+  advertencia de ciclo de vida.
+* Nueva **viñeta** "Scraping de X/Twitter con TweetScraperR" con el flujo
+  completo recomendado (instalar el motor, importar la sesión, usar las
+  funciones `*API()`).
+
 # TweetScraperR 0.3.0
 
 ## Cambio mayor: nuevo motor de scraping (Node.js + Playwright + stealth)

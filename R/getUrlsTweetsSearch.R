@@ -3,7 +3,10 @@
 #' @description
 #' 
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
-#' 
+#'
+#' @description
+#' **Obsoleta**: preférí getTweetsSearchAPI(), basada en la API de X (datos del JSON, mas robusta).
+#'
 #' Esta función recupera URLs de tweets basados en una consulta de búsqueda especifica en Twitter.
 #' Utiliza el buscador de Twitter para encontrar tweets que coincidan con el término de búsqueda proporcionado,
 #' enfocándose en los tweets destacados que aparecen en la plataforma.
@@ -55,6 +58,7 @@ getUrlsTweetsSearch <- function(
     dir = getwd(),
     save = TRUE
 ) {
+  .Deprecated(msg = "getUrlsTweetsSearch() est\u00e1 obsoleta: us\u00e1 getTweetsSearchAPI() (basada en la API de X, datos estructurados del JSON, m\u00e1s robusta). Ver ?getTweetsSearchAPI.")
   url <- paste0("https://x.com/search?q=", gsub("#", "%23", search), "&src=typed_query")
   cat("Inici\u00f3 la recolecci\u00f3n de URLs.\n")
 

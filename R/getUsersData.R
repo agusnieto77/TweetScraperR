@@ -4,6 +4,9 @@
 #'
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
 #'
+#' @description
+#' **Obsoleta**: preféri getUsersDataAPI(), basada en la API de X (datos del JSON, mas robusta).
+#'
 #' Esta función permite recuperar y procesar datos de usuarixs de Twitter a partir de un vector de URLs
 #' proporcionadas. Opcionalmente puede realizar la autenticación en Twitter si open=TRUE utilizando las
 #' credenciales proporcionadas. La función extrae información detallada de cada perfil de usuarix incluyendo
@@ -49,6 +52,7 @@ getUsersData <- function(
     dir = getwd(),
     save = TRUE
 ) {
+  .Deprecated(msg = "getUsersData() est\u00e1 obsoleta: us\u00e1 getUsersDataAPI() (basada en la API de X, datos estructurados del JSON, m\u00e1s robusta). Ver ?getUsersDataAPI.")
   global_retry_count <- 0
   success <- FALSE
   twitter <- NULL

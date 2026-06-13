@@ -4,6 +4,9 @@
 #'
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
 #'
+#' @description
+#' **Obsoleta**: preféri getTweetsRetweetsAPI(), basada en la API de X (datos del JSON, mas robusta).
+#'
 #' Esta función recupera los retweets a un tweet específico en Twitter (ahora X),
 #' incluyendo datos como el user name, name y URL.
 #' Utiliza web scraping para acceder a la página del tweet, iniciar sesión con las credenciales proporcionadas,
@@ -73,6 +76,7 @@ getTweetsRetweets <- function(
     save = TRUE,
     open = FALSE
 ) {
+  .Deprecated(msg = "getTweetsRetweets() est\u00e1 obsoleta: us\u00e1 getTweetsRetweetsAPI() (basada en la API de X, datos estructurados del JSON, m\u00e1s robusta). Ver ?getTweetsRetweetsAPI.")
   urlrt <- paste0(url, "/retweets")
   cat("Inici\u00f3 la recolecci\u00f3n de users.\n")
   res <- .pw_collect(urlrt, mode = "users", n_max = n_users, max_attempts = 3)

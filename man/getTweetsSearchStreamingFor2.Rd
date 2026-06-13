@@ -65,6 +65,8 @@ Lista con estadísticas de la recolección y ruta del archivo unificado (si apli
 \description{
 \if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}
 
+\strong{Obsoleta}: preferí getTweetsSearchAPI(), basada en la API de X (datos del JSON, mas robusta).
+
 Esta función recolecta tweets de forma iterativa utilizando la función optimizada
 getTweetsSearchStreaming2, con manejo robusto de errores, seguimiento de progreso,
 unificación de datos y gestión eficiente de recursos del sistema.

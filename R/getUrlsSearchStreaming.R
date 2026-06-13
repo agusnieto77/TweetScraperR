@@ -4,6 +4,9 @@
 #'
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
 #'
+#' @description
+#' **Obsoleta**: preférí getTweetsSearchAPI(), basada en la API de X (datos del JSON, mas robusta).
+#'
 #' Esta función recupera URLs de tweets basados en una consulta de búsqueda en tiempo real en Twitter.
 #' Utiliza autenticación en Twitter mediante el nombre de usuario y la contraseña proporcionados,
 #' o los valores predeterminados de las variables de entorno del sistema. Después de autenticar al usuario,
@@ -54,6 +57,7 @@ getUrlsSearchStreaming <- function(
     dir = getwd(),
     save = TRUE
 ) {
+  .Deprecated(msg = "getUrlsSearchStreaming() est\u00e1 obsoleta: us\u00e1 getTweetsSearchAPI() (basada en la API de X, datos estructurados del JSON, m\u00e1s robusta). Ver ?getTweetsSearchAPI.")
   twitter <- NULL
   searchok <- NULL
   on.exit(.close_sessions(searchok, twitter), add = TRUE)

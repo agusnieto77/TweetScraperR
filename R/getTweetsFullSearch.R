@@ -4,6 +4,9 @@
 #'
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
 #'
+#' @description
+#' **Obsoleta**: preférí getTweetsSearchAPI(), basada en la API de X (datos del JSON, mas robusta).
+#'
 #' Esta función realiza una búsqueda avanzada de tweets en Twitter (X) utilizando
 #' varios criterios de búsqueda y recolecta los tweets que coinciden con estos criterios.
 #'
@@ -99,6 +102,7 @@ getTweetsFullSearch <- function(
     dir = getwd(),
     save = TRUE
 ) {
+  .Deprecated(msg = "getTweetsFullSearch() est\u00e1 obsoleta: us\u00e1 getTweetsSearchAPI() (basada en la API de X, datos estructurados del JSON, m\u00e1s robusta). Ver ?getTweetsSearchAPI.")
   search_all <- ifelse(nchar(search_all)<1, "", paste0(gsub(" ", "%20", search_all), "%20"))
   search_exact <- ifelse(is.null(search_exact), "", paste0("%22", gsub(" ", "%20", search_exact), "%22", "%20"))
   search_any <- ifelse(is.null(search_any), "", paste0("(", gsub(" ", "%20OR%20", search_any), ")", "%20"))

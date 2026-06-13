@@ -38,6 +38,8 @@ Un vector que contiene las URLs de tweets obtenidas.
 \description{
 \if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}
 
+\strong{Obsoleta}: preférí getUserTweetsAPI(), basada en la API de X (datos del JSON, mas robusta).
+
 Esta función recupera URLs de tweets del timeline de unx usuarix especificadx en Twitter.
 Opcionalmente puede iniciar sesión en Twitter utilizando las credenciales proporcionadas si open=TRUE,
 navega al perfil del usuarix especificadx, y recopila hasta \code{n_urls} URLs de tweets.

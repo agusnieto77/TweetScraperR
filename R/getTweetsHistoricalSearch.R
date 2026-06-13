@@ -4,6 +4,9 @@
 #'
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
 #'
+#' @description
+#' **Obsoleta**: preférí getTweetsSearchAPI(), basada en la API de X (datos del JSON, mas robusta).
+#'
 #' Esta función permite recuperar tweets históricos de Twitter (ahora X) que coinciden con una búsqueda específica.
 #' Puedes especificar términos de búsqueda relevantes para tus necesidades de análisis, y la función recuperará
 #' tweets antiguos que coincidan con esos criterios. Esto es útil para investigaciones históricas, análisis de
@@ -77,6 +80,7 @@ getTweetsHistoricalSearch <- function(
     dir = getwd(),
     save = TRUE
 ) {
+  .Deprecated(msg = "getTweetsHistoricalSearch() est\u00e1 obsoleta: us\u00e1 getTweetsSearchAPI() (basada en la API de X, datos estructurados del JSON, m\u00e1s robusta). Ver ?getTweetsSearchAPI.")
   search <- gsub("#", "%23", search)
   term_search <- if(live) {
     paste0("https://x.com/search?f=live&q=", search, "%20since%3A", since, "%20until%3A", until, "&src=typed_query")

@@ -4,6 +4,9 @@
 #'
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
 #'
+#' @description
+#' **Obsoleta**: preférí getTweetsSearchAPI(), basada en la API de X (datos del JSON, mas robusta).
+#'
 #'  Esta función recupera datos de los tweets que contienen un hashtag específico en Twitter,
 #'  basado en un rango de fechas especificado. Utiliza autenticación en Twitter mediante el
 #'  nombre de usuarix y la contraseña proporcionados, o los valores predeterminados de las
@@ -62,6 +65,7 @@ getTweetsHistoricalHashtag <- function(
     dir = getwd(),
     save = TRUE
 ) {
+  .Deprecated(msg = "getTweetsHistoricalHashtag() est\u00e1 obsoleta: us\u00e1 getTweetsSearchAPI() (basada en la API de X, datos estructurados del JSON, m\u00e1s robusta). Ver ?getTweetsSearchAPI.")
   hashtagsearch <- paste0("https://x.com/search?q=(%23", gsub("#", "", hashtag), ")%20until%3A", until, "%20since%3A", since, "&src=typed_query&f=live")
   .get_historical(
     query_url = hashtagsearch,

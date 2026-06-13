@@ -38,6 +38,8 @@ No devuelve un valor, pero guarda los tweets en el directorio especificado
 \description{
 \if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}
 
+\strong{Obsoleta}: preferí getTweetsSearchAPI(), basada en la API de X (datos del JSON, mas robusta).
+
 Esta función recolecta tweets de forma iterativa utilizando TweetScraperR,
 con la opción de cerrar el navegador entre iteraciones.
 }

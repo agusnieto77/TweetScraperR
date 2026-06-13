@@ -3,7 +3,10 @@
 #' @description
 #' 
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
-#' 
+#'
+#' @description
+#' **Obsoleta**: preferí getTweetsSearchAPI(), basada en la API de X (datos del JSON, mas robusta).
+#'
 #' Esta función recolecta tweets de forma iterativa utilizando la función optimizada
 #' getTweetsSearchStreaming2, con manejo robusto de errores, seguimiento de progreso,
 #' unificación de datos y gestión eficiente de recursos del sistema.
@@ -99,7 +102,8 @@ getTweetsSearchStreamingFor2 <- function(
     progress_file = NULL,
     resume_from = 1
 ) {
-  
+  .Deprecated(msg = "getTweetsSearchStreamingFor2() est\u00e1 obsoleta: us\u00e1 getTweetsSearchAPI() (basada en la API de X, datos estructurados del JSON, m\u00e1s robusta). Ver ?getTweetsSearchAPI.")
+
   .create_safe_directory_name <- function(search, timestamp = NULL) {
 
     clean_search <- gsub("[^[:alnum:]_]", "_", search)

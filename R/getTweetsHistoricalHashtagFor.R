@@ -4,6 +4,9 @@
 #' 
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
 #'
+#' @description
+#' **Obsoleta**: preferí getTweetsSearchAPI(), basada en la API de X (datos del JSON, mas robusta).
+#'
 #' Esta función realiza búsquedas históricas de tweets con hashtags específicos de forma iterativa,
 #' permitiendo recolectar tweets en intervalos de tiempo específicos (días, horas o minutos).
 #'
@@ -79,7 +82,8 @@ getTweetsHistoricalHashtagFor <- function(
     kill_system = FALSE,
     sleep_time = 5*60
 ) {
-  
+  .Deprecated(msg = "getTweetsHistoricalHashtagFor() est\u00e1 obsoleta: us\u00e1 getTweetsSearchAPI() (basada en la API de X, datos estructurados del JSON, m\u00e1s robusta). Ver ?getTweetsSearchAPI.")
+
   # Validar el formato de la fecha inicial
   .validate_datetime(since)
   

@@ -4,6 +4,9 @@
 #' 
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
 #' 
+#' @description
+#' **Obsoleta**: preféri getUserMediaAPI(), basada en la API de X (datos del JSON, mas robusta).
+#'
 #' Esta función toma una lista de URLs de imágenes extraídas de tweets, las descarga y
 #' opcionalmente las guarda en un directorio específico. Si el directorio no existe, se creará.
 #'
@@ -45,7 +48,8 @@
 #' 
 
 getTweetsImages <- function(urls, directorio = "img_x", save = TRUE) {
-  
+  .Deprecated(msg = "getTweetsImages() est\u00e1 obsoleta: us\u00e1 getUserMediaAPI() (basada en la API de X, datos estructurados del JSON, m\u00e1s robusta). Ver ?getUserMediaAPI.")
+
   # Asegurar que urls sea un vector, si es una lista la desanida
   urls <- unlist(urls)
   

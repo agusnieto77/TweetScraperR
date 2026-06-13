@@ -4,6 +4,9 @@
 #'
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
 #'
+#' @description
+#' **Obsoleta**: preférí getTweetsSearchAPI(), basada en la API de X (datos del JSON, mas robusta).
+#'
 #' Esta función permite recuperar tweets históricos de Twitter que coinciden con una búsqueda específica en el timeline de unx usuarix en particular.
 #' Puedes especificar el nombre de usuarix de Twitter del que deseas obtener los tweets históricos. La función recupera los tweets antiguos publicados
 #' por ese usuarix dentro del período de tiempo especificado. Es útil para investigaciones históricas, análisis de tendencias a lo largo del tiempo
@@ -58,6 +61,7 @@ getTweetsHistoricalTimeline <- function(
     dir = getwd(),
     save = TRUE
 ) {
+  .Deprecated(msg = "getTweetsHistoricalTimeline() est\u00e1 obsoleta: us\u00e1 getTweetsSearchAPI() (basada en la API de X, datos estructurados del JSON, m\u00e1s robusta). Ver ?getTweetsSearchAPI.")
   user_name <- paste0("https://x.com/search?f=live&q=%28from%3A", username, "%29+until%3A", until, "+since%3A", since, "&src=typed_query")
   .get_historical(
     query_url = user_name,

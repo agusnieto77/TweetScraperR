@@ -4,6 +4,9 @@
 #'
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
 #'
+#' @description
+#' **Obsoleta**: preférí getUserTweetsAPI(), basada en la API de X (datos del JSON, mas robusta).
+#'
 #' Esta función recupera tweets del timeline de unx usuarix especificadx en Twitter.
 #' La función inicia sesión en Twitter utilizando las credenciales proporcionadas,
 #' navega al perfil de le usuarix especificadx, y recopila hasta `n_tweets` tweets.
@@ -54,6 +57,7 @@ getTweetsTimeline <- function(
     dir = getwd(),
     save = TRUE
 ) {
+  .Deprecated(msg = "getTweetsTimeline() est\u00e1 obsoleta: us\u00e1 getUserTweetsAPI() (basada en la API de X, datos estructurados del JSON, m\u00e1s robusta). Ver ?getUserTweetsAPI.")
   url <- paste0("https://x.com/", username)
   cat("Inici\u00f3 la recolecci\u00f3n de tweets.\n")
 

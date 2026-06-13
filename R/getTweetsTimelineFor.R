@@ -4,6 +4,9 @@
 #' 
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
 #'
+#' @description
+#' **Obsoleta**: preferí getUserTweetsAPI(), basada en la API de X (datos del JSON, mas robusta).
+#'
 #' Esta función recolecta tweets de múltiples usuarios de X (Twitter) de forma iterativa,
 #' permitiendo obtener un conjunto de datos combinado con tweets de todos los usuarios especificados.
 #'
@@ -79,7 +82,8 @@ getTweetsTimelineFor <- function(
     system = "windows", 
     kill_system = FALSE
 ) {
-  
+  .Deprecated(msg = "getTweetsTimelineFor() est\u00e1 obsoleta: us\u00e1 getUserTweetsAPI() (basada en la API de X, datos estructurados del JSON, m\u00e1s robusta). Ver ?getUserTweetsAPI.")
+
   # Validación de parámetros
   if (!is.character(usernames)) {
     stop("usernames debe ser un vector de caracteres")

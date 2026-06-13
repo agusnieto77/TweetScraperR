@@ -4,6 +4,9 @@
 #'
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
 #'
+#' @description
+#' **Obsoleta**: preférí getTweetsSearchAPI(), basada en la API de X (datos del JSON, mas robusta).
+#'
 #' Esta función recupera tweets basados en una consulta de búsqueda en tiempo real en Twitter.
 #' Utiliza autenticación en Twitter mediante el nombre de usuario y la contraseña proporcionados,
 #' o los valores predeterminados de las variables de entorno del sistema. Versión optimizada con
@@ -65,6 +68,7 @@ getTweetsSearchStreaming2 <- function(
     backoff_factor = 1.5,
     verbose = TRUE
 ) {
+  .Deprecated(msg = "getTweetsSearchStreaming2() est\u00e1 obsoleta: us\u00e1 getTweetsSearchAPI() (basada en la API de X, datos estructurados del JSON, m\u00e1s robusta). Ver ?getTweetsSearchAPI.")
 
   .validate_params <- function(search, n_tweets, sleep, max_login_attempts, max_collect_attempts, backoff_factor) {
     if (!is.character(search) || length(search) != 1 || nchar(search) == 0) {

@@ -4,6 +4,9 @@
 #'
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
 #'
+#' @description
+#' **Obsoleta**: preférí getTweetsSearchAPI(), basada en la API de X (datos del JSON, mas robusta).
+#'
 #' Esta función recupera URLs de tweets del timeline histórico de unx usuarix en Twitter,
 #' basado en un rango de fechas especificado. Opcionalmente puede realizar la autenticación en Twitter
 #' mediante el nombre de usuarix y la contraseña proporcionados, o los valores predeterminados de
@@ -70,6 +73,7 @@ getUrlsHistoricalTimeline <- function(
     dir = getwd(),
     save = TRUE
 ) {
+  .Deprecated(msg = "getUrlsHistoricalTimeline() est\u00e1 obsoleta: us\u00e1 getTweetsSearchAPI() (basada en la API de X, datos estructurados del JSON, m\u00e1s robusta). Ver ?getTweetsSearchAPI.")
   usersearh <- paste0("https://x.com/search?f=live&q=%28from%3A", username, "%29+until%3A", until, "+since%3A", since, "&src=typed_query")
   cat("Inici\u00f3 la recolecci\u00f3n de URLs.\n")
 

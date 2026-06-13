@@ -35,6 +35,8 @@ Un tibble que contiene los datos de los users recuperados.
 \description{
 \if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}
 
+\strong{Obsoleta}: preféri getUsersDataAPI(), basada en la API de X (datos del JSON, mas robusta).
+
 Esta función permite recuperar y procesar datos de usuarixs de Twitter a partir de un vector de URLs
 proporcionadas. Opcionalmente puede realizar la autenticación en Twitter si open=TRUE utilizando las
 credenciales proporcionadas. La función extrae información detallada de cada perfil de usuarix incluyendo

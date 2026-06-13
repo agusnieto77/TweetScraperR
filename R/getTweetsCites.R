@@ -4,6 +4,9 @@
 #'
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
 #'
+#' @description
+#' **Obsoleta**: preféri getTweetsSearchAPI(), basada en la API de X (datos del JSON, mas robusta).
+#'
 #' Esta función recupera las citas a un tweet específico en Twitter (ahora X),
 #' incluyendo datos como el texto del tweet, usuario, fecha, y URL.
 #' Utiliza web scraping para acceder a la página del tweet, iniciar sesión con las credenciales proporcionadas,
@@ -73,6 +76,7 @@ getTweetsCites <- function(
     save = TRUE,
     open = FALSE
 ) {
+  .Deprecated(msg = "getTweetsCites() est\u00e1 obsoleta: us\u00e1 getTweetsSearchAPI() (basada en la API de X, datos estructurados del JSON, m\u00e1s robusta). Ver ?getTweetsSearchAPI.")
   .get_tweets_from_url(
     target_url = paste0(url, "/quotes"),
     tipo_label = "citas",

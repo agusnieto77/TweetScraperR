@@ -50,6 +50,8 @@ No devuelve un valor explícito, pero guarda los tweets recolectados en el direc
 \description{
 \if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}
 
+\strong{Obsoleta}: preferí getTweetsSearchAPI(), basada en la API de X (datos del JSON, mas robusta).
+
 Esta función realiza búsquedas históricas de tweets con hashtags específicos de forma iterativa,
 permitiendo recolectar tweets en intervalos de tiempo específicos (días, horas o minutos).
 }

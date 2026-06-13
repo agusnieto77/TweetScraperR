@@ -4,6 +4,9 @@
 #'
 #' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
 #'
+#' @description
+#' **Obsoleta**: preférí getTweetsRepliesAPI(), basada en la API de X (datos del JSON, mas robusta).
+#'
 #' Esta función recupera las URLs de las respuestas a un tweet específico en Twitter (ahora X).
 #' Utiliza web scraping para acceder a la página del tweet, iniciar sesión con las credenciales proporcionadas,
 #' y recolectar las URLs de las respuestas al tweet.
@@ -58,6 +61,7 @@ getUrlsTweetsReplies <- function(
     dir = getwd(),
     save = TRUE
 ) {
+  .Deprecated(msg = "getUrlsTweetsReplies() est\u00e1 obsoleta: us\u00e1 getTweetsRepliesAPI() (basada en la API de X, datos estructurados del JSON, m\u00e1s robusta). Ver ?getTweetsRepliesAPI.")
   .get_urls_from_url(
     target_url = url,
     prefix = "replies_",

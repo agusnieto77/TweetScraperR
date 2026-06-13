@@ -41,6 +41,8 @@ Un data frame que contiene información sobre las citas al tweet especificado, i
 \description{
 \if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}
 
+\strong{Obsoleta}: preféri getTweetsSearchAPI(), basada en la API de X (datos del JSON, mas robusta).
+
 Esta función recupera las citas a un tweet específico en Twitter (ahora X),
 incluyendo datos como el texto del tweet, usuario, fecha, y URL.
 Utiliza web scraping para acceder a la página del tweet, iniciar sesión con las credenciales proporcionadas,

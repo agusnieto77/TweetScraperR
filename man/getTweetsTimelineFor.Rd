@@ -41,6 +41,8 @@ Un dataframe que contiene los tweets de todos los usuarios especificados.
 \description{
 \if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}
 
+\strong{Obsoleta}: preferí getUserTweetsAPI(), basada en la API de X (datos del JSON, mas robusta).
+
 Esta función recolecta tweets de múltiples usuarios de X (Twitter) de forma iterativa,
 permitiendo obtener un conjunto de datos combinado con tweets de todos los usuarios especificados.
 }

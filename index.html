@@ -59,10 +59,10 @@
 
 <!-- badges: end -->
 <div class="section level3">
-<h3 id="vision-general">Vision general<a class="anchor" aria-label="anchor" href="#vision-general"></a>
+<h3 id="visión-general">Visión general<a class="anchor" aria-label="anchor" href="#visi%C3%B3n-general"></a>
 </h3>
-<p>Este paquete proporciona funciones para extraer datos de X/Twitter, incluidos tweets, usuarixs y metadatos asociados, permitiendo realizar la extracción y manejo de estos datos de manera conveniente en R. Enfocado en facilitar la recolección de datos para análisis y visualización, el paquete puede obtener tweets desde la búsqueda de X/Twitter y está construido sobre rvest, sin utilizar las API de X/Twitter. Aunque los datos rastreados no son tan limpios como los obtenidos a través de las API, el costo actual de las API hace que esta sea una alternativa flexible, gratuita y de código abierto.</p>
-<p>This package provides functions to extract data from X/Twitter, including tweets, users, and associated metadata, allowing for convenient data extraction and handling in R. Focused on facilitating data collection for analysis and visualization, the package can obtain tweets from X/Twitter search and is built on rvest, without using the X/Twitter APIs. Although the scraped data is not as clean as that obtained through the APIs, the current cost of the APIs makes this a flexible, free, and open-source alternative.</p>
+<p><code>TweetScraperR</code> recolecta datos de X/Twitter —tweets, usuarixs y metadatos— para análisis y visualización en R, <strong>sin usar la API oficial de pago</strong>. Desde la versión <strong>0.4.0</strong>, el scraping corre sobre un motor de <strong>Node.js + Playwright</strong> y consulta la <strong>API GraphQL interna</strong> de X, devolviendo datos <strong>estructurados</strong> desde JSON: texto completo (sin truncar), fecha exacta, métricas (respuestas, retweets, citas, me gusta, vistas), media, hashtags y menciones. La autenticación se hace importando la <strong>sesión real de tu navegador</strong> (cookies), ya que X bloquea el login automatizado. Es una alternativa flexible, gratuita y de código abierto.</p>
+<p><code>TweetScraperR</code> collects data from X/Twitter —tweets, users and metadata— for analysis and visualization in R, <strong>without using the paid official API</strong>. Since version <strong>0.4.0</strong>, scraping runs on a <strong>Node.js + Playwright</strong> engine and queries X’s <strong>internal GraphQL API</strong>, returning <strong>structured</strong> data from JSON: full text, exact date, metrics, media, hashtags and mentions. Authentication works by importing your <strong>real browser session</strong> (cookies), since X blocks automated login. It is a flexible, free, and open-source alternative.</p>
 </div>
 <div class="section level3">
 <h3 id="instalacion-de-la-version-en-desarrollo">Instalacion de la version en desarrollo<a class="anchor" aria-label="anchor" href="#instalacion-de-la-version-en-desarrollo"></a>
@@ -139,9 +139,9 @@
 </blockquote>
 </div>
 <div class="section level3">
-<h3 id="scraping-vía-api-graphqljson-experimental">Scraping vía API GraphQL/JSON (experimental)<a class="anchor" aria-label="anchor" href="#scraping-v%C3%ADa-api-graphqljson-experimental"></a>
+<h3 id="scraping-vía-api-graphqljson-recomendado">Scraping vía API GraphQL/JSON (recomendado)<a class="anchor" aria-label="anchor" href="#scraping-v%C3%ADa-api-graphqljson-recomendado"></a>
 </h3>
-<p>Además del scraping por HTML, el paquete incorpora una familia de funciones <code>*API()</code> que consultan la <strong>API GraphQL interna de X</strong> y devuelven datos estructurados directamente del JSON (texto completo sin truncar, fecha exacta y métricas: respuestas, retweets, citas, me gusta y vistas), sin selectores CSS frágiles. Todas reusan la sesión importada con <code><a href="reference/importSessionX.html">importSessionX()</a></code>.</p>
+<p>La vía <strong>recomendada</strong> es la familia de funciones <code>*API()</code>: consultan la <strong>API GraphQL interna de X</strong> y devuelven datos estructurados directamente del JSON (texto completo sin truncar, fecha exacta y métricas: respuestas, retweets, citas, me gusta y vistas), sin selectores CSS frágiles. Todas reusan la sesión importada con <code><a href="reference/importSessionX.html">importSessionX()</a></code>. Las funciones de scraping por HTML siguen disponibles pero quedaron <strong>deprecadas</strong> en favor de estas.</p>
 <table class="table">
 <colgroup>
 <col width="50%">
@@ -214,388 +214,58 @@
 <div class="section level3">
 <h3 id="funciones">Funciones<a class="anchor" aria-label="anchor" href="#funciones"></a>
 </h3>
-<table class="table">
-<colgroup>
-<col width="33%">
-<col width="33%">
-<col width="33%">
-</colgroup>
-<thead><tr>
-<th align="left">Nombre</th>
-<th align="left">Ciclo</th>
-<th align="left">Descripción</th>
-</tr></thead>
-<tbody>
-<tr>
-<td align="left"><code><a href="reference/checkPlaywrightEngine.html">checkPlaywrightEngine()</a></code></td>
-<td align="left"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg"></td>
-<td align="left">Verifica que el motor de Node.js/Playwright esté instalado y operativo.</td>
-</tr>
-<tr>
-<td align="left"><code><a href="reference/closeTimeline.html">closeTimeline()</a></code></td>
-<td align="left"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-superseded.svg"></td>
-<td align="left">
-<strong>Deprecada</strong> (login por pasos). Cierre de Timeline.</td>
-</tr>
-<tr>
-<td align="left"><code><a href="reference/closeTwitter.html">closeTwitter()</a></code></td>
-<td align="left"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-superseded.svg"></td>
-<td align="left">
-<strong>Deprecada</strong> (login por pasos). Cierre de sesión.</td>
-</tr>
-<tr>
-<td align="left"><code><a href="reference/extractTweetsData.html">extractTweetsData()</a></code></td>
-<td align="left"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg"></td>
-<td align="left">Extrae información relevante de tweets almacenados localmente.</td>
-</tr>
-<tr>
-<td align="left"><code><a href="reference/getScrollExtract.html">getScrollExtract()</a></code></td>
-<td align="left"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg"></td>
-<td align="left">Scrolea y extrae tweets.</td>
-</tr>
-<tr>
-<td align="left"><code><a href="reference/getScrollExtractUrls.html">getScrollExtractUrls()</a></code></td>
-<td align="left"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg"></td>
-<td align="left">Scrolea y extrae URLs de tweets.</td>
-</tr>
-<tr>
-<td align="left"><code><a href="reference/getTweetsCites.html">getTweetsCites()</a></code></td>
-<td align="left"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg"></td>
-<td align="left">Recupera las citas de un tweet a partir de su URL.</td>
-</tr>
-<tr>
-<td align="left"><code><a href="reference/getTweetsData.html">getTweetsData()</a></code></td>
-<td align="left"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg"></td>
-<td align="left">Recupera datos de tweets a partir de URLs.</td>
-</tr>
-<tr>
-<td align="left"><code><a href="reference/getTweetsData2.html">getTweetsData2()</a></code></td>
-<td align="left"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg"></td>
-<td align="left">Recupera datos de tweets a partir de URLs.</td>
-</tr>
-<tr>
-<td align="left"><code><a href="reference/getTweetsFullSearch.html">getTweetsFullSearch()</a></code></td>
-<td align="left"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg"></td>
-<td align="left">Recupera tweets desde la búsqueda avanzada.</td>
-</tr>
-<tr>
-<td align="left"><code><a href="reference/getTweetsHashtags.html">getTweetsHashtags()</a></code></td>
-<td align="left"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg"></td>
-<td align="left">Recupera los hashtags de la columna ‘texto’.</td>
-</tr>
-<tr>
-<td align="left"><code><a href="reference/getTweetsHistoricalHashtag.html">getTweetsHistoricalHashtag()</a></code></td>
-<td align="left"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg"></td>
-<td align="left">Recupera tweets históricos con un hashtag específico.</td>
-</tr>
-<tr>
-<td align="left"><code><a href="reference/getTweetsHistoricalHashtagFor.html">getTweetsHistoricalHashtagFor()</a></code></td>
-<td align="left"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg"></td>
-<td align="left">Recupera tweets históricos con un hashtag específico en un ciclo <code>for</code>.</td>
-</tr>
-<tr>
-<td align="left"><code><a href="reference/getTweetsHistoricalSearch.html">getTweetsHistoricalSearch()</a></code></td>
-<td align="left"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg"></td>
-<td align="left">Recupera tweets históricos con un término específico.</td>
-</tr>
-<tr>
-<td align="left"><code><a href="reference/getTweetsHistoricalSearchFor.html">getTweetsHistoricalSearchFor()</a></code></td>
-<td align="left"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg"></td>
-<td align="left">Recupera tweets históricos con un término específico en un ciclo <code>for</code>.</td>
-</tr>
-<tr>
-<td align="left"><code><a href="reference/getTweetsHistoricalTimeline.html">getTweetsHistoricalTimeline()</a></code></td>
-<td align="left"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg"></td>
-<td align="left">Recupera tweets históricos de un timeline.</td>
-</tr>
-<tr>
-<td align="left"><code><a href="reference/getTweetsHistoricalTimelineFor.html">getTweetsHistoricalTimelineFor()</a></code></td>
-<td align="left"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg"></td>
-<td align="left">Recupera tweets históricos de un timeline en un ciclo <code>for</code>.</td>
-</tr>
-<tr>
-<td align="left"><code><a href="reference/getTweetsImages.html">getTweetsImages()</a></code></td>
-<td align="left"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg"></td>
-<td align="left">Descarga las imágenes posteadas en los tweets.</td>
-</tr>
-<tr>
-<td align="left"><code><a href="reference/getTweetsImagesAnalysis.html">getTweetsImagesAnalysis()</a></code></td>
-<td align="left"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg"></td>
-<td align="left">Analiza las imágenes posteadas en los tweets.</td>
-</tr>
-<tr>
-<td align="left"><code><a href="reference/getTweetsReplies.html">getTweetsReplies()</a></code></td>
-<td align="left"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg"></td>
-<td align="left">Recupera las respuesta a un tweet desde su URL.</td>
-</tr>
-<tr>
-<td align="left"><code><a href="reference/getTweetsRetweets.html">getTweetsRetweets()</a></code></td>
-<td align="left"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg"></td>
-<td align="left">Recupera los usuarios que rt un tweet desde su URL.</td>
-</tr>
-<tr>
-<td align="left"><code><a href="reference/getTweetsSearchStreaming.html">getTweetsSearchStreaming()</a></code></td>
-<td align="left"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg"></td>
-<td align="left">Recupera tweets en tiempo real.</td>
-</tr>
-<tr>
-<td align="left"><code><a href="reference/getTweetsSearchStreaming2.html">getTweetsSearchStreaming2()</a></code></td>
-<td align="left"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg"></td>
-<td align="left">Recupera tweets en tiempo real.</td>
-</tr>
-<tr>
-<td align="left"><code><a href="reference/getTweetsSearchStreamingFor.html">getTweetsSearchStreamingFor()</a></code></td>
-<td align="left"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg"></td>
-<td align="left">Itera la recuperación de tweets en tiempo real.</td>
-</tr>
-<tr>
-<td align="left"><code><a href="reference/getTweetsSearchStreamingFor2.html">getTweetsSearchStreamingFor2()</a></code></td>
-<td align="left"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg"></td>
-<td align="left">Itera la recuperación de tweets en tiempo real.</td>
-</tr>
-<tr>
-<td align="left"><code><a href="reference/getTweetsSentiments.html">getTweetsSentiments()</a></code></td>
-<td align="left"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg"></td>
-<td align="left">Analizador de sentimientos.</td>
-</tr>
-<tr>
-<td align="left"><code><a href="reference/getTweetsTimeline.html">getTweetsTimeline()</a></code></td>
-<td align="left"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg"></td>
-<td align="left">Recupera tweets de un timeline.</td>
-</tr>
-<tr>
-<td align="left"><code><a href="reference/getTweetsTimelineFor.html">getTweetsTimelineFor()</a></code></td>
-<td align="left"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg"></td>
-<td align="left">Recupera tweets de múltiples timelines en un ciclo <code>for</code>.</td>
-</tr>
-<tr>
-<td align="left"><code><a href="reference/getTweetsXquikSearch.html">getTweetsXquikSearch()</a></code></td>
-<td align="left"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg"></td>
-<td align="left">Recupera tweets vía la API de Xquik (servicio externo de pago de xquik.com, requiere <code>XQUIK_API_KEY</code>).</td>
-</tr>
-<tr>
-<td align="left"><code><a href="reference/getUrlsHistoricalTimeline.html">getUrlsHistoricalTimeline()</a></code></td>
-<td align="left"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg"></td>
-<td align="left">Recupera URLs de tweets históricos de un timeline.</td>
-</tr>
-<tr>
-<td align="left"><code><a href="reference/getUrlsSearchStreaming.html">getUrlsSearchStreaming()</a></code></td>
-<td align="left"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg"></td>
-<td align="left">Recupera URLs de tweets en tiempo real.</td>
-</tr>
-<tr>
-<td align="left"><code><a href="reference/getUrlsTweetsCites.html">getUrlsTweetsCites()</a></code></td>
-<td align="left"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg"></td>
-<td align="left">Recupera las URLs de las citas de un tweet.</td>
-</tr>
-<tr>
-<td align="left"><code><a href="reference/getUrlsTweetsReplies.html">getUrlsTweetsReplies()</a></code></td>
-<td align="left"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg"></td>
-<td align="left">Recupera las URLs de las respuestas a un tweet.</td>
-</tr>
-<tr>
-<td align="left"><code><a href="reference/getUrlsTweetsSearch.html">getUrlsTweetsSearch()</a></code></td>
-<td align="left"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg"></td>
-<td align="left">Recupera URLs de tweets por búsqueda.</td>
-</tr>
-<tr>
-<td align="left"><code><a href="reference/getUrlsTweetsTimeline.html">getUrlsTweetsTimeline()</a></code></td>
-<td align="left"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg"></td>
-<td align="left">Recupera URLs de tweets de un timeline.</td>
-</tr>
-<tr>
-<td align="left"><code><a href="reference/getUsersData.html">getUsersData()</a></code></td>
-<td align="left"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg"></td>
-<td align="left">Recupera datos de users a partir de URLs.</td>
-</tr>
-<tr>
-<td align="left"><code><a href="reference/getUsersFullData.html">getUsersFullData()</a></code></td>
-<td align="left"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg"></td>
-<td align="left">Recupera datos completos de users a partir de URLs.</td>
-</tr>
-<tr>
-<td align="left"><code><a href="reference/HTMLImgReport.html">HTMLImgReport()</a></code></td>
-<td align="left"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg"></td>
-<td align="left">Crea una visualización HTML interactiva de imágenes analizadas.</td>
-</tr>
-<tr>
-<td align="left"><code><a href="reference/importSessionX.html">importSessionX()</a></code></td>
-<td align="left"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg"></td>
-<td align="left">Importa la sesión real del navegador (cookies <code>auth_token</code> y <code>ct0</code>) y la persiste como <code>storageState</code>.</td>
-</tr>
-<tr>
-<td align="left"><code><a href="reference/installPlaywrightEngine.html">installPlaywrightEngine()</a></code></td>
-<td align="left"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg"></td>
-<td align="left">Instala el motor de Node.js/Playwright (se ejecuta una sola vez).</td>
-</tr>
-<tr>
-<td align="left"><code><a href="reference/loginX.html">loginX()</a></code></td>
-<td align="left"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg"></td>
-<td align="left">Flujo de autenticación basado en el nuevo motor Playwright.</td>
-</tr>
-<tr>
-<td align="left"><code><a href="reference/openTimeline.html">openTimeline()</a></code></td>
-<td align="left"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-superseded.svg"></td>
-<td align="left">
-<strong>Deprecada</strong> (login por pasos). Accede al Timeline de un/a usuario/a.</td>
-</tr>
-<tr>
-<td align="left"><code><a href="reference/openTwitter.html">openTwitter()</a></code></td>
-<td align="left"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-superseded.svg"></td>
-<td align="left">
-<strong>Deprecada</strong> (login por pasos). Inicio de sesión.</td>
-</tr>
-<tr>
-<td align="left"><code><a href="reference/passTwitter.html">passTwitter()</a></code></td>
-<td align="left"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-superseded.svg"></td>
-<td align="left">
-<strong>Deprecada</strong> (login por pasos). Función de login, completa el campo pass.</td>
-</tr>
-<tr>
-<td align="left"><code><a href="reference/plotEmojis.html">plotEmojis()</a></code></td>
-<td align="left"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg"></td>
-<td align="left">Hace un gráfico de barras en base a la columna ‘emoticones’.</td>
-</tr>
-<tr>
-<td align="left"><code><a href="reference/plotEmojisPNG.html">plotEmojisPNG()</a></code></td>
-<td align="left"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg"></td>
-<td align="left">Hace un gráfico de barras en base a la columna ‘emoticones’ con los PNG de los emojis.</td>
-</tr>
-<tr>
-<td align="left"><code><a href="reference/plotTime.html">plotTime()</a></code></td>
-<td align="left"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg"></td>
-<td align="left">Hace un gráfico de líneas en base a la columna ‘fecha’.</td>
-</tr>
-<tr>
-<td align="left"><code><a href="reference/plotWords.html">plotWords()</a></code></td>
-<td align="left"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg"></td>
-<td align="left">Hace una nube de palabras en base a la columna ‘texto’.</td>
-</tr>
-<tr>
-<td align="left"><code><a href="reference/userTwitter.html">userTwitter()</a></code></td>
-<td align="left"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-superseded.svg"></td>
-<td align="left">
-<strong>Deprecada</strong> (login por pasos). Función de login, completa el campo user.</td>
-</tr>
-</tbody>
-</table>
+<p>El <strong>listado completo de funciones</strong>, organizado por categoría y con su estado de ciclo de vida, está en la referencia del sitio de documentación:</p>
+<p>👉 <a href="https://agusnieto77.github.io/TweetScraperR/reference/" class="uri">https://agusnieto77.github.io/TweetScraperR/reference/</a></p>
+<p>Las recomendadas son la familia <code>*API()</code> (ver la tabla de arriba). Las funciones de scraping por <strong>HTML</strong> (<code><a href="reference/getTweetsTimeline.html">getTweetsTimeline()</a></code>, <code><a href="reference/getTweetsHistoricalSearch.html">getTweetsHistoricalSearch()</a></code>, <code><a href="reference/getTweetsData.html">getTweetsData()</a></code>, <code><a href="reference/getUsersData.html">getUsersData()</a></code>, la familia <code>getUrls*()</code>, las variantes <code>*For()</code>, etc.) quedaron <strong>deprecadas</strong> en favor de sus equivalentes <code>*API()</code>; siguen funcionando con una advertencia de ciclo de vida.</p>
 </div>
 <div class="section level3">
-<h3 id="uso-de-las-funciones-del-paquete-tweetscraperr">Uso de las funciones del paquete {TweetScraperR}<a class="anchor" aria-label="anchor" href="#uso-de-las-funciones-del-paquete-tweetscraperr"></a>
+<h3 id="uso-del-paquete">Uso del paquete<a class="anchor" aria-label="anchor" href="#uso-del-paquete"></a>
 </h3>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Cargamos la librería</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://github.com/agusnieto77/TweetScraperR" class="external-link">TweetScraperR</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://github.com/agusnieto77/TweetScraperR" class="external-link">TweetScraperR</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Con la función getTweetsSearchStreaming() recolectamos en tiempo real los  </span></span>
-<span><span class="co"># tweets que mencionan el término de búsqueda, en este ejemplo es un hashtag.</span></span>
-<span><span class="co"># Esta función guarda un rds con los tweets y algunos metadatos.</span></span>
+<span><span class="co"># 1) Importás tu sesión UNA vez (cookies auth_token y ct0 del navegador)</span></span>
+<span><span class="fu"><a href="reference/importSessionX.html">importSessionX</a></span><span class="op">(</span>auth_token <span class="op">=</span> <span class="st">"TU_AUTH_TOKEN"</span>, ct0 <span class="op">=</span> <span class="st">"TU_CT0"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">urls_hashtagRstats</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/getTweetsSearchStreaming.html">getTweetsSearchStreaming</a></span><span class="op">(</span>search <span class="op">=</span> <span class="st">"#RStats"</span>, n_tweets <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="co">#&gt; Inició la recolección de tweets.</span></span>
-<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="co">#&gt; Finalizó la recolección de tweets.</span></span>
-<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="co">#&gt; Datos procesados y guardados.</span></span>
-<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="co">#&gt; Tweets únicos recolectados: 8</span></span></code></pre></div>
+<span><span class="co"># 2) Búsqueda: tweets recientes que mencionan un hashtag</span></span>
+<span><span class="va">tweets</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/getTweetsSearchAPI.html">getTweetsSearchAPI</a></span><span class="op">(</span><span class="st">"#RStats"</span>, n_tweets <span class="op">=</span> <span class="fl">100</span>, product <span class="op">=</span> <span class="st">"Latest"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 3) Timeline de una cuenta</span></span>
+<span><span class="va">timeline</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/getUserTweetsAPI.html">getUserTweetsAPI</a></span><span class="op">(</span><span class="st">"rstatstweet"</span>, n_tweets <span class="op">=</span> <span class="fl">200</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 4) Timeline COMBINADO de varias cuentas (curaduría de investigación)</span></span>
+<span><span class="va">combinado</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/getTweetsTimelinesAPI.html">getTweetsTimelinesAPI</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"elravignani"</span>, <span class="st">"NucleoIdaes"</span>, <span class="st">"BNMMArgentina"</span><span class="op">)</span>,</span>
+<span>  n_tweets <span class="op">=</span> <span class="fl">100</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 5) Datos de perfil de usuarixs</span></span>
+<span><span class="va">perfiles</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/getUsersDataAPI.html">getUsersDataAPI</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"NASA"</span>, <span class="st">"rstatstweet"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>Cada función de tweets devuelve un <code>tibble</code> con datos <strong>estructurados</strong> (21 columnas), listo para analizar:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">tweets</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Rows: 100</span></span>
+<span><span class="co">#&gt; Columns: 21</span></span>
+<span><span class="co">#&gt; $ fecha           &lt;dttm&gt; 2026-06-13 21:42:13, 2026-06-13 12:10:47, ...</span></span>
+<span><span class="co">#&gt; $ user            &lt;chr&gt; "@RosanaFerrero", "@aRtsy_package", ...</span></span>
+<span><span class="co">#&gt; $ texto           &lt;chr&gt; "...texto completo, sin truncar..."</span></span>
+<span><span class="co">#&gt; $ idioma          &lt;chr&gt; "es", "en", ...</span></span>
+<span><span class="co">#&gt; $ megustas        &lt;int&gt; 7203, 0, 8221, ...</span></span>
+<span><span class="co">#&gt; $ retweets        &lt;int&gt; 1194, 323, 1465, ...</span></span>
+<span><span class="co">#&gt; $ views           &lt;int&gt; 470857, 34, 378665, ...</span></span>
+<span><span class="co">#&gt; $ media           &lt;list&gt; ["https://pbs.twimg.com/media/...jpg"], [], ...</span></span>
+<span><span class="co">#&gt; $ hashtags        &lt;list&gt; ["RStats"], [], ...</span></span>
+<span><span class="co">#&gt; $ menciones       &lt;list&gt; ["Space_Station", "SpaceX"], [], ...</span></span>
+<span><span class="co">#&gt; $ urls_externas   &lt;list&gt; ["https://go.nasa.gov/..."], [], ...</span></span>
+<span><span class="co">#&gt; $ emoticones      &lt;list&gt; ["✈"], [], ...</span></span>
+<span><span class="co">#&gt; # ... respuestas, citas, es_retweet, es_cita, tweet_citado_id,</span></span>
+<span><span class="co">#&gt; #     media_tipo, conversation_id, url, tweet_id</span></span></code></pre></div>
+<p>Y analizás/visualizás directo, sin renombrar columnas:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">urls_hashtagRstats</span></span></code></pre></div>
-<div class="sourceCode" id="cb8"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="co">#&gt; # A tibble: 8 × 6</span></span>
-<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="co">#&gt;   art_html  fecha               user             tweet url   fecha_captura      </span></span>
-<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="co">#&gt;   &lt;list&gt;    &lt;dttm&gt;              &lt;chr&gt;            &lt;chr&gt; &lt;chr&gt; &lt;dttm&gt;             </span></span>
-<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a><span class="co">#&gt; 1 &lt;chr [1]&gt; 2024-10-09 13:39:56 @BiochemistTomas "\nW… http… 2024-10-09 10:53:25</span></span>
-<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a><span class="co">#&gt; 2 &lt;chr [1]&gt; 2024-10-09 13:22:23 @RodgersData     "\nA… http… 2024-10-09 10:53:25</span></span>
-<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a><span class="co">#&gt; 3 &lt;chr [1]&gt; 2024-10-09 12:17:43 @rcityviews      "\nI… http… 2024-10-09 10:53:25</span></span>
-<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a><span class="co">#&gt; 4 &lt;chr [1]&gt; 2024-10-09 12:16:37 @d_mykhailyshyna "\nT… http… 2024-10-09 10:53:25</span></span>
-<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a><span class="co">#&gt; 5 &lt;chr [1]&gt; 2024-10-09 12:04:54 @cyberpuck01     "\nC… http… 2024-10-09 10:53:25</span></span>
-<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a><span class="co">#&gt; 6 &lt;chr [1]&gt; 2024-10-09 11:59:31 @leonardohansa   "\nD… http… 2024-10-09 10:53:25</span></span>
-<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a><span class="co">#&gt; 7 &lt;chr [1]&gt; 2024-10-09 11:58:01 @BjnNowak        "\nT… http… 2024-10-09 10:53:25</span></span>
-<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a><span class="co">#&gt; 8 &lt;chr [1]&gt; 2024-10-09 11:57:34 @HackCyber80     "\nC… http… 2024-10-09 10:53:25</span></span></code></pre></div>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Con la función getTweetsHistoricalHashtag(), recuperamos tweets históricos </span></span>
-<span><span class="co"># que contengan el hashtag #rstats y los imprimimos en pantalla</span></span>
-<span></span>
-<span><span class="va">tweets_historicos</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/getTweetsHistoricalHashtag.html">getTweetsHistoricalHashtag</a></span><span class="op">(</span><span class="st">"#rstats"</span>, n_tweets <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb10"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="co">#&gt; Inició la recolección de tweets.</span></span>
-<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="co">#&gt; Finalizó la recolección de tweets.</span></span>
-<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a><span class="co">#&gt; Procesando datos...</span></span>
-<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a><span class="co">#&gt; Datos procesados y guardados.</span></span>
-<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a><span class="co">#&gt; Tweets únicos recolectados: 34</span></span></code></pre></div>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tweets_historicos</span></span></code></pre></div>
-<div class="sourceCode" id="cb12"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="co">#&gt; # A tibble: 34 × 6</span></span>
-<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a><span class="co">#&gt;    art_html  fecha               user            tweet url   fecha_captura      </span></span>
-<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a><span class="co">#&gt;    &lt;list&gt;    &lt;dttm&gt;              &lt;chr&gt;           &lt;chr&gt; &lt;chr&gt; &lt;dttm&gt;             </span></span>
-<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a><span class="co">#&gt;  1 &lt;chr [1]&gt; 2018-10-29 23:54:40 @gjmount        "\nC… http… 2024-10-09 10:54:12</span></span>
-<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a><span class="co">#&gt;  2 &lt;chr [1]&gt; 2018-10-29 23:53:10 @ahammami0      "\nP… http… 2024-10-09 10:54:12</span></span>
-<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a><span class="co">#&gt;  3 &lt;chr [1]&gt; 2018-10-29 23:49:06 @ChrisTokita    "\nC… http… 2024-10-09 10:54:12</span></span>
-<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a><span class="co">#&gt;  4 &lt;chr [1]&gt; 2018-10-29 23:35:04 @gp_pulipaka    "\nI… http… 2024-10-09 10:54:12</span></span>
-<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a><span class="co">#&gt;  5 &lt;chr [1]&gt; 2018-10-29 23:30:07 @gp_pulipaka    "\nA… http… 2024-10-09 10:54:12</span></span>
-<span id="cb12-9"><a href="#cb12-9" tabindex="-1"></a><span class="co">#&gt;  6 &lt;chr [1]&gt; 2018-10-29 23:28:07 @gp_pulipaka    "\nL… http… 2024-10-09 10:54:12</span></span>
-<span id="cb12-10"><a href="#cb12-10" tabindex="-1"></a><span class="co">#&gt;  7 &lt;chr [1]&gt; 2018-10-29 23:26:09 @gp_pulipaka    "\nM… http… 2024-10-09 10:54:12</span></span>
-<span id="cb12-11"><a href="#cb12-11" tabindex="-1"></a><span class="co">#&gt;  8 &lt;chr [1]&gt; 2018-10-29 23:00:32 @tidyversetwee… "\nG… http… 2024-10-09 10:54:12</span></span>
-<span id="cb12-12"><a href="#cb12-12" tabindex="-1"></a><span class="co">#&gt;  9 &lt;chr [1]&gt; 2018-10-29 23:00:31 @tidyversetwee… "\nW… http… 2024-10-09 10:54:12</span></span>
-<span id="cb12-13"><a href="#cb12-13" tabindex="-1"></a><span class="co">#&gt; 10 &lt;chr [1]&gt; 2018-10-29 23:00:26 @ProCogia       "\nW… http… 2024-10-09 10:54:12</span></span>
-<span id="cb12-14"><a href="#cb12-14" tabindex="-1"></a><span class="co">#&gt; # ℹ 24 more rows</span></span></code></pre></div>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Ahora con la getTweetsHistoricalTimeline() recuperamos los datos de tweets originales </span></span>
-<span><span class="co"># de la cuenta rstatstweet.</span></span>
-<span></span>
-<span><span class="va">timeline_tweets</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/getTweetsHistoricalTimeline.html">getTweetsHistoricalTimeline</a></span><span class="op">(</span>username <span class="op">=</span> <span class="st">"rstatstweet"</span>, n_tweets <span class="op">=</span> <span class="fl">10</span>, </span>
-<span>                                               since <span class="op">=</span> <span class="st">"2018-10-26"</span>, until <span class="op">=</span> <span class="st">"2020-10-30"</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb14"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="co">#&gt; Inició la recolección de tweets.</span></span>
-<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a><span class="co">#&gt; Finalizó la recolección de tweets.</span></span>
-<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a><span class="co">#&gt; Procesando datos...</span></span>
-<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a><span class="co">#&gt; Datos procesados y guardados.</span></span>
-<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a><span class="co">#&gt; Tweets únicos recolectados: 13</span></span></code></pre></div>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Imprimimos en pantalla los datos de los tweets recuperados</span></span>
-<span></span>
-<span><span class="va">timeline_tweets</span></span></code></pre></div>
-<div class="sourceCode" id="cb16"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="co">#&gt; # A tibble: 13 × 6</span></span>
-<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a><span class="co">#&gt;    art_html  fecha               user         tweet    url   fecha_captura      </span></span>
-<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a><span class="co">#&gt;    &lt;list&gt;    &lt;dttm&gt;              &lt;chr&gt;        &lt;chr&gt;    &lt;chr&gt; &lt;dttm&gt;             </span></span>
-<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a><span class="co">#&gt;  1 &lt;chr [1]&gt; 2020-09-25 22:12:32 @rstatstweet "I can’… http… 2024-10-09 10:54:36</span></span>
-<span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a><span class="co">#&gt;  2 &lt;chr [1]&gt; 2020-09-24 15:58:14 @rstatstweet "Welcom… http… 2024-10-09 10:54:36</span></span>
-<span id="cb16-6"><a href="#cb16-6" tabindex="-1"></a><span class="co">#&gt;  3 &lt;chr [1]&gt; 2020-09-24 15:30:13 @rstatstweet "\nI am… http… 2024-10-09 10:54:36</span></span>
-<span id="cb16-7"><a href="#cb16-7" tabindex="-1"></a><span class="co">#&gt;  4 &lt;chr [1]&gt; 2020-09-24 15:10:16 @rstatstweet "This i… http… 2024-10-09 10:54:36</span></span>
-<span id="cb16-8"><a href="#cb16-8" tabindex="-1"></a><span class="co">#&gt;  5 &lt;chr [1]&gt; 2020-09-24 15:05:32 @rstatstweet "\nThan… http… 2024-10-09 10:54:36</span></span>
-<span id="cb16-9"><a href="#cb16-9" tabindex="-1"></a><span class="co">#&gt;  6 &lt;chr [1]&gt; 2020-09-24 13:07:33 @rstatstweet "\nThan… http… 2024-10-09 10:54:36</span></span>
-<span id="cb16-10"><a href="#cb16-10" tabindex="-1"></a><span class="co">#&gt;  7 &lt;chr [1]&gt; 2020-09-24 09:11:22 @rstatstweet "That’s… http… 2024-10-09 10:54:36</span></span>
-<span id="cb16-11"><a href="#cb16-11" tabindex="-1"></a><span class="co">#&gt;  8 &lt;chr [1]&gt; 2020-09-24 00:28:46 @rstatstweet "I will… http… 2024-10-09 10:54:36</span></span>
-<span id="cb16-12"><a href="#cb16-12" tabindex="-1"></a><span class="co">#&gt;  9 &lt;chr [1]&gt; 2020-09-24 00:25:17 @rstatstweet "\nTher… http… 2024-10-09 10:54:36</span></span>
-<span id="cb16-13"><a href="#cb16-13" tabindex="-1"></a><span class="co">#&gt; 10 &lt;chr [1]&gt; 2020-09-24 00:21:15 @rstatstweet "\nSo t… http… 2024-10-09 10:54:36</span></span>
-<span id="cb16-14"><a href="#cb16-14" tabindex="-1"></a><span class="co">#&gt; 11 &lt;chr [1]&gt; 2020-09-24 00:16:20 @rstatstweet "I was … http… 2024-10-09 10:54:36</span></span>
-<span id="cb16-15"><a href="#cb16-15" tabindex="-1"></a><span class="co">#&gt; 12 &lt;chr [1]&gt; 2020-09-24 00:09:42 @rstatstweet "\nThis… http… 2024-10-09 10:54:36</span></span>
-<span id="cb16-16"><a href="#cb16-16" tabindex="-1"></a><span class="co">#&gt; 13 &lt;chr [1]&gt; 2020-02-12 01:36:45 @rstatstweet "Happy … http… 2024-10-09 10:54:36</span></span></code></pre></div>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Ahora con la función getUsersFullData() recuperamos los datos de usuarixs a </span></span>
-<span><span class="co"># partir de las URLs de users recuperadas en el objeto tweets_historicos.</span></span>
-<span></span>
-<span><span class="va">users</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"@"</span>, <span class="st">""</span>, <span class="va">tweets_historicos</span><span class="op">$</span><span class="va">user</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">usuarixs</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/getUsersFullData.html">getUsersFullData</a></span><span class="op">(</span>urls_users <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"https://x.com/"</span>, <span class="va">users</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb18"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a><span class="co">#&gt; Terminando el proceso.</span></span>
-<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a><span class="co">#&gt;       </span></span>
-<span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a><span class="co">#&gt; Usuarixs recuperados: 25 </span></span>
-<span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a><span class="co">#&gt; Usuarixs no recuperados: 0</span></span></code></pre></div>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Imprimimos en pantalla los datos de lxs users recuperadxs </span></span>
-<span></span>
-<span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">usuarixs</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb20"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a><span class="co">#&gt; Rows: 25</span></span>
-<span id="cb20-2"><a href="#cb20-2" tabindex="-1"></a><span class="co">#&gt; Columns: 13</span></span>
-<span id="cb20-3"><a href="#cb20-3" tabindex="-1"></a><span class="co">#&gt; $ fecha_creacion       &lt;dttm&gt; 2014-05-11 11:32:54, 2017-10-11 08:04:19, 2009-0…</span></span>
-<span id="cb20-4"><a href="#cb20-4" tabindex="-1"></a><span class="co">#&gt; $ nombre_adicional     &lt;chr&gt; "gjmount", "ahammami0", "ChrisTokita", "gp_pulipa…</span></span>
-<span id="cb20-5"><a href="#cb20-5" tabindex="-1"></a><span class="co">#&gt; $ descripcion          &lt;chr&gt; "I teach analytics in modern Excel 📚 O'Reilly Au…</span></span>
-<span id="cb20-6"><a href="#cb20-6" tabindex="-1"></a><span class="co">#&gt; $ nombre               &lt;chr&gt; "George Mount", "Abdessalem Hammami", "Chris Toki…</span></span>
-<span id="cb20-7"><a href="#cb20-7" tabindex="-1"></a><span class="co">#&gt; $ ubicacion            &lt;chr&gt; "Cleveland, OH", "Joensuu, Suomi", "Los Angeles, …</span></span>
-<span id="cb20-8"><a href="#cb20-8" tabindex="-1"></a><span class="co">#&gt; $ identificador        &lt;chr&gt; "2489702532", "918024449194065925", "41155612", "…</span></span>
-<span id="cb20-9"><a href="#cb20-9" tabindex="-1"></a><span class="co">#&gt; $ url_imagen           &lt;chr&gt; "https://pbs.twimg.com/profile_images/16538332253…</span></span>
-<span id="cb20-10"><a href="#cb20-10" tabindex="-1"></a><span class="co">#&gt; $ url_miniatura        &lt;chr&gt; "https://pbs.twimg.com/profile_images/16538332253…</span></span>
-<span id="cb20-11"><a href="#cb20-11" tabindex="-1"></a><span class="co">#&gt; $ seguidorxs           &lt;int&gt; 4674, 125, 1529, 183257, 12025, 1621, 2351, 396, …</span></span>
-<span id="cb20-12"><a href="#cb20-12" tabindex="-1"></a><span class="co">#&gt; $ amigxs               &lt;int&gt; 4273, 120, 1880, 20258, 0, 147, 1919, 310, 2505, …</span></span>
-<span id="cb20-13"><a href="#cb20-13" tabindex="-1"></a><span class="co">#&gt; $ tweets               &lt;int&gt; 29713, 883, 5653, 92873, 98491, 1545, 1004, 779, …</span></span>
-<span id="cb20-14"><a href="#cb20-14" tabindex="-1"></a><span class="co">#&gt; $ url                  &lt;chr&gt; "https://twitter.com/gjmount", "https://twitter.c…</span></span>
-<span id="cb20-15"><a href="#cb20-15" tabindex="-1"></a><span class="co">#&gt; $ enlaces_relacionados &lt;chr&gt; "https://t.co/JcWH7Lwy9r, https://stringfestanaly…</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="reference/plotTime.html">plotTime</a></span><span class="op">(</span><span class="va">tweets</span><span class="op">)</span>                    <span class="co"># serie temporal (columna fecha)</span></span>
+<span><span class="fu"><a href="reference/plotWords.html">plotWords</a></span><span class="op">(</span><span class="va">tweets</span><span class="op">)</span>                   <span class="co"># nube de palabras (columna texto)</span></span>
+<span><span class="fu"><a href="reference/plotEmojis.html">plotEmojis</a></span><span class="op">(</span><span class="va">tweets</span><span class="op">)</span>                  <span class="co"># ranking de emojis (columna emoticones)</span></span>
+<span><span class="fu"><a href="reference/getTweetsSentiments.html">getTweetsSentiments</a></span><span class="op">(</span><span class="va">tweets</span><span class="op">$</span><span class="va">texto</span><span class="op">)</span>   <span class="co"># análisis de sentimiento (vía OpenAI)</span></span></code></pre></div>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">
@@ -634,12 +304,13 @@
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://www.repostatus.org/#active" class="external-link"><img src="https://www.repostatus.org/badges/latest/active.svg" alt="Project Status: Active – The project has reached a stable, usable state and is being actively developed."></a></li>
-<li><a href="https://github.com/agusnieto77/TweetScraperR" class="external-link"><img src="https://img.shields.io/badge/devel%20version-0.3.0-blue.svg"></a></li>
+<li><a href="https://github.com/agusnieto77/TweetScraperR" class="external-link"><img src="https://img.shields.io/badge/devel%20version-0.4.0-blue.svg"></a></li>
+<li><a href="https://agusnieto77.github.io/TweetScraperR/"><img src="https://img.shields.io/badge/docs-pkgdown-blue.svg" alt="pkgdown"></a></li>
 <li><a href="https://cran.r-project.org/web/licenses/MIT" class="external-link"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT"></a></li>
 <li><a href="https://github.com/agusnieto77/TweetScraperR" class="external-link"><img src="https://img.shields.io/github/languages/code-size/agusnieto77/TweetScraperR.svg"></a></li>
 <li><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="https://img.shields.io/badge/Lifecycle-Experimental-ff7f2a"></a></li>
-<li><a href="https://github.com/agusnieto77/TweetScraperR" class="external-link"><img src="https://img.shields.io/badge/Build%20with-R%20&amp;%20RStudio-blue?style=plastic=appveyor"></a></li>
-<li><a href="https://github.com/agusnieto77/TweetScraperR" class="external-link"><img src="https://img.shields.io/badge/TweetScraperR-ready%20to%20use-color:%20#39c?style=plastic=appveyor"></a></li>
+<li><a href="https://github.com/agusnieto77/TweetScraperR" class="external-link"><img src="https://img.shields.io/badge/Build%20with-R%20%26%20RStudio-blue?style=plastic"></a></li>
+<li><a href="https://github.com/agusnieto77/TweetScraperR" class="external-link"><img src="https://img.shields.io/badge/TweetScraperR-ready%20to%20use-39c?style=plastic"></a></li>
 </ul>
 </div>
 

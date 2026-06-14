@@ -11,7 +11,7 @@ Description:
     para extraer datos de X/Twitter (publicaciones, usuarixs y metadatos
     asociados) y facilita la recolección de datos para análisis y
     visualización.
-URL: https://github.com/agusnieto77/TweetScraperR
+URL: https://github.com/agusnieto77/TweetScraperR, https://agusnieto77.github.io/TweetScraperR/
 BugReports: https://github.com/agusnieto77/TweetScraperR/issues
 Depends:
     R (>= 4.1.0)

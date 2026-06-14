@@ -1,0 +1,93 @@
+url: https://agusnieto77.github.io/TweetScraperR/
+
+template:
+  bootstrap: 5
+  bslib:
+    primary: "#1d9bf0"
+
+reference:
+- title: "Sesión y motor"
+  desc: >
+    Instalar el motor de Node.js/Playwright e importar tu sesión real de X a
+    partir de las cookies del navegador.
+  contents:
+  - importSessionX
+  - installPlaywrightEngine
+  - checkPlaywrightEngine
+  - loginX
+
+- title: "Scraping de tweets (API — recomendado)"
+  desc: >
+    Consultan la API GraphQL interna de X y devuelven datos estructurados desde
+    JSON (texto completo, métricas, media, hashtags, menciones, etc.).
+  contents:
+  - getUserTweetsAPI
+  - getTweetsTimelinesAPI
+  - getTweetsSearchAPI
+  - getTweetsRepliesAPI
+  - getTweetsDataAPI
+  - getUserMediaAPI
+
+- title: "Usuarios y redes (API)"
+  contents:
+  - getUsersDataAPI
+  - getUserFollowersAPI
+  - getUserFollowingAPI
+  - getTweetsRetweetsAPI
+
+- title: "Visualización"
+  contents:
+  - plotTime
+  - plotWords
+  - plotEmojis
+  - plotEmojisPNG
+
+- title: "Análisis y utilidades"
+  contents:
+  - getTweetsSentiments
+  - getTweetsImagesAnalysis
+  - HTMLImgReport
+  - getTweetsHashtags
+  - extractTweetsData
+  - getTweetsXquikSearch
+
+- title: "Funciones deprecadas (scraping por HTML)"
+  desc: >
+    Reemplazadas por las funciones `*API()`, más robustas. Siguen funcionando
+    pero emiten una advertencia de ciclo de vida.
+  contents:
+  - getTweetsTimeline
+  - getTweetsTimelineFor
+  - getTweetsHistoricalSearch
+  - getTweetsHistoricalSearchFor
+  - getTweetsHistoricalHashtag
+  - getTweetsHistoricalHashtagFor
+  - getTweetsHistoricalTimeline
+  - getTweetsHistoricalTimelineFor
+  - getTweetsFullSearch
+  - getTweetsSearchStreaming
+  - getTweetsSearchStreaming2
+  - getTweetsSearchStreamingFor
+  - getTweetsSearchStreamingFor2
+  - getTweetsCites
+  - getTweetsReplies
+  - getTweetsRetweets
+  - getTweetsData
+  - getTweetsData2
+  - getTweetsImages
+  - getUsersData
+  - getUsersFullData
+  - getScrollExtract
+  - getScrollExtractUrls
+  - getUrlsTweetsSearch
+  - getUrlsTweetsTimeline
+  - getUrlsTweetsCites
+  - getUrlsTweetsReplies
+  - getUrlsHistoricalTimeline
+  - getUrlsSearchStreaming
+  - openTwitter
+  - closeTwitter
+  - openTimeline
+  - closeTimeline
+  - userTwitter
+  - passTwitter

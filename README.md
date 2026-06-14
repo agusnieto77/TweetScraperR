@@ -1,4 +1,4 @@
-# TweetScraperR<img src="man/figures/hex-twitterscraper.svg" align="right" height="320"/>
+# TweetScraperR<img src="man/figures/hex-twitterscraper.svg" align="right" height="320" alt="Logo hexagonal de TweetScraperR"/>
 
 <!-- badges: start -->
 

@@ -21,6 +21,9 @@
                "name": "Rosana",
                "created_at": "Fri Jun 13 06:00:23 +0000 2026"
               },
+              "avatar": {
+               "image_url": "https://pbs.twimg.com/profile_images/2001/x_normal.jpg"
+              },
               "is_blue_verified": true,
               "location": {
                "location": "Buenos Aires"
@@ -31,7 +34,17 @@
                "friends_count": 10,
                "statuses_count": 500,
                "favourites_count": 20,
-               "verified": false
+               "verified": false,
+               "profile_banner_url": "https://pbs.twimg.com/profile_banners/2001",
+               "entities": {
+                "url": {
+                 "urls": [
+                  {
+                   "expanded_url": "https://RosanaFerrero.org"
+                  }
+                 ]
+                }
+               }
               }
              }
             }
@@ -51,6 +64,9 @@
                "name": "DS Tut",
                "created_at": "Fri Jun 13 06:00:23 +0000 2026"
               },
+              "avatar": {
+               "image_url": "https://pbs.twimg.com/profile_images/2002/x_normal.jpg"
+              },
               "is_blue_verified": true,
               "location": {
                "location": "Buenos Aires"
@@ -61,7 +77,17 @@
                "friends_count": 10,
                "statuses_count": 500,
                "favourites_count": 20,
-               "verified": false
+               "verified": false,
+               "profile_banner_url": "https://pbs.twimg.com/profile_banners/2002",
+               "entities": {
+                "url": {
+                 "urls": [
+                  {
+                   "expanded_url": "https://DataSciencetut.org"
+                  }
+                 ]
+                }
+               }
               }
              }
             }

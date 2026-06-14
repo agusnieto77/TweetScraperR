@@ -125,12 +125,20 @@ frágiles. Todas reusan la sesión importada con `importSessionX()`.
 | Función | Qué recupera |
 |---|---|
 | `getUserTweetsAPI()` | Timeline de unx usuarix |
+| `getTweetsTimelinesAPI()` | Timeline **combinado** de varias cuentas |
 | `getTweetsSearchAPI()` | Búsqueda (`product = "Latest"/"Top"/"Media"`) |
 | `getTweetsRepliesAPI()` | Tweet y sus respuestas (hilo) |
+| `getTweetsDataAPI()` | Datos de tweets a partir de sus URLs |
+| `getUserMediaAPI()` | Tweets con media (fotos/videos) de unx usuarix |
 | `getTweetsRetweetsAPI()` | Usuarixs que repostearon un tweet |
 | `getUserFollowersAPI()` | Seguidorxs de unx usuarix |
 | `getUserFollowingAPI()` | Cuentas que sigue unx usuarix |
 | `getUsersDataAPI()` | Datos de perfil de usuarixs |
+
+Las funciones de tweets devuelven un `tibble` rico: texto completo, fecha,
+idioma, métricas (respuestas/retweets/citas/me gusta/vistas), y list-columns
+`media`, `hashtags`, `menciones`, `urls_externas` y `emoticones` — listo para
+analizar con `plotTime()`, `plotWords()`, `plotEmojis()` o `getTweetsSentiments()`.
 
 ``` r
 library(TweetScraperR)

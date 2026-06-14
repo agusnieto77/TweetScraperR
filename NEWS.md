@@ -16,6 +16,8 @@
   - `getUserMediaAPI()` — tweets con media de unx usuarix.
   - `getTweetsDataAPI()` — datos de tweets a partir de sus URLs (reemplazo de
     `getTweetsData()`).
+  - `getTweetsTimelinesAPI()` — timeline combinado de varias cuentas (sin
+    necesitar una Lista de X).
 * Internamente, los endpoints que exigen el header anti-bot
   `x-client-transaction-id` (p.ej. búsqueda, replies, followers) se resuelven
   "cosechando" las respuestas JSON que dispara la propia app de X al navegar la

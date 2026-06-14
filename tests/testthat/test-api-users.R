@@ -8,7 +8,8 @@ test_that(".parse_users extrae usuarios y cursor del JSON de lista", {
   expect_setequal(
     names(res$users),
     c("user", "nombre", "user_id", "descripcion", "seguidores", "siguiendo",
-      "tweets", "favoritos", "verificado", "ubicacion", "fecha_creacion", "url")
+      "tweets", "favoritos", "verificado", "ubicacion", "sitio_web",
+      "imagen_perfil", "banner", "fecha_creacion", "url")
   )
   u1 <- res$users[1, ]
   expect_equal(u1$user, "@RosanaFerrero")
@@ -18,6 +19,10 @@ test_that(".parse_users extrae usuarios y cursor del JSON de lista", {
   expect_equal(u1$ubicacion, "Buenos Aires")
   expect_equal(u1$url, "https://x.com/RosanaFerrero")
   expect_s3_class(u1$fecha_creacion, "POSIXct")
+  # campos de perfil enriquecidos
+  expect_equal(u1$sitio_web, "https://RosanaFerrero.org")
+  expect_match(u1$imagen_perfil, "^https://pbs.twimg.com/profile_images/")
+  expect_match(u1$banner, "^https://pbs.twimg.com/profile_banners/")
 })
 
 test_that(".user_row devuelve NULL si no hay handle", {

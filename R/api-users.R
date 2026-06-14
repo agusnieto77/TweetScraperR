@@ -12,6 +12,7 @@
   cr <- ur$core
   handle <- .or_null(cr$screen_name, lg$screen_name)
   if (is.null(handle)) return(NULL)
+  web <- .entity_vec(lg$entities$url$urls, "expanded_url")
   tibble::tibble(
     user             = paste0("@", handle),
     nombre           = .or_null(.or_null(cr$name, lg$name), NA_character_),
@@ -23,6 +24,9 @@
     favoritos        = as.integer(.or_null(lg$favourites_count, NA)),
     verificado       = isTRUE(ur$is_blue_verified) || isTRUE(lg$verified),
     ubicacion        = .or_null(.or_null(ur$location$location, lg$location), NA_character_),
+    sitio_web        = if (length(web)) web[1] else NA_character_,
+    imagen_perfil    = .or_null(.or_null(ur$avatar$image_url, lg$profile_image_url_https), NA_character_),
+    banner           = .or_null(lg$profile_banner_url, NA_character_),
     fecha_creacion   = .x_parse_twitter_date(.or_null(cr$created_at, lg$created_at)),
     url              = paste0("https://x.com/", handle)
   )

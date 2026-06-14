@@ -21,9 +21,9 @@ test_that(".parse_timeline_tweets extrae tweets, metricas y cursor del JSON", {
   expect_setequal(
     names(res$tweets),
     c("fecha", "user", "texto", "idioma", "respuestas", "retweets", "citas",
-      "megustas", "views", "hashtags", "menciones", "urls_externas", "media",
-      "media_tipo", "es_retweet", "es_cita", "tweet_citado_id",
-      "conversation_id", "url", "tweet_id")
+      "megustas", "views", "emoticones", "hashtags", "menciones",
+      "urls_externas", "media", "media_tipo", "es_retweet", "es_cita",
+      "tweet_citado_id", "conversation_id", "url", "tweet_id")
   )
 
   t1 <- res$tweets[1, ]
@@ -89,4 +89,14 @@ test_that(".parse_timeline_tweets desarma conversationthread (tweet + respuestas
   expect_equal(nrow(res$tweets), 3)
   expect_setequal(res$tweets$tweet_id, c("5000", "5001", "5002"))
   expect_equal(res$cursor, "TDCURSOR")
+})
+
+# .extract_emojis: compatibilidad con plotEmojis ----------------------------
+
+test_that(".extract_emojis extrae los emojis de un texto", {
+  expect_equal(TweetScraperR:::.extract_emojis("hola \U0001F52C\U0001F9E0 mundo"),
+               c("\U0001F52C", "\U0001F9E0"))
+  expect_equal(TweetScraperR:::.extract_emojis("sin emojis"), character(0))
+  expect_equal(TweetScraperR:::.extract_emojis(NULL), character(0))
+  expect_equal(TweetScraperR:::.extract_emojis(""), character(0))
 })

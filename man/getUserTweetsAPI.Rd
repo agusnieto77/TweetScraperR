@@ -17,7 +17,7 @@ getUserTweetsAPI(username = "NASA", n_tweets = 40, dir = getwd(), save = TRUE)
 }
 \value{
 Un tibble con un tweet por fila y columnas: fecha, user, texto,
-idioma, respuestas, retweets, citas, megustas, views, hashtags (lista),
+idioma, respuestas, retweets, citas, megustas, views, emoticones (lista), hashtags (lista),
 menciones (lista), urls_externas (lista), media (lista de URLs),
 media_tipo (lista: photo/video/animated_gif), es_retweet, es_cita,
 tweet_citado_id, conversation_id, url y tweet_id.

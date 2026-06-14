@@ -77,6 +77,18 @@
   list(urls = urls, tipos = tipos)
 }
 
+#' Extrae los emojis presentes en un texto (para compatibilidad con plotEmojis)
+#' @noRd
+.extract_emojis <- function(text) {
+  if (is.null(text) || !nzchar(text)) return(character(0))
+  pat <- paste0(
+    "[\U0001F000-\U0001FAFF\U00002600-\U000027BF\U0001F1E6-\U0001F1FF",
+    "\U00002B00-\U00002BFF\U00002190-\U000021FF\U0001F900-\U0001F9FF\U00002702-\U000027B0]"
+  )
+  m <- unlist(regmatches(text, gregexpr(pat, text, perl = TRUE)))
+  m[nzchar(m)]
+}
+
 #' Construye una fila-tibble de tweet a partir de un objeto tweet_results$result
 #' @noRd
 .tweet_row <- function(tr) {
@@ -101,6 +113,7 @@
     citas           = as.integer(.or_null(lg$quote_count, NA)),
     megustas        = as.integer(.or_null(lg$favorite_count, NA)),
     views           = suppressWarnings(as.integer(.or_null(tr$views$count, NA))),
+    emoticones      = list(.extract_emojis(lg$full_text)),
     hashtags        = list(.entity_vec(ent$hashtags, "text")),
     menciones       = list(.entity_vec(ent$user_mentions, "screen_name")),
     urls_externas   = list(.entity_vec(ent$urls, "expanded_url")),
@@ -176,7 +189,7 @@
 #' @param save Logico. Si TRUE (por defecto) guarda el resultado en un RDS.
 #'
 #' @return Un tibble con un tweet por fila y columnas: fecha, user, texto,
-#'   idioma, respuestas, retweets, citas, megustas, views, hashtags (lista),
+#'   idioma, respuestas, retweets, citas, megustas, views, emoticones (lista), hashtags (lista),
 #'   menciones (lista), urls_externas (lista), media (lista de URLs),
 #'   media_tipo (lista: photo/video/animated_gif), es_retweet, es_cita,
 #'   tweet_citado_id, conversation_id, url y tweet_id.

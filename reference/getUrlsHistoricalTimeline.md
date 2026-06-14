@@ -1,0 +1,123 @@
+# Get Historical Tweet URLs from a User Timeline
+
+[![\[Experimental\]](https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+
+**Obsoleta**: preférí getTweetsSearchAPI(), basada en la API de X (datos
+del JSON, mas robusta).
+
+Esta función recupera URLs de tweets del timeline histórico de unx
+usuarix en Twitter, basado en un rango de fechas especificado.
+Opcionalmente puede realizar la autenticación en Twitter mediante el
+nombre de usuarix y la contraseña proporcionados, o los valores
+predeterminados de las variables de entorno del sistema. Después de
+autenticar al usuarix (si open=TRUE), la función realiza una búsqueda de
+tweets publicados por le usuarix especificadx dentro del rango de fechas
+definido por los parámetros `since` y `until`. Las URLs de los tweets
+encontrados se recogen hasta alcanzar el número máximo de URLs
+especificado por el parámetro `n_urls` o hasta que no se encuentren
+nuevas URLs en varios intentos consecutivos. Los resultados se guardan
+en un archivo con formato `.rds` en el directorio especificado por el
+parámetro `dir` si el parámetro `save` es TRUE.
+
+## Usage
+
+``` r
+getUrlsHistoricalTimeline(
+  username = "rstatstweet",
+  timeout = 10,
+  n_urls = 100,
+  since = "2018-10-26",
+  until = "2018-10-30",
+  open = FALSE,
+  xuser = Sys.getenv("TWITTER_USER", Sys.getenv("USER")),
+  xpass = Sys.getenv("TWITTER_PASS", Sys.getenv("PASS")),
+  dir = getwd(),
+  save = TRUE
+)
+```
+
+## Arguments
+
+- username:
+
+  Nombre de usuarix de Twitter del que se desean recuperar los tweets.
+  Por defecto es "rstatstweet".
+
+- timeout:
+
+  Tiempo de espera entre solicitudes en segundos. Por defecto es 10.
+
+- n_urls:
+
+  El número máximo de URLs de tweets a recuperar. Por defecto es 100.
+
+- since:
+
+  Fecha de inicio para la búsqueda de tweets (en formato "YYYY-MM-DD").
+  Por defecto es "2018-10-26".
+
+- until:
+
+  Fecha de fin para la búsqueda de tweets (en formato "YYYY-MM-DD"). Por
+  defecto es "2018-10-30".
+
+- open:
+
+  Indica si se debe realizar el proceso de autenticación (por defecto
+  FALSE).
+
+- xuser:
+
+  Nombre de usuarix de Twitter para autenticación. Por defecto es el
+  valor de la variable de entorno TWITTER_USER (o, si no está definida,
+  USER).
+
+- xpass:
+
+  Contraseña de Twitter para autenticación. Por defecto es el valor de
+  la variable de entorno TWITTER_PASS (o, si no está definida, PASS).
+
+- dir:
+
+  Directorio para guardar el archivo RDS con las URLs recolectadas. Por
+  defecto es el directorio de trabajo actual.
+
+- save:
+
+  Lógico. Indica si se debe guardar el resultado en un archivo RDS (por
+  defecto TRUE).
+
+## Value
+
+Un vector que contiene las URLs de tweets recuperadas.
+
+## References
+
+Puedes encontrar más información sobre el paquete TweetScrapeR en:
+<https://github.com/agusnieto77/TweetScraperR>
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+# Sin autenticación
+getUrlsHistoricalTimeline(
+  username = "rstatstweet", n_urls = 50,
+  since = "2018-10-26", until = "2018-10-30"
+)
+
+# Con autenticación
+getUrlsHistoricalTimeline(
+  username = "rstatstweet", n_urls = 50,
+  since = "2018-10-26", until = "2018-10-30",
+  open = TRUE
+)
+
+# Sin guardar los resultados
+getUrlsHistoricalTimeline(
+  username = "rstatstweet", n_urls = 50,
+  since = "2018-10-26", until = "2018-10-30",
+  save = FALSE
+)
+} # }
+```

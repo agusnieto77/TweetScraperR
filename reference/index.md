@@ -67,5 +67,3 @@ desde JSON (texto completo, métricas, media, hashtags, menciones, etc.).
   : Get Hashtags from Tweets
 - [`extractTweetsData()`](https://agusnieto77.github.io/TweetScraperR/reference/extractTweetsData.md)
   : Extracts Relevant Information from Locally Stored Tweets
-- [`getTweetsXquikSearch()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsXquikSearch.md)
-  : Get Tweets by Search with Xquik

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">TweetScraperR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,7 +37,7 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.5.0" id="tweetscraperr-050-desarrollo">TweetScraperR 0.5.0 (desarrollo)<a class="anchor" aria-label="anchor" href="#tweetscraperr-050-desarrollo"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.5.0" id="tweetscraperr-050">TweetScraperR 0.5.0<a class="anchor" aria-label="anchor" href="#tweetscraperr-050"></a></h2>
 <div class="section level3">
 <h3 id="paquete-unificado-sobre-el-motor-nodeplaywright-breaking-0-5-0">Paquete unificado sobre el motor Node/Playwright (BREAKING)<a class="anchor" aria-label="anchor" href="#paquete-unificado-sobre-el-motor-nodeplaywright-breaking-0-5-0"></a></h3>
 <ul><li>Se <strong>eliminan</strong> las funciones de scraping por HTML con sesión chromote, todas deprecadas en 0.3/0.4 y rotas tras los rediseños de X (bloqueo de login automatizado y cambios de DOM): familia de sesion (<code>openTwitter()</code>, <code>closeTwitter()</code>, <code>openTimeline()</code>, <code>closeTimeline()</code>, <code>passTwitter()</code>, <code>userTwitter()</code>), la familia de scroll (<code>getScrollExtract()</code>, <code>getScrollExtractUrls()</code>), la familia <code>*API</code> de reemplazo ya cubre:
@@ -57,7 +57,9 @@
 <code>getUsersData()</code>, <code>getUsersFullData()</code> → [getUsersDataAPI()]</li>
 </ul></li>
 <li>[getTweetsSearchAPI()] incorpora los argumentos <code>since</code> y <code>until</code> (paridad con los históricos eliminados: filtrar por rango de fechas nativo de la búsqueda de X).</li>
-<li>Paquete: 21 archivos R, 24 exportaciones, un solo contrato de columnas para toda la familia <code>*API()</code>.</li>
+<li>Paquete: 20 archivos R, 23 exportaciones, un solo contrato de columnas para toda la familia <code>*API()</code>.</li>
+<li>
+<code>ggimage</code> pasa a <code>Suggests</code> (solo lo usa <code><a href="../reference/plotEmojisPNG.html">plotEmojisPNG()</a></code>): su cadena de dependencias (<code>ggiraph</code> → <code>gdtools</code>) exige XQuartz en macOS y rompía la instalación en sistemas sin X11.</li>
 <li>Todas las capacidades post-procesamiento siguen intactas: <code><a href="../reference/extractTweetsData.html">extractTweetsData()</a></code> (procesa RDS legacy con <code>art_html</code> ya guardados), <code><a href="../reference/getTweetsHashtags.html">getTweetsHashtags()</a></code>, <code><a href="../reference/getTweetsSentiments.html">getTweetsSentiments()</a></code>, <code><a href="../reference/getTweetsImagesAnalysis.html">getTweetsImagesAnalysis()</a></code>, <code><a href="../reference/HTMLImgReport.html">HTMLImgReport()</a></code>, <code>plot*()</code>.</li>
 </ul></div>
 </div>
@@ -187,10 +189,6 @@
 <li>La columna <code>art_html</code> de los tibbles devueltos por <code>getTweetsCites()</code>, <code>getTweetsReplies()</code> y <code>getTweetsRetweets()</code> ahora es de tipo <code>character</code> (antes era una list-column). Para combinar datos guardados con versiones anteriores, convertí primero la columna vieja con <code>mutate(art_html = as.character(art_html))</code> antes de <code>bind_rows()</code>.</li>
 </ul></div>
 </div>
-    <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.2.4" id="tweetscraperr-024">TweetScraperR 0.2.4<a class="anchor" aria-label="anchor" href="#tweetscraperr-024"></a></h2>
-<ul><li>Nueva función <code><a href="../reference/getTweetsXquikSearch.html">getTweetsXquikSearch()</a></code>: cliente de búsqueda vía la API de Xquik (servicio externo, requiere <code>XQUIK_API_KEY</code>).</li>
-</ul></div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

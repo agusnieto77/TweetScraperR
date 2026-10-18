@@ -48,8 +48,6 @@ devtools::install_github("agusnieto77/TweetScraperR")
     ([`getTweetsSentiments()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsSentiments.md)
     y
     [`getTweetsImagesAnalysis()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsImagesAnalysis.md)).
-  - `XQUIK_API_KEY`: opcional, solo para
-    [`getTweetsXquikSearch()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsXquikSearch.md).
 
 > **Nota:** las variables `TWITTER_USER`/`TWITTER_PASS` (y su *fallback*
 > legacy `USER`/`PASS`) y el login automatizado quedaron **deprecados**:

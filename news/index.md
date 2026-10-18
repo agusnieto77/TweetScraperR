@@ -1,6 +1,6 @@
 # Changelog
 
-## TweetScraperR 0.5.0 (desarrollo)
+## TweetScraperR 0.5.0
 
 ### Paquete unificado sobre el motor Node/Playwright (BREAKING)
 
@@ -23,8 +23,12 @@
 - \[getTweetsSearchAPI()\] incorpora los argumentos `since` y `until`
   (paridad con los históricos eliminados: filtrar por rango de fechas
   nativo de la búsqueda de X).
-- Paquete: 21 archivos R, 24 exportaciones, un solo contrato de columnas
+- Paquete: 20 archivos R, 23 exportaciones, un solo contrato de columnas
   para toda la familia `*API()`.
+- `ggimage` pasa a `Suggests` (solo lo usa
+  [`plotEmojisPNG()`](https://agusnieto77.github.io/TweetScraperR/reference/plotEmojisPNG.md)):
+  su cadena de dependencias (`ggiraph` → `gdtools`) exige XQuartz en
+  macOS y rompía la instalación en sistemas sin X11.
 - Todas las capacidades post-procesamiento siguen intactas:
   [`extractTweetsData()`](https://agusnieto77.github.io/TweetScraperR/reference/extractTweetsData.md)
   (procesa RDS legacy con `art_html` ya guardados),
@@ -259,10 +263,3 @@
   `character` (antes era una list-column). Para combinar datos guardados
   con versiones anteriores, convertí primero la columna vieja con
   `mutate(art_html = as.character(art_html))` antes de `bind_rows()`.
-
-## TweetScraperR 0.2.4
-
-- Nueva función
-  [`getTweetsXquikSearch()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsXquikSearch.md):
-  cliente de búsqueda vía la API de Xquik (servicio externo, requiere
-  `XQUIK_API_KEY`).

@@ -48,8 +48,6 @@ devtools::install_github("agusnieto77/TweetScraperR")
     ([`getTweetsSentiments()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsSentiments.md)
     y
     [`getTweetsImagesAnalysis()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsImagesAnalysis.md)).
-  - `XQUIK_API_KEY`: opcional, solo para
-    [`getTweetsXquikSearch()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsXquikSearch.md).
 
 > **Nota:** las variables `TWITTER_USER`/`TWITTER_PASS` (y su *fallback*
 > legacy `USER`/`PASS`) y el login automatizado quedaron **deprecados**:
@@ -340,8 +338,6 @@ desde JSON (texto completo, métricas, media, hashtags, menciones, etc.).
   : Get Hashtags from Tweets
 - [`extractTweetsData()`](https://agusnieto77.github.io/TweetScraperR/reference/extractTweetsData.md)
   : Extracts Relevant Information from Locally Stored Tweets
-- [`getTweetsXquikSearch()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsXquikSearch.md)
-  : Get Tweets by Search with Xquik
 
 # Articles
 

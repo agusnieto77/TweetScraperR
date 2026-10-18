@@ -56,7 +56,6 @@ devtools::install_github("agusnieto77/TweetScraperR")
 - **Variables de entorno**:
   - `OPENAI_API_KEY`: opcional, solo para las funciones de análisis
     (`getTweetsSentiments()` y `getTweetsImagesAnalysis()`).
-  - `XQUIK_API_KEY`: opcional, solo para `getTweetsXquikSearch()`.
 
 > **Nota:** las variables `TWITTER_USER`/`TWITTER_PASS` (y su *fallback*
 > legacy `USER`/`PASS`) y el login automatizado quedaron **deprecados**: X

@@ -1,8 +1,11 @@
 # Instalar el motor Node/Playwright (npm install + browsers)
 
-Ejecuta `npm install` dentro de inst/node, lo que instala Playwright, el
-plugin stealth y descarga el navegador Chromium. Hay que correrlo una
-vez por maquina antes de usar las funciones de scraping.
+Copia el motor (tsr-engine.js, package.json) desde inst/node hacia un
+cache persistente del usuario (tools::R_user_dir de TweetScraperR) y
+ejecuta `npm install` alli, lo que instala Playwright, el plugin stealth
+y descarga el navegador Chromium. El cache sobrevive a las
+reinstalaciones del paquete, por lo que solo hay que correrlo una vez
+por maquina.
 
 ## Usage
 

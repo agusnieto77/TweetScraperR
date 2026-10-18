@@ -3,7 +3,7 @@
 <!-- badges: start -->
 
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
-[![](https://img.shields.io/badge/devel%20version-0.4.0-blue.svg)](https://github.com/agusnieto77/TweetScraperR)
+[![](https://img.shields.io/badge/devel%20version-0.5.0-blue.svg)](https://github.com/agusnieto77/TweetScraperR)
 [![pkgdown](https://img.shields.io/badge/docs-pkgdown-blue.svg)](https://agusnieto77.github.io/TweetScraperR/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://cran.r-project.org/web/licenses/MIT)
 [![](https://img.shields.io/github/languages/code-size/agusnieto77/TweetScraperR.svg)](https://github.com/agusnieto77/TweetScraperR)
@@ -17,7 +17,7 @@
 
 `TweetScraperR` recolecta datos de X/Twitter —tweets, usuarixs y
 metadatos— para análisis y visualización en R, **sin usar la API oficial
-de pago**. Desde la versión **0.4.0**, el scraping corre sobre un motor de
+de pago**. Desde la versión **0.5.0**, el scraping corre sobre un motor de
 **Node.js + Playwright** y consulta la **API GraphQL interna** de X,
 devolviendo datos **estructurados** desde JSON: texto completo (sin
 truncar), fecha exacta, métricas (respuestas, retweets, citas, me gusta,
@@ -27,7 +27,7 @@ automatizado. Es una alternativa flexible, gratuita y de código abierto.
 
 `TweetScraperR` collects data from X/Twitter —tweets, users and
 metadata— for analysis and visualization in R, **without using the paid
-official API**. Since version **0.4.0**, scraping runs on a **Node.js +
+official API**. Since version **0.5.0**, scraping runs on a **Node.js +
 Playwright** engine and queries X's **internal GraphQL API**, returning
 **structured** data from JSON: full text, exact date, metrics, media,
 hashtags and mentions. Authentication works by importing your **real
@@ -122,7 +122,8 @@ La vía **recomendada** es la familia de funciones `*API()`: consultan la
 JSON (texto completo sin truncar, fecha exacta y métricas: respuestas,
 retweets, citas, me gusta y vistas), sin selectores CSS frágiles. Todas reusan
 la sesión importada con `importSessionX()`. Las funciones de scraping por HTML
-siguen disponibles pero quedaron **deprecadas** en favor de estas.
+fueron **eliminadas** en la 0.5.0 (ver el mapeo de reemplazos en el
+[NEWS.md](NEWS.md)).
 
 | Función | Qué recupera |
 |---|---|
@@ -204,26 +205,46 @@ perfiles <- getUsersDataAPI(c("NASA", "rstatstweet"))
 ```
 
 Cada función de tweets devuelve un `tibble` con datos **estructurados**
-(21 columnas), listo para analizar:
+(21 columnas), listo para analizar. Salida real (`getUserTweetsAPI("NASA",
+n_tweets = 10)`, capturada el 2026-10-18):
 
 ``` r
-dplyr::glimpse(tweets)
-#> Rows: 100
+dplyr::glimpse(timeline)
+#> Rows: 10
 #> Columns: 21
-#> $ fecha           <dttm> 2026-06-13 21:42:13, 2026-06-13 12:10:47, ...
-#> $ user            <chr> "@RosanaFerrero", "@aRtsy_package", ...
-#> $ texto           <chr> "...texto completo, sin truncar..."
-#> $ idioma          <chr> "es", "en", ...
-#> $ megustas        <int> 7203, 0, 8221, ...
-#> $ retweets        <int> 1194, 323, 1465, ...
-#> $ views           <int> 470857, 34, 378665, ...
-#> $ media           <list> ["https://pbs.twimg.com/media/...jpg"], [], ...
-#> $ hashtags        <list> ["RStats"], [], ...
-#> $ menciones       <list> ["Space_Station", "SpaceX"], [], ...
-#> $ urls_externas   <list> ["https://go.nasa.gov/..."], [], ...
-#> $ emoticones      <list> ["✈"], [], ...
-#> # ... respuestas, citas, es_retweet, es_cita, tweet_citado_id,
-#> #     media_tipo, conversation_id, url, tweet_id
+#> $ fecha           <dttm> 2026-10-16 19:42:20, 2026-10-16 13:53:53, ...
+#> $ user            <chr> "@NASA", "@NASA", "@NASA", "@NASA", ...
+#> $ texto           <chr> "The aircraft lineup just keeps getting bigger. ✈️..."
+#> $ idioma          <chr> "en", "en", "en", "en", ...
+#> $ respuestas      <int> 124, 141, 76, 85, 91, 165, 167, 90, 259, 120
+#> $ retweets        <int> 194, 242, 157, 164, 236, 384, 377, 137, 938, 198
+#> $ citas           <int> 21, 16, 10, 16, 12, 59, 725, 15, 93, 13
+#> $ megustas        <int> 1407, 1867, 1111, 1065, 2105, 2227, 2662, ...
+#> $ views           <int> 329251, 958698, 376585, 460454, 375943, ...
+#> $ emoticones      <list> "✈", <>, <>, <>, <>, <>, "🛠", <>, <>, "✈"
+#> $ hashtags        <list> <>, <>, <>, <>, <>, <>, <>, <>, <>, <>
+#> $ menciones       <list> "NASAKennedy", <>, "JAXA_en", <"NASAJohnson"...>
+#> $ urls_externas   <list> "https://www.nasa.gov/maxpower/", ...
+#> $ media           <list> "https://video.twimg.com/amplify_video/...", ...
+#> $ media_tipo      <list> "video", "photo", "photo", <>, "photo", ...
+#> $ es_retweet      <lgl> FALSE, FALSE, FALSE, FALSE, ...
+#> $ es_cita         <lgl> FALSE, FALSE, FALSE, FALSE, ...
+#> $ tweet_citado_id <chr> NA, NA, NA, NA, ...
+#> $ conversation_id <chr> "2111180963661435219", "2111093273800356092", ...
+#> $ url             <chr> "https://x.com/NASA/status/2111180963661435219", ...
+#> $ tweet_id        <chr> "2111180963661435219", "2111093273800356092", ...
+```
+
+Y los perfiles (`getUsersDataAPI("NASA")`, misma fecha):
+
+``` r
+#> # A tibble: 1 × 15
+#>   user  nombre user_id  descripcion        seguidores siguiendo tweets
+#>   <chr> <chr>  <chr>    <chr>                   <int>     <int>  <int>
+#> 1 @NASA NASA   11348282 Making the seemin…  92323271       115  74438
+#> # ℹ 8 more variables: favoritos <int>, verificado <lgl>, ubicacion <chr>,
+#> #   sitio_web <chr>, imagen_perfil <chr>, banner <chr>,
+#> #   fecha_creacion <dttm>, url <chr>
 ```
 
 Y analizás/visualizás directo, sin renombrar columnas:

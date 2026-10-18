@@ -212,7 +212,7 @@ getUserFollowingAPI <- function(username, n_users = 100, dir = getwd(), save = T
 #' @examples
 #' \dontrun{
 #' importSessionX(auth_token = "...", ct0 = "...")
-#' getTweetsRetweetsAPI("https://x.com/NASA/status/123", n_users = 100)
+#' getTweetsRetweetsAPI("https://x.com/sanchezcastejon/status/2111426246517072370", n_users = 100)
 #' }
 getTweetsRetweetsAPI <- function(url, n_users = 100, dir = getwd(), save = TRUE) {
   if (missing(url) || !nzchar(url)) stop("Necesito la URL de un tweet.")

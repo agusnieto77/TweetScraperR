@@ -25,7 +25,7 @@
 #' @examples
 #' \dontrun{
 #' importSessionX(auth_token = "...", ct0 = "...")
-#' getTweetsDataAPI(c("https://x.com/NASA/status/123", "https://x.com/NASA/status/456"))
+#' getTweetsDataAPI("https://x.com/sanchezcastejon/status/2111426246517072370")
 #' }
 getTweetsDataAPI <- function(urls_tweets, dir = getwd(), save = TRUE) {
   if (missing(urls_tweets) || !length(urls_tweets)) {

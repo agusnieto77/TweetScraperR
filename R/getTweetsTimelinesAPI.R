@@ -49,7 +49,7 @@ getTweetsTimelinesAPI <- function(usernames, n_tweets = 40, dir = getwd(), save 
   cat("Recolectando timelines de ", length(usernames), " cuentas...\n", sep = "")
 
   scrolls <- max(3L, as.integer(ceiling(n_tweets / 15) + 3L))
-  grupos <- .pw_harvest_batch(paste0("https://x.com/", usernames), "UserTweets", max_scrolls = scrolls)
+  grupos <- .pw_harvest_batch(paste0("https://x.com/", usernames), "UserOriginalsTimeline", max_scrolls = scrolls)
 
   acc <- list()
   for (k in seq_along(grupos)) {

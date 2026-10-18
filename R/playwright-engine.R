@@ -14,13 +14,32 @@
   a
 }
 
-#' Directorio del motor Node (inst/node)
+#' Directorio del motor Node
 #' @noRd
+#' @description Prioridad: cache persistente fuera de la libreria de R (que
+#'   sobrevive a las reinstalaciones del paquete, evitando perder node_modules
+#'   en cada `R CMD INSTALL`), con fallback a inst/node del paquete. En ambos
+#'   casos exige que el motor tenga sus dependencias de npm ya instaladas.
 .pw_engine_dir <- function() {
-  d <- system.file("node", package = "TweetScraperR")
-  if (!nzchar(d) || !dir.exists(d)) {
-    stop("No se encontr\u00f3 el motor Node (inst/node). \u00bfInstalaste el motor con installPlaywrightEngine()?")
+  d <- .pw_cache_dir(create = FALSE)
+  if (file.exists(file.path(d, "tsr-engine.js")) &&
+      dir.exists(file.path(d, "node_modules"))) {
+    return(d)
   }
+  d <- system.file("node", package = "TweetScraperR")
+  if (nzchar(d) && dir.exists(d) &&
+      dir.exists(file.path(d, "node_modules"))) {
+    return(d)
+  }
+  stop("El motor Node/Playwright no est\u00e1 instalado (falta node_modules). ",
+       "Corre installPlaywrightEngine() una vez por m\u00e1quina.")
+}
+
+#' Directorio persistente del motor (cache del usuario)
+#' @noRd
+.pw_cache_dir <- function(create = TRUE) {
+  d <- file.path(tools::R_user_dir("TweetScraperR", "cache"), "node")
+  if (create && !dir.exists(d)) dir.create(d, recursive = TRUE)
   d
 }
 
@@ -50,27 +69,43 @@
 #'
 #' @return Lista con el JSON de respuesta del motor mas `.stderr` y `.exit`.
 #' @noRd
+#' @description En Windows `system2(stdout = TRUE)` parte las lineas largas
+#'   (>8KB por el limite de pipe de MSVCRT) y corrompe el JSON del motor, por
+#'   lo que la salida estandar siempre se redirige a un archivo temporal y se
+#'   vuelve a leer intacta.
 .pw_call <- function(cmd, params = list(), timeout = 300, simplify = TRUE) {
   script <- file.path(.pw_engine_dir(), "tsr-engine.js")
   json <- jsonlite::toJSON(params, auto_unbox = TRUE, null = "null")
   errfile <- tempfile(fileext = ".log")
-  on.exit(unlink(errfile), add = TRUE)
+  outfile <- tempfile(fileext = ".json")
+  on.exit(unlink(c(errfile, outfile)), add = TRUE)
   out <- suppressWarnings(system2(
     .pw_node(),
     args = c(shQuote(script), cmd),
     input = json,
-    stdout = TRUE,
+    stdout = outfile,
     stderr = errfile,
     timeout = timeout
   ))
-  status <- attr(out, "status")
-  txt <- paste(out, collapse = "\n")
+  status <- if (is.character(out)) attr(out, "status") else out
+  stderr_chr <- tryCatch(readLines(errfile, warn = FALSE), error = function(e) character(0))
+  txt <- paste(readLines(outfile, warn = FALSE, encoding = "UTF-8"), collapse = "\n")
   res <- tryCatch(
     jsonlite::fromJSON(txt, simplifyVector = simplify),
-    error = function(e) list(ok = FALSE, error = paste0("salida no-JSON del motor: ", substr(txt, 1, 300)))
+    error = function(e) {
+      msg <- paste0(
+        "salida no-JSON del motor (exit ",
+        if (is.null(status) || status == 0) "0" else status,
+        "): ", substr(txt, 1, 300)
+      )
+      if (length(stderr_chr) > 0) {
+        msg <- paste0(msg, " | stderr: ", paste(tail(stderr_chr, 5), collapse = " "))
+      }
+      list(ok = FALSE, error = msg)
+    }
   )
   if (!is.list(res)) res <- list(ok = FALSE, error = "respuesta inesperada del motor")
-  res$.stderr <- tryCatch(readLines(errfile, warn = FALSE), error = function(e) character(0))
+  res$.stderr <- stderr_chr
   res$.exit <- if (is.null(status)) 0L else status
   res
 }
@@ -180,7 +215,18 @@ installPlaywrightEngine <- function(npm = "npm") {
   if (Sys.which(npm) == "" && !file.exists(npm)) {
     stop("No se encontr\u00f3 npm. Instal\u00e1 Node.js (>= 18), que incluye npm.")
   }
-  dir <- .pw_engine_dir()
+  dir <- .pw_cache_dir()
+  src <- system.file("node", package = "TweetScraperR")
+  if (!nzchar(src) || !dir.exists(src)) {
+    stop("No se encontr\u00f3 el c\u00f3digo del motor (inst/node) en el paquete instalado.")
+  }
+  for (f in c("tsr-engine.js", "package.json")) {
+    fp <- file.path(src, f)
+    if (file.exists(fp)) {
+      ok <- file.copy(fp, dir, overwrite = TRUE)
+      if (!ok) stop("No se pudo copiar el motor a ", dir)
+    }
+  }
   message("Instalando el motor Playwright en ", dir, " (esto puede tardar)...")
   status <- system2(npm, args = c("install", "--prefix", shQuote(dir)), stdout = "", stderr = "")
   if (!identical(status, 0L)) {

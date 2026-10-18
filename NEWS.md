@@ -1,3 +1,40 @@
+# TweetScraperR 0.4.0.9000 (desarrollo)
+
+## Mejoras del motor Node/Playwright en Windows
+
+* El motor (tsr-engine.js + dependencias de npm) ahora se instala en un cache
+  persistente (`tools::R_user_dir("TweetScraperR", "cache")`) en lugar de la
+  carpeta del paquete, de modo que reinstalar TweetScraperR ya no borra
+  `node_modules` ni obliga a correr `installPlaywrightEngine()` otra vez.
+* `installPlaywrightEngine()` instala en ese cache; `.pw_engine_dir()` lo usa
+  con preferencia y cae a `inst/node` solo si el cache no tiene dependencias.
+* El timeline de perfil ya no usa la operacion GraphQL `UserTweets` (X la
+  elimino); ahora cosecha `UserOriginalsTimeline`, el nombre nuevo que la app
+  dispara en las paginas de perfil. Afecta a `getUserTweetsAPI()` y
+  `getTweetsTimelinesAPI()`.
+* Las paginas de media de perfil ya no disparan la operacion GraphQL
+  `UserMedia`; ahora cosechan `UserVideoTimeline`. Afecta a `getUserMediaAPI()`
+  (probado sobre @sanchezcastejon). `getTweetsRepliesAPI()` sigue OK con
+  `TweetDetail` (no cambio).
+* X elimino el bloque `legacy` de los payloads de usuario: los counts migraron
+  a `relationship_counts` (seguidores/siguiendo), `tweet_counts` (tweets) y
+  `action_counts` (favoritos); la bio a `profile_bio`; avatar y banner a
+  `avatar`/`banner`. La fila de usuarix (`.user_row`) se reescribio con la
+  estructura nueva y fallbacks a `legacy`. Eso llenaba con NA `seguidores`,
+  `siguiendo`, `tweets` y `favoritos` en `getUsersDataAPI()`,
+  `getTweetsRetweetsAPI()`, `getUserFollowersAPI()` y `getUserFollowingAPI()`.
+* Cuando la respuesta del motor no es JSON, el error ahora incluye el código
+  de salida, la salida cruda y el final de stderr (antes quedaba vacío y no
+  se podía diagnosticar, como el `Cannot find module 'playwright-extra'`).
+
+## Correcciones en Windows
+
+* `.pw_call()` ya redirige el stdout del motor Node.js a un archivo temporal en
+  lugar de capturarlo con `system2(stdout = TRUE)`. En Windows, capturar stdout
+  en memoria trunca las líneas mayores a ~8KB (límite del pipe de MSVCRT) y
+  corrompe el JSON de respuesta. Ya no hace falta aplicar el parche manual con
+  `assignInNamespace()` en cada sesión.
+
 # TweetScraperR 0.4.0
 
 ## Nueva capa de scraping vía API GraphQL/JSON (experimental)

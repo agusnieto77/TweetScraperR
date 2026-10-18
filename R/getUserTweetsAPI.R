@@ -205,7 +205,7 @@ getUserTweetsAPI <- function(username = "NASA", n_tweets = 40, dir = getwd(), sa
   url <- paste0("https://x.com/", username)
   cat("Recolectando timeline de @", username, "...\n", sep = "")
   scrolls <- max(3L, as.integer(ceiling(n_tweets / 15) + 3L))
-  docs <- .pw_harvest(url, "UserTweets", max_scrolls = scrolls)
+  docs <- .pw_harvest(url, "UserOriginalsTimeline", max_scrolls = scrolls)
 
   rows <- list()
   for (d in docs) {

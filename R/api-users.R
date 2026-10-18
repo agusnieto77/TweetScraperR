@@ -6,28 +6,39 @@
 
 #' Construye una fila-tibble de usuario a partir de un user_results$result
 #' @noRd
+#' @description Estructura 2026-10: X elimino el bloque `legacy` de usuarios.
+#'   Los counts viven en `relationship_counts` (followers/following),
+#'   `tweet_counts` (tweets) y `action_counts` (favorites_count); bio en
+#'   `profile_bio`, avatar en `avatar`, banner en `banner`. Se conservan
+#'   fallbacks a `legacy` por si X mezcla esquemas durante el rollout.
 .user_row <- function(ur) {
   if (is.null(ur)) return(NULL)
+  rc <- ur$relationship_counts
+  tc <- ur$tweet_counts
+  ac <- ur$action_counts
+  pb <- ur$profile_bio
   lg <- ur$legacy
   cr <- ur$core
   handle <- .or_null(cr$screen_name, lg$screen_name)
   if (is.null(handle)) return(NULL)
-  web <- .entity_vec(lg$entities$url$urls, "expanded_url")
+  bio_web <- .or_null(pb$entities$url$urls, .or_null(lg$entities$url$urls, list()))
+  web <- .entity_vec(bio_web, "expanded_url")
+  vtype <- ur$verification$verified_type
   tibble::tibble(
     user             = paste0("@", handle),
     nombre           = .or_null(.or_null(cr$name, lg$name), NA_character_),
     user_id          = .or_null(ur$rest_id, NA_character_),
-    descripcion      = .or_null(lg$description, NA_character_),
-    seguidores       = as.integer(.or_null(lg$followers_count, NA)),
-    siguiendo        = as.integer(.or_null(lg$friends_count, NA)),
-    tweets           = as.integer(.or_null(lg$statuses_count, NA)),
-    favoritos        = as.integer(.or_null(lg$favourites_count, NA)),
-    verificado       = isTRUE(ur$is_blue_verified) || isTRUE(lg$verified),
+    descripcion      = .or_null(.or_null(pb$description, lg$description), NA_character_),
+    seguidores       = as.integer(.or_null(.or_null(rc$followers, lg$followers_count), NA)),
+    siguiendo        = as.integer(.or_null(.or_null(rc$following, lg$friends_count), NA)),
+    tweets           = as.integer(.or_null(.or_null(tc$tweets, lg$statuses_count), NA)),
+    favoritos        = as.integer(.or_null(.or_null(ac$favorites_count, lg$favourites_count), NA)),
+    verificado       = isTRUE(ur$is_blue_verified) || (!is.null(vtype) && nzchar(vtype)) || isTRUE(lg$verified),
     ubicacion        = .or_null(.or_null(ur$location$location, lg$location), NA_character_),
-    sitio_web        = if (length(web)) web[1] else NA_character_,
+    sitio_web        = if (length(web)) web[1] else .or_null(.or_null(ur$website$url, NA_character_), NA_character_),
     imagen_perfil    = .or_null(.or_null(ur$avatar$image_url, lg$profile_image_url_https), NA_character_),
-    banner           = .or_null(lg$profile_banner_url, NA_character_),
-    fecha_creacion   = .x_parse_twitter_date(.or_null(cr$created_at, lg$created_at)),
+    banner           = .or_null(.or_null(ur$banner$image_url, lg$profile_banner_url), NA_character_),
+    fecha_creacion   = .x_parse_twitter_date(.or_null(.or_null(cr$created_at, lg$created_at), NA_character_)),
     url              = paste0("https://x.com/", handle)
   )
 }

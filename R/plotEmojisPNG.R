@@ -18,7 +18,6 @@
 #' @importFrom tidyr unnest
 #' @importFrom dplyr filter mutate count slice_head
 #' @importFrom purrr map_chr
-#' @importFrom ggimage geom_image
 #' @importFrom stats reorder
 #'
 #' @export
@@ -36,11 +35,19 @@
 #' 
 
 plotEmojisPNG <- function(
-    df, 
-    top_n = 10, 
+    df,
+    top_n = 10,
     fill = "skyblue",
     color = "grey30"
 ) {
+
+  # ggimage es dependencia opcional (Suggests): trae ggiraph/gdtools, que en
+  # macOS exigen XQuartz. Se chequea solo aca, su unico uso.
+  if (!requireNamespace("ggimage", quietly = TRUE)) {
+    stop("plotEmojisPNG() necesita el paquete 'ggimage'. ",
+         "Instalalo con install.packages(\"ggimage\") ",
+         "(en macOS requiere XQuartz: https://www.xquartz.org).")
+  }
 
   # Verificar que el dataframe tiene una columna 'emoticones'
   if (!"emoticones" %in% colnames(df)) {

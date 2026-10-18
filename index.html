@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">TweetScraperR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -216,7 +216,7 @@
 </h3>
 <p>El <strong>listado completo de funciones</strong>, organizado por categoría y con su estado de ciclo de vida, está en la referencia del sitio de documentación:</p>
 <p>👉 <a href="https://agusnieto77.github.io/TweetScraperR/reference/" class="uri">https://agusnieto77.github.io/TweetScraperR/reference/</a></p>
-<p>Las recomendadas son la familia <code>*API()</code> (ver la tabla de arriba). Las funciones de scraping por <strong>HTML</strong> (<code><a href="reference/getTweetsTimeline.html">getTweetsTimeline()</a></code>, <code><a href="reference/getTweetsHistoricalSearch.html">getTweetsHistoricalSearch()</a></code>, <code><a href="reference/getTweetsData.html">getTweetsData()</a></code>, <code><a href="reference/getUsersData.html">getUsersData()</a></code>, la familia <code>getUrls*()</code>, las variantes <code>*For()</code>, etc.) quedaron <strong>deprecadas</strong> en favor de sus equivalentes <code>*API()</code>; siguen funcionando con una advertencia de ciclo de vida.</p>
+<p>Las recomendadas son la familia <code>*API()</code> (ver la tabla de arriba). Las funciones de scraping por <strong>HTML</strong> (<code>getTweetsTimeline()</code>, <code>getTweetsHistoricalSearch()</code>, <code>getTweetsData()</code>, <code>getUsersData()</code>, la familia <code>getUrls*()</code>, las variantes <code>*For()</code>, la gestión de sesiones <code>openTwitter()</code>/<code>closeTwitter()</code>, etc.) fueron <strong>eliminadas</strong> en la 0.5.0 en favor de sus equivalentes <code>*API()</code> sobre el motor Node/Playwright; el mapeo de reemplazos está en el <a href="NEWS.html">NEWS.md</a>.</p>
 </div>
 <div class="section level3">
 <h3 id="uso-del-paquete">Uso del paquete<a class="anchor" aria-label="anchor" href="#uso-del-paquete"></a>

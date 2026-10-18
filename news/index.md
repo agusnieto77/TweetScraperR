@@ -1,5 +1,39 @@
 # Changelog
 
+## TweetScraperR 0.5.0 (desarrollo)
+
+### Paquete unificado sobre el motor Node/Playwright (BREAKING)
+
+- Se **eliminan** las funciones de scraping por HTML con sesión
+  chromote, todas deprecadas en 0.3/0.4 y rotas tras los rediseños de X
+  (bloqueo de login automatizado y cambios de DOM): familia de sesion
+  (`openTwitter()`, `closeTwitter()`, `openTimeline()`,
+  `closeTimeline()`, `passTwitter()`, `userTwitter()`), la familia de
+  scroll (`getScrollExtract()`, `getScrollExtractUrls()`), la familia
+  `*API` de reemplazo ya cubre:
+  - `getTweetsData()`, `getTweetsData2()` → \[getTweetsDataAPI()\]
+  - `getTweetsFullSearch()`, los streaming, los históricos y la familia
+    `getUrls*()` → \[getTweetsSearchAPI()\]
+  - `getTweetsTimeline()`, `getTweetsTimelineFor()` →
+    \[getUserTweetsAPI()\] / \[getTweetsTimelinesAPI()\]
+  - `getTweetsCites()`, `getTweetsReplies()` → \[getTweetsRepliesAPI()\]
+  - `getTweetsRetweets()` → \[getTweetsRetweetsAPI()\]
+  - `getTweetsImages()` → \[getUserMediaAPI()\]
+  - `getUsersData()`, `getUsersFullData()` → \[getUsersDataAPI()\]
+- \[getTweetsSearchAPI()\] incorpora los argumentos `since` y `until`
+  (paridad con los históricos eliminados: filtrar por rango de fechas
+  nativo de la búsqueda de X).
+- Paquete: 21 archivos R, 24 exportaciones, un solo contrato de columnas
+  para toda la familia `*API()`.
+- Todas las capacidades post-procesamiento siguen intactas:
+  [`extractTweetsData()`](https://agusnieto77.github.io/TweetScraperR/reference/extractTweetsData.md)
+  (procesa RDS legacy con `art_html` ya guardados),
+  [`getTweetsHashtags()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsHashtags.md),
+  [`getTweetsSentiments()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsSentiments.md),
+  [`getTweetsImagesAnalysis()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsImagesAnalysis.md),
+  [`HTMLImgReport()`](https://agusnieto77.github.io/TweetScraperR/reference/HTMLImgReport.md),
+  `plot*()`.
+
 ## TweetScraperR 0.4.0.9000 (desarrollo)
 
 ### Mejoras del motor Node/Playwright en Windows
@@ -81,7 +115,7 @@
     — tweets con media de unx usuarix.
   - [`getTweetsDataAPI()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsDataAPI.md)
     — datos de tweets a partir de sus URLs (reemplazo de
-    [`getTweetsData()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsData.md)).
+    `getTweetsData()`).
   - [`getTweetsTimelinesAPI()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsTimelinesAPI.md)
     — timeline combinado de varias cuentas (sin necesitar una Lista de
     X).
@@ -93,12 +127,9 @@
 
 ### Deprecaciones y documentación
 
-- Las funciones de scraping por **HTML**
-  ([`getTweetsTimeline()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsTimeline.md),
-  [`getTweetsHistoricalSearch()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsHistoricalSearch.md),
-  [`getTweetsData()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsData.md),
-  [`getUsersData()`](https://agusnieto77.github.io/TweetScraperR/reference/getUsersData.md),
-  la familia `getUrls*()`, las variantes `*For()`, etc.) quedan
+- Las funciones de scraping por **HTML** (`getTweetsTimeline()`,
+  `getTweetsHistoricalSearch()`, `getTweetsData()`, `getUsersData()`, la
+  familia `getUrls*()`, las variantes `*For()`, etc.) quedan
   **deprecadas** en favor de sus equivalentes `*API()`, más robustas.
   Siguen funcionando pero emiten una advertencia de ciclo de vida.
 - Nueva **viñeta** “Scraping de X/Twitter con TweetScraperR” con el
@@ -113,10 +144,7 @@
   motor basado en **Node.js + Playwright + stealth** que reemplaza a
   `chromote` para **todo** el scraping del paquete. `chromote` se
   mantiene en `Imports` porque todavía lo usan las funciones de login
-  por pasos
-  ([`openTwitter()`](https://agusnieto77.github.io/TweetScraperR/reference/openTwitter.md)
-  /
-  [`closeTwitter()`](https://agusnieto77.github.io/TweetScraperR/reference/closeTwitter.md)).
+  por pasos (`openTwitter()` / `closeTwitter()`).
 - El motor de Node.js/Playwright se instala una sola vez con
   [`installPlaywrightEngine()`](https://agusnieto77.github.io/TweetScraperR/reference/installPlaywrightEngine.md)
   y su estado se verifica con
@@ -153,28 +181,18 @@
 
 - Las **14** funciones `get*`/`scroll*` de scraping se migraron al motor
   Playwright.
-- [`getTweetsRetweets()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsRetweets.md)
-  se migró al motor Playwright (modo `users`).
+- `getTweetsRetweets()` se migró al motor Playwright (modo `users`).
 - Las funciones de **login por pasos** quedaron **deprecadas**:
-  [`openTwitter()`](https://agusnieto77.github.io/TweetScraperR/reference/openTwitter.md),
-  [`userTwitter()`](https://agusnieto77.github.io/TweetScraperR/reference/userTwitter.md),
-  [`passTwitter()`](https://agusnieto77.github.io/TweetScraperR/reference/passTwitter.md),
-  [`closeTwitter()`](https://agusnieto77.github.io/TweetScraperR/reference/closeTwitter.md),
-  [`openTimeline()`](https://agusnieto77.github.io/TweetScraperR/reference/openTimeline.md)
-  y
-  [`closeTimeline()`](https://agusnieto77.github.io/TweetScraperR/reference/closeTimeline.md).
-  El flujo recomendado es
+  `openTwitter()`, `userTwitter()`, `passTwitter()`, `closeTwitter()`,
+  `openTimeline()` y `closeTimeline()`. El flujo recomendado es
   [`importSessionX()`](https://agusnieto77.github.io/TweetScraperR/reference/importSessionX.md) +
   el motor Playwright.
 
 ### Correcciones
 
-- Se corrigieron loops infinitos en
-  [`getTweetsData()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsData.md)
-  y
-  [`getTweetsData2()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsData2.md)
-  y los contadores de reintento que nunca se incrementaban (código
-  muerto).
+- Se corrigieron loops infinitos en `getTweetsData()` y
+  `getTweetsData2()` y los contadores de reintento que nunca se
+  incrementaban (código muerto).
 - Las sesiones de Chrome ahora se cierran correctamente con
   [`on.exit()`](https://rdrr.io/r/base/on.exit.html), incluso cuando una
   función falla a mitad de ejecución.
@@ -183,9 +201,8 @@
 - [`plotTime()`](https://agusnieto77.github.io/TweetScraperR/reference/plotTime.md)
   ahora funciona correctamente con `group_by = "week"`, `"month"` y
   `"year"`.
-- [`getUsersData()`](https://agusnieto77.github.io/TweetScraperR/reference/getUsersData.md)
-  interpreta correctamente las métricas abreviadas con sufijos `K`/`M`
-  cuando la interfaz de X está en inglés.
+- `getUsersData()` interpreta correctamente las métricas abreviadas con
+  sufijos `K`/`M` cuando la interfaz de X está en inglés.
 
 ### Cambios internos
 
@@ -199,12 +216,9 @@
 
 ### Correcciones
 
-- Se corrigieron loops infinitos en
-  [`getTweetsData()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsData.md)
-  y
-  [`getTweetsData2()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsData2.md)
-  y los contadores de reintento que nunca se incrementaban (código
-  muerto).
+- Se corrigieron loops infinitos en `getTweetsData()` y
+  `getTweetsData2()` y los contadores de reintento que nunca se
+  incrementaban (código muerto).
 - Las sesiones de Chrome ahora se cierran correctamente con
   [`on.exit()`](https://rdrr.io/r/base/on.exit.html), incluso cuando una
   función falla a mitad de ejecución.
@@ -213,9 +227,8 @@
 - [`plotTime()`](https://agusnieto77.github.io/TweetScraperR/reference/plotTime.md)
   ahora funciona correctamente con `group_by = "week"`, `"month"` y
   `"year"`.
-- [`getUsersData()`](https://agusnieto77.github.io/TweetScraperR/reference/getUsersData.md)
-  interpreta correctamente las métricas abreviadas con sufijos `K`/`M`
-  cuando la interfaz de X está en inglés.
+- `getUsersData()` interpreta correctamente las métricas abreviadas con
+  sufijos `K`/`M` cuando la interfaz de X está en inglés.
 - `kill_system` ahora cierra únicamente el navegador iniciado por el
   paquete, en lugar de matar todos los procesos de Chrome del sistema.
 - [`getTweetsHashtags()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsHashtags.md)
@@ -237,22 +250,15 @@
 - Nuevas variables de entorno `TWITTER_USER` y `TWITTER_PASS` para las
   credenciales, con fallback a las variables `USER` y `PASS` por
   compatibilidad. La adopción es parcial:
-  [`getTweetsSearchStreamingFor2()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsSearchStreamingFor2.md),
-  [`getTweetsHistoricalSearchFor()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsHistoricalSearchFor.md),
-  [`getTweetsHistoricalHashtagFor()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsHistoricalHashtagFor.md)
-  y
-  [`getTweetsHistoricalTimelineFor()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsHistoricalTimelineFor.md)
+  `getTweetsSearchStreamingFor2()`, `getTweetsHistoricalSearchFor()`,
+  `getTweetsHistoricalHashtagFor()` y `getTweetsHistoricalTimelineFor()`
   siguen leyendo únicamente `USER` y `PASS`; si usás esas funciones,
   configurá también esas variables.
-- La columna `art_html` de los tibbles devueltos por
-  [`getTweetsCites()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsCites.md),
-  [`getTweetsReplies()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsReplies.md)
-  y
-  [`getTweetsRetweets()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsRetweets.md)
-  ahora es de tipo `character` (antes era una list-column). Para
-  combinar datos guardados con versiones anteriores, convertí primero la
-  columna vieja con `mutate(art_html = as.character(art_html))` antes de
-  `bind_rows()`.
+- La columna `art_html` de los tibbles devueltos por `getTweetsCites()`,
+  `getTweetsReplies()` y `getTweetsRetweets()` ahora es de tipo
+  `character` (antes era una list-column). Para combinar datos guardados
+  con versiones anteriores, convertí primero la columna vieja con
+  `mutate(art_html = as.character(art_html))` antes de `bind_rows()`.
 
 ## TweetScraperR 0.2.4
 

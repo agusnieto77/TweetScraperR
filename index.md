@@ -182,14 +182,13 @@ documentación:
 👉 <https://agusnieto77.github.io/TweetScraperR/reference/>
 
 Las recomendadas son la familia `*API()` (ver la tabla de arriba). Las
-funciones de scraping por **HTML**
-([`getTweetsTimeline()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsTimeline.md),
-[`getTweetsHistoricalSearch()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsHistoricalSearch.md),
-[`getTweetsData()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsData.md),
-[`getUsersData()`](https://agusnieto77.github.io/TweetScraperR/reference/getUsersData.md),
-la familia `getUrls*()`, las variantes `*For()`, etc.) quedaron
-**deprecadas** en favor de sus equivalentes `*API()`; siguen funcionando
-con una advertencia de ciclo de vida.
+funciones de scraping por **HTML** (`getTweetsTimeline()`,
+`getTweetsHistoricalSearch()`, `getTweetsData()`, `getUsersData()`, la
+familia `getUrls*()`, las variantes `*For()`, la gestión de sesiones
+`openTwitter()`/`closeTwitter()`, etc.) fueron **eliminadas** en la
+0.5.0 en favor de sus equivalentes `*API()` sobre el motor
+Node/Playwright; el mapeo de reemplazos está en el
+[NEWS.md](https://agusnieto77.github.io/TweetScraperR/NEWS.md).
 
 ### Uso del paquete
 

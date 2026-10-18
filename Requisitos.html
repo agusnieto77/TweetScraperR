@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="index.html">TweetScraperR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -59,8 +59,7 @@
 <h3 id="librerías-de-r">Librerías de R:<a class="anchor" aria-label="anchor" href="#librer%C3%ADas-de-r"></a></h3>
 <p>Asegúrate de tener instaladas las siguientes librerías en R:</p>
 <ul><li><p><code>tidyverse</code></p></li>
-<li><p><code>rvest</code> (versión mínima 1.0.4)</p></li>
-<li><p><code>chromote</code></p></li>
+<li><p><code>rvest</code> (versión mínima 1.0.4, solo para procesar datos HTML ya guardados con <code><a href="reference/extractTweetsData.html">extractTweetsData()</a></code>)</p></li>
 <li><p><code>devtools</code></p></li>
 <li><p><code>quanteda</code></p></li>
 <li><p><code>wordcloud2</code></p></li>
@@ -75,7 +74,7 @@
 <div class="section level2">
 <h2 id="visión-general-de-tweetscraperr">Visión general de <strong>TweetScraperR</strong>
 <a class="anchor" aria-label="anchor" href="#visi%C3%B3n-general-de-tweetscraperr"></a></h2>
-<p>El paquete proporciona funciones para extraer datos de <strong>X/Twitter</strong>, como tweets, usuarixs y metadatos asociados. Permite la recolección y manejo de estos datos en <strong>R</strong>, facilitando su análisis y visualización. Está diseñado sobre la librería <strong>rvest</strong> y no utiliza las API de <strong>X/Twitter</strong>, lo que lo convierte en una alternativa gratuita, flexible y de código abierto.</p>
+<p>El paquete proporciona funciones para extraer datos de <strong>X/Twitter</strong>, como tweets, usuarixs y metadatos asociados. Permite la recolección y manejo de estos datos en <strong>R</strong>, facilitando su análisis y visualización. Desde la versión 0.5.0 consulta la <strong>API GraphQL interna de X</strong> a través de un motor propio <strong>Node.js + Playwright + stealth</strong> (se instala una vez con <code><a href="reference/installPlaywrightEngine.html">installPlaywrightEngine()</a></code> y la sesión se importa con <code><a href="reference/importSessionX.html">importSessionX()</a></code>), lo que lo convierte en una alternativa gratuita, flexible y de código abierto.</p>
 <div class="section level3">
 <h3 id="instalación">Instalación<a class="anchor" aria-label="anchor" href="#instalaci%C3%B3n"></a></h3>
 <p>Para instalar la versión de desarrollo desde GitHub, ejecuta:</p>

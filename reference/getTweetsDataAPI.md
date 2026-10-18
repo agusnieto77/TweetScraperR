@@ -4,9 +4,8 @@
 
 Recupera los datos de tweets a partir de sus URLs consultando la **API
 GraphQL interna de X** (TweetDetail). Devuelve datos estructurados del
-JSON. Es el reemplazo basado en API de
-[`getTweetsData()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsData.md).
-Requiere una sesion importada con
+JSON. Es el reemplazo basado en API de `getTweetsData()`. Requiere una
+sesion importada con
 [`importSessionX()`](https://agusnieto77.github.io/TweetScraperR/reference/importSessionX.md).
 
 ## Usage

@@ -15,6 +15,8 @@ getTweetsSearchAPI(
   search = "#RStats",
   n_tweets = 40,
   product = c("Latest", "Top", "Media"),
+  since = NULL,
+  until = NULL,
   dir = getwd(),
   save = TRUE
 )
@@ -35,6 +37,16 @@ getTweetsSearchAPI(
 
   Pestania de resultados: "Latest" (recientes, por defecto), "Top"
   (destacados) o "Media".
+
+- since:
+
+  Fecha "desde" (opcional). Formato "YYYY-MM-DD" o el
+  "YYYY-MM-DD_HH:MM:SS" de X. Migra el parametro de los historicos
+  legacy.
+
+- until:
+
+  Fecha "hasta" (opcional). Mismo formato que `since`.
 
 - dir:
 

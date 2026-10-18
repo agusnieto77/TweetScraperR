@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">TweetScraperR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,6 +36,31 @@
       <small>Source: <a href="https://github.com/agusnieto77/TweetScraperR/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.5.0" id="tweetscraperr-050-desarrollo">TweetScraperR 0.5.0 (desarrollo)<a class="anchor" aria-label="anchor" href="#tweetscraperr-050-desarrollo"></a></h2>
+<div class="section level3">
+<h3 id="paquete-unificado-sobre-el-motor-nodeplaywright-breaking-0-5-0">Paquete unificado sobre el motor Node/Playwright (BREAKING)<a class="anchor" aria-label="anchor" href="#paquete-unificado-sobre-el-motor-nodeplaywright-breaking-0-5-0"></a></h3>
+<ul><li>Se <strong>eliminan</strong> las funciones de scraping por HTML con sesión chromote, todas deprecadas en 0.3/0.4 y rotas tras los rediseños de X (bloqueo de login automatizado y cambios de DOM): familia de sesion (<code>openTwitter()</code>, <code>closeTwitter()</code>, <code>openTimeline()</code>, <code>closeTimeline()</code>, <code>passTwitter()</code>, <code>userTwitter()</code>), la familia de scroll (<code>getScrollExtract()</code>, <code>getScrollExtractUrls()</code>), la familia <code>*API</code> de reemplazo ya cubre:
+<ul><li>
+<code>getTweetsData()</code>, <code>getTweetsData2()</code> → [getTweetsDataAPI()]</li>
+<li>
+<code>getTweetsFullSearch()</code>, los streaming, los históricos y la familia <code>getUrls*()</code> → [getTweetsSearchAPI()]</li>
+<li>
+<code>getTweetsTimeline()</code>, <code>getTweetsTimelineFor()</code> → [getUserTweetsAPI()] / [getTweetsTimelinesAPI()]</li>
+<li>
+<code>getTweetsCites()</code>, <code>getTweetsReplies()</code> → [getTweetsRepliesAPI()]</li>
+<li>
+<code>getTweetsRetweets()</code> → [getTweetsRetweetsAPI()]</li>
+<li>
+<code>getTweetsImages()</code> → [getUserMediaAPI()]</li>
+<li>
+<code>getUsersData()</code>, <code>getUsersFullData()</code> → [getUsersDataAPI()]</li>
+</ul></li>
+<li>[getTweetsSearchAPI()] incorpora los argumentos <code>since</code> y <code>until</code> (paridad con los históricos eliminados: filtrar por rango de fechas nativo de la búsqueda de X).</li>
+<li>Paquete: 21 archivos R, 24 exportaciones, un solo contrato de columnas para toda la familia <code>*API()</code>.</li>
+<li>Todas las capacidades post-procesamiento siguen intactas: <code><a href="../reference/extractTweetsData.html">extractTweetsData()</a></code> (procesa RDS legacy con <code>art_html</code> ya guardados), <code><a href="../reference/getTweetsHashtags.html">getTweetsHashtags()</a></code>, <code><a href="../reference/getTweetsSentiments.html">getTweetsSentiments()</a></code>, <code><a href="../reference/getTweetsImagesAnalysis.html">getTweetsImagesAnalysis()</a></code>, <code><a href="../reference/HTMLImgReport.html">HTMLImgReport()</a></code>, <code>plot*()</code>.</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.4.0.9000" id="tweetscraperr-0409000-desarrollo">TweetScraperR 0.4.0.9000 (desarrollo)<a class="anchor" aria-label="anchor" href="#tweetscraperr-0409000-desarrollo"></a></h2>
 <div class="section level3">
@@ -74,7 +99,7 @@
 <li>
 <code><a href="../reference/getUserMediaAPI.html">getUserMediaAPI()</a></code> — tweets con media de unx usuarix.</li>
 <li>
-<code><a href="../reference/getTweetsDataAPI.html">getTweetsDataAPI()</a></code> — datos de tweets a partir de sus URLs (reemplazo de <code><a href="../reference/getTweetsData.html">getTweetsData()</a></code>).</li>
+<code><a href="../reference/getTweetsDataAPI.html">getTweetsDataAPI()</a></code> — datos de tweets a partir de sus URLs (reemplazo de <code>getTweetsData()</code>).</li>
 <li>
 <code><a href="../reference/getTweetsTimelinesAPI.html">getTweetsTimelinesAPI()</a></code> — timeline combinado de varias cuentas (sin necesitar una Lista de X).</li>
 </ul></li>
@@ -82,7 +107,7 @@
 </ul></div>
 <div class="section level3">
 <h3 id="deprecaciones-y-documentación-0-4-0">Deprecaciones y documentación<a class="anchor" aria-label="anchor" href="#deprecaciones-y-documentaci%C3%B3n-0-4-0"></a></h3>
-<ul><li>Las funciones de scraping por <strong>HTML</strong> (<code><a href="../reference/getTweetsTimeline.html">getTweetsTimeline()</a></code>, <code><a href="../reference/getTweetsHistoricalSearch.html">getTweetsHistoricalSearch()</a></code>, <code><a href="../reference/getTweetsData.html">getTweetsData()</a></code>, <code><a href="../reference/getUsersData.html">getUsersData()</a></code>, la familia <code>getUrls*()</code>, las variantes <code>*For()</code>, etc.) quedan <strong>deprecadas</strong> en favor de sus equivalentes <code>*API()</code>, más robustas. Siguen funcionando pero emiten una advertencia de ciclo de vida.</li>
+<ul><li>Las funciones de scraping por <strong>HTML</strong> (<code>getTweetsTimeline()</code>, <code>getTweetsHistoricalSearch()</code>, <code>getTweetsData()</code>, <code>getUsersData()</code>, la familia <code>getUrls*()</code>, las variantes <code>*For()</code>, etc.) quedan <strong>deprecadas</strong> en favor de sus equivalentes <code>*API()</code>, más robustas. Siguen funcionando pero emiten una advertencia de ciclo de vida.</li>
 <li>Nueva <strong>viñeta</strong> “Scraping de X/Twitter con TweetScraperR” con el flujo completo recomendado (instalar el motor, importar la sesión, usar las funciones <code>*API()</code>).</li>
 </ul></div>
 </div>
@@ -90,7 +115,7 @@
 <h2 class="pkg-version" data-toc-text="0.3.0" id="tweetscraperr-030">TweetScraperR 0.3.0<a class="anchor" aria-label="anchor" href="#tweetscraperr-030"></a></h2>
 <div class="section level3">
 <h3 id="cambio-mayor-nuevo-motor-de-scraping-nodejs--playwright--stealth-0-3-0">Cambio mayor: nuevo motor de scraping (Node.js + Playwright + stealth)<a class="anchor" aria-label="anchor" href="#cambio-mayor-nuevo-motor-de-scraping-nodejs--playwright--stealth-0-3-0"></a></h3>
-<ul><li>El scraping ya no se realiza con <code>chromote</code>. Se incorporó un nuevo motor basado en <strong>Node.js + Playwright + stealth</strong> que reemplaza a <code>chromote</code> para <strong>todo</strong> el scraping del paquete. <code>chromote</code> se mantiene en <code>Imports</code> porque todavía lo usan las funciones de login por pasos (<code><a href="../reference/openTwitter.html">openTwitter()</a></code> / <code><a href="../reference/closeTwitter.html">closeTwitter()</a></code>).</li>
+<ul><li>El scraping ya no se realiza con <code>chromote</code>. Se incorporó un nuevo motor basado en <strong>Node.js + Playwright + stealth</strong> que reemplaza a <code>chromote</code> para <strong>todo</strong> el scraping del paquete. <code>chromote</code> se mantiene en <code>Imports</code> porque todavía lo usan las funciones de login por pasos (<code>openTwitter()</code> / <code>closeTwitter()</code>).</li>
 <li>El motor de Node.js/Playwright se instala una sola vez con <code><a href="../reference/installPlaywrightEngine.html">installPlaywrightEngine()</a></code> y su estado se verifica con <code><a href="../reference/checkPlaywrightEngine.html">checkPlaywrightEngine()</a></code>. Requiere <strong>Node.js (&gt;= 18)</strong> y un navegador basado en Chromium.</li>
 </ul></div>
 <div class="section level3">
@@ -114,18 +139,18 @@
 <h3 id="migración-de-funciones-al-motor-playwright-0-3-0">Migración de funciones al motor Playwright<a class="anchor" aria-label="anchor" href="#migraci%C3%B3n-de-funciones-al-motor-playwright-0-3-0"></a></h3>
 <ul><li>Las <strong>14</strong> funciones <code>get*</code>/<code>scroll*</code> de scraping se migraron al motor Playwright.</li>
 <li>
-<code><a href="../reference/getTweetsRetweets.html">getTweetsRetweets()</a></code> se migró al motor Playwright (modo <code>users</code>).</li>
-<li>Las funciones de <strong>login por pasos</strong> quedaron <strong>deprecadas</strong>: <code><a href="../reference/openTwitter.html">openTwitter()</a></code>, <code><a href="../reference/userTwitter.html">userTwitter()</a></code>, <code><a href="../reference/passTwitter.html">passTwitter()</a></code>, <code><a href="../reference/closeTwitter.html">closeTwitter()</a></code>, <code><a href="../reference/openTimeline.html">openTimeline()</a></code> y <code><a href="../reference/closeTimeline.html">closeTimeline()</a></code>. El flujo recomendado es <code><a href="../reference/importSessionX.html">importSessionX()</a></code> + el motor Playwright.</li>
+<code>getTweetsRetweets()</code> se migró al motor Playwright (modo <code>users</code>).</li>
+<li>Las funciones de <strong>login por pasos</strong> quedaron <strong>deprecadas</strong>: <code>openTwitter()</code>, <code>userTwitter()</code>, <code>passTwitter()</code>, <code>closeTwitter()</code>, <code>openTimeline()</code> y <code>closeTimeline()</code>. El flujo recomendado es <code><a href="../reference/importSessionX.html">importSessionX()</a></code> + el motor Playwright.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="correcciones-0-3-0">Correcciones<a class="anchor" aria-label="anchor" href="#correcciones-0-3-0"></a></h3>
-<ul><li>Se corrigieron loops infinitos en <code><a href="../reference/getTweetsData.html">getTweetsData()</a></code> y <code><a href="../reference/getTweetsData2.html">getTweetsData2()</a></code> y los contadores de reintento que nunca se incrementaban (código muerto).</li>
+<ul><li>Se corrigieron loops infinitos en <code>getTweetsData()</code> y <code>getTweetsData2()</code> y los contadores de reintento que nunca se incrementaban (código muerto).</li>
 <li>Las sesiones de Chrome ahora se cierran correctamente con <code><a href="https://rdrr.io/r/base/on.exit.html" class="external-link">on.exit()</a></code>, incluso cuando una función falla a mitad de ejecución.</li>
 <li>Se corrigió la extracción del nombre de usuario para URLs con dominio <code>twitter.com</code> (antes solo funcionaba con <code>x.com</code>).</li>
 <li>
 <code><a href="../reference/plotTime.html">plotTime()</a></code> ahora funciona correctamente con <code>group_by = "week"</code>, <code>"month"</code> y <code>"year"</code>.</li>
 <li>
-<code><a href="../reference/getUsersData.html">getUsersData()</a></code> interpreta correctamente las métricas abreviadas con sufijos <code>K</code>/<code>M</code> cuando la interfaz de X está en inglés.</li>
+<code>getUsersData()</code> interpreta correctamente las métricas abreviadas con sufijos <code>K</code>/<code>M</code> cuando la interfaz de X está en inglés.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="cambios-internos-0-3-0">Cambios internos<a class="anchor" aria-label="anchor" href="#cambios-internos-0-3-0"></a></h3>
@@ -139,13 +164,13 @@
 <h2 class="pkg-version" data-toc-text="0.2.5" id="tweetscraperr-025">TweetScraperR 0.2.5<a class="anchor" aria-label="anchor" href="#tweetscraperr-025"></a></h2>
 <div class="section level3">
 <h3 id="correcciones-0-2-5">Correcciones<a class="anchor" aria-label="anchor" href="#correcciones-0-2-5"></a></h3>
-<ul><li>Se corrigieron loops infinitos en <code><a href="../reference/getTweetsData.html">getTweetsData()</a></code> y <code><a href="../reference/getTweetsData2.html">getTweetsData2()</a></code> y los contadores de reintento que nunca se incrementaban (código muerto).</li>
+<ul><li>Se corrigieron loops infinitos en <code>getTweetsData()</code> y <code>getTweetsData2()</code> y los contadores de reintento que nunca se incrementaban (código muerto).</li>
 <li>Las sesiones de Chrome ahora se cierran correctamente con <code><a href="https://rdrr.io/r/base/on.exit.html" class="external-link">on.exit()</a></code>, incluso cuando una función falla a mitad de ejecución.</li>
 <li>Se corrigió la extracción del nombre de usuario para URLs con dominio <code>twitter.com</code> (antes solo funcionaba con <code>x.com</code>).</li>
 <li>
 <code><a href="../reference/plotTime.html">plotTime()</a></code> ahora funciona correctamente con <code>group_by = "week"</code>, <code>"month"</code> y <code>"year"</code>.</li>
 <li>
-<code><a href="../reference/getUsersData.html">getUsersData()</a></code> interpreta correctamente las métricas abreviadas con sufijos <code>K</code>/<code>M</code> cuando la interfaz de X está en inglés.</li>
+<code>getUsersData()</code> interpreta correctamente las métricas abreviadas con sufijos <code>K</code>/<code>M</code> cuando la interfaz de X está en inglés.</li>
 <li>
 <code>kill_system</code> ahora cierra únicamente el navegador iniciado por el paquete, en lugar de matar todos los procesos de Chrome del sistema.</li>
 <li>
@@ -158,8 +183,8 @@
 <li>Se agregó integración continua (GitHub Actions, <code>R CMD check</code>) y una suite inicial de tests con <code>testthat</code>.</li>
 <li>
 <code>chromote</code> pasa de <code>Suggests</code> a <code>Imports</code>: es el motor de scraping del paquete y se usa de forma incondicional.</li>
-<li>Nuevas variables de entorno <code>TWITTER_USER</code> y <code>TWITTER_PASS</code> para las credenciales, con fallback a las variables <code>USER</code> y <code>PASS</code> por compatibilidad. La adopción es parcial: <code><a href="../reference/getTweetsSearchStreamingFor2.html">getTweetsSearchStreamingFor2()</a></code>, <code><a href="../reference/getTweetsHistoricalSearchFor.html">getTweetsHistoricalSearchFor()</a></code>, <code><a href="../reference/getTweetsHistoricalHashtagFor.html">getTweetsHistoricalHashtagFor()</a></code> y <code><a href="../reference/getTweetsHistoricalTimelineFor.html">getTweetsHistoricalTimelineFor()</a></code> siguen leyendo únicamente <code>USER</code> y <code>PASS</code>; si usás esas funciones, configurá también esas variables.</li>
-<li>La columna <code>art_html</code> de los tibbles devueltos por <code><a href="../reference/getTweetsCites.html">getTweetsCites()</a></code>, <code><a href="../reference/getTweetsReplies.html">getTweetsReplies()</a></code> y <code><a href="../reference/getTweetsRetweets.html">getTweetsRetweets()</a></code> ahora es de tipo <code>character</code> (antes era una list-column). Para combinar datos guardados con versiones anteriores, convertí primero la columna vieja con <code>mutate(art_html = as.character(art_html))</code> antes de <code>bind_rows()</code>.</li>
+<li>Nuevas variables de entorno <code>TWITTER_USER</code> y <code>TWITTER_PASS</code> para las credenciales, con fallback a las variables <code>USER</code> y <code>PASS</code> por compatibilidad. La adopción es parcial: <code>getTweetsSearchStreamingFor2()</code>, <code>getTweetsHistoricalSearchFor()</code>, <code>getTweetsHistoricalHashtagFor()</code> y <code>getTweetsHistoricalTimelineFor()</code> siguen leyendo únicamente <code>USER</code> y <code>PASS</code>; si usás esas funciones, configurá también esas variables.</li>
+<li>La columna <code>art_html</code> de los tibbles devueltos por <code>getTweetsCites()</code>, <code>getTweetsReplies()</code> y <code>getTweetsRetweets()</code> ahora es de tipo <code>character</code> (antes era una list-column). Para combinar datos guardados con versiones anteriores, convertí primero la columna vieja con <code>mutate(art_html = as.character(art_html))</code> antes de <code>bind_rows()</code>.</li>
 </ul></div>
 </div>
     <div class="section level2">

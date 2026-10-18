@@ -14,9 +14,7 @@ Asegúrate de tener instaladas las siguientes librerías en R:
 
 - `tidyverse`
 
-- `rvest` (versión mínima 1.0.4)
-
-- `chromote`
+- `rvest` (versión mínima 1.0.4, solo para procesar datos HTML ya guardados con `extractTweetsData()`)
 
 - `devtools`
 
@@ -35,7 +33,7 @@ Asegúrate de tener instaladas las siguientes librerías en R:
 
 ## Visión general de **TweetScraperR**
 
-El paquete proporciona funciones para extraer datos de **X/Twitter**, como tweets, usuarixs y metadatos asociados. Permite la recolección y manejo de estos datos en **R**, facilitando su análisis y visualización. Está diseñado sobre la librería **rvest** y no utiliza las API de **X/Twitter**, lo que lo convierte en una alternativa gratuita, flexible y de código abierto.
+El paquete proporciona funciones para extraer datos de **X/Twitter**, como tweets, usuarixs y metadatos asociados. Permite la recolección y manejo de estos datos en **R**, facilitando su análisis y visualización. Desde la versión 0.5.0 consulta la **API GraphQL interna de X** a través de un motor propio **Node.js + Playwright + stealth** (se instala una vez con `installPlaywrightEngine()` y la sesión se importa con `importSessionX()`), lo que lo convierte en una alternativa gratuita, flexible y de código abierto.
 
 
 ### Instalación

@@ -174,9 +174,10 @@ estado de ciclo de vida, está en la referencia del sitio de documentación:
 Las recomendadas son la familia `*API()` (ver la tabla de arriba). Las
 funciones de scraping por **HTML** (`getTweetsTimeline()`,
 `getTweetsHistoricalSearch()`, `getTweetsData()`, `getUsersData()`, la
-familia `getUrls*()`, las variantes `*For()`, etc.) quedaron **deprecadas**
-en favor de sus equivalentes `*API()`; siguen funcionando con una
-advertencia de ciclo de vida.
+familia `getUrls*()`, las variantes `*For()`, la gestión de sesiones
+`openTwitter()`/`closeTwitter()`, etc.) fueron **eliminadas** en la 0.5.0
+en favor de sus equivalentes `*API()` sobre el motor Node/Playwright; el
+mapeo de reemplazos está en el [NEWS.md](NEWS.md).
 
 ### Uso del paquete
 

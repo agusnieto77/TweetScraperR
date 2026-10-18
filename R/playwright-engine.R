@@ -168,12 +168,15 @@
 }
 
 #' Cosecha de UNA url -> lista de respuestas JSON parseadas (listas anidadas)
+#'
+#' Los bodies no-JSON (p.ej. el texto plano "Rate limit exceeded" de X cuando
+#' corta el ventanal) se saltean con un aviso en vez de frenar la recoleccion.
 #' @noRd
 .pw_harvest <- function(url, op_names, max_scrolls = 25, state = .pw_state_path()) {
   results <- .pw_harvest_raw(url, op_names, max_scrolls, state)
   if (!length(results)) return(list())
   bodies <- results[[1]]$bodies
-  lapply(bodies, function(b) jsonlite::fromJSON(b, simplifyVector = FALSE))
+  lapply(bodies, .pw_parse_body)
 }
 
 #' Cosecha de VARIAS urls en un solo navegador -> lista (por url) de respuestas
@@ -181,8 +184,24 @@
 .pw_harvest_batch <- function(urls, op_names, max_scrolls = 25, state = .pw_state_path()) {
   results <- .pw_harvest_raw(urls, op_names, max_scrolls, state)
   lapply(results, function(rr) {
-    lapply(rr$bodies, function(b) jsonlite::fromJSON(b, simplifyVector = FALSE))
+    lapply(rr$bodies, .pw_parse_body)
   })
+}
+
+#' Parsea un body crudo a lista R anidada (detallada y tolerante)
+#'
+#' simplifyVector = FALSE garantiza que todo doc sea una lista R estricta, los
+#' parsers asumen eso. Un body no-JSON se reporta y devuelve NULL (lo saltean
+#' los callers que iteran docs y chequean NULL).
+#' @noRd
+.pw_parse_body <- function(b) {
+  tryCatch(
+    jsonlite::fromJSON(b, simplifyVector = FALSE),
+    error = function(e) {
+      warning("Respuesta no-JSON del motor salteada: ", substr(b, 1, 120))
+      NULL
+    }
+  )
 }
 
 #' Comprobar que el motor Node/Playwright esta instalado y operativo

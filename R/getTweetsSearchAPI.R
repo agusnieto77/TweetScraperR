@@ -23,6 +23,9 @@
 #'   "Top" (destacados) o "Media".
 #' @param dir Directorio de destino del RDS. Por defecto el de trabajo.
 #' @param save Logico. Si TRUE (por defecto) guarda el resultado en un RDS.
+#' @param since Fecha "desde" (opcional). Formato "YYYY-MM-DD" o el
+#'   "YYYY-MM-DD_HH:MM:SS" de X. Migra el parametro de los historicos legacy.
+#' @param until Fecha "hasta" (opcional). Mismo formato que `since`.
 #'
 #' @return Un tibble con un tweet por fila (mismas columnas que
 #'   [getUserTweetsAPI()], incluyendo media, hashtags, menciones, etc.).
@@ -36,9 +39,23 @@
 #' }
 getTweetsSearchAPI <- function(search = "#RStats", n_tweets = 40,
                                product = c("Latest", "Top", "Media"),
+                               since = NULL, until = NULL,
                                dir = getwd(), save = TRUE) {
   product <- match.arg(product)
   f <- c(Latest = "live", Top = "top", Media = "media")[[product]]
+  # Filtros de fechas nativos de la busqueda de X (paridad con los historicos
+  # legacy): aceptan "YYYY-MM-DD" o el "YYYY-MM-DD_HH:MM:SS[_UTC]" de los
+  # historicos viejos (X usa "since:YYYY-MM-DD_HH:MM:SS" sin el sufijo _UTC).
+  if (!is.null(since) && nzchar(since)) {
+    since <- sub("_UTC$", "", since)
+    since <- gsub("[[:space:]]+", "_", since)
+    search <- paste(search, paste0("since:", since))
+  }
+  if (!is.null(until) && nzchar(until)) {
+    until <- sub("_UTC$", "", until)
+    until <- gsub("[[:space:]]+", "_", until)
+    search <- paste(search, paste0("until:", until))
+  }
   url <- paste0("https://x.com/search?q=", utils::URLencode(search, reserved = TRUE),
                 "&src=typed_query&f=", f)
   cat("Buscando: ", search, " (", product, ")\n", sep = "")

@@ -8,6 +8,8 @@ getTweetsSearchAPI(
   search = "#RStats",
   n_tweets = 40,
   product = c("Latest", "Top", "Media"),
+  since = NULL,
+  until = NULL,
   dir = getwd(),
   save = TRUE
 )
@@ -20,6 +22,11 @@ getTweetsSearchAPI(
 
 \item{product}{Pestania de resultados: "Latest" (recientes, por defecto),
 "Top" (destacados) o "Media".}
+
+\item{since}{Fecha "desde" (opcional). Formato "YYYY-MM-DD" o el
+"YYYY-MM-DD_HH:MM:SS" de X. Migra el parametro de los historicos legacy.}
+
+\item{until}{Fecha "hasta" (opcional). Mismo formato que \code{since}.}
 
 \item{dir}{Directorio de destino del RDS. Por defecto el de trabajo.}
 

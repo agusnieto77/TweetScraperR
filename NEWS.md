@@ -1,3 +1,33 @@
+# TweetScraperR 0.5.0 (desarrollo)
+
+## Paquete unificado sobre el motor Node/Playwright (BREAKING)
+
+* Se **eliminan** las funciones de scraping por HTML con sesión chromote,
+  todas deprecadas en 0.3/0.4 y rotas tras los rediseños de X (bloqueo de
+  login automatizado y cambios de DOM): familia de sesion
+  (`openTwitter()`, `closeTwitter()`, `openTimeline()`, `closeTimeline()`,
+  `passTwitter()`, `userTwitter()`), la familia de scroll
+  (`getScrollExtract()`, `getScrollExtractUrls()`), la familia `*API` de
+  reemplazo ya cubre:
+  - `getTweetsData()`, `getTweetsData2()` → [getTweetsDataAPI()]
+  - `getTweetsFullSearch()`, los streaming, los históricos y la familia
+    `getUrls*()` → [getTweetsSearchAPI()]
+  - `getTweetsTimeline()`, `getTweetsTimelineFor()` → [getUserTweetsAPI()]
+    / [getTweetsTimelinesAPI()]
+  - `getTweetsCites()`, `getTweetsReplies()` → [getTweetsRepliesAPI()]
+  - `getTweetsRetweets()` → [getTweetsRetweetsAPI()]
+  - `getTweetsImages()` → [getUserMediaAPI()]
+  - `getUsersData()`, `getUsersFullData()` → [getUsersDataAPI()]
+* [getTweetsSearchAPI()] incorpora los argumentos `since` y `until`
+  (paridad con los históricos eliminados: filtrar por rango de fechas
+  nativo de la búsqueda de X).
+* Paquete: 21 archivos R, 24 exportaciones, un solo contrato de columnas
+  para toda la familia `*API()`.
+* Todas las capacidades post-procesamiento siguen intactas:
+  `extractTweetsData()` (procesa RDS legacy con `art_html` ya guardados),
+  `getTweetsHashtags()`, `getTweetsSentiments()`, `getTweetsImagesAnalysis()`,
+  `HTMLImgReport()`, `plot*()`.
+
 # TweetScraperR 0.4.0.9000 (desarrollo)
 
 ## Mejoras del motor Node/Playwright en Windows

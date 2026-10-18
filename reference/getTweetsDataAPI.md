@@ -37,6 +37,6 @@ Un tibble con una fila por tweet (mismas columnas que getUserTweetsAPI).
 ``` r
 if (FALSE) { # \dontrun{
 importSessionX(auth_token = "...", ct0 = "...")
-getTweetsDataAPI(c("https://x.com/NASA/status/123", "https://x.com/NASA/status/456"))
+getTweetsDataAPI("https://x.com/sanchezcastejon/status/2111426246517072370")
 } # }
 ```

@@ -40,6 +40,6 @@ getUsersDataAPI).
 ``` r
 if (FALSE) { # \dontrun{
 importSessionX(auth_token = "...", ct0 = "...")
-getTweetsRetweetsAPI("https://x.com/NASA/status/123", n_users = 100)
+getTweetsRetweetsAPI("https://x.com/sanchezcastejon/status/2111426246517072370", n_users = 100)
 } # }
 ```

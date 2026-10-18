@@ -61,8 +61,8 @@
 <div class="section level3">
 <h3 id="visión-general">Visión general<a class="anchor" aria-label="anchor" href="#visi%C3%B3n-general"></a>
 </h3>
-<p><code>TweetScraperR</code> recolecta datos de X/Twitter —tweets, usuarixs y metadatos— para análisis y visualización en R, <strong>sin usar la API oficial de pago</strong>. Desde la versión <strong>0.4.0</strong>, el scraping corre sobre un motor de <strong>Node.js + Playwright</strong> y consulta la <strong>API GraphQL interna</strong> de X, devolviendo datos <strong>estructurados</strong> desde JSON: texto completo (sin truncar), fecha exacta, métricas (respuestas, retweets, citas, me gusta, vistas), media, hashtags y menciones. La autenticación se hace importando la <strong>sesión real de tu navegador</strong> (cookies), ya que X bloquea el login automatizado. Es una alternativa flexible, gratuita y de código abierto.</p>
-<p><code>TweetScraperR</code> collects data from X/Twitter —tweets, users and metadata— for analysis and visualization in R, <strong>without using the paid official API</strong>. Since version <strong>0.4.0</strong>, scraping runs on a <strong>Node.js + Playwright</strong> engine and queries X’s <strong>internal GraphQL API</strong>, returning <strong>structured</strong> data from JSON: full text, exact date, metrics, media, hashtags and mentions. Authentication works by importing your <strong>real browser session</strong> (cookies), since X blocks automated login. It is a flexible, free, and open-source alternative.</p>
+<p><code>TweetScraperR</code> recolecta datos de X/Twitter —tweets, usuarixs y metadatos— para análisis y visualización en R, <strong>sin usar la API oficial de pago</strong>. Desde la versión <strong>0.5.0</strong>, el scraping corre sobre un motor de <strong>Node.js + Playwright</strong> y consulta la <strong>API GraphQL interna</strong> de X, devolviendo datos <strong>estructurados</strong> desde JSON: texto completo (sin truncar), fecha exacta, métricas (respuestas, retweets, citas, me gusta, vistas), media, hashtags y menciones. La autenticación se hace importando la <strong>sesión real de tu navegador</strong> (cookies), ya que X bloquea el login automatizado. Es una alternativa flexible, gratuita y de código abierto.</p>
+<p><code>TweetScraperR</code> collects data from X/Twitter —tweets, users and metadata— for analysis and visualization in R, <strong>without using the paid official API</strong>. Since version <strong>0.5.0</strong>, scraping runs on a <strong>Node.js + Playwright</strong> engine and queries X’s <strong>internal GraphQL API</strong>, returning <strong>structured</strong> data from JSON: full text, exact date, metrics, media, hashtags and mentions. Authentication works by importing your <strong>real browser session</strong> (cookies), since X blocks automated login. It is a flexible, free, and open-source alternative.</p>
 </div>
 <div class="section level3">
 <h3 id="instalacion-de-la-version-en-desarrollo">Instalacion de la version en desarrollo<a class="anchor" aria-label="anchor" href="#instalacion-de-la-version-en-desarrollo"></a>
@@ -141,7 +141,7 @@
 <div class="section level3">
 <h3 id="scraping-vía-api-graphqljson-recomendado">Scraping vía API GraphQL/JSON (recomendado)<a class="anchor" aria-label="anchor" href="#scraping-v%C3%ADa-api-graphqljson-recomendado"></a>
 </h3>
-<p>La vía <strong>recomendada</strong> es la familia de funciones <code>*API()</code>: consultan la <strong>API GraphQL interna de X</strong> y devuelven datos estructurados directamente del JSON (texto completo sin truncar, fecha exacta y métricas: respuestas, retweets, citas, me gusta y vistas), sin selectores CSS frágiles. Todas reusan la sesión importada con <code><a href="reference/importSessionX.html">importSessionX()</a></code>. Las funciones de scraping por HTML siguen disponibles pero quedaron <strong>deprecadas</strong> en favor de estas.</p>
+<p>La vía <strong>recomendada</strong> es la familia de funciones <code>*API()</code>: consultan la <strong>API GraphQL interna de X</strong> y devuelven datos estructurados directamente del JSON (texto completo sin truncar, fecha exacta y métricas: respuestas, retweets, citas, me gusta y vistas), sin selectores CSS frágiles. Todas reusan la sesión importada con <code><a href="reference/importSessionX.html">importSessionX()</a></code>. Las funciones de scraping por HTML fueron <strong>eliminadas</strong> en la 0.5.0 (ver el mapeo de reemplazos en el <a href="NEWS.html">NEWS.md</a>).</p>
 <table class="table">
 <colgroup>
 <col width="50%">
@@ -241,27 +241,43 @@
 <span></span>
 <span><span class="co"># 5) Datos de perfil de usuarixs</span></span>
 <span><span class="va">perfiles</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/getUsersDataAPI.html">getUsersDataAPI</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"NASA"</span>, <span class="st">"rstatstweet"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p>Cada función de tweets devuelve un <code>tibble</code> con datos <strong>estructurados</strong> (21 columnas), listo para analizar:</p>
+<p>Cada función de tweets devuelve un <code>tibble</code> con datos <strong>estructurados</strong> (21 columnas), listo para analizar. Salida real (<code>getUserTweetsAPI("NASA", n_tweets = 10)</code>, capturada el 2026-10-18):</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">tweets</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Rows: 100</span></span>
+<code class="sourceCode R"><span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">timeline</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Rows: 10</span></span>
 <span><span class="co">#&gt; Columns: 21</span></span>
-<span><span class="co">#&gt; $ fecha           &lt;dttm&gt; 2026-06-13 21:42:13, 2026-06-13 12:10:47, ...</span></span>
-<span><span class="co">#&gt; $ user            &lt;chr&gt; "@RosanaFerrero", "@aRtsy_package", ...</span></span>
-<span><span class="co">#&gt; $ texto           &lt;chr&gt; "...texto completo, sin truncar..."</span></span>
-<span><span class="co">#&gt; $ idioma          &lt;chr&gt; "es", "en", ...</span></span>
-<span><span class="co">#&gt; $ megustas        &lt;int&gt; 7203, 0, 8221, ...</span></span>
-<span><span class="co">#&gt; $ retweets        &lt;int&gt; 1194, 323, 1465, ...</span></span>
-<span><span class="co">#&gt; $ views           &lt;int&gt; 470857, 34, 378665, ...</span></span>
-<span><span class="co">#&gt; $ media           &lt;list&gt; ["https://pbs.twimg.com/media/...jpg"], [], ...</span></span>
-<span><span class="co">#&gt; $ hashtags        &lt;list&gt; ["RStats"], [], ...</span></span>
-<span><span class="co">#&gt; $ menciones       &lt;list&gt; ["Space_Station", "SpaceX"], [], ...</span></span>
-<span><span class="co">#&gt; $ urls_externas   &lt;list&gt; ["https://go.nasa.gov/..."], [], ...</span></span>
-<span><span class="co">#&gt; $ emoticones      &lt;list&gt; ["✈"], [], ...</span></span>
-<span><span class="co">#&gt; # ... respuestas, citas, es_retweet, es_cita, tweet_citado_id,</span></span>
-<span><span class="co">#&gt; #     media_tipo, conversation_id, url, tweet_id</span></span></code></pre></div>
-<p>Y analizás/visualizás directo, sin renombrar columnas:</p>
+<span><span class="co">#&gt; $ fecha           &lt;dttm&gt; 2026-10-16 19:42:20, 2026-10-16 13:53:53, ...</span></span>
+<span><span class="co">#&gt; $ user            &lt;chr&gt; "@NASA", "@NASA", "@NASA", "@NASA", ...</span></span>
+<span><span class="co">#&gt; $ texto           &lt;chr&gt; "The aircraft lineup just keeps getting bigger. ✈️..."</span></span>
+<span><span class="co">#&gt; $ idioma          &lt;chr&gt; "en", "en", "en", "en", ...</span></span>
+<span><span class="co">#&gt; $ respuestas      &lt;int&gt; 124, 141, 76, 85, 91, 165, 167, 90, 259, 120</span></span>
+<span><span class="co">#&gt; $ retweets        &lt;int&gt; 194, 242, 157, 164, 236, 384, 377, 137, 938, 198</span></span>
+<span><span class="co">#&gt; $ citas           &lt;int&gt; 21, 16, 10, 16, 12, 59, 725, 15, 93, 13</span></span>
+<span><span class="co">#&gt; $ megustas        &lt;int&gt; 1407, 1867, 1111, 1065, 2105, 2227, 2662, ...</span></span>
+<span><span class="co">#&gt; $ views           &lt;int&gt; 329251, 958698, 376585, 460454, 375943, ...</span></span>
+<span><span class="co">#&gt; $ emoticones      &lt;list&gt; "✈", &lt;&gt;, &lt;&gt;, &lt;&gt;, &lt;&gt;, &lt;&gt;, "🛠", &lt;&gt;, &lt;&gt;, "✈"</span></span>
+<span><span class="co">#&gt; $ hashtags        &lt;list&gt; &lt;&gt;, &lt;&gt;, &lt;&gt;, &lt;&gt;, &lt;&gt;, &lt;&gt;, &lt;&gt;, &lt;&gt;, &lt;&gt;, &lt;&gt;</span></span>
+<span><span class="co">#&gt; $ menciones       &lt;list&gt; "NASAKennedy", &lt;&gt;, "JAXA_en", &lt;"NASAJohnson"...&gt;</span></span>
+<span><span class="co">#&gt; $ urls_externas   &lt;list&gt; "https://www.nasa.gov/maxpower/", ...</span></span>
+<span><span class="co">#&gt; $ media           &lt;list&gt; "https://video.twimg.com/amplify_video/...", ...</span></span>
+<span><span class="co">#&gt; $ media_tipo      &lt;list&gt; "video", "photo", "photo", &lt;&gt;, "photo", ...</span></span>
+<span><span class="co">#&gt; $ es_retweet      &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, ...</span></span>
+<span><span class="co">#&gt; $ es_cita         &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, ...</span></span>
+<span><span class="co">#&gt; $ tweet_citado_id &lt;chr&gt; NA, NA, NA, NA, ...</span></span>
+<span><span class="co">#&gt; $ conversation_id &lt;chr&gt; "2111180963661435219", "2111093273800356092", ...</span></span>
+<span><span class="co">#&gt; $ url             &lt;chr&gt; "https://x.com/NASA/status/2111180963661435219", ...</span></span>
+<span><span class="co">#&gt; $ tweet_id        &lt;chr&gt; "2111180963661435219", "2111093273800356092", ...</span></span></code></pre></div>
+<p>Y los perfiles (<code>getUsersDataAPI("NASA")</code>, misma fecha):</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#&gt; # A tibble: 1 × 15</span></span>
+<span><span class="co">#&gt;   user  nombre user_id  descripcion        seguidores siguiendo tweets</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;    &lt;chr&gt;                   &lt;int&gt;     &lt;int&gt;  &lt;int&gt;</span></span>
+<span><span class="co">#&gt; 1 @NASA NASA   11348282 Making the seemin…  92323271       115  74438</span></span>
+<span><span class="co">#&gt; # ℹ 8 more variables: favoritos &lt;int&gt;, verificado &lt;lgl&gt;, ubicacion &lt;chr&gt;,</span></span>
+<span><span class="co">#&gt; #   sitio_web &lt;chr&gt;, imagen_perfil &lt;chr&gt;, banner &lt;chr&gt;,</span></span>
+<span><span class="co">#&gt; #   fecha_creacion &lt;dttm&gt;, url &lt;chr&gt;</span></span></code></pre></div>
+<p>Y analizás/visualizás directo, sin renombrar columnas:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/plotTime.html">plotTime</a></span><span class="op">(</span><span class="va">tweets</span><span class="op">)</span>                    <span class="co"># serie temporal (columna fecha)</span></span>
 <span><span class="fu"><a href="reference/plotWords.html">plotWords</a></span><span class="op">(</span><span class="va">tweets</span><span class="op">)</span>                   <span class="co"># nube de palabras (columna texto)</span></span>
 <span><span class="fu"><a href="reference/plotEmojis.html">plotEmojis</a></span><span class="op">(</span><span class="va">tweets</span><span class="op">)</span>                  <span class="co"># ranking de emojis (columna emoticones)</span></span>
@@ -304,7 +320,7 @@
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://www.repostatus.org/#active" class="external-link"><img src="https://www.repostatus.org/badges/latest/active.svg" alt="Project Status: Active – The project has reached a stable, usable state and is being actively developed."></a></li>
-<li><a href="https://github.com/agusnieto77/TweetScraperR" class="external-link"><img src="https://img.shields.io/badge/devel%20version-0.4.0-blue.svg"></a></li>
+<li><a href="https://github.com/agusnieto77/TweetScraperR" class="external-link"><img src="https://img.shields.io/badge/devel%20version-0.5.0-blue.svg"></a></li>
 <li><a href="https://agusnieto77.github.io/TweetScraperR/"><img src="https://img.shields.io/badge/docs-pkgdown-blue.svg" alt="pkgdown"></a></li>
 <li><a href="https://cran.r-project.org/web/licenses/MIT" class="external-link"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT"></a></li>
 <li><a href="https://github.com/agusnieto77/TweetScraperR" class="external-link"><img src="https://img.shields.io/github/languages/code-size/agusnieto77/TweetScraperR.svg"></a></li>

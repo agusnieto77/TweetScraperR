@@ -43,6 +43,6 @@ incluyendo media, hashtags, menciones, etc.).
 ``` r
 if (FALSE) { # \dontrun{
 importSessionX(auth_token = "...", ct0 = "...")
-getTweetsRepliesAPI("https://x.com/NASA/status/123", n_tweets = 100)
+getTweetsRepliesAPI("https://x.com/sanchezcastejon/status/2111426246517072370", n_tweets = 100)
 } # }
 ```

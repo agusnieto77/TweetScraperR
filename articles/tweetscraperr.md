@@ -7,8 +7,8 @@ metadatos) para análisis y visualización. Esta viñeta describe el
 muestran son **capturas reales** obtenidas el 2026-10-18.
 
 > **Nota de versiones:** desde la **0.5.0** el paquete expone una
-> superficie única de 24 funciones sobre el motor Node.js/Playwright.
-> Las funciones de scraping por HTML (`getTweetsTimeline()`,
+> superficie única sobre el motor Node.js/Playwright (24 funciones en la
+> 0.6). Las funciones de scraping por HTML (`getTweetsTimeline()`,
 > `getTweetsData()`, `getUsersData()`, la familia `getUrls*()`, etc.)
 > fueron **eliminadas**; el mapa de reemplazos está en el `NEWS.md`.
 

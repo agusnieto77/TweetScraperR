@@ -1,3 +1,13 @@
+# TweetScraperR 0.6.0
+
+## Skill conversacional para agentes de IA
+
+* Nueva [installAgentSkill()]: instala una skill (formato Agent Skills) para
+  usar TweetScraperR de forma conversacional desde agentes de IA, en
+  particular Posit Assistant (RStudio/Positron), además de Claude Code y
+  clientes de `.agents/skills`. En Windows instala en `%USERPROFILE%`, que es
+  donde los agentes buscan sus skills (R usa Documentos como `~`).
+
 # TweetScraperR 0.5.0
 
 ## Paquete unificado sobre el motor Node/Playwright (BREAKING)

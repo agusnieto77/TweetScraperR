@@ -16,7 +16,7 @@ reference:
   - checkPlaywrightEngine
   - loginX
 
-- title: "Scraping de tweets (API — recomendado)"
+- title: "Scraping de tweets (API)"
   desc: >
     Consultan la API GraphQL interna de X y devuelven datos estructurados desde
     JSON (texto completo, métricas, media, hashtags, menciones, etc.).

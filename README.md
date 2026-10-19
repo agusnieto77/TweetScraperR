@@ -114,9 +114,9 @@ sesión (persistida como `storageState`) sin necesidad de volver a loguearte.
 > `auth_token` y `ct0` desde el navegador y reimportalas con
 > `importSessionX()`.
 
-### Scraping vía API GraphQL/JSON (recomendado)
+### Scraping vía API GraphQL/JSON
 
-La vía **recomendada** es la familia de funciones `*API()`: consultan la
+Toda la recolección se hace con la familia de funciones `*API()`: consultan la
 **API GraphQL interna de X** y devuelven datos estructurados directamente del
 JSON (texto completo sin truncar, fecha exacta y métricas: respuestas,
 retweets, citas, me gusta y vistas), sin selectores CSS frágiles. Todas reusan
@@ -194,7 +194,7 @@ estado de ciclo de vida, está en la referencia del sitio de documentación:
 
 👉 <https://agusnieto77.github.io/TweetScraperR/reference/>
 
-Las recomendadas son la familia `*API()` (ver la tabla de arriba). Las
+La recolección se hace con la familia `*API()` (ver la tabla de arriba). Las
 funciones de scraping por **HTML** (`getTweetsTimeline()`,
 `getTweetsHistoricalSearch()`, `getTweetsData()`, `getUsersData()`, la
 familia `getUrls*()`, las variantes `*For()`, la gestión de sesiones

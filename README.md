@@ -3,7 +3,7 @@
 <!-- badges: start -->
 
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
-[![](https://img.shields.io/badge/version-0.5.0-blue.svg)](https://github.com/agusnieto77/TweetScraperR)
+[![](https://img.shields.io/badge/version-0.6.0-blue.svg)](https://github.com/agusnieto77/TweetScraperR)
 [![pkgdown](https://img.shields.io/badge/docs-pkgdown-blue.svg)](https://agusnieto77.github.io/TweetScraperR/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://cran.r-project.org/web/licenses/MIT)
 [![](https://img.shields.io/github/languages/code-size/agusnieto77/TweetScraperR.svg)](https://github.com/agusnieto77/TweetScraperR)
@@ -147,6 +147,29 @@ library(TweetScraperR)
 importSessionX(auth_token = "tu_auth_token", ct0 = "tu_ct0")
 tw <- getTweetsSearchAPI("#RStats", n_tweets = 100, product = "Latest")
 ```
+
+### Uso conversacional con agentes de IA (Posit Assistant)
+
+`installAgentSkill()` instala una *skill* ([Agent
+Skills](https://agentskills.io)) que le enseña a un agente de IA a usar
+TweetScraperR: puesta a punto, qué función corresponde a cada pedido,
+columnas devueltas, recetas y solución de errores. Está pensada para
+**Posit Assistant** (RStudio y Positron), que la carga sola cuando hablás
+de X/Twitter o la invocás con `/tweetscraperr`.
+
+``` r
+# Posit Assistant, para todos tus proyectos
+installAgentSkill()
+
+# También para Claude Code y clientes de .agents/skills, solo en este proyecto
+installAgentSkill(c("posit", "claude", "agents"), scope = "project")
+
+# Tras actualizar el paquete
+installAgentSkill(overwrite = TRUE)
+```
+
+Después, en una conversación nueva del asistente: *"traeme los últimos 200
+tweets de @NASA y graficá su actividad por día"*.
 
 ### Uso responsable / Aviso legal
 

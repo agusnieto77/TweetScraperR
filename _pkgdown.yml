@@ -50,3 +50,7 @@ reference:
   - getTweetsHashtags
   - extractTweetsData
 
+- title: "Agentes de IA"
+  contents:
+  - installAgentSkill
+

@@ -67,3 +67,8 @@ desde JSON (texto completo, métricas, media, hashtags, menciones, etc.).
   : Get Hashtags from Tweets
 - [`extractTweetsData()`](https://agusnieto77.github.io/TweetScraperR/reference/extractTweetsData.md)
   : Extracts Relevant Information from Locally Stored Tweets
+
+## Agentes de IA
+
+- [`installAgentSkill()`](https://agusnieto77.github.io/TweetScraperR/reference/installAgentSkill.md)
+  : Install the TweetScraperR Skill for AI Agents

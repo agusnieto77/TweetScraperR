@@ -3,7 +3,7 @@
 <!-- badges: start -->
 
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
-[![](https://img.shields.io/badge/version-0.6.0-blue.svg)](https://github.com/agusnieto77/TweetScraperR)
+[![](https://img.shields.io/badge/version-0.6.1-blue.svg)](https://github.com/agusnieto77/TweetScraperR)
 [![pkgdown](https://img.shields.io/badge/docs-pkgdown-blue.svg)](https://agusnieto77.github.io/TweetScraperR/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://cran.r-project.org/web/licenses/MIT)
 [![](https://img.shields.io/github/languages/code-size/agusnieto77/TweetScraperR.svg)](https://github.com/agusnieto77/TweetScraperR)
@@ -40,8 +40,8 @@ Puedes instalar la versión de desarrollo de TweetScraperR desde
 [GitHub](https://github.com/) con:
 
 ``` r
-# install.packages("devtools")
-devtools::install_github("agusnieto77/TweetScraperR")
+# install.packages("pak")
+pak::pak("agusnieto77/TweetScraperR")
 ```
 
 ### Requisitos

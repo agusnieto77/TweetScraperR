@@ -14,7 +14,7 @@ partir de las cookies del navegador.
 - [`loginX()`](https://agusnieto77.github.io/TweetScraperR/reference/loginX.md)
   : Iniciar sesion en X/Twitter con Playwright y guardar la sesion
 
-## Scraping de tweets (API — recomendado)
+## Scraping de tweets (API)
 
 Consultan la API GraphQL interna de X y devuelven datos estructurados
 desde JSON (texto completo, métricas, media, hashtags, menciones, etc.).

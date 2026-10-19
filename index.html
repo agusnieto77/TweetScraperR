@@ -142,9 +142,9 @@
 </blockquote>
 </div>
 <div class="section level3">
-<h3 id="scraping-vía-api-graphqljson-recomendado">Scraping vía API GraphQL/JSON (recomendado)<a class="anchor" aria-label="anchor" href="#scraping-v%C3%ADa-api-graphqljson-recomendado"></a>
+<h3 id="scraping-vía-api-graphqljson">Scraping vía API GraphQL/JSON<a class="anchor" aria-label="anchor" href="#scraping-v%C3%ADa-api-graphqljson"></a>
 </h3>
-<p>La vía <strong>recomendada</strong> es la familia de funciones <code>*API()</code>: consultan la <strong>API GraphQL interna de X</strong> y devuelven datos estructurados directamente del JSON (texto completo sin truncar, fecha exacta y métricas: respuestas, retweets, citas, me gusta y vistas), sin selectores CSS frágiles. Todas reusan la sesión importada con <code><a href="reference/importSessionX.html">importSessionX()</a></code>. Las funciones de scraping por HTML fueron <strong>eliminadas</strong> en la 0.5.0 (ver el mapeo de reemplazos en el <a href="NEWS.html">NEWS.md</a>).</p>
+<p>Toda la recolección se hace con la familia de funciones <code>*API()</code>: consultan la <strong>API GraphQL interna de X</strong> y devuelven datos estructurados directamente del JSON (texto completo sin truncar, fecha exacta y métricas: respuestas, retweets, citas, me gusta y vistas), sin selectores CSS frágiles. Todas reusan la sesión importada con <code><a href="reference/importSessionX.html">importSessionX()</a></code>. Las funciones de scraping por HTML fueron <strong>eliminadas</strong> en la 0.5.0 (ver el mapeo de reemplazos en el <a href="NEWS.html">NEWS.md</a>).</p>
 <table class="table">
 <colgroup>
 <col width="50%">
@@ -234,7 +234,7 @@
 </h3>
 <p>El <strong>listado completo de funciones</strong>, organizado por categoría y con su estado de ciclo de vida, está en la referencia del sitio de documentación:</p>
 <p>👉 <a href="https://agusnieto77.github.io/TweetScraperR/reference/" class="uri">https://agusnieto77.github.io/TweetScraperR/reference/</a></p>
-<p>Las recomendadas son la familia <code>*API()</code> (ver la tabla de arriba). Las funciones de scraping por <strong>HTML</strong> (<code>getTweetsTimeline()</code>, <code>getTweetsHistoricalSearch()</code>, <code>getTweetsData()</code>, <code>getUsersData()</code>, la familia <code>getUrls*()</code>, las variantes <code>*For()</code>, la gestión de sesiones <code>openTwitter()</code>/<code>closeTwitter()</code>, etc.) fueron <strong>eliminadas</strong> en la 0.5.0 en favor de sus equivalentes <code>*API()</code> sobre el motor Node/Playwright; el mapeo de reemplazos está en el <a href="NEWS.html">NEWS.md</a>.</p>
+<p>La recolección se hace con la familia <code>*API()</code> (ver la tabla de arriba). Las funciones de scraping por <strong>HTML</strong> (<code>getTweetsTimeline()</code>, <code>getTweetsHistoricalSearch()</code>, <code>getTweetsData()</code>, <code>getUsersData()</code>, la familia <code>getUrls*()</code>, las variantes <code>*For()</code>, la gestión de sesiones <code>openTwitter()</code>/<code>closeTwitter()</code>, etc.) fueron <strong>eliminadas</strong> en la 0.5.0 en favor de sus equivalentes <code>*API()</code> sobre el motor Node/Playwright; el mapeo de reemplazos está en el <a href="NEWS.html">NEWS.md</a>.</p>
 </div>
 <div class="section level3">
 <h3 id="uso-del-paquete">Uso del paquete<a class="anchor" aria-label="anchor" href="#uso-del-paquete"></a>

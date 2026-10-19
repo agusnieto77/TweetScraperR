@@ -2,7 +2,7 @@
 
 `TweetScraperR` recolecta datos de X/Twitter (tweets, usuarixs y
 metadatos) para análisis y visualización. Esta viñeta describe el
-**flujo recomendado**, basado en consultas a la API GraphQL interna de X
+**flujo de trabajo**, basado en consultas a la API GraphQL interna de X
 (datos estructurados, sin selectores HTML frágiles). Las salidas que se
 muestran son **capturas reales** obtenidas el 2026-10-18.
 

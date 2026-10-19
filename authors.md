@@ -7,7 +7,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/agusnieto77/TweetScraperR/blob/v0.6.1/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/agusnieto77/TweetScraperR/blob/main/DESCRIPTION)
 
 Nieto A (2026). *TweetScraperR: Scrape Posts and User Data from X
 Twitter*. R package version 0.6.1,

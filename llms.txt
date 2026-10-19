@@ -112,12 +112,12 @@ loguearte.
 > copiar `auth_token` y `ct0` desde el navegador y reimportalas con
 > [`importSessionX()`](https://agusnieto77.github.io/TweetScraperR/reference/importSessionX.md).
 
-### Scraping vía API GraphQL/JSON (recomendado)
+### Scraping vía API GraphQL/JSON
 
-La vía **recomendada** es la familia de funciones `*API()`: consultan la
-**API GraphQL interna de X** y devuelven datos estructurados
-directamente del JSON (texto completo sin truncar, fecha exacta y
-métricas: respuestas, retweets, citas, me gusta y vistas), sin
+Toda la recolección se hace con la familia de funciones `*API()`:
+consultan la **API GraphQL interna de X** y devuelven datos
+estructurados directamente del JSON (texto completo sin truncar, fecha
+exacta y métricas: respuestas, retweets, citas, me gusta y vistas), sin
 selectores CSS frágiles. Todas reusan la sesión importada con
 [`importSessionX()`](https://agusnieto77.github.io/TweetScraperR/reference/importSessionX.md).
 Las funciones de scraping por HTML fueron **eliminadas** en la 0.5.0
@@ -205,8 +205,8 @@ documentación:
 
 👉 <https://agusnieto77.github.io/TweetScraperR/reference/>
 
-Las recomendadas son la familia `*API()` (ver la tabla de arriba). Las
-funciones de scraping por **HTML** (`getTweetsTimeline()`,
+La recolección se hace con la familia `*API()` (ver la tabla de arriba).
+Las funciones de scraping por **HTML** (`getTweetsTimeline()`,
 `getTweetsHistoricalSearch()`, `getTweetsData()`, `getUsersData()`, la
 familia `getUrls*()`, las variantes `*For()`, la gestión de sesiones
 `openTwitter()`/`closeTwitter()`, etc.) fueron **eliminadas** en la
@@ -310,7 +310,7 @@ partir de las cookies del navegador.
 - [`loginX()`](https://agusnieto77.github.io/TweetScraperR/reference/loginX.md)
   : Iniciar sesion en X/Twitter con Playwright y guardar la sesion
 
-## Scraping de tweets (API — recomendado)
+## Scraping de tweets (API)
 
 Consultan la API GraphQL interna de X y devuelven datos estructurados
 desde JSON (texto completo, métricas, media, hashtags, menciones, etc.).

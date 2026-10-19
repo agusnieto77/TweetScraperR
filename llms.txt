@@ -29,8 +29,8 @@ Puedes instalar la versión de desarrollo de TweetScraperR desde
 
 ``` r
 
-# install.packages("devtools")
-devtools::install_github("agusnieto77/TweetScraperR")
+# install.packages("pak")
+pak::pak("agusnieto77/TweetScraperR")
 ```
 
 ### Requisitos

@@ -64,8 +64,8 @@ Para instalar la versión de desarrollo desde GitHub, ejecuta:
 
 ``` r
 
-# install.packages("devtools")
-devtools::install_github("agusnieto77/TweetScraperR")
+# install.packages("pak")
+pak::pak("agusnieto77/TweetScraperR")
 ```
 
 ### Funcionalidades principales

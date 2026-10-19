@@ -1,5 +1,14 @@
 # Changelog
 
+## TweetScraperR 0.6.1
+
+- Las instrucciones de instalación (README y `Requisitos.md`) pasan de
+  `devtools::install_github()`, deprecada en devtools 2.5.0, a
+  `pak::pak("agusnieto77/TweetScraperR")`. Con `pak` tampoco aparecen
+  los avisos `skipping pax global extended headers` del
+  [`untar()`](https://rdrr.io/r/utils/untar.html) interno de R, que eran
+  inofensivos.
+
 ## TweetScraperR 0.6.0
 
 ### Skill conversacional para agentes de IA

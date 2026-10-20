@@ -19,11 +19,13 @@
 #' @description Prioridad: cache persistente fuera de la libreria de R (que
 #'   sobrevive a las reinstalaciones del paquete, evitando perder node_modules
 #'   en cada `R CMD INSTALL`), con fallback a inst/node del paquete. En ambos
-#'   casos exige que el motor tenga sus dependencias de npm ya instaladas.
+#'   casos exige que el motor tenga sus dependencias de npm ya instaladas. El
+#'   cache se mantiene al dia con el paquete instalado via `.pw_sync_engine()`.
 .pw_engine_dir <- function() {
   d <- .pw_cache_dir(create = FALSE)
   if (file.exists(file.path(d, "tsr-engine.js")) &&
       dir.exists(file.path(d, "node_modules"))) {
+    .pw_sync_engine(system.file("node", package = "TweetScraperR"), d)
     return(d)
   }
   d <- system.file("node", package = "TweetScraperR")
@@ -33,6 +35,38 @@
   }
   stop("El motor Node/Playwright no est\u00e1 instalado (falta node_modules). ",
        "Corre installPlaywrightEngine() una vez por m\u00e1quina.")
+}
+
+#' Actualiza el tsr-engine.js del cache si cambio el del paquete
+#'
+#' Solo copia el script: si tambien cambio package.json (dependencias de npm
+#' nuevas), el script nuevo podria no funcionar con el node_modules del cache,
+#' asi que se mantiene el motor viejo y se avisa que hay que reinstalarlo.
+#'
+#' @param pkg_dir Directorio inst/node del paquete instalado.
+#' @param cache_dir Directorio del motor en cache.
+#' @return Invisiblemente, TRUE si el cache quedo al dia.
+#' @noRd
+.pw_sync_engine <- function(pkg_dir, cache_dir) {
+  # Compara por lineas: segun como se instalo el paquete los archivos pueden
+  # venir con finales CRLF o LF y un md5 los daria por distintos.
+  same <- function(f) {
+    a <- file.path(pkg_dir, f)
+    b <- file.path(cache_dir, f)
+    !file.exists(a) || (utils::file_test("-f", b) && identical(readLines(a, warn = FALSE), readLines(b, warn = FALSE)))
+  }
+  if (!nzchar(pkg_dir) || same("tsr-engine.js")) return(invisible(TRUE))
+  if (!same("package.json")) {
+    warning("El motor Playwright del paquete cambi\u00f3 sus dependencias; se sigue usando la versi\u00f3n anterior. ",
+            "Corr\u00e9 installPlaywrightEngine() para actualizarlo.", call. = FALSE)
+    return(invisible(FALSE))
+  }
+  ok <- suppressWarnings(file.copy(file.path(pkg_dir, "tsr-engine.js"), cache_dir, overwrite = TRUE))
+  if (!isTRUE(ok)) {
+    warning("No se pudo actualizar el motor Playwright en ", cache_dir, "; se sigue usando la versi\u00f3n anterior. ",
+            "Corr\u00e9 installPlaywrightEngine() para actualizarlo.", call. = FALSE)
+  }
+  invisible(isTRUE(ok))
 }
 
 #' Directorio persistente del motor (cache del usuario)
@@ -63,32 +97,66 @@
 
 #' Invoca un comando del motor Node y devuelve el resultado parseado
 #'
-#' @param cmd Comando del motor ("doctor", "login", "collect").
+#' @param cmd Comando del motor ("doctor", "login", "collect", "harvest").
 #' @param params Lista de parametros (se serializa a JSON y va por stdin).
 #' @param timeout Timeout en segundos.
+#' @param progress Si es TRUE, muestra un spinner de una sola linea con los
+#'   eventos de progreso que el motor emite por stderr ("@@TSR <json>").
 #'
 #' @return Lista con el JSON de respuesta del motor mas `.stderr` y `.exit`.
 #' @noRd
-#' @description En Windows `system2(stdout = TRUE)` parte las lineas largas
-#'   (>8KB por el limite de pipe de MSVCRT) y corrompe el JSON del motor, por
-#'   lo que la salida estandar siempre se redirige a un archivo temporal y se
-#'   vuelve a leer intacta.
-.pw_call <- function(cmd, params = list(), timeout = 300, simplify = TRUE) {
+#' @description El motor corre como proceso asincrono (processx) para poder
+#'   refrescar el progreso mientras trabaja. La salida estandar se redirige a
+#'   un archivo temporal (en Windows las lineas largas por pipe se parten y
+#'   corrompen el JSON) y se vuelve a leer intacta al terminar.
+.pw_call <- function(cmd, params = list(), timeout = 300, simplify = TRUE, progress = FALSE) {
   script <- file.path(.pw_engine_dir(), "tsr-engine.js")
   json <- jsonlite::toJSON(params, auto_unbox = TRUE, null = "null")
-  errfile <- tempfile(fileext = ".log")
+  infile <- tempfile(fileext = ".json")
   outfile <- tempfile(fileext = ".json")
-  on.exit(unlink(c(errfile, outfile)), add = TRUE)
-  out <- suppressWarnings(system2(
-    .pw_node(),
-    args = c(shQuote(script), cmd),
-    input = json,
-    stdout = outfile,
-    stderr = errfile,
-    timeout = timeout
-  ))
-  status <- if (is.character(out)) attr(out, "status") else out
-  stderr_chr <- tryCatch(readLines(errfile, warn = FALSE), error = function(e) character(0))
+  on.exit(unlink(c(infile, outfile)), add = TRUE)
+  writeLines(enc2utf8(json), infile, useBytes = TRUE)
+
+  proc <- processx::process$new(
+    .pw_node(), c(script, cmd),
+    stdin = infile, stdout = outfile, stderr = "|",
+    encoding = "UTF-8", cleanup_tree = TRUE
+  )
+  # Corre antes que el unlink: un Ctrl+C no deja Node/Chromium huerfanos.
+  on.exit(if (proc$is_alive()) proc$kill_tree(), add = TRUE, after = FALSE)
+
+  ui <- if (isTRUE(progress)) .pw_progress() else NULL
+  if (!is.null(ui)) on.exit(ui$clear(), add = TRUE, after = FALSE)
+
+  stderr_chr <- character(0)
+  handle <- function(lines) {
+    is_ev <- startsWith(lines, "@@TSR ")
+    stderr_chr <<- c(stderr_chr, lines[!is_ev])
+    if (!is.null(ui)) {
+      for (l in lines[is_ev]) {
+        ev <- tryCatch(jsonlite::fromJSON(substring(l, 7)), error = function(e) NULL)
+        if (!is.null(ev)) ui$update(ev)
+      }
+    }
+  }
+
+  deadline <- Sys.time() + timeout
+  timed_out <- FALSE
+  while (proc$is_alive()) {
+    if (Sys.time() > deadline) {
+      proc$kill_tree()
+      timed_out <- TRUE
+      break
+    }
+    proc$poll_io(100)
+    handle(proc$read_error_lines())
+    if (!is.null(ui)) ui$draw()
+  }
+  # Tras kill_tree() el pipe de stderr queda cerrado y no se puede drenar.
+  if (!timed_out) handle(proc$read_all_error_lines())
+  proc$wait()
+  status <- if (timed_out) 124L else proc$get_exit_status()
+
   txt <- paste(readLines(outfile, warn = FALSE, encoding = "UTF-8"), collapse = "\n")
   res <- tryCatch(
     jsonlite::fromJSON(txt, simplifyVector = simplify),
@@ -108,6 +176,69 @@
   res$.stderr <- stderr_chr
   res$.exit <- if (is.null(status)) 0L else status
   res
+}
+
+#' Spinner de una sola linea para la cosecha
+#'
+#' Redibuja en el lugar (con `\r`) un spinner, el contador de tweets o
+#' usuarixs, el tiempo transcurrido y el ultimo tweet recibido. Devuelve NULL
+#' si la consola no soporta redibujar lineas (Rscript, knitr, logs).
+#' @noRd
+.pw_progress <- function() {
+  if (!interactive() || !cli::is_dynamic_tty(stdout())) return(NULL)
+  frames <- cli::get_spinner(if (cli::is_utf8_output()) "dots" else "line")$frames
+  t0 <- Sys.time()
+  i <- 0L
+  tweets <- 0L
+  users <- 0L
+  status <- "Iniciando navegador..."
+  drawn <- FALSE
+
+  elapsed <- function() {
+    s <- as.integer(difftime(Sys.time(), t0, units = "secs"))
+    if (s < 60) paste0(s, "s") else sprintf("%dm %02ds", s %/% 60, s %% 60)
+  }
+
+  list(
+    update = function(ev) {
+      if (identical(ev$stage, "open")) {
+        page <- sub("^https?://(www\\.)?", "", ev$url)
+        status <<- if (isTRUE(ev$n > 1)) {
+          paste0("Cargando ", ev$i, "/", ev$n, ": ", page)
+        } else {
+          paste0("Cargando ", page)
+        }
+      } else if (identical(ev$stage, "data")) {
+        tweets <<- as.integer(.pw_or(ev$tweets, 0L))
+        users <<- as.integer(.pw_or(ev$users, 0L))
+        if (!is.null(ev$last)) status <<- gsub("\\s+", " ", ev$last)
+      }
+    },
+    draw = function() {
+      i <<- i %% length(frames) + 1L
+      count <- if (tweets > 0) {
+        paste(tweets, "tweets")
+      } else if (users > 0) {
+        paste(users, "usuarixs")
+      } else {
+        NULL
+      }
+      line <- paste(c(
+        cli::col_cyan(frames[i]),
+        if (!is.null(count)) cli::style_bold(count),
+        cli::col_silver(elapsed()),
+        status
+      ), collapse = "  ")
+      w <- max(20L, cli::console_width() - 1L)
+      cat("\r", cli::ansi_align(cli::ansi_strtrim(line, w), w), sep = "")
+      utils::flush.console()
+      drawn <<- TRUE
+    },
+    clear = function() {
+      if (drawn) cat("\r", strrep(" ", max(20L, cli::console_width() - 1L)), "\r", sep = "")
+      drawn <<- FALSE
+    }
+  )
 }
 
 #' Login de bajo nivel via motor Node
@@ -149,7 +280,7 @@
   res <- .pw_call("harvest", list(
     storageStatePath = state, urls = as.list(urls),
     opNames = as.list(op_names), maxScrolls = max_scrolls
-  ), timeout = 900, simplify = FALSE)
+  ), timeout = 900, simplify = FALSE, progress = TRUE)
   if (isTRUE(res$reason == "not_logged_in")) {
     stop("No hay una sesi\u00f3n activa de X. Import\u00e1 tu sesi\u00f3n con importSessionX(auth_token, ct0).")
   }

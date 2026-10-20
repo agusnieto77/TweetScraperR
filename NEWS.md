@@ -1,3 +1,19 @@
+# TweetScraperR (development version)
+
+* Las funciones de recolección (`getTweetsSearchAPI()`, `getUserTweetsAPI()`,
+  `getTweetsTimelinesAPI()`, perfiles, seguidorxs, etc.) muestran ahora un
+  spinner de una sola línea que se actualiza en el lugar con la cantidad de
+  tweets/usuarixs capturados, el tiempo transcurrido y el último tweet
+  recibido. Solo aparece en consolas interactivas (RStudio, terminal); en
+  Rscript/knitr no se imprime nada extra.
+* El motor Node corre como proceso asíncrono (`processx`): un Ctrl+C corta la
+  recolección sin dejar Chromium abierto. Nuevas dependencias: `cli` y
+  `processx`.
+* El `tsr-engine.js` del cache del motor se actualiza solo cuando cambia el
+  del paquete. Si también cambiaron sus dependencias de npm (o la copia
+  falla), se sigue usando el motor anterior y se avisa que hay que correr
+  `installPlaywrightEngine()`.
+
 # TweetScraperR 0.6.1
 
 * Las instrucciones de instalación (README y `Requisitos.md`) pasan de

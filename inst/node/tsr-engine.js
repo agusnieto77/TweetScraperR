@@ -9,7 +9,8 @@
  *   login    -> hace login con el modal actual de X y guarda storageState a disco
  *   collect  -> reusa storageState (SIN re-login), scrollea y extrae articles o urls
  *
- * Logs humanos van a stderr; el unico stdout es el JSON de resultado.
+ * Logs humanos van a stderr; el unico stdout es el JSON de resultado. Los
+ * eventos de progreso para R van a stderr como lineas "@@TSR <json>".
  */
 'use strict';
 
@@ -65,6 +66,48 @@ function parseProxy(proxy) {
 
 function elog(tag, msg) {
   process.stderr.write('[' + tag + '] ' + msg + '\n');
+}
+
+function progress(ev) {
+  process.stderr.write('@@TSR ' + JSON.stringify(ev) + '\n');
+}
+
+// Recorre un body GraphQL y registra tweets/usuarixs nuevos (por rest_id).
+// No baja a los tweets citados ni a los originales de un retweet para no
+// contarlos como resultados propios.
+// Devuelve el ultimo tweet visto como "@usuario: texto" (o null).
+function scanBody(text, seenTweets, seenUsers) {
+  let doc;
+  try {
+    doc = JSON.parse(text);
+  } catch (e) {
+    return null;
+  }
+  let last = null;
+  const walk = (o) => {
+    if (!o || typeof o !== 'object') return;
+    if (Array.isArray(o)) {
+      for (const x of o) walk(x);
+      return;
+    }
+    if (o.rest_id && o.legacy) {
+      if (typeof o.legacy.full_text === 'string') {
+        if (!seenTweets.has(o.rest_id)) {
+          seenTweets.add(o.rest_id);
+          const u = o.core && o.core.user_results && o.core.user_results.result;
+          const sn = u && ((u.core && u.core.screen_name) || (u.legacy && u.legacy.screen_name));
+          last = (sn ? '@' + sn + ': ' : '') + o.legacy.full_text;
+        }
+      } else if (o.__typename === 'User') {
+        seenUsers.add(o.rest_id);
+      }
+    }
+    for (const k in o) {
+      if (k !== 'quoted_status_result' && k !== 'retweeted_status_result') walk(o[k]);
+    }
+  };
+  walk(doc);
+  return last;
 }
 
 function readStdin() {
@@ -366,14 +409,20 @@ async function harvest(p) {
 
   // Un solo navegador/contexto reutilizado para TODAS las urls (evita el costo
   // de arranque de Chromium por llamada).
+  progress({ stage: 'launch' });
   const browser = await chromium.launch(proxy ? { headless, proxy } : { headless });
   const context = await browser.newContext(ctxOpts({ storageState: storageStatePath }));
   const results = [];
   let rateLimit = { remaining: null, reset: null };
   let expired = false;
+  const seenTweets = new Set();
+  const seenUsers = new Set();
+  let last = null;
 
   try {
-    for (const url of urls) {
+    for (let k = 0; k < urls.length; k++) {
+      const url = urls[k];
+      progress({ stage: 'open', i: k + 1, n: urls.length, url });
       const page = await context.newPage();
       const bodies = [];
       page.on('response', async (resp) => {
@@ -390,6 +439,9 @@ async function harvest(p) {
           const t = await resp.text();
           if (t) {
             bodies.push(t);
+            const l = scanBody(t, seenTweets, seenUsers);
+            if (l) last = l;
+            progress({ stage: 'data', tweets: seenTweets.size, users: seenUsers.size, last });
             // codigo 32 = "Could not authenticate you" -> sesion expirada
             if (t.indexOf('"code":32') !== -1) expired = true;
           }

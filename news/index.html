@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">TweetScraperR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,6 +36,15 @@
       <small>Source: <a href="https://github.com/agusnieto77/TweetScraperR/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.7.0" id="tweetscraperr-070">TweetScraperR 0.7.0<a class="anchor" aria-label="anchor" href="#tweetscraperr-070"></a></h2>
+<div class="section level3">
+<h3 id="progreso-en-vivo-durante-la-recolección-0-7-0">Progreso en vivo durante la recolección<a class="anchor" aria-label="anchor" href="#progreso-en-vivo-durante-la-recolecci%C3%B3n-0-7-0"></a></h3>
+<ul><li>Las funciones de recolección (<code><a href="../reference/getTweetsSearchAPI.html">getTweetsSearchAPI()</a></code>, <code><a href="../reference/getUserTweetsAPI.html">getUserTweetsAPI()</a></code>, <code><a href="../reference/getTweetsTimelinesAPI.html">getTweetsTimelinesAPI()</a></code>, perfiles, seguidorxs, etc.) muestran ahora un spinner de una sola línea que se actualiza en el lugar con la cantidad de tweets/usuarixs capturados, el tiempo transcurrido y el último tweet recibido. Solo aparece en consolas interactivas (RStudio, terminal); en Rscript/knitr no se imprime nada extra.</li>
+<li>El motor Node corre como proceso asíncrono (<code>processx</code>): un Ctrl+C corta la recolección sin dejar Chromium abierto. Nuevas dependencias: <code>cli</code> y <code>processx</code>.</li>
+<li>El <code>tsr-engine.js</code> del cache del motor se actualiza solo cuando cambia el del paquete. Si también cambiaron sus dependencias de npm (o la copia falla), se sigue usando el motor anterior y se avisa que hay que correr <code><a href="../reference/installPlaywrightEngine.html">installPlaywrightEngine()</a></code>.</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.6.1" id="tweetscraperr-061">TweetScraperR 0.6.1<a class="anchor" aria-label="anchor" href="#tweetscraperr-061"></a></h2>
 <ul><li>Las instrucciones de instalación (README y <code>Requisitos.md</code>) pasan de <code>devtools::install_github()</code>, deprecada en devtools 2.5.0, a <code>pak::pak("agusnieto77/TweetScraperR")</code>. Con <code>pak</code> tampoco aparecen los avisos <code>skipping pax global extended headers</code> del <code><a href="https://rdrr.io/r/utils/untar.html" class="external-link">untar()</a></code> interno de R, que eran inofensivos.</li>

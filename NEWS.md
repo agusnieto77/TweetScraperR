@@ -1,4 +1,6 @@
-# TweetScraperR (development version)
+# TweetScraperR 0.7.0
+
+## Progreso en vivo durante la recolección
 
 * Las funciones de recolección (`getTweetsSearchAPI()`, `getUserTweetsAPI()`,
   `getTweetsTimelinesAPI()`, perfiles, seguidorxs, etc.) muestran ahora un

@@ -12,6 +12,36 @@
          "&src=typed_query&f=", f)
 }
 
+#' Operador de fecha de la busqueda de X para `since`/`until`
+#'
+#' Un dia se pasa como `since:`/`until:` (X incluye ambos dias). Un instante
+#' se pasa como `since_time:`/`until_time:` en segundos Unix: X ya no
+#' devuelve resultados con `since:YYYY-MM-DD_HH:MM:SS`. Las horas en texto se
+#' interpretan en UTC, como la columna `fecha`.
+#' @return El operador como texto, o NULL si `x` es NULL o vacio.
+#' @noRd
+.search_time_operator <- function(x, op) {
+  if (is.null(x) || (is.character(x) && !nzchar(x))) return(NULL)
+  if (length(x) != 1L || is.na(x)) {
+    stop("`", op, "` debe ser una sola fecha.", call. = FALSE)
+  }
+  if (inherits(x, "Date")) return(paste0(op, ":", format(x)))
+  if (inherits(x, "POSIXct")) return(paste0(op, "_time:", as.integer(x)))
+  x <- trimws(sub("_UTC$", "", as.character(x)))
+  if (grepl("^\\d{4}-\\d{2}-\\d{2}$", x, perl = TRUE) &&
+      !is.na(as.Date(x, format = "%Y-%m-%d", optional = TRUE))) {
+    return(paste0(op, ":", x))
+  }
+  if (grepl("^\\d{4}-\\d{2}-\\d{2}[ _T]\\d{2}:\\d{2}(:\\d{2})?$", x, perl = TRUE)) {
+    x <- sub("^(\\S{10})[ _T]", "\\1 ", x)
+    t <- as.POSIXct(x, tz = "UTC", tryFormats = c("%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H:%M"),
+                    optional = TRUE)
+    if (!is.na(t)) return(paste0(op, "_time:", as.integer(t)))
+  }
+  stop("`", op, "` no es una fecha valida: usa \"YYYY-MM-DD\" o \"YYYY-MM-DD HH:MM:SS\" (UTC).",
+       call. = FALSE)
+}
+
 #' Search Tweets via the X API (experimental)
 #'
 #' @description
@@ -31,9 +61,12 @@
 #' @param dir Directorio de destino del RDS. Por defecto el de trabajo.
 #' @param save Logico. Si TRUE guarda el resultado en un RDS dentro de `dir`.
 #'   Por defecto FALSE: no se escribe ningun archivo.
-#' @param since Fecha "desde" (opcional). Formato "YYYY-MM-DD" o el
-#'   "YYYY-MM-DD_HH:MM:SS" de X. Migra el parametro de los historicos legacy.
-#' @param until Fecha "hasta" (opcional). Mismo formato que `since`.
+#' @param since Desde cuando (opcional). Un dia `"YYYY-MM-DD"` (incluye ese
+#'   dia) o un instante `"YYYY-MM-DD HH:MM[:SS]"` en UTC (tambien con `_` o
+#'   `T` como separador y sufijo `_UTC`). Acepta objetos `Date` y `POSIXct`.
+#'   Con hora se traduce al operador `since_time:` de X.
+#' @param until Hasta cuando (opcional), mismos formatos que `since`. Un dia
+#'   solo incluye ese dia; con hora se traduce a `until_time:`.
 #'
 #' @return Un tibble con un tweet por fila (mismas columnas que
 #'   [getUserTweetsAPI()], incluyendo media, hashtags, menciones, etc.).
@@ -51,19 +84,8 @@ getTweetsSearchAPI <- function(search = "#RStats", n_tweets = 40,
                                dir = getwd(), save = FALSE) {
   product <- match.arg(product)
   f <- c(Latest = "live", Top = "top", Media = "media")[[product]]
-  # Filtros de fechas nativos de la busqueda de X (paridad con los historicos
-  # legacy): aceptan "YYYY-MM-DD" o el "YYYY-MM-DD_HH:MM:SS[_UTC]" de los
-  # historicos viejos (X usa "since:YYYY-MM-DD_HH:MM:SS" sin el sufijo _UTC).
-  if (!is.null(since) && nzchar(since)) {
-    since <- sub("_UTC$", "", since)
-    since <- gsub("[[:space:]]+", "_", since)
-    search <- paste(search, paste0("since:", since))
-  }
-  if (!is.null(until) && nzchar(until)) {
-    until <- sub("_UTC$", "", until)
-    until <- gsub("[[:space:]]+", "_", until)
-    search <- paste(search, paste0("until:", until))
-  }
+  search <- paste(c(search, .search_time_operator(since, "since"),
+                    .search_time_operator(until, "until")), collapse = " ")
   url <- .search_url(search, f)
   cat("Buscando: ", search, " (", product, ")\n", sep = "")
 

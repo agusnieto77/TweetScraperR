@@ -64,7 +64,7 @@ pak::pak("agusnieto77/TweetScraperR")
 > (ver la sección **Autenticación**).
 
 Más detalles en
-[Requisitos.md](https://agusnieto77.github.io/TweetScraperR/Requisitos.md).
+[Requisitos.md](https://github.com/agusnieto77/TweetScraperR/blob/main/Requisitos.md).
 
 ### Instalación del motor
 

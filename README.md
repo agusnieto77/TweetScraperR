@@ -69,7 +69,7 @@ pak::pak("agusnieto77/TweetScraperR")
 > importando la sesión real del navegador con `importSessionX()` (ver la
 > sección **Autenticación**).
 
-Más detalles en [Requisitos.md](Requisitos.md).
+Más detalles en [Requisitos.md](https://github.com/agusnieto77/TweetScraperR/blob/main/Requisitos.md).
 
 ### Instalación del motor
 

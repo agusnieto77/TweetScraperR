@@ -1,4 +1,4 @@
-# TweetScraperR (development version)
+# TweetScraperR 0.8.0
 
 ## Pool de cuentas con rotación automática
 

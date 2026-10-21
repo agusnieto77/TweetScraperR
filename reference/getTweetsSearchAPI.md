@@ -40,13 +40,15 @@ getTweetsSearchAPI(
 
 - since:
 
-  Fecha "desde" (opcional). Formato "YYYY-MM-DD" o el
-  "YYYY-MM-DD_HH:MM:SS" de X. Migra el parametro de los historicos
-  legacy.
+  Desde cuando (opcional). Un dia `"YYYY-MM-DD"` (incluye ese dia) o un
+  instante `"YYYY-MM-DD HH:MM[:SS]"` en UTC (tambien con `_` o `T` como
+  separador y sufijo `_UTC`). Acepta objetos `Date` y `POSIXct`. Con
+  hora se traduce al operador `since_time:` de X.
 
 - until:
 
-  Fecha "hasta" (opcional). Mismo formato que `since`.
+  Hasta cuando (opcional), mismos formatos que `since`. Un dia solo
+  incluye ese dia; con hora se traduce a `until_time:`.
 
 - dir:
 

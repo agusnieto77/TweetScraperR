@@ -18,7 +18,8 @@
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/tweetscraperr.html">Scraping de X/Twitter con TweetScraperR</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/busquedas.html">Parámetros de búsqueda: operadores de X con getTweetsSearchAPI()</a></li>
+    <li><a class="dropdown-item" href="../articles/tweetscraperr.html">Scraping de X/Twitter con TweetScraperR</a></li>
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -39,6 +40,9 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="tweetscraperr-development-version">TweetScraperR (development version)<a class="anchor" aria-label="anchor" href="#tweetscraperr-development-version"></a></h2>
 <ul><li>Nueva [getTweetsLiveAPI()] (experimental): captura en vivo de una búsqueda “hacia adelante”. Repite [getTweetsSearchAPI()] cada <code>interval</code> segundos (mínimo 60) durante <code>duration</code> y, desde la segunda ronda, agrega <code>since_id:&lt;último ID visto&gt;</code> a la consulta para traer solo lo publicado después, sin gastar cupo en lo ya recolectado. Con <code>save = TRUE</code> guarda lo acumulado después de cada ronda; una ronda fallida no corta la captura y Esc / Ctrl+C devuelve lo acumulado. Avisa cuando una ronda llega al tope <code>n_tweets</code> (posibles huecos).</li>
+<li>Nuevo artículo “Parámetros de búsqueda” en el sitio: recorre los operadores de X en <code><a href="../reference/getTweetsSearchAPI.html">getTweetsSearchAPI()</a></code> (términos, frase exacta, <code>OR</code>, exclusiones, hashtags, <code>from:</code>/<code>to:</code>, menciones, <code>conversation_id:</code>, fechas, franjas horarias, idioma, métricas mínimas, tipo de contenido, pestañas) con ejemplos ejecutados y verificados contra X.</li>
+<li>
+<code><a href="../reference/getTweetsSearchAPI.html">getTweetsSearchAPI()</a></code>: <code>since</code>/<code>until</code> con hora vuelven a funcionar. X dejó de devolver resultados con <code>since:YYYY-MM-DD_HH:MM:SS</code>, así que ahora un instante (<code>"YYYY-MM-DD HH:MM[:SS]"</code> en UTC, o un <code>POSIXct</code> en cualquier zona horaria) se traduce a <code>since_time:</code>/<code>until_time:</code>. Un día (<code>"YYYY-MM-DD"</code> o <code>Date</code>) sigue yendo como <code>since:</code>/<code>until:</code>, con ambos días inclusivos. Una fecha inválida ahora da error en vez de una búsqueda vacía.</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.8.1" id="tweetscraperr-081">TweetScraperR 0.8.1<a class="anchor" aria-label="anchor" href="#tweetscraperr-081"></a></h2>

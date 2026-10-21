@@ -26,7 +26,8 @@ me gusta, vistas). Requiere una sesion importada con importSessionX()."></head><
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/tweetscraperr.html">Scraping de X/Twitter con TweetScraperR</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/busquedas.html">Parámetros de búsqueda: operadores de X con getTweetsSearchAPI()</a></li>
+    <li><a class="dropdown-item" href="../articles/tweetscraperr.html">Scraping de X/Twitter con TweetScraperR</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -85,12 +86,15 @@ me gusta, vistas). Requiere una sesion importada con <code><a href="importSessio
 
 
 <dt id="arg-since">since<a class="anchor" aria-label="anchor" href="#arg-since"></a></dt>
-<dd><p>Fecha "desde" (opcional). Formato "YYYY-MM-DD" o el
-"YYYY-MM-DD_HH:MM:SS" de X. Migra el parametro de los historicos legacy.</p></dd>
+<dd><p>Desde cuando (opcional). Un dia <code>"YYYY-MM-DD"</code> (incluye ese
+dia) o un instante <code>"YYYY-MM-DD HH:MM[:SS]"</code> en UTC (tambien con <code>_</code> o
+<code>T</code> como separador y sufijo <code>_UTC</code>). Acepta objetos <code>Date</code> y <code>POSIXct</code>.
+Con hora se traduce al operador <code>since_time:</code> de X.</p></dd>
 
 
 <dt id="arg-until">until<a class="anchor" aria-label="anchor" href="#arg-until"></a></dt>
-<dd><p>Fecha "hasta" (opcional). Mismo formato que <code>since</code>.</p></dd>
+<dd><p>Hasta cuando (opcional), mismos formatos que <code>since</code>. Un dia
+solo incluye ese dia; con hora se traduce a <code>until_time:</code>.</p></dd>
 
 
 <dt id="arg-dir">dir<a class="anchor" aria-label="anchor" href="#arg-dir"></a></dt>

@@ -64,7 +64,7 @@
       <h1>Scraping de X/Twitter con TweetScraperR</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/agusnieto77/TweetScraperR/blob/main/vignettes/tweetscraperr.Rmd" class="external-link"><code>vignettes/tweetscraperr.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/agusnieto77/TweetScraperR/blob/v0.8.0/vignettes/tweetscraperr.Rmd" class="external-link"><code>vignettes/tweetscraperr.Rmd</code></a></small>
       <div class="d-none name"><code>tweetscraperr.Rmd</code></div>
     </div>
 
@@ -79,7 +79,7 @@ reales</strong> obtenidas entre el 2026-10-18 y el 2026-10-20.</p>
 <blockquote>
 <p><strong>Nota de versiones:</strong> desde la <strong>0.5.0</strong>
 el paquete expone una superficie única sobre el motor Node.js/Playwright
-(36 funciones en la 0.8, con el pool de cuentas). Las funciones de
+(33 funciones en la 0.8, con el pool de cuentas). Las funciones de
 scraping por HTML (<code>getTweetsTimeline()</code>,
 <code>getTweetsData()</code>, <code>getUsersData()</code>, la familia
 <code>getUrls*()</code>, etc.) fueron <strong>eliminadas</strong>; el
@@ -126,52 +126,23 @@ repetí el paso para reimportarlas.</p>
 <h3 id="varias-cuentas-el-pool">Varias cuentas: el pool<a class="anchor" aria-label="anchor" href="#varias-cuentas-el-pool"></a>
 </h3>
 <p>X limita cada endpoint <strong>por cuenta</strong> en ventanas de 15
-minutos (la búsqueda admite unas 50 consultas). Con varias cuentas, la
-recolección rota sola: la cuenta que agota el cupo queda en pausa hasta
-que X lo renueva y se sigue con la siguiente desde donde se cortó
-(retomando el cursor de paginación); la que X rechaza (sesión vencida o
+minutos (la búsqueda admite unas 50 consultas). Importando más cuentas
+con distinto <code>account</code>, la recolección rota sola: la cuenta
+que agota el cupo queda en pausa hasta que X lo renueva y se sigue con
+la siguiente desde donde se cortó; la que X rechaza (sesión vencida o
 suspendida) se desactiva.</p>
-<p>Hay tres formas de cargar cuentas:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># 1) Asistente de consola: pide nombre, auth_token y ct0 (entrada oculta) y valida</span></span>
-<span><span class="fu"><a href="../reference/setupAccountsX.html">setupAccountsX</a></span><span class="op">(</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># 2) Carga masiva desde un CSV (separado por "," o ";", como lo guarda Excel)</span></span>
-<span><span class="co">#    columnas: account, auth_token, ct0 y, opcional, proxy</span></span>
-<span><span class="fu"><a href="../reference/addAccountsX.html">addAccountsX</a></span><span class="op">(</span><span class="st">"cuentas.csv"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># 3) De a una, desde código</span></span>
-<span><span class="fu"><a href="../reference/importSessionX.html">importSessionX</a></span><span class="op">(</span>cookies <span class="op">=</span> <span class="st">"auth_token=...; ct0=..."</span>, account <span class="op">=</span> <span class="st">"cuenta2"</span><span class="op">)</span></span></code></pre></div>
-<p>Para revisar y administrar el pool:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/checkAccountsX.html">checkAccountsX</a></span><span class="op">(</span><span class="op">)</span>   <span class="co"># valida cada sesión y registra su @usuario real</span></span>
-<span><span class="fu"><a href="../reference/accountsX.html">accountsX</a></span><span class="op">(</span><span class="op">)</span>        <span class="co"># estado: activas, pausas por endpoint, requests, errores</span></span>
-<span><span class="fu"><a href="../reference/reactivateAccountX.html">reactivateAccountX</a></span><span class="op">(</span><span class="st">"cuenta2"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/resetLocksX.html">resetLocksX</a></span><span class="op">(</span><span class="op">)</span>      <span class="co"># quita las pausas de rate-limit</span></span>
-<span><span class="fu"><a href="../reference/removeAccountX.html">removeAccountX</a></span><span class="op">(</span><span class="st">"cuenta2"</span><span class="op">)</span></span></code></pre></div>
-<p><code><a href="../reference/checkAccountsX.html">checkAccountsX()</a></code> desactiva las sesiones vencidas y, si
-la misma cuenta de X quedó cargada dos veces con nombres distintos,
-conserva solo la más nueva. Con una sola cuenta, al agotarse el cupo el
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/importSessionX.html">importSessionX</a></span><span class="op">(</span>cookies <span class="op">=</span> <span class="st">"auth_token=...; ct0=..."</span>, account <span class="op">=</span> <span class="st">"cuenta2"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/accountsX.html">accountsX</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 1 x 8</span></span>
+<span><span class="co">#&gt;   cuenta  activa pausas requests requests_por_endpoint ultimo_uso          proxy</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;   &lt;lgl&gt;  &lt;chr&gt;     &lt;int&gt; &lt;chr&gt;                 &lt;dttm&gt;              &lt;chr&gt;</span></span>
+<span><span class="co">#&gt; 1 default TRUE   &lt;NA&gt;         34 AboutAccountQuery: 7~ 2026-10-20 17:54:20 &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; # i 1 more variable: error &lt;chr&gt;</span></span></code></pre></div>
+<p>(Salida real con una sola cuenta, antes de importar
+<code>cuenta2</code>.) Con una sola cuenta, al agotarse el cupo el
 paquete espera a que X lo renueve, como máximo
 <code>getOption("TweetScraperR.wait_timeout", 900)</code> segundos.</p>
-</div>
-<div class="section level3">
-<h3 id="proxy-opcional">Proxy (opcional)<a class="anchor" aria-label="anchor" href="#proxy-opcional"></a>
-</h3>
-<p>Un proxy hace que una cuenta salga a X por otra IP. No suma cupo (eso
-lo hace el pool), pero sirve si X bloquea tu IP o para que las cuentas
-no salgan todas de la misma conexión. Conviene una IP residencial
-dedicada y fija (“static residential” o “ISP”), usando la dirección
-<strong>HTTP</strong> del proveedor: Chromium no admite SOCKS5 con
-usuario y clave.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Por cuenta (valida la cuenta a través del proxy nuevo)</span></span>
-<span><span class="fu"><a href="../reference/setProxyX.html">setProxyX</a></span><span class="op">(</span><span class="st">"cuenta2"</span>, <span class="st">"http://usuario:clave@host:puerto"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/setProxyX.html">setProxyX</a></span><span class="op">(</span><span class="st">"cuenta2"</span>, <span class="cn">NULL</span><span class="op">)</span>   <span class="co"># quitarlo</span></span>
-<span></span>
-<span><span class="co"># Global, para las cuentas sin proxy propio</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>TweetScraperR.proxy <span class="op">=</span> <span class="st">"http://usuario:clave@host:puerto"</span><span class="op">)</span></span>
-<span><span class="co"># o TWEETSCRAPERR_PROXY=... en ~/.Renviron</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -180,14 +151,14 @@ usuario y clave.</p>
 <div class="section level3">
 <h3 id="timeline-de-unx-usuarix">3.1 Timeline de unx usuarix<a class="anchor" aria-label="anchor" href="#timeline-de-unx-usuarix"></a>
 </h3>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getUserTweetsAPI.html">getUserTweetsAPI</a></span><span class="op">(</span><span class="st">"NASA"</span>, n_tweets <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Recolectando timeline de @NASA...</span></span>
 <span><span class="co">#&gt; Tweets únicos recolectados: 10</span></span>
 <span><span class="co">#&gt; Datos procesados y guardados.</span></span></code></pre></div>
 <p>Cada función de tweets devuelve el mismo <code>tibble</code> de
 <strong>31 columnas</strong> (salida real del 2026-10-20):</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">tl</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: 10</span></span>
 <span><span class="co">#&gt; Columns: 31</span></span>
@@ -228,7 +199,7 @@ usuario y clave.</p>
 <div class="section level3">
 <h3 id="timelines-combinados-curaduría-de-investigación">3.2 Timelines combinados (curaduría de investigación)<a class="anchor" aria-label="anchor" href="#timelines-combinados-curadur%C3%ADa-de-investigaci%C3%B3n"></a>
 </h3>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">combinado</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getTweetsTimelinesAPI.html">getTweetsTimelinesAPI</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sanchezcastejon"</span>, <span class="st">"agusnieto77"</span><span class="op">)</span>,</span>
 <span>  n_tweets <span class="op">=</span> <span class="fl">40</span></span>
@@ -247,7 +218,7 @@ usuario y clave.</p>
 <code>lang:</code>, …) y los argumentos
 <code>since</code>/<code>until</code> para acotar por fechas (formato
 <code>"YYYY-MM-DD"</code> o <code>"YYYY-MM-DD_HH:MM:SS"</code>):</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">top</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getTweetsSearchAPI.html">getTweetsSearchAPI</a></span><span class="op">(</span><span class="st">"Milei"</span>, n_tweets <span class="op">=</span> <span class="fl">10</span>, product <span class="op">=</span> <span class="st">"Top"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Buscando: Milei (Top)</span></span>
 <span><span class="co">#&gt; Tweets únicos recolectados: 10</span></span>
@@ -271,7 +242,7 @@ usuario y clave.</p>
 <div class="section level3">
 <h3 id="respuestas-hilo-de-un-tweet">3.4 Respuestas / hilo de un tweet<a class="anchor" aria-label="anchor" href="#respuestas-hilo-de-un-tweet"></a>
 </h3>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hilo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getTweetsRepliesAPI.html">getTweetsRepliesAPI</a></span><span class="op">(</span></span>
 <span>  <span class="st">"https://x.com/sanchezcastejon/status/2111426246517072370"</span>,</span>
 <span>  n_tweets <span class="op">=</span> <span class="fl">8</span></span>
@@ -291,7 +262,7 @@ respuestas.</p>
 <div class="section level3">
 <h3 id="datos-de-tweets-a-partir-de-sus-urls">3.5 Datos de tweets a partir de sus URLs<a class="anchor" aria-label="anchor" href="#datos-de-tweets-a-partir-de-sus-urls"></a>
 </h3>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">datos</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getTweetsDataAPI.html">getTweetsDataAPI</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  <span class="st">"https://x.com/sanchezcastejon/status/2111426246517072370"</span></span>
 <span><span class="op">)</span><span class="op">)</span></span>
@@ -301,7 +272,7 @@ respuestas.</p>
 <div class="section level3">
 <h3 id="media-fotosvideos-de-unx-usuarix">3.6 Media (fotos/videos) de unx usuarix<a class="anchor" aria-label="anchor" href="#media-fotosvideos-de-unx-usuarix"></a>
 </h3>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">media</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getUserMediaAPI.html">getUserMediaAPI</a></span><span class="op">(</span><span class="st">"sanchezcastejon"</span>, n_tweets <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Recolectando media de @sanchezcastejon...</span></span>
 <span><span class="co">#&gt; Tweets de media recolectados: 15</span></span>
@@ -313,7 +284,7 @@ adjunto.</p>
 <div class="section level3">
 <h3 id="redes-de-usuarixs">3.7 Redes de usuarixs<a class="anchor" aria-label="anchor" href="#redes-de-usuarixs"></a>
 </h3>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">seguidores</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getUserFollowersAPI.html">getUserFollowersAPI</a></span><span class="op">(</span><span class="st">"agusnieto77"</span>, n_users <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
 <span><span class="va">siguiendo</span>  <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getUserFollowingAPI.html">getUserFollowingAPI</a></span><span class="op">(</span><span class="st">"sanchezcastejon"</span>, n_users <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
 <span><span class="va">retweeters</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getTweetsRetweetsAPI.html">getTweetsRetweetsAPI</a></span><span class="op">(</span></span>
@@ -324,7 +295,7 @@ adjunto.</p>
 <div class="section level3">
 <h3 id="datos-de-perfil">3.8 Datos de perfil<a class="anchor" aria-label="anchor" href="#datos-de-perfil"></a>
 </h3>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">perfiles</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getUsersDataAPI.html">getUsersDataAPI</a></span><span class="op">(</span><span class="st">"NASA"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Datos procesados y guardados.</span></span>
 <span><span class="co">#&gt; # A tibble: 1 × 18</span></span>
@@ -341,7 +312,7 @@ adjunto.</p>
 <p>La ficha que X muestra en <code>x.com/&lt;cuenta&gt;/about</code>:
 país desde el que opera la cuenta, cambios de nombre de usuarix y
 verificación. X no publica todos los campos para todas las cuentas.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">about</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getUsersAboutAPI.html">getUsersAboutAPI</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"NASA"</span>, <span class="st">"elonmusk"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; # A tibble: 2 × 13</span></span>
 <span><span class="co">#&gt;   user      nombre    user_id  pais_cuenta   ubicacion_precisa cambios_usuario</span></span>
@@ -355,7 +326,7 @@ verificación. X no publica todos los campos para todas las cuentas.</p>
 <div class="section level3">
 <h3 id="listas-y-búsqueda-de-cuentas">3.10 Listas y búsqueda de cuentas<a class="anchor" aria-label="anchor" href="#listas-y-b%C3%BAsqueda-de-cuentas"></a>
 </h3>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">miembros</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getListMembersAPI.html">getListMembersAPI</a></span><span class="op">(</span><span class="st">"https://x.com/i/lists/53645372"</span>, n_users <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Recolectando miembros de la lista 53645372...</span></span>
 <span><span class="co">#&gt; Usuarios únicos recolectados: 20</span></span>
@@ -382,13 +353,13 @@ pasá <code>save = FALSE</code> para no guardar.</p>
 </h2>
 <p>Las columnas tienen nombres estables, así que el post-procesamiento
 va directo, sin renombrar nada:</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotTime.html">plotTime</a></span><span class="op">(</span><span class="va">tl</span><span class="op">)</span>                  <span class="co"># serie temporal (columna fecha)</span></span>
 <span><span class="fu"><a href="../reference/plotWords.html">plotWords</a></span><span class="op">(</span><span class="va">tl</span>, max_words <span class="op">=</span> <span class="fl">50</span><span class="op">)</span> <span class="co"># nube de palabras (columna texto)</span></span>
 <span><span class="fu"><a href="../reference/plotEmojis.html">plotEmojis</a></span><span class="op">(</span><span class="va">tl</span><span class="op">)</span>                <span class="co"># ranking de emojis (columna emoticones)</span></span>
 <span><span class="fu"><a href="../reference/getTweetsHashtags.html">getTweetsHashtags</a></span><span class="op">(</span><span class="va">tl</span><span class="op">)</span>         <span class="co"># hashtags detectados (columna hashtags)</span></span></code></pre></div>
 <p>Para análisis con IA (requieren <code>OPENAI_API_KEY</code>):</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/getTweetsSentiments.html">getTweetsSentiments</a></span><span class="op">(</span><span class="va">tl</span><span class="op">$</span><span class="va">texto</span><span class="op">)</span>      <span class="co"># sentimiento de cada texto</span></span>
 <span><span class="fu"><a href="../reference/getTweetsImagesAnalysis.html">getTweetsImagesAnalysis</a></span><span class="op">(</span><span class="va">tl</span><span class="op">$</span><span class="va">media</span><span class="op">)</span>  <span class="co"># qué muestran las imágenes</span></span></code></pre></div>
 </div>
@@ -398,7 +369,7 @@ va directo, sin renombrar nada:</p>
 <p>Si tenés <code>.rds</code> viejos con HTML crudo (columna
 <code>art_html</code>), <code><a href="../reference/extractTweetsData.html">extractTweetsData()</a></code> los sigue
 procesando sin necesidad de volver a scrapear:</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">viejos</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="st">"tweets_2024.rds"</span><span class="op">)</span></span>
 <span><span class="va">procesados</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/extractTweetsData.html">extractTweetsData</a></span><span class="op">(</span><span class="va">viejos</span><span class="op">)</span></span></code></pre></div>
 </div>

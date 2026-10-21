@@ -16,9 +16,11 @@ muestran son **capturas reales** obtenidas entre el 2026-10-18 y el
 
 ## 1. Instalar el motor (una vez por máquina)
 
-El motor de scraping corre sobre **Node.js (\>= 18) + Playwright +
-stealth**. Se instala una sola vez en un caché persistente del usuario
-(sobrevive a reinstalaciones del paquete):
+El motor de recolección corre sobre **Node.js (\>= 18) + Playwright**.
+No se instala junto con el paquete: lo descargás vos, una sola vez, en
+un caché persistente del usuario
+(`tools::R_user_dir("TweetScraperR", "cache")`, que sobrevive a
+reinstalaciones del paquete):
 
 ``` r
 
@@ -325,9 +327,9 @@ cuentas[, c("user", "seguidores")]
 #>  3 @RStatsJobs          3956
 ```
 
-Por defecto cada función guarda un archivo `.rds` con marca de tiempo en
-el directorio de trabajo (`save = TRUE`); pasá `save = FALSE` para no
-guardar.
+Por defecto las funciones no escriben archivos (`save = FALSE`). Con
+`save = TRUE` guardan un `.rds` con marca de tiempo en `dir` (por
+defecto, el directorio de trabajo).
 
 ## 4. Visualización y análisis
 

@@ -16,7 +16,7 @@ getTweetsSentiments(
   api_key = Sys.getenv("OPENAI_API_KEY"),
   model = "gpt-4o-mini",
   dir = getwd(),
-  save = TRUE
+  save = FALSE
 )
 ```
 
@@ -38,14 +38,15 @@ getTweetsSentiments(
 
 - dir:
 
-  Una cadena de caracteres que especifica el directorio donde se
-  guardarán los archivos RDS con los resultados. Por defecto es el
-  directorio de trabajo actual.
+  Una cadena de caracteres que especifica el directorio donde se guardan
+  los archivos RDS con los resultados cuando `save = TRUE`. Por defecto
+  es el directorio de trabajo actual.
 
 - save:
 
-  Lógico. Indica si se deben guardar los resultados (totales y
-  parciales) en archivos RDS dentro de `dir`. Por defecto es TRUE.
+  Logico. Si TRUE guarda los resultados (totales y parciales) en
+  archivos RDS dentro de `dir`. Por defecto FALSE: no se escribe ningun
+  archivo.
 
 ## Value
 

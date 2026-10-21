@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">TweetScraperR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -88,9 +88,11 @@ mapa de reemplazos está en el <code>NEWS.md</code>.</p>
 <div class="section level2">
 <h2 id="instalar-el-motor-una-vez-por-máquina">1. Instalar el motor (una vez por máquina)<a class="anchor" aria-label="anchor" href="#instalar-el-motor-una-vez-por-m%C3%A1quina"></a>
 </h2>
-<p>El motor de scraping corre sobre <strong>Node.js (&gt;= 18) +
-Playwright + stealth</strong>. Se instala una sola vez en un caché
-persistente del usuario (sobrevive a reinstalaciones del paquete):</p>
+<p>El motor de recolección corre sobre <strong>Node.js (&gt;= 18) +
+Playwright</strong>. No se instala junto con el paquete: lo descargás
+vos, una sola vez, en un caché persistente del usuario
+(<code>tools::R_user_dir("TweetScraperR", "cache")</code>, que sobrevive
+a reinstalaciones del paquete):</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/agusnieto77/TweetScraperR" class="external-link">TweetScraperR</a></span><span class="op">)</span></span>
 <span></span>
@@ -372,9 +374,10 @@ verificación. X no publica todos los campos para todas las cuentas.</p>
 <span><span class="co">#&gt;  1 @rstats              1246</span></span>
 <span><span class="co">#&gt;  2 @rstatstweet        28306</span></span>
 <span><span class="co">#&gt;  3 @RStatsJobs          3956</span></span></code></pre></div>
-<p>Por defecto cada función guarda un archivo <code>.rds</code> con
-marca de tiempo en el directorio de trabajo (<code>save = TRUE</code>);
-pasá <code>save = FALSE</code> para no guardar.</p>
+<p>Por defecto las funciones no escriben archivos
+(<code>save = FALSE</code>). Con <code>save = TRUE</code> guardan un
+<code>.rds</code> con marca de tiempo en <code>dir</code> (por defecto,
+el directorio de trabajo).</p>
 </div>
 </div>
 <div class="section level2">

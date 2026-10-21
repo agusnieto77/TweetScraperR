@@ -9,7 +9,7 @@ interna de X** (Followers). Requiere una sesion importada con
 ## Usage
 
 ``` r
-getUserFollowersAPI(username, n_users = 100, dir = getwd(), save = TRUE)
+getUserFollowersAPI(username, n_users = 100, dir = getwd(), save = FALSE)
 ```
 
 ## Arguments
@@ -28,7 +28,8 @@ getUserFollowersAPI(username, n_users = 100, dir = getwd(), save = TRUE)
 
 - save:
 
-  Logico. Si TRUE (por defecto) guarda el resultado en un RDS.
+  Logico. Si TRUE guarda el resultado en un RDS dentro de `dir`. Por
+  defecto FALSE: no se escribe ningun archivo.
 
 ## Value
 

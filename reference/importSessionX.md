@@ -1,11 +1,12 @@
 # Importar una sesion de X/Twitter desde las cookies de tu navegador
 
-Como X bloquea el login automatizado (detecta el navegador de Playwright
-por fingerprint), la via robusta es: logueate a mano en tu navegador
-normal y pasale a esta funcion las cookies `auth_token` y `ct0` de tu
-sesion (las encontras en DevTools -\> Application/Almacenamiento -\>
-Cookies -\> x.com). La sesion queda guardada en el pool de cuentas y
-todas las funciones de scraping la reusan sin volver a loguearse.
+La via recomendada para autenticarse es iniciar sesion a mano en tu
+navegador habitual y pasarle a esta funcion las cookies `auth_token` y
+`ct0` de tu sesion (las encontras en DevTools -\>
+Application/Almacenamiento -\> Cookies -\> x.com). La sesion queda
+guardada en el pool de cuentas (en
+`tools::R_user_dir("TweetScraperR", "data")`) y todas las funciones de
+recoleccion la reusan sin volver a loguearse.
 
 ## Usage
 
@@ -53,9 +54,12 @@ Invisiblemente, el nombre de la cuenta.
 
 ## Details
 
-Importando varias cuentas (con distintos `account`) se arma un **pool**:
-cuando una cuenta agota el cupo de un endpoint de X (p. ej. 50 busquedas
-cada 15 minutos), la recoleccion sigue con otra sin cortarse. Ver
+Importando varias cuentas propias (con distintos `account`) se arma un
+**pool** que distribuye la carga de trabajo entre ellas: cada cuenta
+respeta los limites de uso que X informa por endpoint (p. ej. 50
+busquedas cada 15 minutos) y, cuando una llega a su limite, queda en
+pausa hasta que X lo renueve mientras la recoleccion continua con otra
+cuenta disponible. Ver
 [`accountsX()`](https://agusnieto77.github.io/TweetScraperR/reference/accountsX.md).
 
 ## Examples

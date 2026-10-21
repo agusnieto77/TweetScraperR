@@ -13,7 +13,7 @@ el contenido de cada imagen."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">TweetScraperR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -57,7 +57,7 @@ el contenido de cada imagen.</p>
 <span>  modelo <span class="op">=</span> <span class="st">"gpt-4o-mini"</span>,</span>
 <span>  api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"OPENAI_API_KEY"</span><span class="op">)</span>,</span>
 <span>  dir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  save <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  save <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -80,12 +80,12 @@ Por defecto es <code>Sys.getenv("OPENAI_API_KEY")</code>.</p></dd>
 
 <dt id="arg-dir">dir<a class="anchor" aria-label="anchor" href="#arg-dir"></a></dt>
 <dd><p>Una cadena de caracteres que especifica el directorio donde se
-guardarán los resultados. Por defecto es <code><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd()</a></code>.</p></dd>
+guardan los resultados cuando <code>save = TRUE</code>. Por defecto es <code><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd()</a></code>.</p></dd>
 
 
 <dt id="arg-save">save<a class="anchor" aria-label="anchor" href="#arg-save"></a></dt>
-<dd><p>Lógico. Indica si se deben guardar los resultados (totales y
-parciales) en archivos RDS dentro de <code>dir</code>. Por defecto es <code>TRUE</code>.</p></dd>
+<dd><p>Logico. Si TRUE guarda los resultados (totales y parciales) en
+archivos RDS dentro de <code>dir</code>. Por defecto FALSE: no se escribe ningun archivo.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -132,7 +132,7 @@ parciales) en archivos RDS dentro de <code>dir</code>. Por defecto es <code>TRUE
 <li><p>Procesa la respuesta de la API para extraer los resultados del análisis.</p></li>
 </ul></li>
 <li><p>Combina todos los resultados en un solo tibble.</p></li>
-<li><p>Guarda los resultados como archivos RDS en el directorio especificado, con resultados parciales cada 7 imágenes si el total es mayor a 7.</p></li>
+<li><p>Si <code>save = TRUE</code>, guarda los resultados como archivos RDS en el directorio especificado, con resultados parciales cada 7 imágenes si el total es mayor a 7.</p></li>
 </ol><p>El análisis de la imagen incluye:</p><ul><li><p>Clasificación del tipo de imagen (por ejemplo, foto, meme, captura de pantalla)</p></li>
 <li><p>Detección de texto en la imagen (limitado a 10 palabras si es extenso)</p></li>
 <li><p>Identificación de contenido discriminatorio, violento, pornográfico o inapropiado</p></li>

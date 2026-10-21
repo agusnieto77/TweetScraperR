@@ -9,7 +9,7 @@ interna de X** (Following). Requiere una sesion importada con
 ## Usage
 
 ``` r
-getUserFollowingAPI(username, n_users = 100, dir = getwd(), save = TRUE)
+getUserFollowingAPI(username, n_users = 100, dir = getwd(), save = FALSE)
 ```
 
 ## Arguments
@@ -28,7 +28,8 @@ getUserFollowingAPI(username, n_users = 100, dir = getwd(), save = TRUE)
 
 - save:
 
-  Logico. Si TRUE (por defecto) guarda el resultado en un RDS.
+  Logico. Si TRUE guarda el resultado en un RDS dentro de `dir`. Por
+  defecto FALSE: no se escribe ningun archivo.
 
 ## Value
 

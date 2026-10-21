@@ -1,8 +1,14 @@
-# Instalar el motor Node/Playwright (npm install + browsers)
+# Instalar el motor Node/Playwright (npm install + navegador)
 
-Ejecuta `npm install` dentro de inst/node, lo que instala Playwright, el
-plugin stealth y descarga el navegador Chromium. Hay que correrlo una
-vez por maquina antes de usar las funciones de scraping.
+Copia el motor (`inst/node`) a la carpeta de cache del usuario
+(`tools::R_user_dir("TweetScraperR", "cache")`) y ejecuta alli
+`npm install`, que instala 'Playwright', 'playwright-extra' y su plugin
+'stealth' (ajustes de compatibilidad para que el navegador automatizado
+se presente como un 'Chromium' de escritorio estandar) y descarga el
+navegador 'Chromium'. Nada de esto ocurre al instalar el paquete: hay
+que llamar a esta funcion explicitamente, una vez por maquina, antes de
+usar las funciones de recoleccion. Requiere 'Node.js' (\>= 18) con 'npm'
+y conexion a internet.
 
 ## Usage
 
@@ -18,4 +24,12 @@ installPlaywrightEngine(npm = "npm")
 
 ## Value
 
-Invisiblemente, el codigo de salida de npm.
+Invisiblemente, el codigo de salida de npm (0 si todo salio bien).
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+installPlaywrightEngine()
+} # }
+```

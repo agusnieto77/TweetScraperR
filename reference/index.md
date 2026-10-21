@@ -25,7 +25,7 @@ recolección rota sola cuando una agota el cupo de X.
 - [`removeAccountX()`](https://agusnieto77.github.io/TweetScraperR/reference/removeAccountX.md)
   : Eliminar cuentas del pool
 - [`installPlaywrightEngine()`](https://agusnieto77.github.io/TweetScraperR/reference/installPlaywrightEngine.md)
-  : Instalar el motor Node/Playwright (npm install + browsers)
+  : Instalar el motor Node/Playwright (npm install + navegador)
 - [`checkPlaywrightEngine()`](https://agusnieto77.github.io/TweetScraperR/reference/checkPlaywrightEngine.md)
   : Comprobar que el motor Node/Playwright esta instalado y operativo
 - [`loginX()`](https://agusnieto77.github.io/TweetScraperR/reference/loginX.md)

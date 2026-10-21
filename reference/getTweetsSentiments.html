@@ -15,7 +15,7 @@ direccionado a alguien específico y si contiene un llamado a la acción."></hea
 
     <a class="navbar-brand me-2" href="../index.html">TweetScraperR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -60,7 +60,7 @@ direccionado a alguien específico y si contiene un llamado a la acción.</p>
 <span>  api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"OPENAI_API_KEY"</span><span class="op">)</span>,</span>
 <span>  model <span class="op">=</span> <span class="st">"gpt-4o-mini"</span>,</span>
 <span>  dir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  save <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  save <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -83,13 +83,14 @@ Por defecto es "gpt-4o-mini".</p></dd>
 
 
 <dt id="arg-dir">dir<a class="anchor" aria-label="anchor" href="#arg-dir"></a></dt>
-<dd><p>Una cadena de caracteres que especifica el directorio donde se guardarán
-los archivos RDS con los resultados. Por defecto es el directorio de trabajo actual.</p></dd>
+<dd><p>Una cadena de caracteres que especifica el directorio donde se guardan
+los archivos RDS con los resultados cuando <code>save = TRUE</code>. Por defecto es el
+directorio de trabajo actual.</p></dd>
 
 
 <dt id="arg-save">save<a class="anchor" aria-label="anchor" href="#arg-save"></a></dt>
-<dd><p>Lógico. Indica si se deben guardar los resultados (totales y parciales)
-en archivos RDS dentro de <code>dir</code>. Por defecto es TRUE.</p></dd>
+<dd><p>Logico. Si TRUE guarda los resultados (totales y parciales) en
+archivos RDS dentro de <code>dir</code>. Por defecto FALSE: no se escribe ningun archivo.</p></dd>
 
 </dl></div>
     <div class="section level2">

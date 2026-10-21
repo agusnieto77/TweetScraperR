@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">TweetScraperR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,6 +36,17 @@
       <small>Source: <a href="https://github.com/agusnieto77/TweetScraperR/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.8.1" id="tweetscraperr-081">TweetScraperR 0.8.1<a class="anchor" aria-label="anchor" href="#tweetscraperr-081"></a></h2>
+<p>Preparación del primer envío a CRAN.</p>
+<ul><li>
+<strong>Cambio de comportamiento</strong>: las funciones de recolección y de análisis (<code>get*API()</code>, <code><a href="../reference/getTweetsSentiments.html">getTweetsSentiments()</a></code>, <code><a href="../reference/getTweetsImagesAnalysis.html">getTweetsImagesAnalysis()</a></code>) ya no escriben archivos por defecto: <code>save</code> pasa a <code>FALSE</code>. Para conservar el <code>.rds</code> hay que pasar <code>save = TRUE</code> (se guarda en <code>dir</code>, por defecto el directorio de trabajo).</li>
+<li>
+<code><a href="../reference/HTMLImgReport.html">HTMLImgReport()</a></code>: <code>output_file</code> pasa a ser obligatorio y la función devuelve, de forma invisible, la ruta del HTML generado.</li>
+<li>
+<code>DESCRIPTION</code>: se acredita a vladkens (autor de ‘twscrape’) como contribuidor y titular de copyright del código portado del pool de cuentas; el aviso de licencia MIT original está en <code>inst/COPYRIGHTS</code>.</li>
+<li>Documentación: ejemplos en todas las funciones exportadas y descripción revisada del motor y del pool de cuentas.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.8.0" id="tweetscraperr-080">TweetScraperR 0.8.0<a class="anchor" aria-label="anchor" href="#tweetscraperr-080"></a></h2>
 <div class="section level3">

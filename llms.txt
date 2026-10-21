@@ -42,8 +42,8 @@ pak::pak("agusnieto77/TweetScraperR")
 
 ### Requisitos
 
-- **Node.js (\>= 18)**: el motor de scraping está basado en Node.js +
-  Playwright + stealth. Se instala una sola vez con
+- **Node.js (\>= 18)**: el motor de recolección está basado en Node.js +
+  Playwright. Se instala una sola vez, explícitamente, con
   [`installPlaywrightEngine()`](https://agusnieto77.github.io/TweetScraperR/reference/installPlaywrightEngine.md)
   (ver más abajo).
 - **Chrome o Chromium**: navegador basado en Chromium requerido por el
@@ -69,7 +69,9 @@ Más detalles en
 ### Instalación del motor
 
 El scraping ya no usa `chromote`: corre sobre un motor de **Node.js +
-Playwright + stealth**.
+Playwright** (con el plugin de compatibilidad `stealth` de
+`playwright-extra`, para que el navegador automatizado se presente como
+un Chromium de escritorio estándar).
 
 - Necesitás **Node.js (\>= 18)** instalado en tu sistema.
 - Una sola vez, después de instalar el paquete, ejecutá:
@@ -406,7 +408,7 @@ recolección rota sola cuando una agota el cupo de X.
 - [`removeAccountX()`](https://agusnieto77.github.io/TweetScraperR/reference/removeAccountX.md)
   : Eliminar cuentas del pool
 - [`installPlaywrightEngine()`](https://agusnieto77.github.io/TweetScraperR/reference/installPlaywrightEngine.md)
-  : Instalar el motor Node/Playwright (npm install + browsers)
+  : Instalar el motor Node/Playwright (npm install + navegador)
 - [`checkPlaywrightEngine()`](https://agusnieto77.github.io/TweetScraperR/reference/checkPlaywrightEngine.md)
   : Comprobar que el motor Node/Playwright esta instalado y operativo
 - [`loginX()`](https://agusnieto77.github.io/TweetScraperR/reference/loginX.md)

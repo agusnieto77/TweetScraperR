@@ -15,7 +15,7 @@ getTweetsImagesAnalysis(
   modelo = "gpt-4o-mini",
   api_key = Sys.getenv("OPENAI_API_KEY"),
   dir = getwd(),
-  save = TRUE
+  save = FALSE
 )
 ```
 
@@ -38,14 +38,15 @@ getTweetsImagesAnalysis(
 
 - dir:
 
-  Una cadena de caracteres que especifica el directorio donde se
-  guardarán los resultados. Por defecto es
+  Una cadena de caracteres que especifica el directorio donde se guardan
+  los resultados cuando `save = TRUE`. Por defecto es
   [`getwd()`](https://rdrr.io/r/base/getwd.html).
 
 - save:
 
-  Lógico. Indica si se deben guardar los resultados (totales y
-  parciales) en archivos RDS dentro de `dir`. Por defecto es `TRUE`.
+  Logico. Si TRUE guarda los resultados (totales y parciales) en
+  archivos RDS dentro de `dir`. Por defecto FALSE: no se escribe ningun
+  archivo.
 
 ## Value
 
@@ -116,9 +117,9 @@ La función realiza los siguientes pasos:
 
 6.  Combina todos los resultados en un solo tibble.
 
-7.  Guarda los resultados como archivos RDS en el directorio
-    especificado, con resultados parciales cada 7 imágenes si el total
-    es mayor a 7.
+7.  Si `save = TRUE`, guarda los resultados como archivos RDS en el
+    directorio especificado, con resultados parciales cada 7 imágenes si
+    el total es mayor a 7.
 
 El análisis de la imagen incluye:
 

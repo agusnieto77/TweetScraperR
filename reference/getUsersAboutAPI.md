@@ -14,7 +14,7 @@ quedan en NA.
 ## Usage
 
 ``` r
-getUsersAboutAPI(usernames, dir = getwd(), save = TRUE)
+getUsersAboutAPI(usernames, dir = getwd(), save = FALSE)
 ```
 
 ## Arguments
@@ -30,7 +30,8 @@ getUsersAboutAPI(usernames, dir = getwd(), save = TRUE)
 
 - save:
 
-  Logico. Si TRUE (por defecto) guarda el resultado en un RDS.
+  Logico. Si TRUE guarda el resultado en un RDS dentro de `dir`. Por
+  defecto FALSE: no se escribe ningun archivo.
 
 ## Value
 

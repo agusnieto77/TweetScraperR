@@ -1,5 +1,25 @@
 # Changelog
 
+## TweetScraperR 0.8.1
+
+Preparación del primer envío a CRAN.
+
+- **Cambio de comportamiento**: las funciones de recolección y de
+  análisis (`get*API()`,
+  [`getTweetsSentiments()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsSentiments.md),
+  [`getTweetsImagesAnalysis()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsImagesAnalysis.md))
+  ya no escriben archivos por defecto: `save` pasa a `FALSE`. Para
+  conservar el `.rds` hay que pasar `save = TRUE` (se guarda en `dir`,
+  por defecto el directorio de trabajo).
+- [`HTMLImgReport()`](https://agusnieto77.github.io/TweetScraperR/reference/HTMLImgReport.md):
+  `output_file` pasa a ser obligatorio y la función devuelve, de forma
+  invisible, la ruta del HTML generado.
+- `DESCRIPTION`: se acredita a vladkens (autor de ‘twscrape’) como
+  contribuidor y titular de copyright del código portado del pool de
+  cuentas; el aviso de licencia MIT original está en `inst/COPYRIGHTS`.
+- Documentación: ejemplos en todas las funciones exportadas y
+  descripción revisada del motor y del pool de cuentas.
+
 ## TweetScraperR 0.8.0
 
 ### Pool de cuentas con rotación automática

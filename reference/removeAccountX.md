@@ -17,3 +17,11 @@ removeAccountX(accounts)
 ## Value
 
 Invisiblemente, la cantidad de cuentas eliminadas.
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+removeAccountX("cuenta2")
+} # }
+```

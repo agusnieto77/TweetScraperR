@@ -13,7 +13,7 @@ y banderas de contenido en un diseño responsivo con un carrusel y miniaturas.">
 
     <a class="navbar-brand me-2" href="../index.html">TweetScraperR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -52,7 +52,7 @@ y banderas de contenido en un diseño responsivo con un carrusel y miniaturas.</
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">HTMLImgReport</span><span class="op">(</span><span class="va">results</span>, output_file <span class="op">=</span> <span class="st">"visualizacion_imagenes.html"</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">HTMLImgReport</span><span class="op">(</span><span class="va">results</span>, <span class="va">output_file</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -76,15 +76,15 @@ Debe incluir las siguientes columnas:</p><ul><li><p>clasificacion: La clasificac
 
 <dt id="arg-output-file">output_file<a class="anchor" aria-label="anchor" href="#arg-output-file"></a></dt>
 <dd><p>Una cadena de caracteres con el nombre (o la ruta) del archivo
-HTML de salida. Por defecto es "visualizacion_imagenes.html" en el directorio
-de trabajo actual.</p></dd>
+HTML de salida. Es obligatorio: la funcion no escribe archivos en una
+ubicacion por defecto.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>Esta función no devuelve ningún valor. Genera un archivo HTML (por defecto
-"visualizacion_imagenes.html" en el directorio de trabajo actual) y muestra
-un mensaje de confirmación.</p>
+    <p>Invisiblemente, la ruta normalizada del archivo HTML generado. Como
+efecto secundario escribe el archivo en <code>output_file</code> y muestra un mensaje
+de confirmacion.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -103,7 +103,8 @@ El diseño se ajusta automáticamente a diferentes tamaños de pantalla.</p>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="co"># Asumiendo que tienes un data frame llamado 'resultados_analisis'</span></span></span>
-<span class="r-in"><span><span class="fu">HTMLImgReport</span><span class="op">(</span><span class="va">resultados_analisis</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">HTMLImgReport</span><span class="op">(</span><span class="va">resultados_analisis</span>,</span></span>
+<span class="r-in"><span>              output_file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"visualizacion_imagenes.html"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

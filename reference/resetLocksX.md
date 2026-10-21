@@ -1,7 +1,7 @@
 # Quitar las pausas de rate-limit de todas las cuentas
 
-Util si una recoleccion se corto a la fuerza y dejo cuentas tomadas, o
-para forzar un reintento antes de que X renueve el cupo.
+Util si una recoleccion se corto a la fuerza (Ctrl+C, error) y dejo
+cuentas tomadas o pausas desactualizadas.
 
 ## Usage
 
@@ -12,3 +12,11 @@ resetLocksX()
 ## Value
 
 Invisiblemente, la cantidad de cuentas afectadas.
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+resetLocksX()
+} # }
+```

@@ -11,5 +11,13 @@ checkPlaywrightEngine()
 
 ## Value
 
-Una lista con `ok`, version de Playwright, version de Node y ruta de
-Chromium. Lanza un error si el motor no responde.
+Invisiblemente, una lista con `ok`, version de Playwright, version de
+Node y ruta de Chromium. Lanza un error si el motor no responde.
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+checkPlaywrightEngine()
+} # }
+```

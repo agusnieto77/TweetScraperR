@@ -15,7 +15,7 @@ me gusta, vistas). Requiere una sesion importada con importSessionX()."></head><
 
     <a class="navbar-brand me-2" href="../index.html">TweetScraperR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -62,7 +62,7 @@ me gusta, vistas). Requiere una sesion importada con <code><a href="importSessio
 <span>  since <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  until <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  dir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  save <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  save <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -98,7 +98,8 @@ me gusta, vistas). Requiere una sesion importada con <code><a href="importSessio
 
 
 <dt id="arg-save">save<a class="anchor" aria-label="anchor" href="#arg-save"></a></dt>
-<dd><p>Logico. Si TRUE (por defecto) guarda el resultado en un RDS.</p></dd>
+<dd><p>Logico. Si TRUE guarda el resultado en un RDS dentro de <code>dir</code>.
+Por defecto FALSE: no se escribe ningun archivo.</p></dd>
 
 </dl></div>
     <div class="section level2">

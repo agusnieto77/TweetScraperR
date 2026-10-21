@@ -20,3 +20,11 @@ reactivateAccountX(accounts)
 ## Value
 
 Invisiblemente, la cantidad de cuentas reactivadas.
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+reactivateAccountX("cuenta2")
+} # }
+```

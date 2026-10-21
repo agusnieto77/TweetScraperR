@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Scrape Posts and User Data from X Twitter • TweetScraperR</title>
+<title>Collect Posts and User Data from X (Formerly Twitter) • TweetScraperR</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
@@ -15,9 +15,9 @@
 <link href="deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Scrape Posts and User Data from X Twitter">
-<meta name="description" content="Provides functions to extract data from X/Twitter, including posts (tweets), users, and associated metadata, without using the official APIs. It allows collecting data from X/Twitter and handling the responses conveniently in R, with a focus on easing data collection for analysis and visualization. Este paquete proporciona funciones para extraer datos de X/Twitter (publicaciones, usuarixs y metadatos asociados) y facilita la recolección de datos para análisis y visualización.">
-<meta property="og:description" content="Provides functions to extract data from X/Twitter, including posts (tweets), users, and associated metadata, without using the official APIs. It allows collecting data from X/Twitter and handling the responses conveniently in R, with a focus on easing data collection for analysis and visualization. Este paquete proporciona funciones para extraer datos de X/Twitter (publicaciones, usuarixs y metadatos asociados) y facilita la recolección de datos para análisis y visualización.">
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Collect Posts and User Data from X (Formerly Twitter)">
+<meta name="description" content="Collects posts, user profiles, lists, followers and related metadata from the social network X (formerly Twitter) and returns them as tidy data frames. Data are retrieved through a local Node.js engine that drives a Chromium browser with Playwright, reusing the sessions of the users own accounts. Work can be distributed across several accounts of the user while respecting the per-endpoint rate limits reported by X; the design of this account pool is ported from the Python library twscrape &lt;https://github.com/vladkens/twscrape&gt;. Also includes helpers to plot word, emoji and time frequencies, and optional sentiment and image analysis through the OpenAI' API. Documentation is written in Spanish.">
+<meta property="og:description" content="Collects posts, user profiles, lists, followers and related metadata from the social network X (formerly Twitter) and returns them as tidy data frames. Data are retrieved through a local Node.js engine that drives a Chromium browser with Playwright, reusing the sessions of the users own accounts. Work can be distributed across several accounts of the user while respecting the per-endpoint rate limits reported by X; the design of this account pool is ported from the Python library twscrape &lt;https://github.com/vladkens/twscrape&gt;. Also includes helpers to plot word, emoji and time frequencies, and optional sentiment and image analysis through the OpenAI' API. Documentation is written in Spanish.">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -27,7 +27,7 @@
 
     <a class="navbar-brand me-2" href="index.html">TweetScraperR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -85,7 +85,7 @@
 </h3>
 <ul>
 <li>
-<strong>Node.js (&gt;= 18)</strong>: el motor de scraping está basado en Node.js + Playwright + stealth. Se instala una sola vez con <code><a href="reference/installPlaywrightEngine.html">installPlaywrightEngine()</a></code> (ver más abajo).</li>
+<strong>Node.js (&gt;= 18)</strong>: el motor de recolección está basado en Node.js + Playwright. Se instala una sola vez, explícitamente, con <code><a href="reference/installPlaywrightEngine.html">installPlaywrightEngine()</a></code> (ver más abajo).</li>
 <li>
 <strong>Chrome o Chromium</strong>: navegador basado en Chromium requerido por el motor de Playwright.</li>
 <li>
@@ -106,7 +106,7 @@
 <div class="section level3">
 <h3 id="instalación-del-motor">Instalación del motor<a class="anchor" aria-label="anchor" href="#instalaci%C3%B3n-del-motor"></a>
 </h3>
-<p>El scraping ya no usa <code>chromote</code>: corre sobre un motor de <strong>Node.js + Playwright + stealth</strong>.</p>
+<p>El scraping ya no usa <code>chromote</code>: corre sobre un motor de <strong>Node.js + Playwright</strong> (con el plugin de compatibilidad <code>stealth</code> de <code>playwright-extra</code>, para que el navegador automatizado se presente como un Chromium de escritorio estándar).</p>
 <ul>
 <li>Necesitás <strong>Node.js (&gt;= 18)</strong> instalado en tu sistema.</li>
 <li>Una sola vez, después de instalar el paquete, ejecutá:</li>
@@ -400,6 +400,7 @@
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
 <li>Agustín Nieto <br><small class="roles"> Author, maintainer </small>   </li>
+<li><a href="authors.html">More about authors...</a></li>
 </ul>
 </div>
 

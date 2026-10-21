@@ -11,7 +11,7 @@ responsivo con un carrusel y miniaturas.
 ## Usage
 
 ``` r
-HTMLImgReport(results, output_file = "visualizacion_imagenes.html")
+HTMLImgReport(results, output_file)
 ```
 
 ## Arguments
@@ -48,14 +48,14 @@ HTMLImgReport(results, output_file = "visualizacion_imagenes.html")
 - output_file:
 
   Una cadena de caracteres con el nombre (o la ruta) del archivo HTML de
-  salida. Por defecto es "visualizacion_imagenes.html" en el directorio
-  de trabajo actual.
+  salida. Es obligatorio: la funcion no escribe archivos en una
+  ubicacion por defecto.
 
 ## Value
 
-Esta función no devuelve ningún valor. Genera un archivo HTML (por
-defecto "visualizacion_imagenes.html" en el directorio de trabajo
-actual) y muestra un mensaje de confirmación.
+Invisiblemente, la ruta normalizada del archivo HTML generado. Como
+efecto secundario escribe el archivo en `output_file` y muestra un
+mensaje de confirmacion.
 
 ## Details
 
@@ -82,6 +82,7 @@ La visualización incluye:
 ``` r
 if (FALSE) { # \dontrun{
 # Asumiendo que tienes un data frame llamado 'resultados_analisis'
-HTMLImgReport(resultados_analisis)
+HTMLImgReport(resultados_analisis,
+              output_file = file.path(tempdir(), "visualizacion_imagenes.html"))
 } # }
 ```

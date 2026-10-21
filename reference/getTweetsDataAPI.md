@@ -11,7 +11,7 @@ sesion importada con
 ## Usage
 
 ``` r
-getTweetsDataAPI(urls_tweets, dir = getwd(), save = TRUE)
+getTweetsDataAPI(urls_tweets, dir = getwd(), save = FALSE)
 ```
 
 ## Arguments
@@ -26,7 +26,8 @@ getTweetsDataAPI(urls_tweets, dir = getwd(), save = TRUE)
 
 - save:
 
-  Logico. Si TRUE (por defecto) guarda el resultado en un RDS.
+  Logico. Si TRUE guarda el resultado en un RDS dentro de `dir`. Por
+  defecto FALSE: no se escribe ningun archivo.
 
 ## Value
 

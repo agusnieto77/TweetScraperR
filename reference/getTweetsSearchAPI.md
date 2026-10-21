@@ -18,7 +18,7 @@ getTweetsSearchAPI(
   since = NULL,
   until = NULL,
   dir = getwd(),
-  save = TRUE
+  save = FALSE
 )
 ```
 
@@ -54,7 +54,8 @@ getTweetsSearchAPI(
 
 - save:
 
-  Logico. Si TRUE (por defecto) guarda el resultado en un RDS.
+  Logico. Si TRUE guarda el resultado en un RDS dentro de `dir`. Por
+  defecto FALSE: no se escribe ningun archivo.
 
 ## Value
 

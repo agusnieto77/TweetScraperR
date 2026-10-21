@@ -8,7 +8,7 @@ muestran son **capturas reales** obtenidas entre el 2026-10-18 y el
 2026-10-20.
 
 > **Nota de versiones:** desde la **0.5.0** el paquete expone una
-> superficie única sobre el motor Node.js/Playwright (33 funciones en la
+> superficie única sobre el motor Node.js/Playwright (36 funciones en la
 > 0.8, con el pool de cuentas). Las funciones de scraping por HTML
 > (`getTweetsTimeline()`, `getTweetsData()`, `getUsersData()`, la
 > familia `getUrls*()`, etc.) fueron **eliminadas**; el mapa de
@@ -56,25 +56,62 @@ reimportarlas.
 ### Varias cuentas: el pool
 
 X limita cada endpoint **por cuenta** en ventanas de 15 minutos (la
-búsqueda admite unas 50 consultas). Importando más cuentas con distinto
-`account`, la recolección rota sola: la cuenta que agota el cupo queda
-en pausa hasta que X lo renueva y se sigue con la siguiente desde donde
-se cortó; la que X rechaza (sesión vencida o suspendida) se desactiva.
+búsqueda admite unas 50 consultas). Con varias cuentas, la recolección
+rota sola: la cuenta que agota el cupo queda en pausa hasta que X lo
+renueva y se sigue con la siguiente desde donde se cortó (retomando el
+cursor de paginación); la que X rechaza (sesión vencida o suspendida) se
+desactiva.
+
+Hay tres formas de cargar cuentas:
 
 ``` r
 
+# 1) Asistente de consola: pide nombre, auth_token y ct0 (entrada oculta) y valida
+setupAccountsX()
+
+# 2) Carga masiva desde un CSV (separado por "," o ";", como lo guarda Excel)
+#    columnas: account, auth_token, ct0 y, opcional, proxy
+addAccountsX("cuentas.csv")
+
+# 3) De a una, desde código
 importSessionX(cookies = "auth_token=...; ct0=...", account = "cuenta2")
-accountsX()
-#> # A tibble: 1 x 8
-#>   cuenta  activa pausas requests requests_por_endpoint ultimo_uso          proxy
-#>   <chr>   <lgl>  <chr>     <int> <chr>                 <dttm>              <chr>
-#> 1 default TRUE   <NA>         34 AboutAccountQuery: 7~ 2026-10-20 17:54:20 <NA>
-#> # i 1 more variable: error <chr>
 ```
 
-(Salida real con una sola cuenta, antes de importar `cuenta2`.) Con una
+Para revisar y administrar el pool:
+
+``` r
+
+checkAccountsX()   # valida cada sesión y registra su @usuario real
+accountsX()        # estado: activas, pausas por endpoint, requests, errores
+reactivateAccountX("cuenta2")
+resetLocksX()      # quita las pausas de rate-limit
+removeAccountX("cuenta2")
+```
+
+[`checkAccountsX()`](https://agusnieto77.github.io/TweetScraperR/reference/checkAccountsX.md)
+desactiva las sesiones vencidas y, si la misma cuenta de X quedó cargada
+dos veces con nombres distintos, conserva solo la más nueva. Con una
 sola cuenta, al agotarse el cupo el paquete espera a que X lo renueve,
 como máximo `getOption("TweetScraperR.wait_timeout", 900)` segundos.
+
+### Proxy (opcional)
+
+Un proxy hace que una cuenta salga a X por otra IP. No suma cupo (eso lo
+hace el pool), pero sirve si X bloquea tu IP o para que las cuentas no
+salgan todas de la misma conexión. Conviene una IP residencial dedicada
+y fija (“static residential” o “ISP”), usando la dirección **HTTP** del
+proveedor: Chromium no admite SOCKS5 con usuario y clave.
+
+``` r
+
+# Por cuenta (valida la cuenta a través del proxy nuevo)
+setProxyX("cuenta2", "http://usuario:clave@host:puerto")
+setProxyX("cuenta2", NULL)   # quitarlo
+
+# Global, para las cuentas sin proxy propio
+options(TweetScraperR.proxy = "http://usuario:clave@host:puerto")
+# o TWEETSCRAPERR_PROXY=... en ~/.Renviron
+```
 
 ## 3. Recolectar datos (funciones `*API()`)
 

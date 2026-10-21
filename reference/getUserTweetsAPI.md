@@ -35,11 +35,15 @@ getUserTweetsAPI(username = "NASA", n_tweets = 40, dir = getwd(), save = TRUE)
 
 ## Value
 
-Un tibble con un tweet por fila y columnas: fecha, user, texto, idioma,
-respuestas, retweets, citas, megustas, views, emoticones (lista),
-hashtags (lista), menciones (lista), urls_externas (lista), media (lista
-de URLs), media_tipo (lista: photo/video/animated_gif), es_retweet,
-es_cita, tweet_citado_id, conversation_id, url y tweet_id.
+Un tibble con un tweet por fila y columnas: fecha, user, texto
+(completo, tambien en tweets largos), idioma, respuestas, retweets,
+citas, megustas, views, emoticones (lista), hashtags (lista), menciones
+(lista), urls_externas (lista), media (lista de URLs), media_tipo
+(lista: photo/video/animated_gif), es_retweet, es_cita, tweet_citado_id,
+conversation_id, url, tweet_id, user_id (autorx), respuesta_a_id,
+respuesta_a_user, retweet_id (tweet original de un retweet), guardados,
+fuente (app de publicacion), sensible, editado, lugar y pais
+(geoetiqueta, si la hay).
 
 ## Examples
 

@@ -31,7 +31,8 @@ getUsersDataAPI(usernames, dir = getwd(), save = TRUE)
 
 Un tibble con una fila por usuarix y columnas user, nombre, user_id,
 descripcion, seguidores, siguiendo, tweets, favoritos, verificado,
-ubicacion, fecha_creacion, url.
+ubicacion, sitio_web, imagen_perfil, banner, fecha_creacion, url,
+tweets_media, protegida y tipo_verificacion.
 
 ## Examples
 

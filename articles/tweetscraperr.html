@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">TweetScraperR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -64,7 +64,7 @@
       <h1>Scraping de X/Twitter con TweetScraperR</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/agusnieto77/TweetScraperR/blob/v0.7.0/vignettes/tweetscraperr.Rmd" class="external-link"><code>vignettes/tweetscraperr.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/agusnieto77/TweetScraperR/blob/main/vignettes/tweetscraperr.Rmd" class="external-link"><code>vignettes/tweetscraperr.Rmd</code></a></small>
       <div class="d-none name"><code>tweetscraperr.Rmd</code></div>
     </div>
 
@@ -75,15 +75,15 @@ usuarixs y metadatos) para análisis y visualización. Esta viñeta
 describe el <strong>flujo de trabajo</strong>, basado en consultas a la
 API GraphQL interna de X (datos estructurados, sin selectores HTML
 frágiles). Las salidas que se muestran son <strong>capturas
-reales</strong> obtenidas el 2026-10-18.</p>
+reales</strong> obtenidas entre el 2026-10-18 y el 2026-10-20.</p>
 <blockquote>
 <p><strong>Nota de versiones:</strong> desde la <strong>0.5.0</strong>
 el paquete expone una superficie única sobre el motor Node.js/Playwright
-(24 funciones en la 0.6). Las funciones de scraping por HTML
-(<code>getTweetsTimeline()</code>, <code>getTweetsData()</code>,
-<code>getUsersData()</code>, la familia <code>getUrls*()</code>, etc.)
-fueron <strong>eliminadas</strong>; el mapa de reemplazos está en el
-<code>NEWS.md</code>.</p>
+(33 funciones en la 0.8, con el pool de cuentas). Las funciones de
+scraping por HTML (<code>getTweetsTimeline()</code>,
+<code>getTweetsData()</code>, <code>getUsersData()</code>, la familia
+<code>getUrls*()</code>, etc.) fueron <strong>eliminadas</strong>; el
+mapa de reemplazos está en el <code>NEWS.md</code>.</p>
 </blockquote>
 <div class="section level2">
 <h2 id="instalar-el-motor-una-vez-por-máquina">1. Instalar el motor (una vez por máquina)<a class="anchor" aria-label="anchor" href="#instalar-el-motor-una-vez-por-m%C3%A1quina"></a>
@@ -122,6 +122,28 @@ Almacenamiento</strong> → <strong>Cookies</strong> →
 <p>La sesión queda guardada en disco y <strong>todas las funciones la
 reusan</strong> sin volver a loguearse. Cuando las cookies expiren,
 repetí el paso para reimportarlas.</p>
+<div class="section level3">
+<h3 id="varias-cuentas-el-pool">Varias cuentas: el pool<a class="anchor" aria-label="anchor" href="#varias-cuentas-el-pool"></a>
+</h3>
+<p>X limita cada endpoint <strong>por cuenta</strong> en ventanas de 15
+minutos (la búsqueda admite unas 50 consultas). Importando más cuentas
+con distinto <code>account</code>, la recolección rota sola: la cuenta
+que agota el cupo queda en pausa hasta que X lo renueva y se sigue con
+la siguiente desde donde se cortó; la que X rechaza (sesión vencida o
+suspendida) se desactiva.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/importSessionX.html">importSessionX</a></span><span class="op">(</span>cookies <span class="op">=</span> <span class="st">"auth_token=...; ct0=..."</span>, account <span class="op">=</span> <span class="st">"cuenta2"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/accountsX.html">accountsX</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 1 x 8</span></span>
+<span><span class="co">#&gt;   cuenta  activa pausas requests requests_por_endpoint ultimo_uso          proxy</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;   &lt;lgl&gt;  &lt;chr&gt;     &lt;int&gt; &lt;chr&gt;                 &lt;dttm&gt;              &lt;chr&gt;</span></span>
+<span><span class="co">#&gt; 1 default TRUE   &lt;NA&gt;         34 AboutAccountQuery: 7~ 2026-10-20 17:54:20 &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; # i 1 more variable: error &lt;chr&gt;</span></span></code></pre></div>
+<p>(Salida real con una sola cuenta, antes de importar
+<code>cuenta2</code>.) Con una sola cuenta, al agotarse el cupo el
+paquete espera a que X lo renueve, como máximo
+<code>getOption("TweetScraperR.wait_timeout", 900)</code> segundos.</p>
+</div>
 </div>
 <div class="section level2">
 <h2 id="recolectar-datos-funciones-api">3. Recolectar datos (funciones <code>*API()</code>)<a class="anchor" aria-label="anchor" href="#recolectar-datos-funciones-api"></a>
@@ -129,43 +151,55 @@ repetí el paso para reimportarlas.</p>
 <div class="section level3">
 <h3 id="timeline-de-unx-usuarix">3.1 Timeline de unx usuarix<a class="anchor" aria-label="anchor" href="#timeline-de-unx-usuarix"></a>
 </h3>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getUserTweetsAPI.html">getUserTweetsAPI</a></span><span class="op">(</span><span class="st">"NASA"</span>, n_tweets <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Recolectando timeline de @NASA...</span></span>
 <span><span class="co">#&gt; Tweets únicos recolectados: 10</span></span>
 <span><span class="co">#&gt; Datos procesados y guardados.</span></span></code></pre></div>
 <p>Cada función de tweets devuelve el mismo <code>tibble</code> de
-<strong>21 columnas</strong>:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<strong>31 columnas</strong> (salida real del 2026-10-20):</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">tl</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: 10</span></span>
-<span><span class="co">#&gt; Columns: 21</span></span>
-<span><span class="co">#&gt; $ fecha           &lt;dttm&gt; 2026-10-16 19:42:20, 2026-10-16 13:53:53, ...</span></span>
-<span><span class="co">#&gt; $ user            &lt;chr&gt; "@NASA", "@NASA", "@NASA", "@NASA", ...</span></span>
-<span><span class="co">#&gt; $ texto           &lt;chr&gt; "The aircraft lineup just keeps getting bigger. ✈️..."</span></span>
-<span><span class="co">#&gt; $ idioma          &lt;chr&gt; "en", "en", "en", "en", ...</span></span>
-<span><span class="co">#&gt; $ respuestas      &lt;int&gt; 124, 141, 76, 85, 91, 165, 167, 90, 259, 120</span></span>
-<span><span class="co">#&gt; $ retweets        &lt;int&gt; 194, 242, 157, 164, 236, 384, 377, 137, 938, 198</span></span>
-<span><span class="co">#&gt; $ citas           &lt;int&gt; 21, 16, 10, 16, 12, 59, 725, 15, 93, 13</span></span>
-<span><span class="co">#&gt; $ megustas        &lt;int&gt; 1407, 1867, 1111, 1065, 2105, 2227, 2662, ...</span></span>
-<span><span class="co">#&gt; $ views           &lt;int&gt; 329251, 958698, 376585, 460454, 375943, ...</span></span>
-<span><span class="co">#&gt; $ emoticones      &lt;list&gt; "✈", &lt;&gt;, &lt;&gt;, &lt;&gt;, &lt;&gt;, &lt;&gt;, "🛠", &lt;&gt;, &lt;&gt;, "✈"</span></span>
-<span><span class="co">#&gt; $ hashtags        &lt;list&gt; &lt;&gt;, &lt;&gt;, &lt;&gt;, &lt;&gt;, &lt;&gt;, &lt;&gt;, &lt;&gt;, &lt;&gt;, &lt;&gt;, &lt;&gt;</span></span>
-<span><span class="co">#&gt; $ menciones       &lt;list&gt; "NASAKennedy", &lt;&gt;, "JAXA_en", &lt;"NASAJohnson"...&gt;</span></span>
-<span><span class="co">#&gt; $ urls_externas   &lt;list&gt; "https://www.nasa.gov/maxpower/", ...</span></span>
-<span><span class="co">#&gt; $ media           &lt;list&gt; "https://video.twimg.com/amplify_video/...", ...</span></span>
-<span><span class="co">#&gt; $ media_tipo      &lt;list&gt; "video", "photo", "photo", &lt;&gt;, "photo", ...</span></span>
-<span><span class="co">#&gt; $ es_retweet      &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, ...</span></span>
-<span><span class="co">#&gt; $ es_cita         &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, ...</span></span>
-<span><span class="co">#&gt; $ tweet_citado_id &lt;chr&gt; NA, NA, NA, NA, ...</span></span>
-<span><span class="co">#&gt; $ conversation_id &lt;chr&gt; "2111180963661435219", "2111093273800356092", ...</span></span>
-<span><span class="co">#&gt; $ url             &lt;chr&gt; "https://x.com/NASA/status/2111180963661435219", ...</span></span>
-<span><span class="co">#&gt; $ tweet_id        &lt;chr&gt; "2111180963661435219", "2111093273800356092", ...</span></span></code></pre></div>
+<span><span class="co">#&gt; Columns: 31</span></span>
+<span><span class="co">#&gt; $ fecha            &lt;dttm&gt; 2026-10-20 18:00:27, 2026-10-20 18:00:06, 2026-10-20~</span></span>
+<span><span class="co">#&gt; $ user             &lt;chr&gt; "@NASA", "@NASA", "@NASA", "@NASA", "@NASA", "@NASA",~</span></span>
+<span><span class="co">#&gt; $ texto            &lt;chr&gt; "LIVE: Get a preview of two upcoming spacewalks set f~</span></span>
+<span><span class="co">#&gt; $ idioma           &lt;chr&gt; "en", "en", "en", "en", "en", "en", "en", "en", "en",~</span></span>
+<span><span class="co">#&gt; $ respuestas       &lt;int&gt; 41, 20, 151, 11, 83, 189, 169, 81, 88, 92</span></span>
+<span><span class="co">#&gt; $ retweets         &lt;int&gt; 79, 75, 305, 52, 120, 249, 264, 168, 172, 243</span></span>
+<span><span class="co">#&gt; $ citas            &lt;int&gt; 5, 8, 43, 3, 14, 25, 19, 10, 18, 10</span></span>
+<span><span class="co">#&gt; $ megustas         &lt;int&gt; 497, 511, 1949, 322, 1034, 1652, 2026, 1165, 1100, 21~</span></span>
+<span><span class="co">#&gt; $ views            &lt;int&gt; 227105, 224886, 286788, 90650, 405674, 404857, 100438~</span></span>
+<span><span class="co">#&gt; $ emoticones       &lt;list&gt; &lt;&gt;, &lt;&gt;, &lt;&gt;, &lt;&gt;, &lt;"🇺", "🇿"&gt;, "✈", &lt;&gt;, &lt;&gt;, &lt;&gt;, &lt;&gt;</span></span>
+<span><span class="co">#&gt; $ hashtags         &lt;list&gt; &lt;&gt;, &lt;&gt;, &lt;&gt;, &lt;&gt;, &lt;&gt;, &lt;&gt;, &lt;&gt;, &lt;&gt;, &lt;&gt;, &lt;&gt;</span></span>
+<span><span class="co">#&gt; $ menciones        &lt;list&gt; "astro_anil", &lt;&gt;, "NASAMoonBase", &lt;"NASAMoonBase", "N~</span></span>
+<span><span class="co">#&gt; $ urls_externas    &lt;list&gt; "https://x.com/i/broadcasts/1jxXgBNWypPJZ", "https://~</span></span>
+<span><span class="co">#&gt; $ media            &lt;list&gt; &lt;&gt;, &lt;&gt;, "https://video.twimg.com/amplify_video/211256~</span></span>
+<span><span class="co">#&gt; $ media_tipo       &lt;list&gt; &lt;&gt;, &lt;&gt;, "video", &lt;&gt;, "photo", "video", "photo", "pho~</span></span>
+<span><span class="co">#&gt; $ es_retweet       &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FAL~</span></span>
+<span><span class="co">#&gt; $ es_cita          &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FAL~</span></span>
+<span><span class="co">#&gt; $ tweet_citado_id  &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA</span></span>
+<span><span class="co">#&gt; $ conversation_id  &lt;chr&gt; "2112604875452223824", "2112604787539865876", "21125~</span></span>
+<span><span class="co">#&gt; $ url              &lt;chr&gt; "https://x.com/NASA/status/2112604875452223824", "ht~</span></span>
+<span><span class="co">#&gt; $ tweet_id         &lt;chr&gt; "2112604875452223824", "2112604787539865876", "21125~</span></span>
+<span><span class="co">#&gt; $ user_id          &lt;chr&gt; "11348282", "11348282", "11348282", "11348282", "1134~</span></span>
+<span><span class="co">#&gt; $ respuesta_a_id   &lt;chr&gt; NA, NA, NA, "2112560723603632217", NA, NA, NA, NA, NA~</span></span>
+<span><span class="co">#&gt; $ respuesta_a_user &lt;chr&gt; NA, NA, NA, "@NASA", NA, NA, NA, NA, NA, NA</span></span>
+<span><span class="co">#&gt; $ retweet_id       &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA</span></span>
+<span><span class="co">#&gt; $ guardados        &lt;int&gt; 28, 38, 122, 25, 32, 67, 112, 50, 48, 131</span></span>
+<span><span class="co">#&gt; $ fuente           &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA</span></span>
+<span><span class="co">#&gt; $ sensible         &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALS~</span></span>
+<span><span class="co">#&gt; $ editado          &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALS~</span></span>
+<span><span class="co">#&gt; $ lugar            &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA</span></span>
+<span><span class="co">#&gt; $ pais             &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA</span></span></code></pre></div>
+<p>Los tweets largos (más de 280 caracteres) vienen completos en
+<code>texto</code>.</p>
 </div>
 <div class="section level3">
 <h3 id="timelines-combinados-curaduría-de-investigación">3.2 Timelines combinados (curaduría de investigación)<a class="anchor" aria-label="anchor" href="#timelines-combinados-curadur%C3%ADa-de-investigaci%C3%B3n"></a>
 </h3>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">combinado</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getTweetsTimelinesAPI.html">getTweetsTimelinesAPI</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sanchezcastejon"</span>, <span class="st">"agusnieto77"</span><span class="op">)</span>,</span>
 <span>  n_tweets <span class="op">=</span> <span class="fl">40</span></span>
@@ -184,12 +218,12 @@ repetí el paso para reimportarlas.</p>
 <code>lang:</code>, …) y los argumentos
 <code>since</code>/<code>until</code> para acotar por fechas (formato
 <code>"YYYY-MM-DD"</code> o <code>"YYYY-MM-DD_HH:MM:SS"</code>):</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">top</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getTweetsSearchAPI.html">getTweetsSearchAPI</a></span><span class="op">(</span><span class="st">"Milei"</span>, n_tweets <span class="op">=</span> <span class="fl">10</span>, product <span class="op">=</span> <span class="st">"Top"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Buscando: Milei (Top)</span></span>
 <span><span class="co">#&gt; Tweets únicos recolectados: 10</span></span>
 <span><span class="co">#&gt; Datos procesados y guardados.</span></span>
-<span><span class="co">#&gt; # A tibble: 10 × 21</span></span>
+<span><span class="co">#&gt; # A tibble: 10 × 31</span></span>
 <span><span class="co">#&gt;   user           fecha               megustas retweets</span></span>
 <span><span class="co">#&gt;   &lt;chr&gt;          &lt;dttm&gt;                 &lt;int&gt;    &lt;int&gt;</span></span>
 <span><span class="co">#&gt; 1 @JMilei        2026-10-15 17:54:43    11639     1558</span></span>
@@ -208,7 +242,7 @@ repetí el paso para reimportarlas.</p>
 <div class="section level3">
 <h3 id="respuestas-hilo-de-un-tweet">3.4 Respuestas / hilo de un tweet<a class="anchor" aria-label="anchor" href="#respuestas-hilo-de-un-tweet"></a>
 </h3>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hilo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getTweetsRepliesAPI.html">getTweetsRepliesAPI</a></span><span class="op">(</span></span>
 <span>  <span class="st">"https://x.com/sanchezcastejon/status/2111426246517072370"</span>,</span>
 <span>  n_tweets <span class="op">=</span> <span class="fl">8</span></span>
@@ -216,7 +250,7 @@ repetí el paso para reimportarlas.</p>
 <span><span class="co">#&gt; Recolectando respuestas de: https://x.com/sanchezcastejon/status/2111426246517072370</span></span>
 <span><span class="co">#&gt; Tweets únicos recolectados: 8</span></span>
 <span><span class="co">#&gt; Datos procesados y guardados.</span></span>
-<span><span class="co">#&gt; # A tibble: 8 × 21 (primeras 3 filas)</span></span>
+<span><span class="co">#&gt; # A tibble: 8 × 31 (primeras 3 filas)</span></span>
 <span><span class="co">#&gt;   user             fecha               texto</span></span>
 <span><span class="co">#&gt;   &lt;chr&gt;            &lt;dttm&gt;              &lt;chr&gt;</span></span>
 <span><span class="co">#&gt; 1 @sanchezcastejon 2026-10-17 11:57:00 "Feijóo es todo un personaje.\n\nDice que va..."</span></span>
@@ -228,7 +262,7 @@ respuestas.</p>
 <div class="section level3">
 <h3 id="datos-de-tweets-a-partir-de-sus-urls">3.5 Datos de tweets a partir de sus URLs<a class="anchor" aria-label="anchor" href="#datos-de-tweets-a-partir-de-sus-urls"></a>
 </h3>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">datos</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getTweetsDataAPI.html">getTweetsDataAPI</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  <span class="st">"https://x.com/sanchezcastejon/status/2111426246517072370"</span></span>
 <span><span class="op">)</span><span class="op">)</span></span>
@@ -238,7 +272,7 @@ respuestas.</p>
 <div class="section level3">
 <h3 id="media-fotosvideos-de-unx-usuarix">3.6 Media (fotos/videos) de unx usuarix<a class="anchor" aria-label="anchor" href="#media-fotosvideos-de-unx-usuarix"></a>
 </h3>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">media</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getUserMediaAPI.html">getUserMediaAPI</a></span><span class="op">(</span><span class="st">"sanchezcastejon"</span>, n_tweets <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Recolectando media de @sanchezcastejon...</span></span>
 <span><span class="co">#&gt; Tweets de media recolectados: 15</span></span>
@@ -250,7 +284,7 @@ adjunto.</p>
 <div class="section level3">
 <h3 id="redes-de-usuarixs">3.7 Redes de usuarixs<a class="anchor" aria-label="anchor" href="#redes-de-usuarixs"></a>
 </h3>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">seguidores</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getUserFollowersAPI.html">getUserFollowersAPI</a></span><span class="op">(</span><span class="st">"agusnieto77"</span>, n_users <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
 <span><span class="va">siguiendo</span>  <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getUserFollowingAPI.html">getUserFollowingAPI</a></span><span class="op">(</span><span class="st">"sanchezcastejon"</span>, n_users <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
 <span><span class="va">retweeters</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getTweetsRetweetsAPI.html">getTweetsRetweetsAPI</a></span><span class="op">(</span></span>
@@ -261,16 +295,54 @@ adjunto.</p>
 <div class="section level3">
 <h3 id="datos-de-perfil">3.8 Datos de perfil<a class="anchor" aria-label="anchor" href="#datos-de-perfil"></a>
 </h3>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">perfiles</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getUsersDataAPI.html">getUsersDataAPI</a></span><span class="op">(</span><span class="st">"NASA"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Datos procesados y guardados.</span></span>
-<span><span class="co">#&gt; # A tibble: 1 × 15</span></span>
-<span><span class="co">#&gt;   user  nombre user_id  descripcion        seguidores siguiendo tweets</span></span>
-<span><span class="co">#&gt;   &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;    &lt;chr&gt;                   &lt;int&gt;     &lt;int&gt;  &lt;int&gt;</span></span>
-<span><span class="co">#&gt; 1 @NASA NASA   11348282 Making the seemin…  92323271       115  74438</span></span>
-<span><span class="co">#&gt; # ℹ 8 more variables: favoritos &lt;int&gt;, verificado &lt;lgl&gt;, ubicacion &lt;chr&gt;,</span></span>
-<span><span class="co">#&gt; #   sitio_web &lt;chr&gt;, imagen_perfil &lt;chr&gt;, banner &lt;chr&gt;,</span></span>
+<span><span class="co">#&gt; # A tibble: 1 × 18</span></span>
+<span><span class="co">#&gt;   user  nombre user_id  descripcion        seguidores siguiendo tweets favoritos</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;    &lt;chr&gt;                   &lt;int&gt;     &lt;int&gt;  &lt;int&gt;     &lt;int&gt;</span></span>
+<span><span class="co">#&gt; 1 @NASA NASA   11348282 "Making the seemi…   92315363       115  74444     17032</span></span>
+<span><span class="co">#&gt; # ℹ 10 more variables: verificado &lt;lgl&gt;, ubicacion &lt;chr&gt;, sitio_web &lt;chr&gt;,</span></span>
+<span><span class="co">#&gt; #   imagen_perfil &lt;chr&gt;, banner &lt;chr&gt;, fecha_creacion &lt;dttm&gt;, url &lt;chr&gt;,</span></span>
+<span><span class="co">#&gt; #   tweets_media &lt;int&gt;, protegida &lt;lgl&gt;, tipo_verificacion &lt;chr&gt;</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="acerca-de-esta-cuenta">3.9 “Acerca de esta cuenta”<a class="anchor" aria-label="anchor" href="#acerca-de-esta-cuenta"></a>
+</h3>
+<p>La ficha que X muestra en <code>x.com/&lt;cuenta&gt;/about</code>:
+país desde el que opera la cuenta, cambios de nombre de usuarix y
+verificación. X no publica todos los campos para todas las cuentas.</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">about</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getUsersAboutAPI.html">getUsersAboutAPI</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"NASA"</span>, <span class="st">"elonmusk"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 2 × 13</span></span>
+<span><span class="co">#&gt;   user      nombre    user_id  pais_cuenta   ubicacion_precisa cambios_usuario</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;    &lt;chr&gt;         &lt;lgl&gt;                       &lt;int&gt;</span></span>
+<span><span class="co">#&gt; 1 @NASA     NASA      11348282 &lt;NA&gt;          TRUE                            0</span></span>
+<span><span class="co">#&gt; 2 @elonmusk Elon Musk 44196397 United States FALSE                           0</span></span>
+<span><span class="co">#&gt; # ℹ 7 more variables: ultimo_cambio_usuario &lt;dttm&gt;, afiliada_a &lt;chr&gt;,</span></span>
+<span><span class="co">#&gt; #   origen_cuenta &lt;chr&gt;, identidad_verificada &lt;lgl&gt;, verificada_desde &lt;dttm&gt;,</span></span>
 <span><span class="co">#&gt; #   fecha_creacion &lt;dttm&gt;, url &lt;chr&gt;</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="listas-y-búsqueda-de-cuentas">3.10 Listas y búsqueda de cuentas<a class="anchor" aria-label="anchor" href="#listas-y-b%C3%BAsqueda-de-cuentas"></a>
+</h3>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">miembros</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getListMembersAPI.html">getListMembersAPI</a></span><span class="op">(</span><span class="st">"https://x.com/i/lists/53645372"</span>, n_users <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Recolectando miembros de la lista 53645372...</span></span>
+<span><span class="co">#&gt; Usuarios únicos recolectados: 20</span></span>
+<span><span class="va">lista</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getListTweetsAPI.html">getListTweetsAPI</a></span><span class="op">(</span><span class="st">"53645372"</span>, n_tweets <span class="op">=</span> <span class="fl">25</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Recolectando tweets de la lista 53645372...</span></span>
+<span><span class="co">#&gt; Tweets únicos recolectados: 25</span></span>
+<span><span class="va">cuentas</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getUsersSearchAPI.html">getUsersSearchAPI</a></span><span class="op">(</span><span class="st">"rstats"</span>, n_users <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Buscando usuarixs: rstats</span></span>
+<span><span class="co">#&gt; Usuarios únicos recolectados: 10</span></span>
+<span><span class="va">cuentas</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"user"</span>, <span class="st">"seguidores"</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="co">#&gt; # A tibble: 10 × 2</span></span>
+<span><span class="co">#&gt;    user           seguidores</span></span>
+<span><span class="co">#&gt;    &lt;chr&gt;               &lt;int&gt;</span></span>
+<span><span class="co">#&gt;  1 @rstats              1246</span></span>
+<span><span class="co">#&gt;  2 @rstatstweet        28306</span></span>
+<span><span class="co">#&gt;  3 @RStatsJobs          3956</span></span></code></pre></div>
 <p>Por defecto cada función guarda un archivo <code>.rds</code> con
 marca de tiempo en el directorio de trabajo (<code>save = TRUE</code>);
 pasá <code>save = FALSE</code> para no guardar.</p>
@@ -281,13 +353,13 @@ pasá <code>save = FALSE</code> para no guardar.</p>
 </h2>
 <p>Las columnas tienen nombres estables, así que el post-procesamiento
 va directo, sin renombrar nada:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotTime.html">plotTime</a></span><span class="op">(</span><span class="va">tl</span><span class="op">)</span>                  <span class="co"># serie temporal (columna fecha)</span></span>
 <span><span class="fu"><a href="../reference/plotWords.html">plotWords</a></span><span class="op">(</span><span class="va">tl</span>, max_words <span class="op">=</span> <span class="fl">50</span><span class="op">)</span> <span class="co"># nube de palabras (columna texto)</span></span>
 <span><span class="fu"><a href="../reference/plotEmojis.html">plotEmojis</a></span><span class="op">(</span><span class="va">tl</span><span class="op">)</span>                <span class="co"># ranking de emojis (columna emoticones)</span></span>
 <span><span class="fu"><a href="../reference/getTweetsHashtags.html">getTweetsHashtags</a></span><span class="op">(</span><span class="va">tl</span><span class="op">)</span>         <span class="co"># hashtags detectados (columna hashtags)</span></span></code></pre></div>
 <p>Para análisis con IA (requieren <code>OPENAI_API_KEY</code>):</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/getTweetsSentiments.html">getTweetsSentiments</a></span><span class="op">(</span><span class="va">tl</span><span class="op">$</span><span class="va">texto</span><span class="op">)</span>      <span class="co"># sentimiento de cada texto</span></span>
 <span><span class="fu"><a href="../reference/getTweetsImagesAnalysis.html">getTweetsImagesAnalysis</a></span><span class="op">(</span><span class="va">tl</span><span class="op">$</span><span class="va">media</span><span class="op">)</span>  <span class="co"># qué muestran las imágenes</span></span></code></pre></div>
 </div>
@@ -297,7 +369,7 @@ va directo, sin renombrar nada:</p>
 <p>Si tenés <code>.rds</code> viejos con HTML crudo (columna
 <code>art_html</code>), <code><a href="../reference/extractTweetsData.html">extractTweetsData()</a></code> los sigue
 procesando sin necesidad de volver a scrapear:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">viejos</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="st">"tweets_2024.rds"</span><span class="op">)</span></span>
 <span><span class="va">procesados</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/extractTweetsData.html">extractTweetsData</a></span><span class="op">(</span><span class="va">viejos</span><span class="op">)</span></span></code></pre></div>
 </div>

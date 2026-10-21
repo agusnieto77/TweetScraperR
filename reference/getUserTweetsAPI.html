@@ -17,7 +17,7 @@ importada con importSessionX()."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">TweetScraperR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -43,7 +43,7 @@ importada con importSessionX()."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Get Tweets from a User Timeline via the X API (experimental)</h1>
-      <small class="dont-index">Source: <a href="https://github.com/agusnieto77/TweetScraperR/blob/v0.7.0/R/getUserTweetsAPI.R" class="external-link"><code>R/getUserTweetsAPI.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/agusnieto77/TweetScraperR/blob/main/R/getUserTweetsAPI.R" class="external-link"><code>R/getUserTweetsAPI.R</code></a></small>
       <div class="d-none name"><code>getUserTweetsAPI.Rd</code></div>
     </div>
 
@@ -83,11 +83,15 @@ importada con <code><a href="importSessionX.html">importSessionX()</a></code>.</
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>Un tibble con un tweet por fila y columnas: fecha, user, texto,
-idioma, respuestas, retweets, citas, megustas, views, emoticones (lista), hashtags (lista),
-menciones (lista), urls_externas (lista), media (lista de URLs),
-media_tipo (lista: photo/video/animated_gif), es_retweet, es_cita,
-tweet_citado_id, conversation_id, url y tweet_id.</p>
+    <p>Un tibble con un tweet por fila y columnas: fecha, user, texto
+(completo, tambien en tweets largos), idioma, respuestas, retweets, citas,
+megustas, views, emoticones (lista), hashtags (lista), menciones (lista),
+urls_externas (lista), media (lista de URLs), media_tipo (lista:
+photo/video/animated_gif), es_retweet, es_cita, tweet_citado_id,
+conversation_id, url, tweet_id, user_id (autorx), respuesta_a_id,
+respuesta_a_user, retweet_id (tweet original de un retweet), guardados,
+fuente (app de publicacion), sensible, editado, lugar y pais (geoetiqueta,
+si la hay).</p>
     </div>
 
     <div class="section level2">

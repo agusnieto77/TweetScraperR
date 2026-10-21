@@ -3,13 +3,13 @@
 fingerprint), la via robusta es: logueate a mano en tu navegador normal y
 pasale a esta funcion las cookies auth_token y ct0 de tu sesion (las
 encontras en DevTools -&amp;gt; Application/Almacenamiento -&amp;gt; Cookies -&amp;gt; x.com).
-La sesion queda guardada (storageState) y todas las funciones de scraping la
-reusan sin volver a loguearse."><meta property="og:description" content="Como X bloquea el login automatizado (detecta el navegador de Playwright por
+La sesion queda guardada en el pool de cuentas y todas las funciones de
+scraping la reusan sin volver a loguearse."><meta property="og:description" content="Como X bloquea el login automatizado (detecta el navegador de Playwright por
 fingerprint), la via robusta es: logueate a mano en tu navegador normal y
 pasale a esta funcion las cookies auth_token y ct0 de tu sesion (las
 encontras en DevTools -&amp;gt; Application/Almacenamiento -&amp;gt; Cookies -&amp;gt; x.com).
-La sesion queda guardada (storageState) y todas las funciones de scraping la
-reusan sin volver a loguearse."></head><body>
+La sesion queda guardada en el pool de cuentas y todas las funciones de
+scraping la reusan sin volver a loguearse."></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -17,7 +17,7 @@ reusan sin volver a loguearse."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">TweetScraperR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -43,7 +43,7 @@ reusan sin volver a loguearse."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Importar una sesion de X/Twitter desde las cookies de tu navegador</h1>
-      <small class="dont-index">Source: <a href="https://github.com/agusnieto77/TweetScraperR/blob/v0.7.0/R/playwright-engine.R" class="external-link"><code>R/playwright-engine.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/agusnieto77/TweetScraperR/blob/main/R/accounts-pool.R" class="external-link"><code>R/accounts-pool.R</code></a></small>
       <div class="d-none name"><code>importSessionX.Rd</code></div>
     </div>
 
@@ -52,13 +52,19 @@ reusan sin volver a loguearse."></head><body>
 fingerprint), la via robusta es: logueate a mano en tu navegador normal y
 pasale a esta funcion las cookies <code>auth_token</code> y <code>ct0</code> de tu sesion (las
 encontras en DevTools -&gt; Application/Almacenamiento -&gt; Cookies -&gt; x.com).
-La sesion queda guardada (storageState) y todas las funciones de scraping la
-reusan sin volver a loguearse.</p>
+La sesion queda guardada en el pool de cuentas y todas las funciones de
+scraping la reusan sin volver a loguearse.</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">importSessionX</span><span class="op">(</span><span class="va">auth_token</span>, <span class="va">ct0</span>, state <span class="op">=</span> <span class="fu">.pw_state_path</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">importSessionX</span><span class="op">(</span></span>
+<span>  <span class="va">auth_token</span>,</span>
+<span>  <span class="va">ct0</span>,</span>
+<span>  account <span class="op">=</span> <span class="st">"default"</span>,</span>
+<span>  proxy <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  cookies <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -73,16 +79,45 @@ reusan sin volver a loguearse.</p>
 <dd><p>Valor de la cookie <code>ct0</code> de x.com.</p></dd>
 
 
-<dt id="arg-state">state<a class="anchor" aria-label="anchor" href="#arg-state"></a></dt>
-<dd><p>Ruta donde guardar la sesion. Por defecto la ubicacion estandar
-del paquete, que las demas funciones leen automaticamente.</p></dd>
+<dt id="arg-account">account<a class="anchor" aria-label="anchor" href="#arg-account"></a></dt>
+<dd><p>Nombre local de la cuenta en el pool. Por defecto "default".
+Reimportar con el mismo nombre renueva la sesion y reactiva la cuenta,
+conservando su proxy y estadisticas.</p></dd>
+
+
+<dt id="arg-proxy">proxy<a class="anchor" aria-label="anchor" href="#arg-proxy"></a></dt>
+<dd><p>Proxy opcional de esta cuenta ("http://host:puerto",
+"usuario:clave@host:puerto" o "socks5://host:puerto"). Tiene prioridad
+sobre el proxy global <code>options(TweetScraperR.proxy = ...)</code>.</p></dd>
+
+
+<dt id="arg-cookies">cookies<a class="anchor" aria-label="anchor" href="#arg-cookies"></a></dt>
+<dd><p>Alternativa a <code>auth_token</code>/<code>ct0</code>: el header de cookies
+("auth_token=...; ct0=...") o el JSON exportado por una extension de
+cookies (p. ej. Cookie-Editor).</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>Invisiblemente, la ruta del archivo de sesion.</p>
+    <p>Invisiblemente, el nombre de la cuenta.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>Importando varias cuentas (con distintos <code>account</code>) se arma un <strong>pool</strong>:
+cuando una cuenta agota el cupo de un endpoint de X (p. ej. 50 busquedas
+cada 15 minutos), la recoleccion sigue con otra sin cortarse. Ver
+<code><a href="accountsX.html">accountsX()</a></code>.</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+<span class="r-in"><span><span class="fu">importSessionX</span><span class="op">(</span>auth_token <span class="op">=</span> <span class="st">"..."</span>, ct0 <span class="op">=</span> <span class="st">"..."</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">importSessionX</span><span class="op">(</span>cookies <span class="op">=</span> <span class="st">"auth_token=...; ct0=..."</span>, account <span class="op">=</span> <span class="st">"cuenta2"</span>,</span></span>
+<span class="r-in"><span>               proxy <span class="op">=</span> <span class="st">"http://usuario:clave@host:8080"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

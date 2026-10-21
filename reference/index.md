@@ -1,12 +1,29 @@
 # Package index
 
-## Sesión y motor
+## Sesión, pool de cuentas y motor
 
-Instalar el motor de Node.js/Playwright e importar tu sesión real de X a
-partir de las cookies del navegador.
+Instalar el motor de Node.js/Playwright e importar tus sesiones reales
+de X a partir de las cookies del navegador. Con varias cuentas, la
+recolección rota sola cuando una agota el cupo de X.
 
 - [`importSessionX()`](https://agusnieto77.github.io/TweetScraperR/reference/importSessionX.md)
   : Importar una sesion de X/Twitter desde las cookies de tu navegador
+- [`setupAccountsX()`](https://agusnieto77.github.io/TweetScraperR/reference/setupAccountsX.md)
+  : Cargar y validar cuentas de X desde la consola
+- [`addAccountsX()`](https://agusnieto77.github.io/TweetScraperR/reference/addAccountsX.md)
+  : Agregar varias cuentas al pool de una vez
+- [`accountsX()`](https://agusnieto77.github.io/TweetScraperR/reference/accountsX.md)
+  : Estado del pool de cuentas de X
+- [`setProxyX()`](https://agusnieto77.github.io/TweetScraperR/reference/setProxyX.md)
+  : Asignar, cambiar o quitar el proxy de cuentas del pool
+- [`checkAccountsX()`](https://agusnieto77.github.io/TweetScraperR/reference/checkAccountsX.md)
+  : Validar las sesiones del pool de cuentas
+- [`reactivateAccountX()`](https://agusnieto77.github.io/TweetScraperR/reference/reactivateAccountX.md)
+  : Reactivar cuentas desactivadas del pool
+- [`resetLocksX()`](https://agusnieto77.github.io/TweetScraperR/reference/resetLocksX.md)
+  : Quitar las pausas de rate-limit de todas las cuentas
+- [`removeAccountX()`](https://agusnieto77.github.io/TweetScraperR/reference/removeAccountX.md)
+  : Eliminar cuentas del pool
 - [`installPlaywrightEngine()`](https://agusnieto77.github.io/TweetScraperR/reference/installPlaywrightEngine.md)
   : Instalar el motor Node/Playwright (npm install + browsers)
 - [`checkPlaywrightEngine()`](https://agusnieto77.github.io/TweetScraperR/reference/checkPlaywrightEngine.md)
@@ -32,17 +49,26 @@ desde JSON (texto completo, métricas, media, hashtags, menciones, etc.).
   : Get Tweet Data from URLs via the X API (experimental)
 - [`getUserMediaAPI()`](https://agusnieto77.github.io/TweetScraperR/reference/getUserMediaAPI.md)
   : Get a User's Media Tweets via the X API (experimental)
+- [`getListTweetsAPI()`](https://agusnieto77.github.io/TweetScraperR/reference/getListTweetsAPI.md)
+  : Get the Tweets of an X List via the X API (experimental)
 
 ## Usuarios y redes (API)
 
 - [`getUsersDataAPI()`](https://agusnieto77.github.io/TweetScraperR/reference/getUsersDataAPI.md)
   : Get a User's Profile Data via the X API (experimental)
+- [`getUsersAboutAPI()`](https://agusnieto77.github.io/TweetScraperR/reference/getUsersAboutAPI.md)
+  : Get the "About this account" Data of Users via the X API
+  (experimental)
+- [`getUsersSearchAPI()`](https://agusnieto77.github.io/TweetScraperR/reference/getUsersSearchAPI.md)
+  : Search Users via the X API (experimental)
 - [`getUserFollowersAPI()`](https://agusnieto77.github.io/TweetScraperR/reference/getUserFollowersAPI.md)
   : Get a User's Followers via the X API (experimental)
 - [`getUserFollowingAPI()`](https://agusnieto77.github.io/TweetScraperR/reference/getUserFollowingAPI.md)
   : Get the Accounts a User Follows via the X API (experimental)
 - [`getTweetsRetweetsAPI()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsRetweetsAPI.md)
   : Get the Users Who Retweeted a Tweet via the X API (experimental)
+- [`getListMembersAPI()`](https://agusnieto77.github.io/TweetScraperR/reference/getListMembersAPI.md)
+  : Get the Members of an X List via the X API (experimental)
 
 ## Visualización
 

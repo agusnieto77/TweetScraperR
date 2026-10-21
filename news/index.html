@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">TweetScraperR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -33,9 +33,45 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/agusnieto77/TweetScraperR/blob/v0.7.0/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/agusnieto77/TweetScraperR/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.8.0" id="tweetscraperr-080">TweetScraperR 0.8.0<a class="anchor" aria-label="anchor" href="#tweetscraperr-080"></a></h2>
+<div class="section level3">
+<h3 id="pool-de-cuentas-con-rotación-automática-0-8-0">Pool de cuentas con rotación automática<a class="anchor" aria-label="anchor" href="#pool-de-cuentas-con-rotaci%C3%B3n-autom%C3%A1tica-0-8-0"></a></h3>
+<p>Modelo portado de <a href="https://github.com/vladkens/twscrape" class="external-link">twscrape</a> (MIT).</p>
+<ul><li>
+<code><a href="../reference/importSessionX.html">importSessionX()</a></code> gana <code>account</code>: importando varias cuentas se arma un pool (SQLite en <code>tools::R_user_dir("TweetScraperR", "data")</code>). X limita cada endpoint <strong>por cuenta</strong> en ventanas de 15 minutos (la búsqueda, ~50 consultas); cuando una cuenta agota el cupo queda en pausa hasta el reset de X y la recolección sigue con la siguiente, retomando desde la URL cortada. El bloqueo es por (cuenta, endpoint) y la cuenta se toma de forma atómica, así que varias sesiones de R pueden compartir el pool.</li>
+<li>Lo cortado se retoma <strong>desde donde quedó</strong>, sin volver a gastar cupo en lo ya traído: el motor guarda el último cursor de paginación de cada URL y la cuenta siguiente lo inyecta en la primera request que arma la app de X (el <code>x-client-transaction-id</code> firma solo método y path, no la query, así que la request sigue siendo válida). Verificado entre cuentas distintas.</li>
+<li>El motor deja de scrollear apenas junta los <code>n_tweets</code>/<code>n_users</code> pedidos (antes scrolleaba un número fijo de veces): menos cupo gastado y recolecciones más rápidas.</li>
+<li>Corregido: el conteo de usuarixs del progreso (y del corte por <code>n_users</code>) dependía del bloque <code>legacy</code> que X eliminó, y quedaba siempre en 0.</li>
+<li>Si X rechaza una sesión (vencida o revocada, suspendida o bloqueada: errores 32, 88 con cupo disponible, 326, 401/403) la cuenta se desactiva con el motivo y se sigue con otra. Una página de bloqueo HTML (Cloudflare) pausa la cuenta 15 minutos.</li>
+<li>Si todas las cuentas están en pausa, se espera hasta <code>getOption("TweetScraperR.wait_timeout", 900)</code> segundos; pasado ese plazo (o con <code>0</code>) se devuelve lo recolectado hasta el corte con un aviso.</li>
+<li>Nuevas funciones: <code><a href="../reference/setupAccountsX.html">setupAccountsX()</a></code> (asistente de consola que pide cada cuenta, con <code>auth_token</code>/<code>ct0</code> ocultos, y la valida en el momento), <code><a href="../reference/accountsX.html">accountsX()</a></code> (estado del pool), <code><a href="../reference/checkAccountsX.html">checkAccountsX()</a></code> (valida cada sesión, registra el <a href="https://github.com/usuario" class="external-link">@usuario</a> real, desactiva las vencidas o bloqueadas y, si la misma cuenta de X está cargada dos veces, deja solo la sesión más nueva con las pausas y estadísticas de ambas), <code><a href="../reference/setProxyX.html">setProxyX()</a></code> (asigna, cambia o quita el proxy de una cuenta sin volver a cargar sus cookies, y la valida a través del proxy nuevo), <code><a href="../reference/addAccountsX.html">addAccountsX()</a></code> (alta masiva desde CSV o data frame; detecta solo el separador <code>,</code> o <code>;</code> de los CSV de Excel), <code><a href="../reference/reactivateAccountX.html">reactivateAccountX()</a></code>, <code><a href="../reference/resetLocksX.html">resetLocksX()</a></code> y <code><a href="../reference/removeAccountX.html">removeAccountX()</a></code>.</li>
+<li>
+<code>importSessionX(cookies = ...)</code> acepta el header <code>"auth_token=...; ct0=..."</code> o el JSON de extensiones como Cookie-Editor, y <code>proxy</code> por cuenta.</li>
+<li>
+<strong>BREAKING</strong>: <code><a href="../reference/importSessionX.html">importSessionX()</a></code> y <code><a href="../reference/loginX.html">loginX()</a></code> reemplazan <code>state</code> (ruta del archivo de sesión, que el resto de las funciones nunca leía) por <code>account</code>. La sesión única existente se incorpora sola al pool como la cuenta <code>"default"</code>: no hace falta reimportarla.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="motor-0-8-0">Motor<a class="anchor" aria-label="anchor" href="#motor-0-8-0"></a></h3>
+<ul><li>Corregido: con una sesión inválida X no redirige al login sino que borra la cookie <code>auth_token</code> y sirve la página en modo invitado, así que las funciones <code>*API()</code> devolvían 0 filas sin ningún error. El motor ahora lo detecta y la cuenta se desactiva como sesión expirada.</li>
+<li>Corregido: el proxy nunca llegaba al motor en las funciones <code>*API()</code>. Ahora se usa el proxy de la cuenta o, si no tiene, el global (<code>options(TweetScraperR.proxy = ...)</code> o la variable de entorno <code>TWEETSCRAPERR_PROXY</code>).</li>
+<li>El navegador ya no declara un User-Agent fijo (<code>Linux Chrome/131</code>), que no coincidía con el sistema operativo ni con la versión real de Chromium: usa el suyo propio, coherente con el resto de la huella.</li>
+<li>El rate-limit se registra por endpoint (antes se pisaba con la última respuesta) y se elimina el aviso “Rate-limit de X bajo”: el pool pausa la cuenta cuando el cupo llega a cero.</li>
+<li>
+<code>options(TweetScraperR.debug_dir = "carpeta")</code> guarda cada respuesta cruda de X para depurar cambios de formato.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="datos-0-8-0">Datos<a class="anchor" aria-label="anchor" href="#datos-0-8-0"></a></h3>
+<ul><li>Corregido: los tweets largos (más de 280 caracteres) salían truncados; ahora <code>texto</code>, <code>hashtags</code>, <code>menciones</code> y <code>urls_externas</code> salen del texto completo.</li>
+<li>Nuevas columnas en los tweets: <code>user_id</code>, <code>respuesta_a_id</code>, <code>respuesta_a_user</code>, <code>retweet_id</code>, <code>guardados</code>, <code>fuente</code> (app de publicación), <code>sensible</code>, <code>editado</code>, <code>lugar</code> y <code>pais</code>.</li>
+<li>Nuevas columnas en usuarixs: <code>tweets_media</code>, <code>protegida</code> y <code>tipo_verificacion</code>.</li>
+<li>Nuevas funciones: <code><a href="../reference/getUsersAboutAPI.html">getUsersAboutAPI()</a></code> (ficha “Acerca de esta cuenta”: país de la cuenta, cambios de nombre de usuarix, verificación), <code><a href="../reference/getUsersSearchAPI.html">getUsersSearchAPI()</a></code> (búsqueda de cuentas), <code><a href="../reference/getListTweetsAPI.html">getListTweetsAPI()</a></code> y <code><a href="../reference/getListMembersAPI.html">getListMembersAPI()</a></code> (Listas de X).</li>
+<li>Nuevas dependencias: <code>DBI</code> y <code>RSQLite</code>.</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.7.0" id="tweetscraperr-070">TweetScraperR 0.7.0<a class="anchor" aria-label="anchor" href="#tweetscraperr-070"></a></h2>
 <div class="section level3">

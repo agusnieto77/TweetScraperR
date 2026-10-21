@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">TweetScraperR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,9 +36,9 @@
     </div>
 
     <div class="section level2">
-      <h2 id="sesi-n-y-motor">Sesión y motor<a class="anchor" aria-label="anchor" href="#sesi-n-y-motor"></a></h2>
+      <h2 id="sesi-n-pool-de-cuentas-y-motor">Sesión, pool de cuentas y motor<a class="anchor" aria-label="anchor" href="#sesi-n-pool-de-cuentas-y-motor"></a></h2>
 
-      <div class="section-desc"><p>Instalar el motor de Node.js/Playwright e importar tu sesión real de X a partir de las cookies del navegador.</p></div>
+      <div class="section-desc"><p>Instalar el motor de Node.js/Playwright e importar tus sesiones reales de X a partir de las cookies del navegador. Con varias cuentas, la recolección rota sola cuando una agota el cupo de X.</p></div>
 
       <dl></dl></div><div class="section level2">
 
@@ -51,6 +51,62 @@
 
         </dt>
         <dd>Importar una sesion de X/Twitter desde las cookies de tu navegador</dd>
+
+        <dt>
+
+          <code><a href="setupAccountsX.html">setupAccountsX()</a></code>
+
+        </dt>
+        <dd>Cargar y validar cuentas de X desde la consola</dd>
+
+        <dt>
+
+          <code><a href="addAccountsX.html">addAccountsX()</a></code>
+
+        </dt>
+        <dd>Agregar varias cuentas al pool de una vez</dd>
+
+        <dt>
+
+          <code><a href="accountsX.html">accountsX()</a></code>
+
+        </dt>
+        <dd>Estado del pool de cuentas de X</dd>
+
+        <dt>
+
+          <code><a href="setProxyX.html">setProxyX()</a></code>
+
+        </dt>
+        <dd>Asignar, cambiar o quitar el proxy de cuentas del pool</dd>
+
+        <dt>
+
+          <code><a href="checkAccountsX.html">checkAccountsX()</a></code>
+
+        </dt>
+        <dd>Validar las sesiones del pool de cuentas</dd>
+
+        <dt>
+
+          <code><a href="reactivateAccountX.html">reactivateAccountX()</a></code>
+
+        </dt>
+        <dd>Reactivar cuentas desactivadas del pool</dd>
+
+        <dt>
+
+          <code><a href="resetLocksX.html">resetLocksX()</a></code>
+
+        </dt>
+        <dd>Quitar las pausas de rate-limit de todas las cuentas</dd>
+
+        <dt>
+
+          <code><a href="removeAccountX.html">removeAccountX()</a></code>
+
+        </dt>
+        <dd>Eliminar cuentas del pool</dd>
 
         <dt>
 
@@ -123,6 +179,13 @@
 
         </dt>
         <dd>Get a User's Media Tweets via the X API (experimental)</dd>
+
+        <dt>
+
+          <code><a href="getListTweetsAPI.html">getListTweetsAPI()</a></code>
+
+        </dt>
+        <dd>Get the Tweets of an X List via the X API (experimental)</dd>
       </dl></div><div class="section level2">
       <h2 id="usuarios-y-redes-api-">Usuarios y redes (API)<a class="anchor" aria-label="anchor" href="#usuarios-y-redes-api-"></a></h2>
 
@@ -139,6 +202,20 @@
 
         </dt>
         <dd>Get a User's Profile Data via the X API (experimental)</dd>
+
+        <dt>
+
+          <code><a href="getUsersAboutAPI.html">getUsersAboutAPI()</a></code>
+
+        </dt>
+        <dd>Get the "About this account" Data of Users via the X API (experimental)</dd>
+
+        <dt>
+
+          <code><a href="getUsersSearchAPI.html">getUsersSearchAPI()</a></code>
+
+        </dt>
+        <dd>Search Users via the X API (experimental)</dd>
 
         <dt>
 
@@ -160,6 +237,13 @@
 
         </dt>
         <dd>Get the Users Who Retweeted a Tweet via the X API (experimental)</dd>
+
+        <dt>
+
+          <code><a href="getListMembersAPI.html">getListMembersAPI()</a></code>
+
+        </dt>
+        <dd>Get the Members of an X List via the X API (experimental)</dd>
       </dl></div><div class="section level2">
       <h2 id="visualizaci-n">Visualización<a class="anchor" aria-label="anchor" href="#visualizaci-n"></a></h2>
 

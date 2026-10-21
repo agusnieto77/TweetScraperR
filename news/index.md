@@ -1,5 +1,114 @@
 # Changelog
 
+## TweetScraperR 0.8.0
+
+### Pool de cuentas con rotación automática
+
+Modelo portado de [twscrape](https://github.com/vladkens/twscrape)
+(MIT).
+
+- [`importSessionX()`](https://agusnieto77.github.io/TweetScraperR/reference/importSessionX.md)
+  gana `account`: importando varias cuentas se arma un pool (SQLite en
+  `tools::R_user_dir("TweetScraperR", "data")`). X limita cada endpoint
+  **por cuenta** en ventanas de 15 minutos (la búsqueda, ~50 consultas);
+  cuando una cuenta agota el cupo queda en pausa hasta el reset de X y
+  la recolección sigue con la siguiente, retomando desde la URL cortada.
+  El bloqueo es por (cuenta, endpoint) y la cuenta se toma de forma
+  atómica, así que varias sesiones de R pueden compartir el pool.
+- Lo cortado se retoma **desde donde quedó**, sin volver a gastar cupo
+  en lo ya traído: el motor guarda el último cursor de paginación de
+  cada URL y la cuenta siguiente lo inyecta en la primera request que
+  arma la app de X (el `x-client-transaction-id` firma solo método y
+  path, no la query, así que la request sigue siendo válida). Verificado
+  entre cuentas distintas.
+- El motor deja de scrollear apenas junta los `n_tweets`/`n_users`
+  pedidos (antes scrolleaba un número fijo de veces): menos cupo gastado
+  y recolecciones más rápidas.
+- Corregido: el conteo de usuarixs del progreso (y del corte por
+  `n_users`) dependía del bloque `legacy` que X eliminó, y quedaba
+  siempre en 0.
+- Si X rechaza una sesión (vencida o revocada, suspendida o bloqueada:
+  errores 32, 88 con cupo disponible, 326, 401/403) la cuenta se
+  desactiva con el motivo y se sigue con otra. Una página de bloqueo
+  HTML (Cloudflare) pausa la cuenta 15 minutos.
+- Si todas las cuentas están en pausa, se espera hasta
+  `getOption("TweetScraperR.wait_timeout", 900)` segundos; pasado ese
+  plazo (o con `0`) se devuelve lo recolectado hasta el corte con un
+  aviso.
+- Nuevas funciones:
+  [`setupAccountsX()`](https://agusnieto77.github.io/TweetScraperR/reference/setupAccountsX.md)
+  (asistente de consola que pide cada cuenta, con `auth_token`/`ct0`
+  ocultos, y la valida en el momento),
+  [`accountsX()`](https://agusnieto77.github.io/TweetScraperR/reference/accountsX.md)
+  (estado del pool),
+  [`checkAccountsX()`](https://agusnieto77.github.io/TweetScraperR/reference/checkAccountsX.md)
+  (valida cada sesión, registra el
+  [@usuario](https://github.com/usuario) real, desactiva las vencidas o
+  bloqueadas y, si la misma cuenta de X está cargada dos veces, deja
+  solo la sesión más nueva con las pausas y estadísticas de ambas),
+  [`setProxyX()`](https://agusnieto77.github.io/TweetScraperR/reference/setProxyX.md)
+  (asigna, cambia o quita el proxy de una cuenta sin volver a cargar sus
+  cookies, y la valida a través del proxy nuevo),
+  [`addAccountsX()`](https://agusnieto77.github.io/TweetScraperR/reference/addAccountsX.md)
+  (alta masiva desde CSV o data frame; detecta solo el separador `,` o
+  `;` de los CSV de Excel),
+  [`reactivateAccountX()`](https://agusnieto77.github.io/TweetScraperR/reference/reactivateAccountX.md),
+  [`resetLocksX()`](https://agusnieto77.github.io/TweetScraperR/reference/resetLocksX.md)
+  y
+  [`removeAccountX()`](https://agusnieto77.github.io/TweetScraperR/reference/removeAccountX.md).
+- `importSessionX(cookies = ...)` acepta el header
+  `"auth_token=...; ct0=..."` o el JSON de extensiones como
+  Cookie-Editor, y `proxy` por cuenta.
+- **BREAKING**:
+  [`importSessionX()`](https://agusnieto77.github.io/TweetScraperR/reference/importSessionX.md)
+  y
+  [`loginX()`](https://agusnieto77.github.io/TweetScraperR/reference/loginX.md)
+  reemplazan `state` (ruta del archivo de sesión, que el resto de las
+  funciones nunca leía) por `account`. La sesión única existente se
+  incorpora sola al pool como la cuenta `"default"`: no hace falta
+  reimportarla.
+
+### Motor
+
+- Corregido: con una sesión inválida X no redirige al login sino que
+  borra la cookie `auth_token` y sirve la página en modo invitado, así
+  que las funciones `*API()` devolvían 0 filas sin ningún error. El
+  motor ahora lo detecta y la cuenta se desactiva como sesión expirada.
+- Corregido: el proxy nunca llegaba al motor en las funciones `*API()`.
+  Ahora se usa el proxy de la cuenta o, si no tiene, el global
+  (`options(TweetScraperR.proxy = ...)` o la variable de entorno
+  `TWEETSCRAPERR_PROXY`).
+- El navegador ya no declara un User-Agent fijo (`Linux Chrome/131`),
+  que no coincidía con el sistema operativo ni con la versión real de
+  Chromium: usa el suyo propio, coherente con el resto de la huella.
+- El rate-limit se registra por endpoint (antes se pisaba con la última
+  respuesta) y se elimina el aviso “Rate-limit de X bajo”: el pool pausa
+  la cuenta cuando el cupo llega a cero.
+- `options(TweetScraperR.debug_dir = "carpeta")` guarda cada respuesta
+  cruda de X para depurar cambios de formato.
+
+### Datos
+
+- Corregido: los tweets largos (más de 280 caracteres) salían truncados;
+  ahora `texto`, `hashtags`, `menciones` y `urls_externas` salen del
+  texto completo.
+- Nuevas columnas en los tweets: `user_id`, `respuesta_a_id`,
+  `respuesta_a_user`, `retweet_id`, `guardados`, `fuente` (app de
+  publicación), `sensible`, `editado`, `lugar` y `pais`.
+- Nuevas columnas en usuarixs: `tweets_media`, `protegida` y
+  `tipo_verificacion`.
+- Nuevas funciones:
+  [`getUsersAboutAPI()`](https://agusnieto77.github.io/TweetScraperR/reference/getUsersAboutAPI.md)
+  (ficha “Acerca de esta cuenta”: país de la cuenta, cambios de nombre
+  de usuarix, verificación),
+  [`getUsersSearchAPI()`](https://agusnieto77.github.io/TweetScraperR/reference/getUsersSearchAPI.md)
+  (búsqueda de cuentas),
+  [`getListTweetsAPI()`](https://agusnieto77.github.io/TweetScraperR/reference/getListTweetsAPI.md)
+  y
+  [`getListMembersAPI()`](https://agusnieto77.github.io/TweetScraperR/reference/getListMembersAPI.md)
+  (Listas de X).
+- Nuevas dependencias: `DBI` y `RSQLite`.
+
 ## TweetScraperR 0.7.0
 
 ### Progreso en vivo durante la recolección

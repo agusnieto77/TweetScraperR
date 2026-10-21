@@ -8,8 +8,13 @@
 <url><loc>https://agusnieto77.github.io/TweetScraperR/index.html</loc></url>
 <url><loc>https://agusnieto77.github.io/TweetScraperR/news/index.html</loc></url>
 <url><loc>https://agusnieto77.github.io/TweetScraperR/reference/HTMLImgReport.html</loc></url>
+<url><loc>https://agusnieto77.github.io/TweetScraperR/reference/accountsX.html</loc></url>
+<url><loc>https://agusnieto77.github.io/TweetScraperR/reference/addAccountsX.html</loc></url>
+<url><loc>https://agusnieto77.github.io/TweetScraperR/reference/checkAccountsX.html</loc></url>
 <url><loc>https://agusnieto77.github.io/TweetScraperR/reference/checkPlaywrightEngine.html</loc></url>
 <url><loc>https://agusnieto77.github.io/TweetScraperR/reference/extractTweetsData.html</loc></url>
+<url><loc>https://agusnieto77.github.io/TweetScraperR/reference/getListMembersAPI.html</loc></url>
+<url><loc>https://agusnieto77.github.io/TweetScraperR/reference/getListTweetsAPI.html</loc></url>
 <url><loc>https://agusnieto77.github.io/TweetScraperR/reference/getTweetsDataAPI.html</loc></url>
 <url><loc>https://agusnieto77.github.io/TweetScraperR/reference/getTweetsHashtags.html</loc></url>
 <url><loc>https://agusnieto77.github.io/TweetScraperR/reference/getTweetsImagesAnalysis.html</loc></url>
@@ -22,7 +27,9 @@
 <url><loc>https://agusnieto77.github.io/TweetScraperR/reference/getUserFollowingAPI.html</loc></url>
 <url><loc>https://agusnieto77.github.io/TweetScraperR/reference/getUserMediaAPI.html</loc></url>
 <url><loc>https://agusnieto77.github.io/TweetScraperR/reference/getUserTweetsAPI.html</loc></url>
+<url><loc>https://agusnieto77.github.io/TweetScraperR/reference/getUsersAboutAPI.html</loc></url>
 <url><loc>https://agusnieto77.github.io/TweetScraperR/reference/getUsersDataAPI.html</loc></url>
+<url><loc>https://agusnieto77.github.io/TweetScraperR/reference/getUsersSearchAPI.html</loc></url>
 <url><loc>https://agusnieto77.github.io/TweetScraperR/reference/importSessionX.html</loc></url>
 <url><loc>https://agusnieto77.github.io/TweetScraperR/reference/index.html</loc></url>
 <url><loc>https://agusnieto77.github.io/TweetScraperR/reference/installAgentSkill.html</loc></url>
@@ -32,5 +39,10 @@
 <url><loc>https://agusnieto77.github.io/TweetScraperR/reference/plotEmojisPNG.html</loc></url>
 <url><loc>https://agusnieto77.github.io/TweetScraperR/reference/plotTime.html</loc></url>
 <url><loc>https://agusnieto77.github.io/TweetScraperR/reference/plotWords.html</loc></url>
+<url><loc>https://agusnieto77.github.io/TweetScraperR/reference/reactivateAccountX.html</loc></url>
+<url><loc>https://agusnieto77.github.io/TweetScraperR/reference/removeAccountX.html</loc></url>
+<url><loc>https://agusnieto77.github.io/TweetScraperR/reference/resetLocksX.html</loc></url>
+<url><loc>https://agusnieto77.github.io/TweetScraperR/reference/setProxyX.html</loc></url>
+<url><loc>https://agusnieto77.github.io/TweetScraperR/reference/setupAccountsX.html</loc></url>
 </urlset>
 

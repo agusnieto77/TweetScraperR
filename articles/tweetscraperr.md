@@ -4,13 +4,15 @@
 metadatos) para análisis y visualización. Esta viñeta describe el
 **flujo de trabajo**, basado en consultas a la API GraphQL interna de X
 (datos estructurados, sin selectores HTML frágiles). Las salidas que se
-muestran son **capturas reales** obtenidas el 2026-10-18.
+muestran son **capturas reales** obtenidas entre el 2026-10-18 y el
+2026-10-20.
 
 > **Nota de versiones:** desde la **0.5.0** el paquete expone una
-> superficie única sobre el motor Node.js/Playwright (24 funciones en la
-> 0.6). Las funciones de scraping por HTML (`getTweetsTimeline()`,
-> `getTweetsData()`, `getUsersData()`, la familia `getUrls*()`, etc.)
-> fueron **eliminadas**; el mapa de reemplazos está en el `NEWS.md`.
+> superficie única sobre el motor Node.js/Playwright (33 funciones en la
+> 0.8, con el pool de cuentas). Las funciones de scraping por HTML
+> (`getTweetsTimeline()`, `getTweetsData()`, `getUsersData()`, la
+> familia `getUrls*()`, etc.) fueron **eliminadas**; el mapa de
+> reemplazos está en el `NEWS.md`.
 
 ## 1. Instalar el motor (una vez por máquina)
 
@@ -51,6 +53,29 @@ La sesión queda guardada en disco y **todas las funciones la reusan**
 sin volver a loguearse. Cuando las cookies expiren, repetí el paso para
 reimportarlas.
 
+### Varias cuentas: el pool
+
+X limita cada endpoint **por cuenta** en ventanas de 15 minutos (la
+búsqueda admite unas 50 consultas). Importando más cuentas con distinto
+`account`, la recolección rota sola: la cuenta que agota el cupo queda
+en pausa hasta que X lo renueva y se sigue con la siguiente desde donde
+se cortó; la que X rechaza (sesión vencida o suspendida) se desactiva.
+
+``` r
+
+importSessionX(cookies = "auth_token=...; ct0=...", account = "cuenta2")
+accountsX()
+#> # A tibble: 1 x 8
+#>   cuenta  activa pausas requests requests_por_endpoint ultimo_uso          proxy
+#>   <chr>   <lgl>  <chr>     <int> <chr>                 <dttm>              <chr>
+#> 1 default TRUE   <NA>         34 AboutAccountQuery: 7~ 2026-10-20 17:54:20 <NA>
+#> # i 1 more variable: error <chr>
+```
+
+(Salida real con una sola cuenta, antes de importar `cuenta2`.) Con una
+sola cuenta, al agotarse el cupo el paquete espera a que X lo renueve,
+como máximo `getOption("TweetScraperR.wait_timeout", 900)` segundos.
+
 ## 3. Recolectar datos (funciones `*API()`)
 
 ### 3.1 Timeline de unx usuarix
@@ -63,35 +88,48 @@ tl <- getUserTweetsAPI("NASA", n_tweets = 10)
 #> Datos procesados y guardados.
 ```
 
-Cada función de tweets devuelve el mismo `tibble` de **21 columnas**:
+Cada función de tweets devuelve el mismo `tibble` de **31 columnas**
+(salida real del 2026-10-20):
 
 ``` r
 
 dplyr::glimpse(tl)
 #> Rows: 10
-#> Columns: 21
-#> $ fecha           <dttm> 2026-10-16 19:42:20, 2026-10-16 13:53:53, ...
-#> $ user            <chr> "@NASA", "@NASA", "@NASA", "@NASA", ...
-#> $ texto           <chr> "The aircraft lineup just keeps getting bigger. ✈️..."
-#> $ idioma          <chr> "en", "en", "en", "en", ...
-#> $ respuestas      <int> 124, 141, 76, 85, 91, 165, 167, 90, 259, 120
-#> $ retweets        <int> 194, 242, 157, 164, 236, 384, 377, 137, 938, 198
-#> $ citas           <int> 21, 16, 10, 16, 12, 59, 725, 15, 93, 13
-#> $ megustas        <int> 1407, 1867, 1111, 1065, 2105, 2227, 2662, ...
-#> $ views           <int> 329251, 958698, 376585, 460454, 375943, ...
-#> $ emoticones      <list> "✈", <>, <>, <>, <>, <>, "🛠", <>, <>, "✈"
-#> $ hashtags        <list> <>, <>, <>, <>, <>, <>, <>, <>, <>, <>
-#> $ menciones       <list> "NASAKennedy", <>, "JAXA_en", <"NASAJohnson"...>
-#> $ urls_externas   <list> "https://www.nasa.gov/maxpower/", ...
-#> $ media           <list> "https://video.twimg.com/amplify_video/...", ...
-#> $ media_tipo      <list> "video", "photo", "photo", <>, "photo", ...
-#> $ es_retweet      <lgl> FALSE, FALSE, FALSE, FALSE, ...
-#> $ es_cita         <lgl> FALSE, FALSE, FALSE, FALSE, ...
-#> $ tweet_citado_id <chr> NA, NA, NA, NA, ...
-#> $ conversation_id <chr> "2111180963661435219", "2111093273800356092", ...
-#> $ url             <chr> "https://x.com/NASA/status/2111180963661435219", ...
-#> $ tweet_id        <chr> "2111180963661435219", "2111093273800356092", ...
+#> Columns: 31
+#> $ fecha            <dttm> 2026-10-20 18:00:27, 2026-10-20 18:00:06, 2026-10-20~
+#> $ user             <chr> "@NASA", "@NASA", "@NASA", "@NASA", "@NASA", "@NASA",~
+#> $ texto            <chr> "LIVE: Get a preview of two upcoming spacewalks set f~
+#> $ idioma           <chr> "en", "en", "en", "en", "en", "en", "en", "en", "en",~
+#> $ respuestas       <int> 41, 20, 151, 11, 83, 189, 169, 81, 88, 92
+#> $ retweets         <int> 79, 75, 305, 52, 120, 249, 264, 168, 172, 243
+#> $ citas            <int> 5, 8, 43, 3, 14, 25, 19, 10, 18, 10
+#> $ megustas         <int> 497, 511, 1949, 322, 1034, 1652, 2026, 1165, 1100, 21~
+#> $ views            <int> 227105, 224886, 286788, 90650, 405674, 404857, 100438~
+#> $ emoticones       <list> <>, <>, <>, <>, <"🇺", "🇿">, "✈", <>, <>, <>, <>
+#> $ hashtags         <list> <>, <>, <>, <>, <>, <>, <>, <>, <>, <>
+#> $ menciones        <list> "astro_anil", <>, "NASAMoonBase", <"NASAMoonBase", "N~
+#> $ urls_externas    <list> "https://x.com/i/broadcasts/1jxXgBNWypPJZ", "https://~
+#> $ media            <list> <>, <>, "https://video.twimg.com/amplify_video/211256~
+#> $ media_tipo       <list> <>, <>, "video", <>, "photo", "video", "photo", "pho~
+#> $ es_retweet       <lgl> FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FAL~
+#> $ es_cita          <lgl> FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FAL~
+#> $ tweet_citado_id  <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA
+#> $ conversation_id  <chr> "2112604875452223824", "2112604787539865876", "21125~
+#> $ url              <chr> "https://x.com/NASA/status/2112604875452223824", "ht~
+#> $ tweet_id         <chr> "2112604875452223824", "2112604787539865876", "21125~
+#> $ user_id          <chr> "11348282", "11348282", "11348282", "11348282", "1134~
+#> $ respuesta_a_id   <chr> NA, NA, NA, "2112560723603632217", NA, NA, NA, NA, NA~
+#> $ respuesta_a_user <chr> NA, NA, NA, "@NASA", NA, NA, NA, NA, NA, NA
+#> $ retweet_id       <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA
+#> $ guardados        <int> 28, 38, 122, 25, 32, 67, 112, 50, 48, 131
+#> $ fuente           <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA
+#> $ sensible         <lgl> FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALS~
+#> $ editado          <lgl> FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALS~
+#> $ lugar            <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA
+#> $ pais             <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA
 ```
+
+Los tweets largos (más de 280 caracteres) vienen completos en `texto`.
 
 ### 3.2 Timelines combinados (curaduría de investigación)
 
@@ -120,7 +158,7 @@ top <- getTweetsSearchAPI("Milei", n_tweets = 10, product = "Top")
 #> Buscando: Milei (Top)
 #> Tweets únicos recolectados: 10
 #> Datos procesados y guardados.
-#> # A tibble: 10 × 21
+#> # A tibble: 10 × 31
 #>   user           fecha               megustas retweets
 #>   <chr>          <dttm>                 <int>    <int>
 #> 1 @JMilei        2026-10-15 17:54:43    11639     1558
@@ -148,7 +186,7 @@ hilo <- getTweetsRepliesAPI(
 #> Recolectando respuestas de: https://x.com/sanchezcastejon/status/2111426246517072370
 #> Tweets únicos recolectados: 8
 #> Datos procesados y guardados.
-#> # A tibble: 8 × 21 (primeras 3 filas)
+#> # A tibble: 8 × 31 (primeras 3 filas)
 #>   user             fecha               texto
 #>   <chr>            <dttm>              <chr>
 #> 1 @sanchezcastejon 2026-10-17 11:57:00 "Feijóo es todo un personaje.\n\nDice que va..."
@@ -200,13 +238,54 @@ retweeters <- getTweetsRetweetsAPI(
 
 perfiles <- getUsersDataAPI("NASA")
 #> Datos procesados y guardados.
-#> # A tibble: 1 × 15
-#>   user  nombre user_id  descripcion        seguidores siguiendo tweets
-#>   <chr> <chr>  <chr>    <chr>                   <int>     <int>  <int>
-#> 1 @NASA NASA   11348282 Making the seemin…  92323271       115  74438
-#> # ℹ 8 more variables: favoritos <int>, verificado <lgl>, ubicacion <chr>,
-#> #   sitio_web <chr>, imagen_perfil <chr>, banner <chr>,
+#> # A tibble: 1 × 18
+#>   user  nombre user_id  descripcion        seguidores siguiendo tweets favoritos
+#>   <chr> <chr>  <chr>    <chr>                   <int>     <int>  <int>     <int>
+#> 1 @NASA NASA   11348282 "Making the seemi…   92315363       115  74444     17032
+#> # ℹ 10 more variables: verificado <lgl>, ubicacion <chr>, sitio_web <chr>,
+#> #   imagen_perfil <chr>, banner <chr>, fecha_creacion <dttm>, url <chr>,
+#> #   tweets_media <int>, protegida <lgl>, tipo_verificacion <chr>
+```
+
+### 3.9 “Acerca de esta cuenta”
+
+La ficha que X muestra en `x.com/<cuenta>/about`: país desde el que
+opera la cuenta, cambios de nombre de usuarix y verificación. X no
+publica todos los campos para todas las cuentas.
+
+``` r
+
+about <- getUsersAboutAPI(c("NASA", "elonmusk"))
+#> # A tibble: 2 × 13
+#>   user      nombre    user_id  pais_cuenta   ubicacion_precisa cambios_usuario
+#>   <chr>     <chr>     <chr>    <chr>         <lgl>                       <int>
+#> 1 @NASA     NASA      11348282 <NA>          TRUE                            0
+#> 2 @elonmusk Elon Musk 44196397 United States FALSE                           0
+#> # ℹ 7 more variables: ultimo_cambio_usuario <dttm>, afiliada_a <chr>,
+#> #   origen_cuenta <chr>, identidad_verificada <lgl>, verificada_desde <dttm>,
 #> #   fecha_creacion <dttm>, url <chr>
+```
+
+### 3.10 Listas y búsqueda de cuentas
+
+``` r
+
+miembros <- getListMembersAPI("https://x.com/i/lists/53645372", n_users = 20)
+#> Recolectando miembros de la lista 53645372...
+#> Usuarios únicos recolectados: 20
+lista <- getListTweetsAPI("53645372", n_tweets = 25)
+#> Recolectando tweets de la lista 53645372...
+#> Tweets únicos recolectados: 25
+cuentas <- getUsersSearchAPI("rstats", n_users = 10)
+#> Buscando usuarixs: rstats
+#> Usuarios únicos recolectados: 10
+cuentas[, c("user", "seguidores")]
+#> # A tibble: 10 × 2
+#>    user           seguidores
+#>    <chr>               <int>
+#>  1 @rstats              1246
+#>  2 @rstatstweet        28306
+#>  3 @RStatsJobs          3956
 ```
 
 Por defecto cada función guarda un archivo `.rds` con marca de tiempo en

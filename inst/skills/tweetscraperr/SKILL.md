@@ -138,10 +138,15 @@ Notas de argumentos:
 - `username` va sin `@`. `getTweetsTimelinesAPI()` acepta `"NASA"`, `"@NASA"`
   o la URL del perfil.
 - `getTweetsSearchAPI()` acepta los operadores de búsqueda de X dentro de
-  `search`: `from:cuenta`, `to:cuenta`, `#hashtag`, `lang:es`, `"frase exacta"`,
-  `-palabra`, `min_faves:100`, `filter:media`, `OR`. `product`: `"Latest"`
-  (recientes), `"Top"` (destacados) o `"Media"`. `since`/`until` en
-  `"YYYY-MM-DD"`.
+  `search`: `from:cuenta`, `to:cuenta`, `#hashtag`, `@mención`, `lang:es`,
+  `"frase exacta"`, `-palabra`, `OR`, `min_faves:100`, `min_retweets:`,
+  `min_replies:`, `filter:media`, `filter:videos`, `filter:links`,
+  `url:dominio`, `filter:replies`, `filter:quote`, `conversation_id:<id>`.
+  `product`: `"Latest"` (recientes), `"Top"` (destacados) o `"Media"`.
+  `since`/`until`: un día `"YYYY-MM-DD"` (ambos días inclusivos) o una hora
+  `"YYYY-MM-DD HH:MM:SS"` en UTC (o un `POSIXct`) para franjas horarias. `filter:images`
+  no funciona: usar `filter:media` y filtrar por `media_tipo`. Si una búsqueda
+  devuelve 0 tweets de forma inesperada, reintentarla una vez.
 - Las URLs de tweets tienen la forma `https://x.com/<cuenta>/status/<id>`.
 
 ## Qué devuelven

@@ -14,3 +14,4 @@
 ^inst/node/\.gitignore$
 ^inst/node/node_modules$
 ^inst/node/package-lock\.json$
+^vignettes/articles$

@@ -185,8 +185,11 @@ combinado <- getTweetsTimelinesAPI(
 ### 3.3 Búsqueda (`Latest` / `Top` / `Media`) con rango de fechas
 
 La búsqueda soporta los operadores de X (`from:`, `lang:`, ...) y los
-argumentos `since`/`until` para acotar por fechas (formato `"YYYY-MM-DD"` o
-`"YYYY-MM-DD_HH:MM:SS"`):
+argumentos `since`/`until` para acotar por días (formato `"YYYY-MM-DD"`, ambos
+extremos inclusivos). El artículo
+[Parámetros de búsqueda](https://agusnieto77.github.io/TweetScraperR/articles/busquedas.html) recorre todos los
+operadores con ejemplos verificados, incluidas las franjas horarias
+(`since = "2026-10-20 12:00"`, en UTC):
 
 ```{r}
 top <- getTweetsSearchAPI("Milei", n_tweets = 10, product = "Top")

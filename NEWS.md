@@ -8,6 +8,17 @@
   acumulado después de cada ronda; una ronda fallida no corta la captura y
   Esc / Ctrl+C devuelve lo acumulado. Avisa cuando una ronda llega al tope
   `n_tweets` (posibles huecos).
+* Nuevo artículo "Parámetros de búsqueda" en el sitio: recorre los operadores
+  de X en `getTweetsSearchAPI()` (términos, frase exacta, `OR`, exclusiones,
+  hashtags, `from:`/`to:`, menciones, `conversation_id:`, fechas, franjas
+  horarias, idioma, métricas mínimas, tipo de contenido, pestañas) con
+  ejemplos ejecutados y verificados contra X.
+* `getTweetsSearchAPI()`: `since`/`until` con hora vuelven a funcionar. X
+  dejó de devolver resultados con `since:YYYY-MM-DD_HH:MM:SS`, así que ahora
+  un instante (`"YYYY-MM-DD HH:MM[:SS]"` en UTC, o un `POSIXct` en cualquier
+  zona horaria) se traduce a `since_time:`/`until_time:`. Un día
+  (`"YYYY-MM-DD"` o `Date`) sigue yendo como `since:`/`until:`, con ambos días
+  inclusivos. Una fecha inválida ahora da error en vez de una búsqueda vacía.
 
 # TweetScraperR 0.8.1
 

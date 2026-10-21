@@ -75,8 +75,9 @@ getTweetsSearchAPI(search = "#RStats", n_tweets = 40,
                    product = c("Latest", "Top", "Media"),
                    since = NULL, until = NULL, dir = getwd(), save = FALSE)
 ```
-Búsqueda con operadores de X. `since`/`until`: `"YYYY-MM-DD"` o
-`"YYYY-MM-DD_HH:MM:SS"`.
+Búsqueda con operadores de X. `since`/`until`: un día `"YYYY-MM-DD"` (ambos
+días inclusivos) o una hora `"YYYY-MM-DD HH:MM:SS"` en UTC; también aceptan
+`Date` y `POSIXct` (respeta su zona horaria).
 
 ```r
 getTweetsLiveAPI(search = "#RStats", interval = 300, duration = 3600,

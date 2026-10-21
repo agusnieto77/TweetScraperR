@@ -159,7 +159,7 @@
         "): ", substr(txt, 1, 300)
       )
       if (length(stderr_chr) > 0) {
-        msg <- paste0(msg, " | stderr: ", paste(tail(stderr_chr, 5), collapse = " "))
+        msg <- paste0(msg, " | stderr: ", paste(utils::tail(stderr_chr, 5), collapse = " "))
       }
       list(ok = FALSE, error = msg)
     }

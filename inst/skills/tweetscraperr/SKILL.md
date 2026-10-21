@@ -97,11 +97,15 @@ importSessionX(Sys.getenv("X2_AUTH_TOKEN"), Sys.getenv("X2_CT0"), account = "cue
 addAccountsX("cuentas.csv")   # columnas account, auth_token, ct0, proxy (opcional)
 accountsX()                   # activas, pausas por endpoint, requests, errores
 checkAccountsX()              # valida cada sesión y muestra su @usuario real
+setProxyX("cuenta2", "http://usuario:clave@host:puerto")  # proxy por cuenta (NULL lo quita)
+reactivateAccountX("cuenta2"); resetLocksX(); removeAccountX("cuenta2")
 ```
 
 `options(TweetScraperR.wait_timeout = 0)` hace que, si todas las cuentas están
 en pausa, se devuelva lo recolectado en vez de esperar (por defecto espera
-hasta 900 s).
+hasta 900 s). Proxy global: `options(TweetScraperR.proxy = "http://...")` o
+`TWEETSCRAPERR_PROXY` en `~/.Renviron`. Usar la dirección HTTP del proveedor:
+Chromium no admite SOCKS5 con usuario y clave.
 
 ## De la intención a la función
 

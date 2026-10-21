@@ -87,14 +87,6 @@
   n
 }
 
-#' Ruta por defecto del storageState (sesion autenticada persistente)
-#' @noRd
-.pw_state_path <- function() {
-  d <- tools::R_user_dir("TweetScraperR", "data")
-  if (!dir.exists(d)) dir.create(d, recursive = TRUE)
-  file.path(d, "x-storage-state.json")
-}
-
 #' Invoca un comando del motor Node y devuelve el resultado parseado
 #'
 #' @param cmd Comando del motor ("doctor", "login", "collect", "harvest").
@@ -243,8 +235,7 @@
 
 #' Login de bajo nivel via motor Node
 #' @noRd
-.pw_login <- function(xuser, xpass, email = "", state = .pw_state_path(),
-                      headless = TRUE, proxy = NULL) {
+.pw_login <- function(xuser, xpass, email = "", state, headless = TRUE, proxy = NULL) {
   params <- list(
     user = xuser, pass = xpass, email = email,
     storageStatePath = state, headless = headless,
@@ -254,48 +245,126 @@
   .pw_call("login", params, timeout = 180)
 }
 
-#' Recoleccion de bajo nivel via motor Node (reusa storageState, sin re-login)
+#' Motivo (para error_msg del pool) de cada corte que desactiva una cuenta
 #' @noRd
-.pw_collect <- function(url, mode = c("articles", "urls", "users"), n_max = 100,
-                        state = .pw_state_path(), max_attempts = 3,
-                        scroll_px = 4000, wait_ms = 2500, headless = TRUE,
-                        proxy = NULL) {
-  mode <- match.arg(mode)
-  params <- list(
-    storageStatePath = state, url = url, mode = mode, nMax = n_max,
-    maxAttempts = max_attempts, scrollPx = scroll_px, waitMs = wait_ms,
-    headless = headless
-  )
-  if (!is.null(proxy)) params$proxy <- proxy
-  .pw_call("collect", params, timeout = 600)
+.pw_disable_msgs <- c(
+  expired       = "sesi\u00f3n expirada o revocada",
+  not_logged_in = "sin sesi\u00f3n iniciada",
+  banned        = "X limit\u00f3 o suspendi\u00f3 la cuenta (error 88 con cupo disponible)",
+  locked        = "cuenta bloqueada por X (error 326)"
+)
+
+#' Corre el motor con una cuenta tomada del pool
+#'
+#' Si R corta antes de que el motor responda (Ctrl+C, error), libera la cuenta
+#' para que no quede tomada hasta que venza el bloqueo.
+#' @noRd
+.pw_harvest_with <- function(acc, op, params) {
+  done <- FALSE
+  on.exit(if (!done) .pool_release(acc$username, op), add = TRUE)
+  res <- .pw_call("harvest", params, timeout = 900, simplify = FALSE, progress = TRUE)
+  done <- TRUE
+  res
 }
 
-#' Cosecha cruda: invoca el motor para 1+ urls y devuelve los resultados por url
+#' Cosecha cruda: invoca el motor para 1+ urls rotando cuentas del pool
 #'
-#' Reusa UN solo navegador para todas las `urls` (batch). Maneja sesion no
-#' iniciada / expirada y avisa si el rate-limit de X esta bajo. Devuelve la lista
-#' `results` del motor (un elemento por url, cada uno con `url` y `bodies`).
+#' Reusa UN solo navegador por cuenta para todas las `urls` (batch). Si el
+#' motor corta (cupo del endpoint agotado, sesion vencida, cuenta suspendida),
+#' pausa o desactiva esa cuenta en el pool y retoma la url cortada con la
+#' siguiente cuenta disponible: el motor inyecta el ultimo cursor de paginacion
+#' obtenido en la primera request de la app, asi que la recoleccion sigue desde
+#' donde quedo en vez de volver al principio. El cupo se cuenta por la primera
+#' operacion de `op_names`.
+#'
+#' @param n Cantidad buscada por url (de `unit`: "tweets" o "users"). Al
+#'   alcanzarla el motor deja de scrollear, sin gastar cupo de mas. NULL
+#'   scrollea hasta `max_scrolls` o hasta que no lleguen datos nuevos.
+#' @return Lista con un elemento por url (`url`, `bodies`).
 #' @noRd
-.pw_harvest_raw <- function(urls, op_names, max_scrolls = 25, state = .pw_state_path()) {
-  res <- .pw_call("harvest", list(
-    storageStatePath = state, urls = as.list(urls),
-    opNames = as.list(op_names), maxScrolls = max_scrolls
-  ), timeout = 900, simplify = FALSE, progress = TRUE)
-  if (isTRUE(res$reason == "not_logged_in")) {
-    stop("No hay una sesi\u00f3n activa de X. Import\u00e1 tu sesi\u00f3n con importSessionX(auth_token, ct0).")
+.pw_harvest_raw <- function(urls, op_names, max_scrolls = 25, n = NULL, unit = "tweets") {
+  op <- op_names[[1]]
+  bodies <- rep(list(character(0)), length(urls))
+  cursors <- rep(NA_character_, length(urls))
+  found <- integer(length(urls))
+  pending <- seq_along(urls)
+  last_disabled <- NULL
+  while (length(pending)) {
+    acc <- .pool_acquire_wait(op)
+    if (!length(acc)) {
+      msg <- if (identical(attr(acc, "reason"), "busy")) {
+        paste0("Todas las cuentas est\u00e1n en pausa para ", op, " hasta las ",
+               .pool_hms(attr(acc, "next_at")), ".")
+      } else if (identical(last_disabled, "expired")) {
+        "Tu sesi\u00f3n de X parece haber expirado. Reimportala con importSessionX(auth_token, ct0)."
+      } else {
+        "No hay una sesi\u00f3n activa de X. Import\u00e1 tu sesi\u00f3n con importSessionX(auth_token, ct0)."
+      }
+      if (any(lengths(bodies) > 0)) {
+        warning(msg, " Se devuelven los datos recolectados hasta el corte.", call. = FALSE)
+        break
+      }
+      stop(msg, call. = FALSE)
+    }
+
+    params <- list(storageStatePath = acc$state_path, urls = as.list(urls[pending]),
+                   opNames = as.list(op_names), maxScrolls = max_scrolls)
+    if (!is.null(n)) {
+      params$targets <- as.list(pmax(as.integer(n) - found[pending], 1L))
+      params$unit <- unit
+    }
+    if (any(!is.na(cursors[pending]))) {
+      # NA logico -> null en el JSON: esa url arranca sin cursor.
+      params$cursors <- lapply(cursors[pending], function(cu) if (is.na(cu)) NA else cu)
+    }
+    proxy <- .pool_proxy(acc)
+    if (!is.null(proxy)) params$proxy <- proxy
+    if (!is.na(acc$user_agent)) params$userAgent <- acc$user_agent
+    dump <- getOption("TweetScraperR.debug_dir")
+    if (!is.null(dump)) params$dumpDir <- dump
+
+    res <- .pw_harvest_with(acc, op, params)
+    if (!isTRUE(res$ok)) {
+      .pool_release(acc$username, op)
+      stop("La cosecha de la API fall\u00f3: ", .pw_or(res$error, "error desconocido"), call. = FALSE)
+    }
+    sent <- pending
+    n_resp <- 0L
+    for (i in seq_along(res$results)) {
+      r <- res$results[[i]]
+      j <- sent[i]
+      b <- unlist(r$bodies)
+      bodies[[j]] <- c(bodies[[j]], b)
+      n_resp <- n_resp + length(b)
+      found[j] <- found[j] + as.integer(.pw_or(r$count, 0L))
+      if (!is.null(r$cursor)) cursors[j] <- r$cursor
+    }
+    rl <- res$rateLimits[[op]]
+    stopped <- .pw_or(res$stopped, "")
+
+    if (!nzchar(stopped)) {
+      .pool_release(acc$username, op, if (isTRUE(rl$remaining == 0)) rl$reset else 0L, n_resp)
+      break
+    }
+    pending <- sent[res$stoppedAt:length(sent)]
+    if (stopped %in% c("rate_limited", "blocked")) {
+      now <- .pool_now()
+      reset <- .pw_or(rl$reset, 0L)
+      until <- if (stopped == "rate_limited" && reset > now) reset else now + 900L
+      .pool_release(acc$username, op, until, n_resp)
+      message(
+        "Cuenta \"", acc$username, "\": ",
+        if (stopped == "blocked") "X devolvi\u00f3 una p\u00e1gina de bloqueo" else paste0("cupo de ", op, " agotado"),
+        "; en pausa hasta las ", .pool_hms(until), ". Se retoma con la siguiente cuenta disponible."
+      )
+    } else {
+      msg <- .pw_or(unname(.pw_disable_msgs[stopped]), stopped)
+      .pool_disable(acc$username, op, msg, n_resp)
+      last_disabled <- stopped
+      message("Cuenta \"", acc$username, "\" desactivada: ", msg, ".")
+    }
   }
-  if (isTRUE(res$expired)) {
-    stop("Tu sesi\u00f3n de X parece haber expirado. Reimportala con importSessionX(auth_token, ct0).")
-  }
-  if (!isTRUE(res$ok)) {
-    stop("La cosecha de la API fall\u00f3: ", .pw_or(res$error, .pw_or(res$reason, "error desconocido")))
-  }
-  rl <- res$rateLimit
-  if (!is.null(rl$remaining) && !is.na(rl$remaining) && rl$remaining < 10) {
-    warning("Rate-limit de X bajo: quedan ", rl$remaining,
-            " consultas para este endpoint antes de un corte temporal.")
-  }
-  if (is.null(res$results)) list() else res$results
+  lapply(seq_along(urls), function(i) list(url = urls[i], bodies = bodies[[i]]))
 }
 
 #' Cosecha de UNA url -> lista de respuestas JSON parseadas (listas anidadas)
@@ -303,21 +372,26 @@
 #' Los bodies no-JSON (p.ej. el texto plano "Rate limit exceeded" de X cuando
 #' corta el ventanal) se saltean con un aviso en vez de frenar la recoleccion.
 #' @noRd
-.pw_harvest <- function(url, op_names, max_scrolls = 25, state = .pw_state_path()) {
-  results <- .pw_harvest_raw(url, op_names, max_scrolls, state)
-  if (!length(results)) return(list())
-  bodies <- results[[1]]$bodies
-  lapply(bodies, .pw_parse_body)
+.pw_harvest <- function(url, op_names, max_scrolls = 25, n = NULL, unit = "tweets") {
+  results <- .pw_harvest_raw(url, op_names, max_scrolls, n, unit)
+  lapply(results[[1]]$bodies, .pw_parse_body)
 }
 
 #' Cosecha de VARIAS urls en un solo navegador -> lista (por url) de respuestas
 #' @noRd
-.pw_harvest_batch <- function(urls, op_names, max_scrolls = 25, state = .pw_state_path()) {
-  results <- .pw_harvest_raw(urls, op_names, max_scrolls, state)
+.pw_harvest_batch <- function(urls, op_names, max_scrolls = 25, n = NULL, unit = "tweets") {
+  results <- .pw_harvest_raw(urls, op_names, max_scrolls, n, unit)
   lapply(results, function(rr) {
     lapply(rr$bodies, .pw_parse_body)
   })
 }
+
+#' Tope de scrolls para juntar `n` items
+#'
+#' Es solo un techo de seguridad: el motor deja de scrollear apenas llega a
+#' `n` o cuando X deja de mandar datos nuevos.
+#' @noRd
+.scrolls_for <- function(n) max(5L, as.integer(ceiling(n / 10) + 5L))
 
 #' Parsea un body crudo a lista R anidada (detallada y tolerante)
 #'
@@ -386,45 +460,13 @@ installPlaywrightEngine <- function(npm = "npm") {
   invisible(status)
 }
 
-#' Importar una sesion de X/Twitter desde las cookies de tu navegador
-#'
-#' Como X bloquea el login automatizado (detecta el navegador de Playwright por
-#' fingerprint), la via robusta es: logueate a mano en tu navegador normal y
-#' pasale a esta funcion las cookies `auth_token` y `ct0` de tu sesion (las
-#' encontras en DevTools -> Application/Almacenamiento -> Cookies -> x.com).
-#' La sesion queda guardada (storageState) y todas las funciones de scraping la
-#' reusan sin volver a loguearse.
-#'
-#' @param auth_token Valor de la cookie `auth_token` de x.com.
-#' @param ct0 Valor de la cookie `ct0` de x.com.
-#' @param state Ruta donde guardar la sesion. Por defecto la ubicacion estandar
-#'   del paquete, que las demas funciones leen automaticamente.
-#'
-#' @return Invisiblemente, la ruta del archivo de sesion.
-#' @export
-importSessionX <- function(auth_token, ct0, state = .pw_state_path()) {
-  if (missing(auth_token) || !nzchar(auth_token) || missing(ct0) || !nzchar(ct0)) {
-    stop("Necesito ambos valores: auth_token y ct0 (cookies de x.com).")
-  }
-  mk <- function(name, value, http_only) {
-    list(name = name, value = value, domain = ".x.com", path = "/",
-         expires = -1L, httpOnly = http_only, secure = TRUE, sameSite = "Lax")
-  }
-  st <- list(
-    cookies = list(mk("auth_token", auth_token, TRUE), mk("ct0", ct0, FALSE)),
-    origins = list()
-  )
-  writeLines(jsonlite::toJSON(st, auto_unbox = TRUE), state)
-  message("Sesi\u00f3n importada y guardada en: ", state)
-  invisible(state)
-}
-
 #' Iniciar sesion en X/Twitter con Playwright y guardar la sesion
 #'
 #' Abre un navegador Chromium con tecnicas anti-deteccion (stealth), realiza el
 #' login en X/Twitter con el flujo del modal actual y guarda la sesion
-#' autenticada (cookies + storage) en disco. Las demas funciones del paquete
-#' reusan esa sesion sin volver a loguearse, lo que evita el rate-limit de X.
+#' autenticada (cookies + storage) como una cuenta del pool. Las demas
+#' funciones del paquete reusan esa sesion sin volver a loguearse, lo que evita
+#' el rate-limit de X.
 #'
 #' @param xuser Usuario de X/Twitter. Por defecto la variable de entorno
 #'   TWITTER_USER (con fallback a USER).
@@ -434,24 +476,27 @@ importSessionX <- function(auth_token, ct0, state = .pw_state_path()) {
 #'   Por defecto la variable de entorno TWITTER_EMAIL.
 #' @param headless Logico. Si TRUE (por defecto) corre el navegador sin
 #'   interfaz. Pone FALSE para ver/depurar el login.
-#' @param state Ruta del archivo donde se guarda la sesion (storageState).
+#' @param account Nombre local de la cuenta en el pool. Por defecto "default".
 #' @param proxy Proxy opcional para rutear el trafico (util si X bloquea tu IP).
 #'   Acepta un string "http://host:puerto" o "usuario:clave@host:puerto", o una
-#'   lista list(server=, username=, password=).
+#'   lista list(server=, username=, password=). Si es un string queda guardado
+#'   como proxy de la cuenta.
 #'
-#' @return Invisiblemente, la ruta del archivo de sesion. Lanza un error si el
-#'   login falla o si X limita el intento.
+#' @return Invisiblemente, el nombre de la cuenta. Lanza un error si el login
+#'   falla o si X limita el intento.
 #' @export
 loginX <- function(xuser = Sys.getenv("TWITTER_USER", Sys.getenv("USER")),
                    xpass = Sys.getenv("TWITTER_PASS", Sys.getenv("PASS")),
                    email = Sys.getenv("TWITTER_EMAIL", ""),
                    headless = TRUE,
-                   state = .pw_state_path(),
+                   account = "default",
                    proxy = NULL) {
+  state <- .pw_or(.pool_state_of(account), .pool_session_path(account))
   res <- .pw_login(xuser, xpass, email, state = state, headless = headless, proxy = proxy)
   if (isTRUE(res$ok)) {
-    message("Login OK. Sesi\u00f3n guardada en: ", state)
-    return(invisible(state))
+    .pool_upsert(account, state, proxy = if (is.character(proxy)) proxy else NULL)
+    message("Login OK. Sesi\u00f3n guardada en la cuenta \"", account, "\" del pool.")
+    return(invisible(account))
   }
   if (isTRUE(res$limited)) {
     stop("X limit\u00f3 temporalmente el inicio de sesi\u00f3n (rate-limit). Esper\u00e1 un rato y reintent\u00e1. URL: ", .pw_or(res$url, "?"))

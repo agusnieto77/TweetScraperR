@@ -23,7 +23,9 @@ test_that(".parse_timeline_tweets extrae tweets, metricas y cursor del JSON", {
     c("fecha", "user", "texto", "idioma", "respuestas", "retweets", "citas",
       "megustas", "views", "emoticones", "hashtags", "menciones",
       "urls_externas", "media", "media_tipo", "es_retweet", "es_cita",
-      "tweet_citado_id", "conversation_id", "url", "tweet_id")
+      "tweet_citado_id", "conversation_id", "url", "tweet_id", "user_id",
+      "respuesta_a_id", "respuesta_a_user", "retweet_id", "guardados",
+      "fuente", "sensible", "editado", "lugar", "pais")
   )
 
   t1 <- res$tweets[1, ]
@@ -49,6 +51,46 @@ test_that(".parse_timeline_tweets extrae tweets, metricas y cursor del JSON", {
   expect_true(t2$es_cita)                  # is_quote_status = TRUE
   expect_equal(t2$tweet_id, "1002")
   expect_equal(t2$tweet_citado_id, "999")  # quoted_status_result.result.rest_id
+})
+
+test_that(".tweet_row usa el texto completo de los tweets largos (note_tweet) y sus entidades", {
+  largo <- strrep("palabra ", 60)
+  tr <- list(
+    rest_id = "7001",
+    source = '<a href="http://twitter.com/download/iphone" rel="nofollow">Twitter for iPhone</a>',
+    core = list(user_results = list(result = list(rest_id = "42", core = list(screen_name = "ana")))),
+    edit_control = list(edit_tweet_ids = list("7000", "7001")),
+    note_tweet = list(note_tweet_results = list(result = list(
+      text = paste(largo, "#RStats @NASA"),
+      entity_set = list(
+        hashtags = list(list(text = "RStats")),
+        user_mentions = list(list(screen_name = "NASA"))
+      )
+    ))),
+    legacy = list(
+      full_text = "palabra palabra palabra \u2026",
+      created_at = "Fri Jun 12 21:22:33 +0000 2026",
+      entities = list(hashtags = list(), user_mentions = list()),
+      bookmark_count = 5L,
+      in_reply_to_status_id_str = "6999",
+      in_reply_to_screen_name = "beto",
+      place = list(full_name = "Mar del Plata, Argentina", country = "Argentina")
+    )
+  )
+  row <- TweetScraperR:::.tweet_row(tr)
+
+  expect_equal(row$texto, paste(largo, "#RStats @NASA"))
+  expect_equal(row$hashtags[[1]], "RStats")
+  expect_equal(row$menciones[[1]], "NASA")
+  expect_equal(row$user_id, "42")
+  expect_equal(row$respuesta_a_id, "6999")
+  expect_equal(row$respuesta_a_user, "@beto")
+  expect_equal(row$guardados, 5L)
+  expect_equal(row$fuente, "Twitter for iPhone")
+  expect_true(row$editado)
+  expect_equal(row$lugar, "Mar del Plata, Argentina")
+  expect_equal(row$pais, "Argentina")
+  expect_true(is.na(row$retweet_id))
 })
 
 test_that(".parse_timeline_tweets devuelve NULL en tweets si no hay entradas", {

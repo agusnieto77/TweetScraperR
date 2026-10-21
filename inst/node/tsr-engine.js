@@ -14,21 +14,22 @@
  */
 'use strict';
 
+const fs = require('fs');
+const path = require('path');
 const { chromium } = require('playwright-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 chromium.use(StealthPlugin());
 
-const UA =
-  'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) ' +
-  'Chrome/131.0.0.0 Safari/537.36';
-
+// Sin userAgent fijo: el de Chromium (con "HeadlessChrome" corregido por el
+// plugin stealth) coincide con la version real del navegador, el sistema
+// operativo y los client hints. Un UA hardcodeado (version vieja, otro SO)
+// es en si mismo una huella. Cada cuenta del pool puede fijar el suyo.
 function ctxOpts(extra) {
   return Object.assign(
     {
       locale: 'es-ES',
       timezoneId: 'America/Argentina/Buenos_Aires',
       viewport: { width: 1280, height: 860 },
-      userAgent: UA,
     },
     extra || {}
   );
@@ -74,40 +75,55 @@ function progress(ev) {
 
 // Recorre un body GraphQL y registra tweets/usuarixs nuevos (por rest_id).
 // No baja a los tweets citados ni a los originales de un retweet para no
-// contarlos como resultados propios.
-// Devuelve el ultimo tweet visto como "@usuario: texto" (o null).
+// contarlos como resultados propios. Lxs usuarixs se reconocen por
+// __typename (X elimino su bloque `legacy` en 2026-10).
+// Devuelve el ultimo tweet visto como "@usuario: texto" (o null), cuantos
+// tweets/usuarixs nuevos trajo y el ultimo cursor "Bottom" (o null), con el
+// que se retoma la paginacion desde otra cuenta.
 function scanBody(text, seenTweets, seenUsers) {
+  const out = { last: null, tweets: 0, users: 0, cursor: null };
   let doc;
   try {
     doc = JSON.parse(text);
   } catch (e) {
-    return null;
+    return out;
   }
-  let last = null;
   const walk = (o) => {
     if (!o || typeof o !== 'object') return;
     if (Array.isArray(o)) {
       for (const x of o) walk(x);
       return;
     }
-    if (o.rest_id && o.legacy) {
-      if (typeof o.legacy.full_text === 'string') {
-        if (!seenTweets.has(o.rest_id)) {
-          seenTweets.add(o.rest_id);
-          const u = o.core && o.core.user_results && o.core.user_results.result;
-          const sn = u && ((u.core && u.core.screen_name) || (u.legacy && u.legacy.screen_name));
-          last = (sn ? '@' + sn + ': ' : '') + o.legacy.full_text;
-        }
-      } else if (o.__typename === 'User') {
-        seenUsers.add(o.rest_id);
+    if (o.cursorType === 'Bottom' && typeof o.value === 'string') out.cursor = o.value;
+    if (o.rest_id && o.legacy && typeof o.legacy.full_text === 'string') {
+      if (!seenTweets.has(o.rest_id)) {
+        seenTweets.add(o.rest_id);
+        out.tweets++;
+        const u = o.core && o.core.user_results && o.core.user_results.result;
+        const sn = u && ((u.core && u.core.screen_name) || (u.legacy && u.legacy.screen_name));
+        out.last = (sn ? '@' + sn + ': ' : '') + o.legacy.full_text;
       }
+    } else if (o.__typename === 'User' && o.rest_id && !seenUsers.has(o.rest_id)) {
+      seenUsers.add(o.rest_id);
+      out.users++;
     }
     for (const k in o) {
       if (k !== 'quoted_status_result' && k !== 'retweeted_status_result') walk(o[k]);
     }
   };
   walk(doc);
-  return last;
+  return out;
+}
+
+// Reemplaza el cursor en las variables de una URL de la API GraphQL. El
+// x-client-transaction-id que agrega la app firma solo metodo y path (no la
+// query), asi que la request sigue siendo valida con el cursor cambiado.
+function withCursor(url, cursor) {
+  const u = new URL(url);
+  const v = JSON.parse(u.searchParams.get('variables') || '{}');
+  v.cursor = cursor;
+  u.searchParams.set('variables', JSON.stringify(v));
+  return u.toString();
 }
 
 function readStdin() {
@@ -225,6 +241,42 @@ const PASS_SEL = "input[name='password']";
 
 function isLoginUrl(u) {
   return /\/(i\/flow\/login|login|i\/jf\/onboarding)/.test(u);
+}
+
+// Valida una sesion: abre x.com/home y devuelve si sigue autenticada y el
+// @usuario real (del enlace "Perfil" de la barra lateral). Con una sesion
+// invalida X borra la cookie auth_token y sirve la pagina como invitado; una
+// cuenta bloqueada redirige a /account/access.
+async function whoami(p) {
+  const { storageStatePath } = p;
+  if (!storageStatePath) throw new Error('falta storageStatePath');
+  const proxy = parseProxy(p.proxy);
+  const browser = await chromium.launch(proxy ? { headless: true, proxy } : { headless: true });
+  try {
+    const context = await browser.newContext(
+      ctxOpts(Object.assign({ storageState: storageStatePath }, p.userAgent ? { userAgent: p.userAgent } : {}))
+    );
+    const page = await context.newPage();
+    await page.goto('https://x.com/home', { waitUntil: 'domcontentloaded', timeout: 60000 });
+    let screenName = null;
+    try {
+      const link = page.locator('[data-testid="AppTabBar_Profile_Link"]');
+      await link.waitFor({ timeout: 15000 });
+      screenName = ((await link.getAttribute('href')) || '').replace(/^\//, '') || null;
+    } catch (e) {
+      /* sin barra lateral: sesion invalida, bloqueada o pagina de error */
+    }
+    const url = page.url();
+    const cookies = await context.cookies('https://x.com');
+    const hasAuth = cookies.some((c) => c.name === 'auth_token' && c.value);
+    let reason = null;
+    if (/\/account\/access/.test(url)) reason = 'locked';
+    else if (isLoginUrl(url) || !hasAuth) reason = 'expired';
+    else if (!screenName) reason = 'unknown';
+    return { ok: true, valid: !reason, reason, screenName, url };
+  } finally {
+    await browser.close().catch(() => {});
+  }
 }
 
 async function doctor() {
@@ -389,10 +441,49 @@ async function manualLogin(p) {
   }
 }
 
+// Operacion GraphQL de una URL de la API: /i/api/graphql/<hash>/<Operacion>
+function opOf(u) {
+  const m = /\/i\/api\/graphql\/[^/]+\/([^/?#]+)/.exec(u);
+  return m ? m[1] : null;
+}
+
+// Clasifica una respuesta de la API para decidir que hacer con la cuenta
+// (reglas portadas de twscrape, queue_client._check_rep). Devuelve null si la
+// cuenta puede seguir, o el motivo para cortar:
+//   rate_limited  cupo del endpoint agotado hasta x-rate-limit-reset
+//   banned        X responde "Rate limit exceeded" (88) con cupo disponible:
+//                 la cuenta esta suspendida o limitada
+//   locked        cuenta bloqueada por control de acceso (326)
+//   expired       sesion invalida (cookies vencidas o revocadas: 32, 401, 403)
+//   blocked       pagina HTML de error (Cloudflare u otro bloqueo de la IP)
+function classify(status, headers, text) {
+  const remaining = parseInt(headers['x-rate-limit-remaining'], 10);
+  if (status >= 400 && (headers['content-type'] || '').indexOf('text/html') !== -1) return 'blocked';
+  let codes = [];
+  try {
+    const d = JSON.parse(text);
+    if (d && Array.isArray(d.errors)) codes = d.errors.map((e) => e && e.code);
+  } catch (e) {
+    /* body vacio o texto plano */
+  }
+  if (codes.includes(88) && remaining > 0) return 'banned';
+  if (status === 429 || remaining === 0 || codes.includes(88) || /^\s*rate limit exceeded/i.test(text)) {
+    return 'rate_limited';
+  }
+  if (codes.includes(326)) return 'locked';
+  if (codes.includes(32) || status === 401 || (status === 403 && !codes.length)) return 'expired';
+  return null;
+}
+
 // "Ride-along": navega a una pagina de X y COSECHA las respuestas JSON de la
 // API GraphQL que la propia app dispara (que ya traen el x-client-transaction-id
 // que ciertos endpoints, como SearchTimeline, exigen). Scrollea para gatillar
 // mas paginas. Devuelve los bodies JSON crudos para que R los parsee.
+//
+// Si una respuesta indica que la cuenta no puede seguir (ver classify()), corta
+// en la url actual y devuelve lo cosechado hasta ahi con `stopped` (motivo) y
+// `stoppedAt` (indice 1-based de la url cortada): R rota a otra cuenta del pool
+// y retoma desde esa url. `rateLimits` trae el cupo por operacion.
 async function harvest(p) {
   const { storageStatePath } = p;
   const urls = p.urls && p.urls.length ? p.urls : p.url ? [p.url] : [];
@@ -401,63 +492,114 @@ async function harvest(p) {
   const waitMs = p.waitMs || 2500;
   const scrollPx = p.scrollPx || 4000;
   const headless = p.headless !== false;
+  const dumpDir = p.dumpDir || null;
+  // Por url (alineados con `urls`): cursor desde el que retomar (lo inyecta en
+  // la primera request de la app) y cantidad buscada de tweets o usuarixs
+  // (`unit`), al llegar a la cual se deja de scrollear para no gastar cupo.
+  const cursors = p.cursors || [];
+  const targets = p.targets || [];
+  const unit = p.unit === 'users' ? 'users' : 'tweets';
   if (!storageStatePath) throw new Error('falta storageStatePath');
   if (!urls.length) throw new Error('falta url/urls');
   const proxy = parseProxy(p.proxy);
-  const matches = (u) =>
-    u.includes('/i/api/graphql/') && opNames.some((n) => u.indexOf('/' + n) !== -1);
+  if (dumpDir) fs.mkdirSync(dumpDir, { recursive: true });
 
   // Un solo navegador/contexto reutilizado para TODAS las urls (evita el costo
   // de arranque de Chromium por llamada).
   progress({ stage: 'launch' });
   const browser = await chromium.launch(proxy ? { headless, proxy } : { headless });
-  const context = await browser.newContext(ctxOpts({ storageState: storageStatePath }));
+  const context = await browser.newContext(
+    ctxOpts(Object.assign({ storageState: storageStatePath }, p.userAgent ? { userAgent: p.userAgent } : {}))
+  );
   const results = [];
-  let rateLimit = { remaining: null, reset: null };
-  let expired = false;
+  const rateLimits = {};
   const seenTweets = new Set();
   const seenUsers = new Set();
   let last = null;
+  let stop = null;
+  let dumpSeq = 0;
+  // Prefijo por corrida: cada llamada del motor es un proceso nuevo y sin el
+  // prefijo la numeracion se repetiria y pisaria los volcados anteriores.
+  const dumpRun = new Date().toISOString().replace(/[-:]/g, '').replace('T', '_').slice(0, 15) + '_' + process.pid;
 
   try {
-    for (let k = 0; k < urls.length; k++) {
+    for (let k = 0; k < urls.length && !stop; k++) {
       const url = urls[k];
       progress({ stage: 'open', i: k + 1, n: urls.length, url });
       const page = await context.newPage();
       const bodies = [];
+      const target = targets[k] || 0;
+      let found = 0;
+      let cursor = null;
+      if (cursors[k]) {
+        let injected = false;
+        await page.route('**/i/api/graphql/**', (route) => {
+          const req = route.request();
+          if (injected || opOf(req.url()) !== opNames[0]) return route.continue();
+          injected = true;
+          elog('harvest', 'retomando ' + opNames[0] + ' desde el cursor guardado');
+          return route.continue({ url: withCursor(req.url(), cursors[k]) });
+        });
+      }
       page.on('response', async (resp) => {
-        if (!matches(resp.url())) return;
+        const op = opOf(resp.url());
+        if (!op || !opNames.includes(op)) return;
         const h = resp.headers();
         if (h['x-rate-limit-remaining'] != null) {
-          rateLimit = {
+          rateLimits[op] = {
             remaining: parseInt(h['x-rate-limit-remaining'], 10),
+            limit: parseInt(h['x-rate-limit-limit'], 10),
             reset: parseInt(h['x-rate-limit-reset'], 10),
           };
         }
-        if (resp.status() === 401 || resp.status() === 403) expired = true;
+        let t = '';
         try {
-          const t = await resp.text();
-          if (t) {
-            bodies.push(t);
-            const l = scanBody(t, seenTweets, seenUsers);
-            if (l) last = l;
-            progress({ stage: 'data', tweets: seenTweets.size, users: seenUsers.size, last });
-            // codigo 32 = "Could not authenticate you" -> sesion expirada
-            if (t.indexOf('"code":32') !== -1) expired = true;
-          }
+          t = await resp.text();
         } catch (e) {
           /* respuesta ya consumida o navegacion */
+        }
+        if (dumpDir) {
+          const f = dumpRun + '_' + String(++dumpSeq).padStart(4, '0') + '_' + op + '_' + resp.status() + '.json';
+          try {
+            fs.writeFileSync(path.join(dumpDir, f), t);
+          } catch (e) {
+            elog('harvest', 'no se pudo volcar ' + f + ': ' + e.message);
+          }
+        }
+        const reason = classify(resp.status(), h, t);
+        if (reason && !stop) {
+          stop = { reason, op, at: k + 1, status: resp.status(), detail: t.slice(0, 200) };
+          elog('harvest', 'corte (' + reason + ') en ' + op + ': HTTP ' + resp.status());
+        }
+        // La ultima respuesta antes del corte por cupo todavia trae datos.
+        if (t && t[0] === '{') {
+          bodies.push(t);
+          const s = scanBody(t, seenTweets, seenUsers);
+          if (s.last) last = s.last;
+          if (op === opNames[0]) {
+            found += unit === 'users' ? s.users : s.tweets;
+            if (s.cursor) cursor = s.cursor;
+          }
+          progress({ stage: 'data', tweets: seenTweets.size, users: seenUsers.size, last });
         }
       });
 
       await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
       await page.waitForTimeout(4500);
-      if (isLoginUrl(page.url())) {
-        await page.close().catch(() => {});
-        return { ok: false, reason: 'not_logged_in', url: page.url(), results: [] };
+      if (!stop && isLoginUrl(page.url())) {
+        stop = { reason: 'not_logged_in', op: null, at: k + 1, status: null, detail: page.url() };
+      }
+      // Con una sesion invalida X no redirige al login: borra la cookie
+      // auth_token y sirve la pagina en modo invitado (sin la API autenticada),
+      // asi que la cosecha volveria vacia sin ningun error.
+      if (!stop) {
+        const cookies = await context.cookies('https://x.com');
+        if (!cookies.some((c) => c.name === 'auth_token' && c.value)) {
+          stop = { reason: 'expired', op: null, at: k + 1, status: null, detail: 'X borró la cookie auth_token' };
+        }
       }
       let stable = 0;
-      for (let i = 0; i < maxScrolls; i++) {
+      for (let i = 0; i < maxScrolls && !stop && !(target && found >= target); i++) {
         const before = bodies.length;
         await page.mouse.wheel(0, scrollPx);
         await page.waitForTimeout(waitMs);
@@ -468,12 +610,21 @@ async function harvest(p) {
           stable = 0;
         }
       }
-      results.push({ url, bodies });
+      results.push({ url, bodies, cursor, count: found });
       await page.close().catch(() => {});
     }
     const total = results.reduce((a, r) => a + r.bodies.length, 0);
-    elog('harvest', 'cosechadas ' + total + ' respuestas de ' + urls.length + ' url(s) (' + opNames.join('/') + ')');
-    return { ok: true, count: total, results, rateLimit, expired };
+    elog('harvest', 'cosechadas ' + total + ' respuestas de ' + results.length + ' url(s) (' + opNames.join('/') + ')');
+    return {
+      ok: true,
+      count: total,
+      results,
+      rateLimits,
+      stopped: stop ? stop.reason : null,
+      stoppedOp: stop ? stop.op : null,
+      stoppedAt: stop ? stop.at : null,
+      detail: stop ? stop.detail : null,
+    };
   } finally {
     await browser.close().catch(() => {});
   }
@@ -568,6 +719,7 @@ async function collect(p) {
     else if (cmd === 'login') out = await login(params);
     else if (cmd === 'manualLogin') out = await manualLogin(params);
     else if (cmd === 'harvest') out = await harvest(params);
+    else if (cmd === 'whoami') out = await whoami(params);
     else if (cmd === 'collect') out = await collect(params);
     else throw new Error('comando desconocido: ' + cmd);
     process.stdout.write(JSON.stringify(out));

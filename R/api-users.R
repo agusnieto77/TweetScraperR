@@ -39,7 +39,10 @@
     imagen_perfil    = .or_null(.or_null(ur$avatar$image_url, lg$profile_image_url_https), NA_character_),
     banner           = .or_null(.or_null(ur$banner$image_url, lg$profile_banner_url), NA_character_),
     fecha_creacion   = .x_parse_twitter_date(.or_null(.or_null(cr$created_at, lg$created_at), NA_character_)),
-    url              = paste0("https://x.com/", handle)
+    url              = paste0("https://x.com/", handle),
+    tweets_media     = as.integer(.or_null(.or_null(tc$media_tweets, lg$media_count), NA)),
+    protegida        = isTRUE(.or_null(ur$privacy$protected, lg$protected)),
+    tipo_verificacion = if (is.null(vtype) || !nzchar(vtype)) NA_character_ else vtype
   )
 }
 
@@ -70,8 +73,7 @@
 #' Recolecta usuarios cosechando una pagina (Followers/Following/Retweeters)
 #' @noRd
 .collect_users <- function(url, op_name, n_users, dir, save, prefix) {
-  scrolls <- max(3L, as.integer(ceiling(n_users / 15) + 3L))
-  docs <- .pw_harvest(url, op_name, max_scrolls = scrolls)
+  docs <- .pw_harvest(url, op_name, max_scrolls = .scrolls_for(n_users), n = n_users, unit = "users")
   rows <- list()
   for (d in docs) {
     p <- .parse_users(d)
@@ -104,7 +106,8 @@
 #'
 #' @return Un tibble con una fila por usuarix y columnas user, nombre, user_id,
 #'   descripcion, seguidores, siguiendo, tweets, favoritos, verificado,
-#'   ubicacion, fecha_creacion, url.
+#'   ubicacion, sitio_web, imagen_perfil, banner, fecha_creacion, url,
+#'   tweets_media, protegida y tipo_verificacion.
 #' @export
 #'
 #' @examples
@@ -115,7 +118,8 @@
 getUsersDataAPI <- function(usernames, dir = getwd(), save = TRUE) {
   if (missing(usernames) || !length(usernames)) stop("Necesito al menos un nombre de usuarix.")
   # Una sola sesion de navegador para TODOS los perfiles (batch).
-  grupos <- .pw_harvest_batch(paste0("https://x.com/", usernames), "UserByScreenName", max_scrolls = 2)
+  grupos <- .pw_harvest_batch(paste0("https://x.com/", usernames), "UserByScreenName",
+                              max_scrolls = 2, n = 1, unit = "users")
   rows <- list()
   for (k in seq_along(grupos)) {
     row <- NULL
@@ -219,4 +223,119 @@ getTweetsRetweetsAPI <- function(url, n_users = 100, dir = getwd(), save = TRUE)
   cat("Recolectando usuarixs que repostearon: ", url, "\n", sep = "")
   prefix <- paste0("api_rt_", gsub("https://x.com/(.*)/status/(.*)", "\\1_\\2", url))
   .collect_users(paste0(url, "/retweets"), "Retweeters", n_users, dir, save, prefix)
+}
+
+#' Fecha en milisegundos unix (string de X) a POSIXct UTC
+#'
+#' X oculta algunas fechas con valores negativos (p. ej. verificada "desde el
+#' anio -3000"): se devuelven como NA.
+#' @noRd
+.x_msec <- function(x) {
+  ms <- suppressWarnings(as.numeric(.or_null(x, NA)))
+  if (is.na(ms) || ms < 0) return(as.POSIXct(NA, tz = "UTC"))
+  as.POSIXct(ms / 1000, origin = "1970-01-01", tz = "UTC")
+}
+
+#' Fila-tibble de "Acerca de esta cuenta" (AboutAccountQuery)
+#' @noRd
+.about_row <- function(ur) {
+  if (is.null(ur)) return(NULL)
+  handle <- ur$core$screen_name
+  if (is.null(handle)) return(NULL)
+  ab <- ur$about_profile
+  vi <- ur$verification_info
+  tibble::tibble(
+    user                  = paste0("@", handle),
+    nombre                = .or_null(ur$core$name, NA_character_),
+    user_id               = .or_null(ur$rest_id, NA_character_),
+    pais_cuenta           = .or_null(ab$account_based_in, NA_character_),
+    ubicacion_precisa     = as.logical(.or_null(ab$location_accurate, NA)),
+    cambios_usuario       = as.integer(.or_null(ab$username_changes$count, NA)),
+    ultimo_cambio_usuario = .x_msec(ab$username_changes$last_changed_at_msec),
+    afiliada_a            = .or_null(ab$affiliate_username, NA_character_),
+    origen_cuenta         = .or_null(ab$source, NA_character_),
+    identidad_verificada  = as.logical(.or_null(vi$is_identity_verified, NA)),
+    verificada_desde      = .x_msec(vi$reason$verified_since_msec),
+    fecha_creacion        = .x_parse_twitter_date(.or_null(ur$core$created_at, NA_character_)),
+    url                   = paste0("https://x.com/", handle)
+  )
+}
+
+#' Get the "About this account" Data of Users via the X API (experimental)
+#'
+#' @description
+#'
+#' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
+#'
+#' Recupera la ficha "Acerca de esta cuenta" de unx o varixs usuarixs
+#' consultando la **API GraphQL interna de X** (AboutAccountQuery): el pais
+#' desde el que opera la cuenta, cuantas veces cambio de nombre de usuarix,
+#' desde cuando esta verificada, etc. Util para estudiar redes de cuentas
+#' coordinadas o de origen extranjero. Requiere una sesion importada con
+#' [importSessionX()]. X no publica todos los campos para todas las cuentas;
+#' los ausentes quedan en NA.
+#'
+#' @param usernames Vector de nombres de usuarix (acepta "NASA", "@NASA" o la
+#'   URL completa).
+#' @param dir Directorio de destino del RDS. Por defecto el de trabajo.
+#' @param save Logico. Si TRUE (por defecto) guarda el resultado en un RDS.
+#'
+#' @return Un tibble con una fila por usuarix y columnas user, nombre, user_id,
+#'   pais_cuenta, ubicacion_precisa, cambios_usuario, ultimo_cambio_usuario,
+#'   afiliada_a, origen_cuenta, identidad_verificada, verificada_desde,
+#'   fecha_creacion y url.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' importSessionX(auth_token = "...", ct0 = "...")
+#' getUsersAboutAPI(c("NASA", "rstatstweet"))
+#' }
+getUsersAboutAPI <- function(usernames, dir = getwd(), save = TRUE) {
+  if (missing(usernames) || !length(usernames)) stop("Necesito al menos un nombre de usuarix.")
+  usernames <- .x_handle(usernames)
+  grupos <- .pw_harvest_batch(paste0("https://x.com/", usernames, "/about"), "AboutAccountQuery",
+                              max_scrolls = 1, n = 1, unit = "users")
+  rows <- list()
+  for (k in seq_along(grupos)) {
+    row <- NULL
+    for (d in grupos[[k]]) {
+      row <- .about_row(d$data$user_result_by_screen_name$result)
+      if (!is.null(row)) break
+    }
+    if (!is.null(row)) rows[[length(rows) + 1L]] <- row else warning("No se encontr\u00f3 @", usernames[k])
+  }
+  users <- if (length(rows)) dplyr::bind_rows(rows) else tibble::tibble()
+  .save_rds(users, dir, "api_about", save = save)
+  users
+}
+
+#' Search Users via the X API (experimental)
+#'
+#' @description
+#'
+#' <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
+#'
+#' Busca cuentas (pestania "Personas" del buscador de X) consultando la **API
+#' GraphQL interna de X** (SearchTimeline). Requiere una sesion importada con
+#' [importSessionX()].
+#'
+#' @param search Consulta de busqueda (nombre, tema, etc.).
+#' @param n_users Numero maximo de usuarixs a recuperar. Por defecto 40.
+#' @param dir Directorio de destino del RDS. Por defecto el de trabajo.
+#' @param save Logico. Si TRUE (por defecto) guarda el resultado en un RDS.
+#'
+#' @return Un tibble con una fila por usuarix (mismas columnas que getUsersDataAPI).
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' importSessionX(auth_token = "...", ct0 = "...")
+#' getUsersSearchAPI("rstats", n_users = 50)
+#' }
+getUsersSearchAPI <- function(search, n_users = 40, dir = getwd(), save = TRUE) {
+  if (missing(search) || !nzchar(search)) stop("Necesito una consulta de b\u00fasqueda.")
+  cat("Buscando usuarixs: ", search, "\n", sep = "")
+  .collect_users(.search_url(search, "user"), "SearchTimeline", n_users, dir, save,
+                 paste0("api_users_search_", gsub("[^A-Za-z0-9]+", "_", search)))
 }

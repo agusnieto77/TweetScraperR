@@ -16,7 +16,8 @@ getUsersDataAPI(usernames, dir = getwd(), save = TRUE)
 \value{
 Un tibble con una fila por usuarix y columnas user, nombre, user_id,
 descripcion, seguidores, siguiendo, tweets, favoritos, verificado,
-ubicacion, fecha_creacion, url.
+ubicacion, sitio_web, imagen_perfil, banner, fecha_creacion, url,
+tweets_media, protegida y tipo_verificacion.
 }
 \description{
 \if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}

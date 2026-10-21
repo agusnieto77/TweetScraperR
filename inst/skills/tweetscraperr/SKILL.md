@@ -37,11 +37,15 @@ Referencia completa de argumentos y columnas: `references/functions.md`
 5. **Asigná siempre el resultado** a un objeto con nombre descriptivo
    (`tw_nasa`, `seg_rstats`) y mostrá un resumen corto
    (`nrow()`, rango de `fecha`, `dplyr::glimpse()`), no el tibble entero.
-6. **Pedidos grandes**: X aplica rate-limit. Para más de ~500 tweets o ~1000
-   usuarixs por llamada, avisá que puede tardar o cortarse y proponé partir en
-   tramos (por ejemplo con `since`/`until` en búsquedas).
-7. **Secretos**: nunca pidas que peguen cookies ni claves en el chat. Indicá
-   guardarlas en `~/.Renviron` y leerlas con `Sys.getenv()`.
+6. **Pedidos grandes**: X limita cada endpoint por cuenta en ventanas de 15
+   minutos (la búsqueda, ~50 consultas). Con una sola cuenta, al agotarse el
+   cupo el paquete espera a que X lo renueve; para más de ~500 tweets o ~1000
+   usuarixs proponé sumar cuentas al pool (`importSessionX(..., account =)`)
+   o partir en tramos (por ejemplo con `since`/`until` en búsquedas).
+7. **Secretos**: nunca pidas que peguen cookies ni claves en el chat. Para
+   cargar cuentas, que la persona corra `setupAccountsX()` en su consola
+   (entrada oculta), o que las guarde en `~/.Renviron` y las lea con
+   `Sys.getenv()`.
 8. **Uso responsable**: recordá, cuando aplique, que los datos son de personas
    reales; sugerí no redistribuir datos personales y respetar los términos de
    X. Las funciones con OpenAI envían contenido a un tercero: avisalo antes de
@@ -82,6 +86,23 @@ La sesión se guarda en disco y todas las funciones la reusan. Solo hay que
 repetirlo cuando expira. `loginX()` existe pero X suele bloquearlo: proponelo
 solo si la persona lo pide explícitamente.
 
+### Pool de cuentas (opcional)
+
+Con varias cuentas la recolección rota sola: la que agota el cupo de un
+endpoint queda en pausa y se sigue con otra; la que X rechaza se desactiva.
+
+```r
+setupAccountsX()              # asistente de consola: la persona carga cada cuenta (entrada oculta)
+importSessionX(Sys.getenv("X2_AUTH_TOKEN"), Sys.getenv("X2_CT0"), account = "cuenta2")
+addAccountsX("cuentas.csv")   # columnas account, auth_token, ct0, proxy (opcional)
+accountsX()                   # activas, pausas por endpoint, requests, errores
+checkAccountsX()              # valida cada sesión y muestra su @usuario real
+```
+
+`options(TweetScraperR.wait_timeout = 0)` hace que, si todas las cuentas están
+en pausa, se devuelva lo recolectado en vez de esperar (por defecto espera
+hasta 900 s).
+
 ## De la intención a la función
 
 | La persona quiere... | Función |
@@ -93,9 +114,13 @@ solo si la persona lo pide explícitamente.
 | Datos de tweets puntuales a partir de URLs | `getTweetsDataAPI(urls_tweets)` |
 | Tweets con fotos/videos de una cuenta | `getUserMediaAPI(username, n_tweets = 40)` |
 | Perfil(es): seguidores, bio, fecha de creación | `getUsersDataAPI(usernames)` |
+| País de la cuenta, cambios de nombre, verificación | `getUsersAboutAPI(usernames)` |
+| Buscar cuentas por tema o nombre | `getUsersSearchAPI(search, n_users = 40)` |
 | Seguidorxs de una cuenta | `getUserFollowersAPI(username, n_users = 100)` |
 | Cuentas que sigue una cuenta | `getUserFollowingAPI(username, n_users = 100)` |
 | Quién retuiteó un tweet | `getTweetsRetweetsAPI(url, n_users = 100)` |
+| Tweets de una Lista de X | `getListTweetsAPI(list_id, n_tweets = 40)` |
+| Miembros de una Lista de X | `getListMembersAPI(list_id, n_users = 100)` |
 | Actividad en el tiempo | `plotTime(df, group_by = "hour"/"day"/"week"/"month"/"year")` |
 | Nube de palabras | `plotWords(df, lang = "es", sw = NULL)` |
 | Emojis más usados | `plotEmojis(df, top_n = 10)` / `plotEmojisPNG(df)` (necesita `ggimage`) |
@@ -117,20 +142,30 @@ Notas de argumentos:
 ## Qué devuelven
 
 **Tweets** (`getUserTweetsAPI`, `getTweetsTimelinesAPI`, `getTweetsSearchAPI`,
-`getTweetsRepliesAPI`, `getTweetsDataAPI`, `getUserMediaAPI`): un tibble, una
-fila por tweet, 21 columnas:
+`getTweetsRepliesAPI`, `getTweetsDataAPI`, `getUserMediaAPI`,
+`getListTweetsAPI`): un tibble, una fila por tweet, 31 columnas:
 
-`fecha` (POSIXct UTC), `user` (con `@`), `texto`, `idioma`, `respuestas`,
-`retweets`, `citas`, `megustas`, `views`, `emoticones` (lista), `hashtags`
-(lista), `menciones` (lista), `urls_externas` (lista), `media` (lista de
-URLs), `media_tipo` (lista: photo/video/animated_gif), `es_retweet`,
-`es_cita`, `tweet_citado_id`, `conversation_id`, `url`, `tweet_id`.
+`fecha` (POSIXct UTC), `user` (con `@`), `texto` (completo, también en tweets
+largos), `idioma`, `respuestas`, `retweets`, `citas`, `megustas`, `views`,
+`emoticones` (lista), `hashtags` (lista), `menciones` (lista), `urls_externas`
+(lista), `media` (lista de URLs), `media_tipo` (lista: photo/video/animated_gif),
+`es_retweet`, `es_cita`, `tweet_citado_id`, `conversation_id`, `url`,
+`tweet_id`, `user_id`, `respuesta_a_id`, `respuesta_a_user`, `retweet_id`,
+`guardados`, `fuente` (app de publicación), `sensible`, `editado`, `lugar`,
+`pais`.
 
-**Usuarixs** (`getUsersDataAPI`, `getUserFollowersAPI`,
-`getUserFollowingAPI`, `getTweetsRetweetsAPI`): una fila por cuenta, 15
-columnas: `user`, `nombre`, `user_id`, `descripcion`, `seguidores`,
-`siguiendo`, `tweets`, `favoritos`, `verificado`, `ubicacion`, `sitio_web`,
-`imagen_perfil`, `banner`, `fecha_creacion` (POSIXct UTC), `url`.
+**Usuarixs** (`getUsersDataAPI`, `getUsersSearchAPI`, `getUserFollowersAPI`,
+`getUserFollowingAPI`, `getTweetsRetweetsAPI`, `getListMembersAPI`): una fila
+por cuenta, 18 columnas: `user`, `nombre`, `user_id`, `descripcion`,
+`seguidores`, `siguiendo`, `tweets`, `favoritos`, `verificado`, `ubicacion`,
+`sitio_web`, `imagen_perfil`, `banner`, `fecha_creacion` (POSIXct UTC), `url`,
+`tweets_media`, `protegida`, `tipo_verificacion`.
+
+**Acerca de la cuenta** (`getUsersAboutAPI`): `user`, `nombre`, `user_id`,
+`pais_cuenta`, `ubicacion_precisa`, `cambios_usuario`,
+`ultimo_cambio_usuario`, `afiliada_a`, `origen_cuenta`,
+`identidad_verificada`, `verificada_desde`, `fecha_creacion`, `url`. X no
+publica todos los campos para todas las cuentas (quedan en NA).
 
 Las columnas lista se exploran con `tidyr::unnest()` o `unlist()`.
 
@@ -184,8 +219,9 @@ dplyr::arrange(seg, dplyr::desc(seguidores))
 |---|---|
 | "No hay una sesión activa de X" | Correr `importSessionX()` con cookies frescas. |
 | "Tu sesión de X parece haber expirado" | Volver a copiar `auth_token` y `ct0` del navegador y reimportar. |
-| "Rate-limit de X bajo" (warning) | Esperar 15 minutos antes de seguir, o pedir menos datos. |
-| "Respuesta no-JSON del motor salteada" | X cortó por rate-limit a mitad de camino; el resultado es parcial. |
+| "Cuenta ... desactivada: ..." (mensaje) | X rechazó esa sesión; se sigue con otra cuenta del pool. Reimportarla con cookies frescas o `reactivateAccountX()`. |
+| "Todas las cuentas están en pausa para ..." | Se agotó el cupo de X en todas las cuentas; el resultado es parcial. Esperar a la hora indicada o sumar cuentas. |
+| "Respuesta no-JSON del motor salteada" | X cortó a mitad de camino; el resultado es parcial. |
 | "El motor Node/Playwright no está instalado" | `installPlaywrightEngine()`. |
 | "No se encontró Node.js" | Instalar Node.js >= 18 o `options(TweetScraperR.node = "ruta/a/node")`. |
 | "salida no-JSON del motor" con `stderr` | Mostrar el `stderr` a la persona; suele ser Chromium faltante → reinstalar el motor. |

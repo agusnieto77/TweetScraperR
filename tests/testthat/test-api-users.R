@@ -9,7 +9,8 @@ test_that(".parse_users extrae usuarios y cursor del JSON de lista", {
     names(res$users),
     c("user", "nombre", "user_id", "descripcion", "seguidores", "siguiendo",
       "tweets", "favoritos", "verificado", "ubicacion", "sitio_web",
-      "imagen_perfil", "banner", "fecha_creacion", "url")
+      "imagen_perfil", "banner", "fecha_creacion", "url", "tweets_media",
+      "protegida", "tipo_verificacion")
   )
   u1 <- res$users[1, ]
   expect_equal(u1$user, "@RosanaFerrero")

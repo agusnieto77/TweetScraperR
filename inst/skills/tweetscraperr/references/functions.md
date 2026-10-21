@@ -19,15 +19,37 @@ checkPlaywrightEngine()
 Verifica el motor. Devuelve invisible una lista con `ok`, `playwright`, `node`.
 
 ```r
-importSessionX(auth_token, ct0, state = <ruta estándar del paquete>)
+importSessionX(auth_token, ct0, account = "default", proxy = NULL, cookies = NULL)
 ```
-Guarda las cookies `auth_token` y `ct0` de x.com como sesión persistente.
-Devuelve invisible la ruta del archivo de sesión.
+Guarda las cookies `auth_token` y `ct0` de x.com como una cuenta del pool.
+`cookies` acepta el header `"auth_token=...; ct0=..."` o el JSON de
+Cookie-Editor en lugar de los dos argumentos. Reimportar con el mismo
+`account` renueva la sesión y reactiva la cuenta. Devuelve invisible el
+nombre de la cuenta.
+
+```r
+setupAccountsX(validate = TRUE)  # asistente interactivo: pide nombre, auth_token y ct0
+                                 # (ocultos; acepta pegar el header de cookies) y proxy;
+                                 # importa y valida cada cuenta. Enter vacío termina.
+addAccountsX(accounts)        # data frame o CSV: account, auth_token, ct0, proxy
+accountsX()                   # tibble: cuenta, usuario_x, activa, pausas, requests,
+                              # requests_por_endpoint, ultimo_uso, proxy, error
+checkAccountsX(accounts = NULL)  # valida sesiones: cuenta, valida, usuario_x, motivo
+setProxyX(accounts, proxy, validate = TRUE)  # asigna/cambia el proxy sin tocar la sesión
+                                            # (NULL lo quita) y valida a través de él
+reactivateAccountX(accounts)
+resetLocksX()
+removeAccountX(accounts)
+```
+Gestión del pool. Opciones: `TweetScraperR.wait_timeout` (segundos de espera
+si todas las cuentas están en pausa; por defecto 900), `TweetScraperR.proxy`
+(proxy global; la cuenta con proxy propio lo usa primero) y
+`TweetScraperR.debug_dir` (vuelca cada respuesta cruda de X).
 
 ```r
 loginX(xuser = Sys.getenv("TWITTER_USER"), xpass = Sys.getenv("TWITTER_PASS"),
        email = Sys.getenv("TWITTER_EMAIL", ""), headless = TRUE,
-       state = <ruta estándar>, proxy = NULL)
+       account = "default", proxy = NULL)
 ```
 Login automatizado. X suele bloquearlo; preferir `importSessionX()`.
 `proxy`: `"http://host:puerto"`, `"usuario:clave@host:puerto"` o
@@ -35,7 +57,7 @@ Login automatizado. X suele bloquearlo; preferir `importSessionX()`.
 
 ## Tweets
 
-Todas devuelven el tibble de 21 columnas descrito en `SKILL.md`.
+Todas devuelven el tibble de 31 columnas descrito en `SKILL.md`.
 
 ```r
 getUserTweetsAPI(username = "NASA", n_tweets = 40, dir = getwd(), save = TRUE)
@@ -72,19 +94,35 @@ getUserMediaAPI(username = "NASA", n_tweets = 40, dir = getwd(), save = TRUE)
 Tweets con fotos/videos de una cuenta. Para videos, `media` trae el mp4 de
 mayor bitrate.
 
+```r
+getListTweetsAPI(list_id, n_tweets = 40, dir = getwd(), save = TRUE)
+```
+Tweets recientes de una Lista de X. `list_id`: id numérico o URL
+`https://x.com/i/lists/<id>`.
+
 ## Usuarixs
 
-Devuelven una fila por cuenta (15 columnas): `user`, `nombre`, `user_id`,
+Devuelven una fila por cuenta (18 columnas): `user`, `nombre`, `user_id`,
 `descripcion`, `seguidores`, `siguiendo`, `tweets`, `favoritos`,
 `verificado`, `ubicacion`, `sitio_web`, `imagen_perfil`, `banner`,
-`fecha_creacion`, `url`.
+`fecha_creacion`, `url`, `tweets_media`, `protegida`, `tipo_verificacion`.
 
 ```r
 getUsersDataAPI(usernames, dir = getwd(), save = TRUE)
+getUsersSearchAPI(search, n_users = 40, dir = getwd(), save = TRUE)
 getUserFollowersAPI(username, n_users = 100, dir = getwd(), save = TRUE)
 getUserFollowingAPI(username, n_users = 100, dir = getwd(), save = TRUE)
 getTweetsRetweetsAPI(url, n_users = 100, dir = getwd(), save = TRUE)
+getListMembersAPI(list_id, n_users = 100, dir = getwd(), save = TRUE)
 ```
+
+```r
+getUsersAboutAPI(usernames, dir = getwd(), save = TRUE)
+```
+Ficha "Acerca de esta cuenta": `pais_cuenta`, `ubicacion_precisa`,
+`cambios_usuario`, `ultimo_cambio_usuario`, `afiliada_a`, `origen_cuenta`,
+`identidad_verificada`, `verificada_desde` (más `user`, `nombre`, `user_id`,
+`fecha_creacion`, `url`).
 
 ## Visualización
 

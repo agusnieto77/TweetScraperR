@@ -5,6 +5,13 @@
 # que dispara la propia app de X al navegar la pagina de busqueda (.pw_harvest),
 # y se parsea con el mismo parser de timeline (.parse_timeline_tweets).
 
+#' URL del buscador de X para una consulta y una pestania (`f`)
+#' @noRd
+.search_url <- function(search, f) {
+  paste0("https://x.com/search?q=", utils::URLencode(search, reserved = TRUE),
+         "&src=typed_query&f=", f)
+}
+
 #' Search Tweets via the X API (experimental)
 #'
 #' @description
@@ -56,12 +63,10 @@ getTweetsSearchAPI <- function(search = "#RStats", n_tweets = 40,
     until <- gsub("[[:space:]]+", "_", until)
     search <- paste(search, paste0("until:", until))
   }
-  url <- paste0("https://x.com/search?q=", utils::URLencode(search, reserved = TRUE),
-                "&src=typed_query&f=", f)
+  url <- .search_url(search, f)
   cat("Buscando: ", search, " (", product, ")\n", sep = "")
 
-  scrolls <- max(3L, as.integer(ceiling(n_tweets / 15) + 3L))
-  docs <- .pw_harvest(url, "SearchTimeline", max_scrolls = scrolls)
+  docs <- .pw_harvest(url, "SearchTimeline", max_scrolls = .scrolls_for(n_tweets), n = n_tweets)
 
   rows <- list()
   for (d in docs) {

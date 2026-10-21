@@ -33,7 +33,7 @@ getTweetsDataAPI <- function(urls_tweets, dir = getwd(), save = TRUE) {
   }
   ids <- sub("^.*/status/([0-9]+).*$", "\\1", urls_tweets)
   # Una sola sesion de navegador para TODAS las URLs (batch).
-  grupos <- .pw_harvest_batch(urls_tweets, "TweetDetail", max_scrolls = 1)
+  grupos <- .pw_harvest_batch(urls_tweets, "TweetDetail", max_scrolls = 1, n = 1)
 
   rows <- list()
   for (k in seq_along(grupos)) {

@@ -6,12 +6,21 @@ template:
     primary: "#1d9bf0"
 
 reference:
-- title: "Sesión y motor"
+- title: "Sesión, pool de cuentas y motor"
   desc: >
-    Instalar el motor de Node.js/Playwright e importar tu sesión real de X a
-    partir de las cookies del navegador.
+    Instalar el motor de Node.js/Playwright e importar tus sesiones reales de X
+    a partir de las cookies del navegador. Con varias cuentas, la recolección
+    rota sola cuando una agota el cupo de X.
   contents:
   - importSessionX
+  - setupAccountsX
+  - addAccountsX
+  - accountsX
+  - setProxyX
+  - checkAccountsX
+  - reactivateAccountX
+  - resetLocksX
+  - removeAccountX
   - installPlaywrightEngine
   - checkPlaywrightEngine
   - loginX
@@ -27,13 +36,17 @@ reference:
   - getTweetsRepliesAPI
   - getTweetsDataAPI
   - getUserMediaAPI
+  - getListTweetsAPI
 
 - title: "Usuarios y redes (API)"
   contents:
   - getUsersDataAPI
+  - getUsersAboutAPI
+  - getUsersSearchAPI
   - getUserFollowersAPI
   - getUserFollowingAPI
   - getTweetsRetweetsAPI
+  - getListMembersAPI
 
 - title: "Visualización"
   contents:

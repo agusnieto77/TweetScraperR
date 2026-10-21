@@ -33,8 +33,7 @@
 getTweetsRepliesAPI <- function(url, n_tweets = 40, dir = getwd(), save = TRUE) {
   if (missing(url) || !nzchar(url)) stop("Necesito la URL de un tweet.")
   cat("Recolectando respuestas de: ", url, "\n", sep = "")
-  scrolls <- max(3L, as.integer(ceiling(n_tweets / 15) + 3L))
-  docs <- .pw_harvest(url, "TweetDetail", max_scrolls = scrolls)
+  docs <- .pw_harvest(url, "TweetDetail", max_scrolls = .scrolls_for(n_tweets), n = n_tweets)
 
   rows <- list()
   for (d in docs) {

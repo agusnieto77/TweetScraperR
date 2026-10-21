@@ -114,13 +114,55 @@ sesión (persistida como `storageState`) sin necesidad de volver a loguearte.
 > `auth_token` y `ct0` desde el navegador y reimportalas con
 > `importSessionX()`.
 
+### Pool de cuentas
+
+X limita cada endpoint **por cuenta** en ventanas de 15 minutos (la búsqueda,
+por ejemplo, admite unas 50 consultas). Si importás **varias cuentas**, el
+paquete arma un *pool* y rota solo: cuando una cuenta agota el cupo de un
+endpoint queda en pausa hasta que X lo renueva y la recolección sigue con la
+siguiente, retomando desde donde se cortó gracias al cursor de paginación,
+sin volver a traer lo ya recolectado. Si X rechaza una sesión (vencida,
+suspendida o bloqueada) la cuenta se desactiva y también se sigue con otra.
+El modelo está portado de [twscrape](https://github.com/vladkens/twscrape).
+
+``` r
+importSessionX(auth_token = "...", ct0 = "...")                     # cuenta "default"
+importSessionX(cookies = "auth_token=...; ct0=...", account = "cuenta2",
+               proxy = "http://usuario:clave@host:8080")             # proxy propio
+addAccountsX("cuentas.csv")  # columnas account, auth_token, ct0 y (opcional) proxy
+
+setupAccountsX()             # asistente: pide nombre, auth_token y ct0 (ocultos) y valida
+
+accountsX()                  # estado: activas, pausas por endpoint, requests, errores
+checkAccountsX()             # valida cada sesión y registra su @usuario real
+setProxyX("cuenta2", "http://usuario:clave@host:puerto")  # asigna/cambia (NULL lo quita) y valida
+reactivateAccountX("cuenta2")
+resetLocksX()                # quita las pausas de rate-limit
+removeAccountX("cuenta2")
+```
+
+Con una sola cuenta funciona igual que antes: si se agota el cupo, el paquete
+espera a que X lo renueve. Opciones:
+
+- `options(TweetScraperR.wait_timeout = 900)`: segundos máximos de espera
+  cuando todas las cuentas están en pausa (`0` = no esperar y devolver lo
+  recolectado hasta el corte).
+- `options(TweetScraperR.proxy = "socks5://host:1080")` (o la variable de
+  entorno `TWEETSCRAPERR_PROXY`): proxy global para las cuentas sin proxy
+  propio.
+- `options(TweetScraperR.debug_dir = "dump")`: guarda cada respuesta cruda de
+  X en esa carpeta, útil cuando X cambia el formato de sus datos.
+
+La sesión única de versiones anteriores se incorpora sola al pool como la
+cuenta `"default"`.
+
 ### Scraping vía API GraphQL/JSON
 
 Toda la recolección se hace con la familia de funciones `*API()`: consultan la
 **API GraphQL interna de X** y devuelven datos estructurados directamente del
 JSON (texto completo sin truncar, fecha exacta y métricas: respuestas,
 retweets, citas, me gusta y vistas), sin selectores CSS frágiles. Todas reusan
-la sesión importada con `importSessionX()`. Las funciones de scraping por HTML
+la sesión importada con `importSessionX()` (rotando las cuentas del pool). Las funciones de scraping por HTML
 fueron **eliminadas** en la 0.5.0 (ver el mapeo de reemplazos en el
 [NEWS.md](NEWS.md)).
 
@@ -136,6 +178,10 @@ fueron **eliminadas** en la 0.5.0 (ver el mapeo de reemplazos en el
 | `getUserFollowersAPI()` | Seguidorxs de unx usuarix |
 | `getUserFollowingAPI()` | Cuentas que sigue unx usuarix |
 | `getUsersDataAPI()` | Datos de perfil de usuarixs |
+| `getUsersAboutAPI()` | Ficha "Acerca de esta cuenta": país de la cuenta, cambios de usuario, verificación |
+| `getUsersSearchAPI()` | Búsqueda de cuentas (pestaña "Personas") |
+| `getListTweetsAPI()` | Tweets de una Lista de X |
+| `getListMembersAPI()` | Miembros de una Lista de X |
 
 Las funciones de tweets devuelven un `tibble` rico: texto completo, fecha,
 idioma, métricas (respuestas/retweets/citas/me gusta/vistas), y list-columns
@@ -227,45 +273,72 @@ perfiles <- getUsersDataAPI(c("NASA", "rstatstweet"))
 ```
 
 Cada función de tweets devuelve un `tibble` con datos **estructurados**
-(21 columnas), listo para analizar. Salida real (`getUserTweetsAPI("NASA",
-n_tweets = 10)`, capturada el 2026-10-18):
+(31 columnas), listo para analizar. Salida real (`getUserTweetsAPI("NASA",
+n_tweets = 10)`, capturada el 2026-10-20):
 
 ``` r
 dplyr::glimpse(timeline)
 #> Rows: 10
-#> Columns: 21
-#> $ fecha           <dttm> 2026-10-16 19:42:20, 2026-10-16 13:53:53, ...
-#> $ user            <chr> "@NASA", "@NASA", "@NASA", "@NASA", ...
-#> $ texto           <chr> "The aircraft lineup just keeps getting bigger. ✈️..."
-#> $ idioma          <chr> "en", "en", "en", "en", ...
-#> $ respuestas      <int> 124, 141, 76, 85, 91, 165, 167, 90, 259, 120
-#> $ retweets        <int> 194, 242, 157, 164, 236, 384, 377, 137, 938, 198
-#> $ citas           <int> 21, 16, 10, 16, 12, 59, 725, 15, 93, 13
-#> $ megustas        <int> 1407, 1867, 1111, 1065, 2105, 2227, 2662, ...
-#> $ views           <int> 329251, 958698, 376585, 460454, 375943, ...
-#> $ emoticones      <list> "✈", <>, <>, <>, <>, <>, "🛠", <>, <>, "✈"
-#> $ hashtags        <list> <>, <>, <>, <>, <>, <>, <>, <>, <>, <>
-#> $ menciones       <list> "NASAKennedy", <>, "JAXA_en", <"NASAJohnson"...>
-#> $ urls_externas   <list> "https://www.nasa.gov/maxpower/", ...
-#> $ media           <list> "https://video.twimg.com/amplify_video/...", ...
-#> $ media_tipo      <list> "video", "photo", "photo", <>, "photo", ...
-#> $ es_retweet      <lgl> FALSE, FALSE, FALSE, FALSE, ...
-#> $ es_cita         <lgl> FALSE, FALSE, FALSE, FALSE, ...
-#> $ tweet_citado_id <chr> NA, NA, NA, NA, ...
-#> $ conversation_id <chr> "2111180963661435219", "2111093273800356092", ...
-#> $ url             <chr> "https://x.com/NASA/status/2111180963661435219", ...
-#> $ tweet_id        <chr> "2111180963661435219", "2111093273800356092", ...
+#> Columns: 31
+#> $ fecha            <dttm> 2026-10-20 18:00:27, 2026-10-20 18:00:06, 2026-10-20~
+#> $ user             <chr> "@NASA", "@NASA", "@NASA", "@NASA", "@NASA", "@NASA",~
+#> $ texto            <chr> "LIVE: Get a preview of two upcoming spacewalks set f~
+#> $ idioma           <chr> "en", "en", "en", "en", "en", "en", "en", "en", "en",~
+#> $ respuestas       <int> 41, 20, 151, 11, 83, 189, 169, 81, 88, 92
+#> $ retweets         <int> 79, 75, 305, 52, 120, 249, 264, 168, 172, 243
+#> $ citas            <int> 5, 8, 43, 3, 14, 25, 19, 10, 18, 10
+#> $ megustas         <int> 497, 511, 1949, 322, 1034, 1652, 2026, 1165, 1100, 21~
+#> $ views            <int> 227105, 224886, 286788, 90650, 405674, 404857, 100438~
+#> $ emoticones       <list> <>, <>, <>, <>, <"🇺", "🇿">, "✈", <>, <>, <>, <>
+#> $ hashtags         <list> <>, <>, <>, <>, <>, <>, <>, <>, <>, <>
+#> $ menciones        <list> "astro_anil", <>, "NASAMoonBase", <"NASAMoonBase", "N~
+#> $ urls_externas    <list> "https://x.com/i/broadcasts/1jxXgBNWypPJZ", "https://~
+#> $ media            <list> <>, <>, "https://video.twimg.com/amplify_video/211256~
+#> $ media_tipo       <list> <>, <>, "video", <>, "photo", "video", "photo", "pho~
+#> $ es_retweet       <lgl> FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FAL~
+#> $ es_cita          <lgl> FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FAL~
+#> $ tweet_citado_id  <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA
+#> $ conversation_id  <chr> "2112604875452223824", "2112604787539865876", "21125~
+#> $ url              <chr> "https://x.com/NASA/status/2112604875452223824", "ht~
+#> $ tweet_id         <chr> "2112604875452223824", "2112604787539865876", "21125~
+#> $ user_id          <chr> "11348282", "11348282", "11348282", "11348282", "1134~
+#> $ respuesta_a_id   <chr> NA, NA, NA, "2112560723603632217", NA, NA, NA, NA, NA~
+#> $ respuesta_a_user <chr> NA, NA, NA, "@NASA", NA, NA, NA, NA, NA, NA
+#> $ retweet_id       <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA
+#> $ guardados        <int> 28, 38, 122, 25, 32, 67, 112, 50, 48, 131
+#> $ fuente           <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA
+#> $ sensible         <lgl> FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALS~
+#> $ editado          <lgl> FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALS~
+#> $ lugar            <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA
+#> $ pais             <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA
 ```
+
+`fuente`, `lugar` y `pais` solo vienen cuando X los publica (la app de
+publicación figura en algunos timelines, como el de las Listas; la geoetiqueta
+es rara).
 
 Y los perfiles (`getUsersDataAPI("NASA")`, misma fecha):
 
 ``` r
-#> # A tibble: 1 × 15
-#>   user  nombre user_id  descripcion        seguidores siguiendo tweets
-#>   <chr> <chr>  <chr>    <chr>                   <int>     <int>  <int>
-#> 1 @NASA NASA   11348282 Making the seemin…  92323271       115  74438
-#> # ℹ 8 more variables: favoritos <int>, verificado <lgl>, ubicacion <chr>,
-#> #   sitio_web <chr>, imagen_perfil <chr>, banner <chr>,
+#> # A tibble: 1 × 18
+#>   user  nombre user_id  descripcion        seguidores siguiendo tweets favoritos
+#>   <chr> <chr>  <chr>    <chr>                   <int>     <int>  <int>     <int>
+#> 1 @NASA NASA   11348282 "Making the seemi…   92315363       115  74444     17032
+#> # ℹ 10 more variables: verificado <lgl>, ubicacion <chr>, sitio_web <chr>,
+#> #   imagen_perfil <chr>, banner <chr>, fecha_creacion <dttm>, url <chr>,
+#> #   tweets_media <int>, protegida <lgl>, tipo_verificacion <chr>
+```
+
+Y la ficha "Acerca de esta cuenta" (`getUsersAboutAPI(c("NASA", "elonmusk"))`):
+
+``` r
+#> # A tibble: 2 × 13
+#>   user      nombre    user_id  pais_cuenta   ubicacion_precisa cambios_usuario
+#>   <chr>     <chr>     <chr>    <chr>         <lgl>                       <int>
+#> 1 @NASA     NASA      11348282 <NA>          TRUE                            0
+#> 2 @elonmusk Elon Musk 44196397 United States FALSE                           0
+#> # ℹ 7 more variables: ultimo_cambio_usuario <dttm>, afiliada_a <chr>,
+#> #   origen_cuenta <chr>, identidad_verificada <lgl>, verificada_desde <dttm>,
 #> #   fecha_creacion <dttm>, url <chr>
 ```
 

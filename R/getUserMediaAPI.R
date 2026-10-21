@@ -27,8 +27,7 @@ getUserMediaAPI <- function(username = "NASA", n_tweets = 40, dir = getwd(), sav
   if (!nzchar(username)) stop("Necesito un nombre de usuarix.")
   url <- paste0("https://x.com/", username, "/media")
   cat("Recolectando media de @", username, "...\n", sep = "")
-  scrolls <- max(3L, as.integer(ceiling(n_tweets / 15) + 3L))
-  docs <- .pw_harvest(url, "UserVideoTimeline", max_scrolls = scrolls)
+  docs <- .pw_harvest(url, "UserVideoTimeline", max_scrolls = .scrolls_for(n_tweets), n = n_tweets)
 
   rows <- list()
   for (d in docs) {

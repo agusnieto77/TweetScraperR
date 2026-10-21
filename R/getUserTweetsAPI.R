@@ -89,7 +89,18 @@
   m[nzchar(m)]
 }
 
+#' Etiqueta legible del campo `source` ('<a href="...">Twitter for iPhone</a>')
+#' @noRd
+.source_label <- function(src) {
+  if (is.null(src) || !nzchar(src)) return(NA_character_)
+  lab <- sub("^.*>([^<]*)<.*$", "\\1", src)
+  if (identical(lab, src)) src else lab
+}
+
 #' Construye una fila-tibble de tweet a partir de un objeto tweet_results$result
+#'
+#' Los tweets largos (mas de 280 caracteres) traen en `legacy$full_text` solo
+#' el comienzo: el texto completo y sus entidades viven en `note_tweet`.
 #' @noRd
 .tweet_row <- function(tr) {
   if (is.null(tr)) return(NULL)
@@ -99,32 +110,47 @@
   core <- tr$core$user_results$result
   handle <- .or_null(core$core$screen_name, core$legacy$screen_name)
   tid <- .or_null(tr$rest_id, lg$id_str)
-  ent <- lg$entities
+  note <- tr$note_tweet$note_tweet_results$result
+  texto <- .or_null(note$text, lg$full_text)
+  ent <- .or_null(note$entity_set, lg$entities)
   med <- .extract_media(lg)
   qr <- tr$quoted_status_result$result
   if (identical(qr$`__typename`, "TweetWithVisibilityResults")) qr <- qr$tweet
+  rt <- lg$retweeted_status_result$result
+  if (identical(rt$`__typename`, "TweetWithVisibilityResults")) rt <- rt$tweet
+  reply_to <- lg$in_reply_to_screen_name
   tibble::tibble(
-    fecha           = .x_parse_twitter_date(lg$created_at),
-    user            = if (is.null(handle)) NA_character_ else paste0("@", handle),
-    texto           = lg$full_text,
-    idioma          = .or_null(lg$lang, NA_character_),
-    respuestas      = as.integer(.or_null(lg$reply_count, NA)),
-    retweets        = as.integer(.or_null(lg$retweet_count, NA)),
-    citas           = as.integer(.or_null(lg$quote_count, NA)),
-    megustas        = as.integer(.or_null(lg$favorite_count, NA)),
-    views           = suppressWarnings(as.integer(.or_null(tr$views$count, NA))),
-    emoticones      = list(.extract_emojis(lg$full_text)),
-    hashtags        = list(.entity_vec(ent$hashtags, "text")),
-    menciones       = list(.entity_vec(ent$user_mentions, "screen_name")),
-    urls_externas   = list(.entity_vec(ent$urls, "expanded_url")),
-    media           = list(med$urls),
-    media_tipo      = list(med$tipos),
-    es_retweet      = !is.null(lg$retweeted_status_result),
-    es_cita         = isTRUE(lg$is_quote_status),
-    tweet_citado_id = .or_null(qr$rest_id, NA_character_),
-    conversation_id = .or_null(lg$conversation_id_str, NA_character_),
-    url             = if (is.null(handle)) NA_character_ else paste0("https://x.com/", handle, "/status/", tid),
-    tweet_id        = .or_null(tid, NA_character_)
+    fecha            = .x_parse_twitter_date(lg$created_at),
+    user             = if (is.null(handle)) NA_character_ else paste0("@", handle),
+    texto            = texto,
+    idioma           = .or_null(lg$lang, NA_character_),
+    respuestas       = as.integer(.or_null(lg$reply_count, NA)),
+    retweets         = as.integer(.or_null(lg$retweet_count, NA)),
+    citas            = as.integer(.or_null(lg$quote_count, NA)),
+    megustas         = as.integer(.or_null(lg$favorite_count, NA)),
+    views            = suppressWarnings(as.integer(.or_null(tr$views$count, NA))),
+    emoticones       = list(.extract_emojis(texto)),
+    hashtags         = list(.entity_vec(ent$hashtags, "text")),
+    menciones        = list(.entity_vec(ent$user_mentions, "screen_name")),
+    urls_externas    = list(.entity_vec(ent$urls, "expanded_url")),
+    media            = list(med$urls),
+    media_tipo       = list(med$tipos),
+    es_retweet       = !is.null(lg$retweeted_status_result),
+    es_cita          = isTRUE(lg$is_quote_status),
+    tweet_citado_id  = .or_null(qr$rest_id, NA_character_),
+    conversation_id  = .or_null(lg$conversation_id_str, NA_character_),
+    url              = if (is.null(handle)) NA_character_ else paste0("https://x.com/", handle, "/status/", tid),
+    tweet_id         = .or_null(tid, NA_character_),
+    user_id          = .or_null(.or_null(core$rest_id, lg$user_id_str), NA_character_),
+    respuesta_a_id   = .or_null(lg$in_reply_to_status_id_str, NA_character_),
+    respuesta_a_user = if (is.null(reply_to)) NA_character_ else paste0("@", reply_to),
+    retweet_id       = .or_null(rt$rest_id, NA_character_),
+    guardados        = as.integer(.or_null(lg$bookmark_count, NA)),
+    fuente           = .source_label(tr$source),
+    sensible         = isTRUE(lg$possibly_sensitive),
+    editado          = length(tr$edit_control$edit_tweet_ids) > 1L,
+    lugar            = .or_null(lg$place$full_name, NA_character_),
+    pais             = .or_null(lg$place$country, NA_character_)
   )
 }
 
@@ -188,11 +214,15 @@
 #' @param dir Directorio de destino del RDS. Por defecto el de trabajo.
 #' @param save Logico. Si TRUE (por defecto) guarda el resultado en un RDS.
 #'
-#' @return Un tibble con un tweet por fila y columnas: fecha, user, texto,
-#'   idioma, respuestas, retweets, citas, megustas, views, emoticones (lista), hashtags (lista),
-#'   menciones (lista), urls_externas (lista), media (lista de URLs),
-#'   media_tipo (lista: photo/video/animated_gif), es_retweet, es_cita,
-#'   tweet_citado_id, conversation_id, url y tweet_id.
+#' @return Un tibble con un tweet por fila y columnas: fecha, user, texto
+#'   (completo, tambien en tweets largos), idioma, respuestas, retweets, citas,
+#'   megustas, views, emoticones (lista), hashtags (lista), menciones (lista),
+#'   urls_externas (lista), media (lista de URLs), media_tipo (lista:
+#'   photo/video/animated_gif), es_retweet, es_cita, tweet_citado_id,
+#'   conversation_id, url, tweet_id, user_id (autorx), respuesta_a_id,
+#'   respuesta_a_user, retweet_id (tweet original de un retweet), guardados,
+#'   fuente (app de publicacion), sensible, editado, lugar y pais (geoetiqueta,
+#'   si la hay).
 #' @export
 #'
 #' @examples
@@ -204,8 +234,7 @@ getUserTweetsAPI <- function(username = "NASA", n_tweets = 40, dir = getwd(), sa
   if (!nzchar(username)) stop("Necesito un nombre de usuarix.")
   url <- paste0("https://x.com/", username)
   cat("Recolectando timeline de @", username, "...\n", sep = "")
-  scrolls <- max(3L, as.integer(ceiling(n_tweets / 15) + 3L))
-  docs <- .pw_harvest(url, "UserOriginalsTimeline", max_scrolls = scrolls)
+  docs <- .pw_harvest(url, "UserOriginalsTimeline", max_scrolls = .scrolls_for(n_tweets), n = n_tweets)
 
   rows <- list()
   for (d in docs) {

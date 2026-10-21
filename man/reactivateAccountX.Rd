@@ -17,3 +17,8 @@ Una cuenta se desactiva cuando X rechaza su sesion o la limita. Si fue un
 falso positivo (o ya se resolvio desde el navegador), se reactiva con esta
 funcion. Si la sesion vencio, conviene reimportarla con \code{\link[=importSessionX]{importSessionX()}}.
 }
+\examples{
+\dontrun{
+reactivateAccountX("cuenta2")
+}
+}

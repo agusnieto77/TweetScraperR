@@ -9,7 +9,7 @@ getTweetsSentiments(
   api_key = Sys.getenv("OPENAI_API_KEY"),
   model = "gpt-4o-mini",
   dir = getwd(),
-  save = TRUE
+  save = FALSE
 )
 }
 \arguments{
@@ -21,11 +21,12 @@ se intenta obtener de la variable de entorno OPENAI_API_KEY.}
 \item{model}{Una cadena de caracteres que especifica el modelo de OpenAI a utilizar.
 Por defecto es "gpt-4o-mini".}
 
-\item{dir}{Una cadena de caracteres que especifica el directorio donde se guardarán
-los archivos RDS con los resultados. Por defecto es el directorio de trabajo actual.}
+\item{dir}{Una cadena de caracteres que especifica el directorio donde se guardan
+los archivos RDS con los resultados cuando \code{save = TRUE}. Por defecto es el
+directorio de trabajo actual.}
 
-\item{save}{Lógico. Indica si se deben guardar los resultados (totales y parciales)
-en archivos RDS dentro de \code{dir}. Por defecto es TRUE.}
+\item{save}{Logico. Si TRUE guarda los resultados (totales y parciales) en
+archivos RDS dentro de \code{dir}. Por defecto FALSE: no se escribe ningun archivo.}
 }
 \value{
 Un tibble con los resultados del análisis para cada tweet. Cada fila

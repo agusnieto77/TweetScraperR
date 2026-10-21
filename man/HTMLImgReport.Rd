@@ -4,7 +4,7 @@
 \alias{HTMLImgReport}
 \title{Generate HTML visualization of analyzed images}
 \usage{
-HTMLImgReport(results, output_file = "visualizacion_imagenes.html")
+HTMLImgReport(results, output_file)
 }
 \arguments{
 \item{results}{Un data frame o tibble que contiene los resultados del análisis de imágenes de la función \code{getTweetsImagesAnalysis}.
@@ -23,13 +23,13 @@ Debe incluir las siguientes columnas:
 }}
 
 \item{output_file}{Una cadena de caracteres con el nombre (o la ruta) del archivo
-HTML de salida. Por defecto es "visualizacion_imagenes.html" en el directorio
-de trabajo actual.}
+HTML de salida. Es obligatorio: la funcion no escribe archivos en una
+ubicacion por defecto.}
 }
 \value{
-Esta función no devuelve ningún valor. Genera un archivo HTML (por defecto
-"visualizacion_imagenes.html" en el directorio de trabajo actual) y muestra
-un mensaje de confirmación.
+Invisiblemente, la ruta normalizada del archivo HTML generado. Como
+efecto secundario escribe el archivo en \code{output_file} y muestra un mensaje
+de confirmacion.
 }
 \description{
 #' \if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}
@@ -56,7 +56,8 @@ La visualización incluye:
 \examples{
 \dontrun{
 # Asumiendo que tienes un data frame llamado 'resultados_analisis'
-HTMLImgReport(resultados_analisis)
+HTMLImgReport(resultados_analisis,
+              output_file = file.path(tempdir(), "visualizacion_imagenes.html"))
 }
 
 }

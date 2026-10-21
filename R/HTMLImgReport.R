@@ -23,12 +23,12 @@
 #'     \item img: La ruta o URL de la imagen (character)
 #'   }
 #' @param output_file Una cadena de caracteres con el nombre (o la ruta) del archivo
-#'   HTML de salida. Por defecto es "visualizacion_imagenes.html" en el directorio
-#'   de trabajo actual.
+#'   HTML de salida. Es obligatorio: la funcion no escribe archivos en una
+#'   ubicacion por defecto.
 #'
-#' @return Esta función no devuelve ningún valor. Genera un archivo HTML (por defecto
-#'   "visualizacion_imagenes.html" en el directorio de trabajo actual) y muestra
-#'   un mensaje de confirmación.
+#' @return Invisiblemente, la ruta normalizada del archivo HTML generado. Como
+#'   efecto secundario escribe el archivo en `output_file` y muestra un mensaje
+#'   de confirmacion.
 #'
 #' @details
 #' La función crea una página HTML responsiva utilizando Bootstrap para el diseño.
@@ -48,7 +48,8 @@
 #' @examples
 #' \dontrun{
 #' # Asumiendo que tienes un data frame llamado 'resultados_analisis'
-#' HTMLImgReport(resultados_analisis)
+#' HTMLImgReport(resultados_analisis,
+#'               output_file = file.path(tempdir(), "visualizacion_imagenes.html"))
 #' }
 #'
 #' @importFrom htmltools tags div img h5 p span strong save_html HTML
@@ -56,7 +57,10 @@
 #' @export
 #'
 
-HTMLImgReport <- function(results, output_file = "visualizacion_imagenes.html") {
+HTMLImgReport <- function(results, output_file) {
+  if (missing(output_file) || !is.character(output_file) || length(output_file) != 1L || !nzchar(output_file)) {
+    stop("Indic\u00e1 'output_file', la ruta del archivo HTML de salida.")
+  }
   # Verificar que 'results' contiene al menos una fila
   if (nrow(results) == 0) {
     stop("El data frame 'results' no contiene filas.")
@@ -679,7 +683,8 @@ HTMLImgReport <- function(results, output_file = "visualizacion_imagenes.html") 
 
   # Guardar el HTML en un archivo
   htmltools::save_html(html_content, file = output_file)
-  file_name <- if (basename(output_file) == output_file) paste0(getwd(), "/", output_file) else output_file
+  file_name <- normalizePath(output_file, winslash = "/", mustWork = FALSE)
 
   message("Visualizaci\u00f3n HTML generada y guardada en: ", file_name)
+  invisible(file_name)
 }

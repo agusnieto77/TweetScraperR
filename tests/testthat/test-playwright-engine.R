@@ -24,6 +24,7 @@ stub_engine <- function() {
 }
 
 test_that(".pw_call pasa los parametros por stdin y separa logs de eventos de progreso", {
+  skip_on_cran()
   skip_if(Sys.which("node") == "", "Node.js no disponible")
   d <- stub_engine()
   local_mocked_bindings(.pw_engine_dir = function() d)
@@ -39,6 +40,7 @@ test_that(".pw_call pasa los parametros por stdin y separa logs de eventos de pr
 })
 
 test_that(".pw_call propaga el codigo de salida del motor", {
+  skip_on_cran()
   skip_if(Sys.which("node") == "", "Node.js no disponible")
   d <- stub_engine()
   local_mocked_bindings(.pw_engine_dir = function() d)
@@ -49,6 +51,7 @@ test_that(".pw_call propaga el codigo de salida del motor", {
 })
 
 test_that(".pw_call corta por timeout con exit 124 y error informativo", {
+  skip_on_cran()
   skip_if(Sys.which("node") == "", "Node.js no disponible")
   d <- stub_engine()
   local_mocked_bindings(.pw_engine_dir = function() d)

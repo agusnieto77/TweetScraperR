@@ -17,7 +17,8 @@
 #'
 #' @param urls_tweets Vector de URLs de tweets (formato https://x.com/u/status/123).
 #' @param dir Directorio de destino del RDS. Por defecto el de trabajo.
-#' @param save Logico. Si TRUE (por defecto) guarda el resultado en un RDS.
+#' @param save Logico. Si TRUE guarda el resultado en un RDS dentro de `dir`.
+#'   Por defecto FALSE: no se escribe ningun archivo.
 #'
 #' @return Un tibble con una fila por tweet (mismas columnas que getUserTweetsAPI).
 #' @export
@@ -27,7 +28,7 @@
 #' importSessionX(auth_token = "...", ct0 = "...")
 #' getTweetsDataAPI("https://x.com/sanchezcastejon/status/2111426246517072370")
 #' }
-getTweetsDataAPI <- function(urls_tweets, dir = getwd(), save = TRUE) {
+getTweetsDataAPI <- function(urls_tweets, dir = getwd(), save = FALSE) {
   if (missing(urls_tweets) || !length(urls_tweets)) {
     stop("Necesito al menos una URL de tweet.")
   }

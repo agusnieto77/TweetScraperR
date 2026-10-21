@@ -52,8 +52,8 @@ pak::pak("agusnieto77/TweetScraperR")
 
 ### Requisitos
 
-- **Node.js (>= 18)**: el motor de scraping está basado en Node.js +
-  Playwright + stealth. Se instala una sola vez con
+- **Node.js (>= 18)**: el motor de recolección está basado en Node.js +
+  Playwright. Se instala una sola vez, explícitamente, con
   `installPlaywrightEngine()` (ver más abajo).
 - **Chrome o Chromium**: navegador basado en Chromium requerido por el
   motor de Playwright.
@@ -74,7 +74,9 @@ Más detalles en [Requisitos.md](Requisitos.md).
 ### Instalación del motor
 
 El scraping ya no usa `chromote`: corre sobre un motor de **Node.js +
-Playwright + stealth**.
+Playwright** (con el plugin de compatibilidad `stealth` de
+`playwright-extra`, para que el navegador automatizado se presente como un
+Chromium de escritorio estándar).
 
 - Necesitás **Node.js (>= 18)** instalado en tu sistema.
 - Una sola vez, después de instalar el paquete, ejecutá:

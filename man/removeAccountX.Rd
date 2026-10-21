@@ -15,3 +15,8 @@ Invisiblemente, la cantidad de cuentas eliminadas.
 \description{
 Borra las cuentas y sus archivos de sesion.
 }
+\examples{
+\dontrun{
+removeAccountX("cuenta2")
+}
+}

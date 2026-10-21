@@ -33,17 +33,19 @@ cookies (p. ej. Cookie-Editor).}
 Invisiblemente, el nombre de la cuenta.
 }
 \description{
-Como X bloquea el login automatizado (detecta el navegador de Playwright por
-fingerprint), la via robusta es: logueate a mano en tu navegador normal y
-pasale a esta funcion las cookies \code{auth_token} y \code{ct0} de tu sesion (las
-encontras en DevTools -> Application/Almacenamiento -> Cookies -> x.com).
-La sesion queda guardada en el pool de cuentas y todas las funciones de
-scraping la reusan sin volver a loguearse.
+La via recomendada para autenticarse es iniciar sesion a mano en tu
+navegador habitual y pasarle a esta funcion las cookies \code{auth_token} y \code{ct0}
+de tu sesion (las encontras en DevTools -> Application/Almacenamiento ->
+Cookies -> x.com). La sesion queda guardada en el pool de cuentas (en
+\code{tools::R_user_dir("TweetScraperR", "data")}) y todas las funciones de
+recoleccion la reusan sin volver a loguearse.
 }
 \details{
-Importando varias cuentas (con distintos \code{account}) se arma un \strong{pool}:
-cuando una cuenta agota el cupo de un endpoint de X (p. ej. 50 busquedas
-cada 15 minutos), la recoleccion sigue con otra sin cortarse. Ver
+Importando varias cuentas propias (con distintos \code{account}) se arma un
+\strong{pool} que distribuye la carga de trabajo entre ellas: cada cuenta respeta
+los limites de uso que X informa por endpoint (p. ej. 50 busquedas cada 15
+minutos) y, cuando una llega a su limite, queda en pausa hasta que X lo
+renueve mientras la recoleccion continua con otra cuenta disponible. Ver
 \code{\link[=accountsX]{accountsX()}}.
 }
 \examples{

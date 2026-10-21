@@ -13,9 +13,9 @@
 #' @param api_key Una cadena de caracteres que contiene la clave de API de OpenAI.
 #'   Por defecto es `Sys.getenv("OPENAI_API_KEY")`.
 #' @param dir Una cadena de caracteres que especifica el directorio donde se
-#'   guardarán los resultados. Por defecto es `getwd()`.
-#' @param save Lógico. Indica si se deben guardar los resultados (totales y
-#'   parciales) en archivos RDS dentro de `dir`. Por defecto es `TRUE`.
+#'   guardan los resultados cuando `save = TRUE`. Por defecto es `getwd()`.
+#' @param save Logico. Si TRUE guarda los resultados (totales y parciales) en
+#'   archivos RDS dentro de `dir`. Por defecto FALSE: no se escribe ningun archivo.
 #'
 #' @return Un tibble con las siguientes columnas:
 #'   \item{clasificacion}{La clasificación de la imagen}
@@ -42,7 +42,7 @@
 #'       \item Procesa la respuesta de la API para extraer los resultados del análisis.
 #'     }
 #'   \item Combina todos los resultados en un solo tibble.
-#'   \item Guarda los resultados como archivos RDS en el directorio especificado, con resultados parciales cada 7 imágenes si el total es mayor a 7.
+#'   \item Si `save = TRUE`, guarda los resultados como archivos RDS en el directorio especificado, con resultados parciales cada 7 imágenes si el total es mayor a 7.
 #' }
 #'
 #' El análisis de la imagen incluye:
@@ -81,7 +81,7 @@
 #' @export
 #'
 
-getTweetsImagesAnalysis <- function(img_sources, modelo = "gpt-4o-mini", api_key = Sys.getenv("OPENAI_API_KEY"), dir = getwd(), save = TRUE) {
+getTweetsImagesAnalysis <- function(img_sources, modelo = "gpt-4o-mini", api_key = Sys.getenv("OPENAI_API_KEY"), dir = getwd(), save = FALSE) {
   if (api_key == "") {
     stop("Se requiere una clave de API de OpenAI. Por favor, proporci\u00f3nela como argumento o configure la variable de entorno OPENAI_API_KEY.")
   }

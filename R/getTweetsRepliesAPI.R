@@ -19,7 +19,8 @@
 #' @param n_tweets Numero maximo de tweets (tweet + respuestas) a recuperar.
 #'   Por defecto 40.
 #' @param dir Directorio de destino del RDS. Por defecto el de trabajo.
-#' @param save Logico. Si TRUE (por defecto) guarda el resultado en un RDS.
+#' @param save Logico. Si TRUE guarda el resultado en un RDS dentro de `dir`.
+#'   Por defecto FALSE: no se escribe ningun archivo.
 #'
 #' @return Un tibble con un tweet por fila (mismas columnas que
 #'   [getUserTweetsAPI()], incluyendo media, hashtags, menciones, etc.).
@@ -30,7 +31,7 @@
 #' importSessionX(auth_token = "...", ct0 = "...")
 #' getTweetsRepliesAPI("https://x.com/sanchezcastejon/status/2111426246517072370", n_tweets = 100)
 #' }
-getTweetsRepliesAPI <- function(url, n_tweets = 40, dir = getwd(), save = TRUE) {
+getTweetsRepliesAPI <- function(url, n_tweets = 40, dir = getwd(), save = FALSE) {
   if (missing(url) || !nzchar(url)) stop("Necesito la URL de un tweet.")
   cat("Recolectando respuestas de: ", url, "\n", sep = "")
   docs <- .pw_harvest(url, "TweetDetail", max_scrolls = .scrolls_for(n_tweets), n = n_tweets)

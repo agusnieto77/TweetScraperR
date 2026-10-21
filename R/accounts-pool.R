@@ -282,16 +282,18 @@
 
 #' Importar una sesion de X/Twitter desde las cookies de tu navegador
 #'
-#' Como X bloquea el login automatizado (detecta el navegador de Playwright por
-#' fingerprint), la via robusta es: logueate a mano en tu navegador normal y
-#' pasale a esta funcion las cookies `auth_token` y `ct0` de tu sesion (las
-#' encontras en DevTools -> Application/Almacenamiento -> Cookies -> x.com).
-#' La sesion queda guardada en el pool de cuentas y todas las funciones de
-#' scraping la reusan sin volver a loguearse.
+#' La via recomendada para autenticarse es iniciar sesion a mano en tu
+#' navegador habitual y pasarle a esta funcion las cookies `auth_token` y `ct0`
+#' de tu sesion (las encontras en DevTools -> Application/Almacenamiento ->
+#' Cookies -> x.com). La sesion queda guardada en el pool de cuentas (en
+#' `tools::R_user_dir("TweetScraperR", "data")`) y todas las funciones de
+#' recoleccion la reusan sin volver a loguearse.
 #'
-#' Importando varias cuentas (con distintos `account`) se arma un **pool**:
-#' cuando una cuenta agota el cupo de un endpoint de X (p. ej. 50 busquedas
-#' cada 15 minutos), la recoleccion sigue con otra sin cortarse. Ver
+#' Importando varias cuentas propias (con distintos `account`) se arma un
+#' **pool** que distribuye la carga de trabajo entre ellas: cada cuenta respeta
+#' los limites de uso que X informa por endpoint (p. ej. 50 busquedas cada 15
+#' minutos) y, cuando una llega a su limite, queda en pausa hasta que X lo
+#' renueve mientras la recoleccion continua con otra cuenta disponible. Ver
 #' [accountsX()].
 #'
 #' @param auth_token Valor de la cookie `auth_token` de x.com.
@@ -620,6 +622,11 @@ checkAccountsX <- function(accounts = NULL) {
 #' @param accounts Nombres de las cuentas a eliminar.
 #' @return Invisiblemente, la cantidad de cuentas eliminadas.
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' removeAccountX("cuenta2")
+#' }
 removeAccountX <- function(accounts) {
   n <- 0L
   for (a in accounts) {
@@ -644,6 +651,11 @@ removeAccountX <- function(accounts) {
 #' @param accounts Nombres de las cuentas a reactivar.
 #' @return Invisiblemente, la cantidad de cuentas reactivadas.
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' reactivateAccountX("cuenta2")
+#' }
 reactivateAccountX <- function(accounts) {
   n <- .pool_with(function(con) {
     sum(vapply(accounts, function(a) {
@@ -710,11 +722,16 @@ setProxyX <- function(accounts, proxy, validate = TRUE) {
 
 #' Quitar las pausas de rate-limit de todas las cuentas
 #'
-#' Util si una recoleccion se corto a la fuerza y dejo cuentas tomadas, o para
-#' forzar un reintento antes de que X renueve el cupo.
+#' Util si una recoleccion se corto a la fuerza (Ctrl+C, error) y dejo
+#' cuentas tomadas o pausas desactualizadas.
 #'
 #' @return Invisiblemente, la cantidad de cuentas afectadas.
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' resetLocksX()
+#' }
 resetLocksX <- function() {
   invisible(.pool_with(function(con) DBI::dbExecute(con, "UPDATE accounts SET locks = '{}'")))
 }

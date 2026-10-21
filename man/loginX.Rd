@@ -28,7 +28,8 @@ interfaz. Pone FALSE para ver/depurar el login.}
 
 \item{account}{Nombre local de la cuenta en el pool. Por defecto "default".}
 
-\item{proxy}{Proxy opcional para rutear el trafico (util si X bloquea tu IP).
+\item{proxy}{Proxy opcional para rutear el trafico (p. ej. en redes que
+exigen salir por un proxy).
 Acepta un string "http://host:puerto" o "usuario:clave@host:puerto", o una
 lista list(server=, username=, password=). Si es un string queda guardado
 como proxy de la cuenta.}
@@ -38,9 +39,16 @@ Invisiblemente, el nombre de la cuenta. Lanza un error si el login
 falla o si X limita el intento.
 }
 \description{
-Abre un navegador Chromium con tecnicas anti-deteccion (stealth), realiza el
-login en X/Twitter con el flujo del modal actual y guarda la sesion
-autenticada (cookies + storage) como una cuenta del pool. Las demas
-funciones del paquete reusan esa sesion sin volver a loguearse, lo que evita
-el rate-limit de X.
+Abre un navegador 'Chromium' controlado por 'Playwright', realiza el login
+en X/Twitter con el flujo del modal actual y guarda la sesion autenticada
+(cookies + storage) como una cuenta del pool. Las demas funciones del
+paquete reusan esa sesion sin volver a loguearse, lo que evita inicios de
+sesion repetidos. La via recomendada es \code{\link[=importSessionX]{importSessionX()}}, que reutiliza la
+sesion de tu navegador habitual.
+}
+\examples{
+\dontrun{
+loginX(xuser = "mi_usuario", xpass = Sys.getenv("TWITTER_PASS"),
+       headless = FALSE)
+}
 }

@@ -212,7 +212,8 @@
 #' @param username Nombre de usuarix (sin @). Por defecto "NASA".
 #' @param n_tweets Numero maximo de tweets a recuperar. Por defecto 40.
 #' @param dir Directorio de destino del RDS. Por defecto el de trabajo.
-#' @param save Logico. Si TRUE (por defecto) guarda el resultado en un RDS.
+#' @param save Logico. Si TRUE guarda el resultado en un RDS dentro de `dir`.
+#'   Por defecto FALSE: no se escribe ningun archivo.
 #'
 #' @return Un tibble con un tweet por fila y columnas: fecha, user, texto
 #'   (completo, tambien en tweets largos), idioma, respuestas, retweets, citas,
@@ -230,7 +231,7 @@
 #' importSessionX(auth_token = "...", ct0 = "...")
 #' tw <- getUserTweetsAPI("NASA", n_tweets = 100)
 #' }
-getUserTweetsAPI <- function(username = "NASA", n_tweets = 40, dir = getwd(), save = TRUE) {
+getUserTweetsAPI <- function(username = "NASA", n_tweets = 40, dir = getwd(), save = FALSE) {
   if (!nzchar(username)) stop("Necesito un nombre de usuarix.")
   url <- paste0("https://x.com/", username)
   cat("Recolectando timeline de @", username, "...\n", sep = "")

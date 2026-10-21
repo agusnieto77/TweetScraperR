@@ -26,7 +26,8 @@
 #'   (`https://x.com/i/lists/<id>`).
 #' @param n_tweets Numero maximo de tweets a recuperar. Por defecto 40.
 #' @param dir Directorio de destino del RDS. Por defecto el de trabajo.
-#' @param save Logico. Si TRUE (por defecto) guarda el resultado en un RDS.
+#' @param save Logico. Si TRUE guarda el resultado en un RDS dentro de `dir`.
+#'   Por defecto FALSE: no se escribe ningun archivo.
 #'
 #' @return Un tibble con un tweet por fila (mismas columnas que
 #'   [getUserTweetsAPI()]).
@@ -37,7 +38,7 @@
 #' importSessionX(auth_token = "...", ct0 = "...")
 #' getListTweetsAPI("https://x.com/i/lists/53645372", n_tweets = 100)
 #' }
-getListTweetsAPI <- function(list_id, n_tweets = 40, dir = getwd(), save = TRUE) {
+getListTweetsAPI <- function(list_id, n_tweets = 40, dir = getwd(), save = FALSE) {
   id <- .x_list_id(list_id)
   cat("Recolectando tweets de la lista ", id, "...\n", sep = "")
   docs <- .pw_harvest(paste0("https://x.com/i/lists/", id), "ListLatestTweetsTimeline",
@@ -72,7 +73,8 @@ getListTweetsAPI <- function(list_id, n_tweets = 40, dir = getwd(), save = TRUE)
 #'   (`https://x.com/i/lists/<id>`).
 #' @param n_users Numero maximo de usuarixs a recuperar. Por defecto 100.
 #' @param dir Directorio de destino del RDS. Por defecto el de trabajo.
-#' @param save Logico. Si TRUE (por defecto) guarda el resultado en un RDS.
+#' @param save Logico. Si TRUE guarda el resultado en un RDS dentro de `dir`.
+#'   Por defecto FALSE: no se escribe ningun archivo.
 #'
 #' @return Un tibble con una fila por usuarix (mismas columnas que
 #'   [getUsersDataAPI()]).
@@ -83,7 +85,7 @@ getListTweetsAPI <- function(list_id, n_tweets = 40, dir = getwd(), save = TRUE)
 #' importSessionX(auth_token = "...", ct0 = "...")
 #' getListMembersAPI("53645372")
 #' }
-getListMembersAPI <- function(list_id, n_users = 100, dir = getwd(), save = TRUE) {
+getListMembersAPI <- function(list_id, n_users = 100, dir = getwd(), save = FALSE) {
   id <- .x_list_id(list_id)
   cat("Recolectando miembros de la lista ", id, "...\n", sep = "")
   .collect_users(paste0("https://x.com/i/lists/", id, "/members"), "ListMembers",

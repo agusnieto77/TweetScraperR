@@ -4,7 +4,7 @@
 \alias{getTweetsRepliesAPI}
 \title{Get Tweet Replies / Thread via the X API (experimental)}
 \usage{
-getTweetsRepliesAPI(url, n_tweets = 40, dir = getwd(), save = TRUE)
+getTweetsRepliesAPI(url, n_tweets = 40, dir = getwd(), save = FALSE)
 }
 \arguments{
 \item{url}{URL del tweet del cual obtener las respuestas.}
@@ -14,7 +14,8 @@ Por defecto 40.}
 
 \item{dir}{Directorio de destino del RDS. Por defecto el de trabajo.}
 
-\item{save}{Logico. Si TRUE (por defecto) guarda el resultado en un RDS.}
+\item{save}{Logico. Si TRUE guarda el resultado en un RDS dentro de \code{dir}.
+Por defecto FALSE: no se escribe ningun archivo.}
 }
 \value{
 Un tibble con un tweet por fila (mismas columnas que

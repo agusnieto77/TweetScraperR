@@ -14,10 +14,11 @@
 #'   se intenta obtener de la variable de entorno OPENAI_API_KEY.
 #' @param model Una cadena de caracteres que especifica el modelo de OpenAI a utilizar.
 #'   Por defecto es "gpt-4o-mini".
-#' @param dir Una cadena de caracteres que especifica el directorio donde se guardarán
-#'   los archivos RDS con los resultados. Por defecto es el directorio de trabajo actual.
-#' @param save Lógico. Indica si se deben guardar los resultados (totales y parciales)
-#'   en archivos RDS dentro de `dir`. Por defecto es TRUE.
+#' @param dir Una cadena de caracteres que especifica el directorio donde se guardan
+#'   los archivos RDS con los resultados cuando `save = TRUE`. Por defecto es el
+#'   directorio de trabajo actual.
+#' @param save Logico. Si TRUE guarda los resultados (totales y parciales) en
+#'   archivos RDS dentro de `dir`. Por defecto FALSE: no se escribe ningun archivo.
 #'
 #' @return Un tibble con los resultados del análisis para cada tweet. Cada fila
 #'   contiene el tweet original y los resultados del análisis (tono, sentimiento,
@@ -59,7 +60,7 @@
 #'
 
 getTweetsSentiments <- function(tweets, api_key = Sys.getenv("OPENAI_API_KEY"),
-                                model = "gpt-4o-mini", dir = getwd(), save = TRUE) {
+                                model = "gpt-4o-mini", dir = getwd(), save = FALSE) {
   # Verificación de la clave de API
   if (api_key == "") {
     stop("Se requiere una clave de API de OpenAI. Por favor, proporci\u00f3nela como argumento o configure la variable de entorno OPENAI_API_KEY.")

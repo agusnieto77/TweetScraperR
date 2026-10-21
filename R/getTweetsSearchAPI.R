@@ -29,7 +29,8 @@
 #' @param product Pestania de resultados: "Latest" (recientes, por defecto),
 #'   "Top" (destacados) o "Media".
 #' @param dir Directorio de destino del RDS. Por defecto el de trabajo.
-#' @param save Logico. Si TRUE (por defecto) guarda el resultado en un RDS.
+#' @param save Logico. Si TRUE guarda el resultado en un RDS dentro de `dir`.
+#'   Por defecto FALSE: no se escribe ningun archivo.
 #' @param since Fecha "desde" (opcional). Formato "YYYY-MM-DD" o el
 #'   "YYYY-MM-DD_HH:MM:SS" de X. Migra el parametro de los historicos legacy.
 #' @param until Fecha "hasta" (opcional). Mismo formato que `since`.
@@ -47,7 +48,7 @@
 getTweetsSearchAPI <- function(search = "#RStats", n_tweets = 40,
                                product = c("Latest", "Top", "Media"),
                                since = NULL, until = NULL,
-                               dir = getwd(), save = TRUE) {
+                               dir = getwd(), save = FALSE) {
   product <- match.arg(product)
   f <- c(Latest = "live", Top = "top", Media = "media")[[product]]
   # Filtros de fechas nativos de la busqueda de X (paridad con los historicos

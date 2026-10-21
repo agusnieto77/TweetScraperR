@@ -4,14 +4,15 @@
 \alias{getTweetsDataAPI}
 \title{Get Tweet Data from URLs via the X API (experimental)}
 \usage{
-getTweetsDataAPI(urls_tweets, dir = getwd(), save = TRUE)
+getTweetsDataAPI(urls_tweets, dir = getwd(), save = FALSE)
 }
 \arguments{
 \item{urls_tweets}{Vector de URLs de tweets (formato https://x.com/u/status/123).}
 
 \item{dir}{Directorio de destino del RDS. Por defecto el de trabajo.}
 
-\item{save}{Logico. Si TRUE (por defecto) guarda el resultado en un RDS.}
+\item{save}{Logico. Si TRUE guarda el resultado en un RDS dentro de \code{dir}.
+Por defecto FALSE: no se escribe ningun archivo.}
 }
 \value{
 Un tibble con una fila por tweet (mismas columnas que getUserTweetsAPI).

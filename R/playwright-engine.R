@@ -413,9 +413,14 @@
 #'
 #' Ejecuta el comando `doctor` del motor y devuelve la informacion de versiones.
 #'
-#' @return Una lista con `ok`, version de Playwright, version de Node y ruta de
-#'   Chromium. Lanza un error si el motor no responde.
+#' @return Invisiblemente, una lista con `ok`, version de Playwright, version
+#'   de Node y ruta de Chromium. Lanza un error si el motor no responde.
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' checkPlaywrightEngine()
+#' }
 checkPlaywrightEngine <- function() {
   res <- .pw_call("doctor", list(), timeout = 60)
   if (!isTRUE(res$ok)) {
@@ -425,16 +430,26 @@ checkPlaywrightEngine <- function() {
   invisible(res)
 }
 
-#' Instalar el motor Node/Playwright (npm install + browsers)
+#' Instalar el motor Node/Playwright (npm install + navegador)
 #'
-#' Ejecuta `npm install` dentro de inst/node, lo que instala Playwright, el
-#' plugin stealth y descarga el navegador Chromium. Hay que correrlo una vez
-#' por maquina antes de usar las funciones de scraping.
+#' Copia el motor (`inst/node`) a la carpeta de cache del usuario
+#' (`tools::R_user_dir("TweetScraperR", "cache")`) y ejecuta alli
+#' `npm install`, que instala 'Playwright', 'playwright-extra' y su plugin
+#' 'stealth' (ajustes de compatibilidad para que el navegador automatizado se
+#' presente como un 'Chromium' de escritorio estandar) y descarga el navegador
+#' 'Chromium'. Nada de esto ocurre al instalar el paquete: hay que llamar a esta
+#' funcion explicitamente, una vez por maquina, antes de usar las funciones de
+#' recoleccion. Requiere 'Node.js' (>= 18) con 'npm' y conexion a internet.
 #'
 #' @param npm Ruta al binario de npm (por defecto "npm" del PATH).
 #'
-#' @return Invisiblemente, el codigo de salida de npm.
+#' @return Invisiblemente, el codigo de salida de npm (0 si todo salio bien).
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' installPlaywrightEngine()
+#' }
 installPlaywrightEngine <- function(npm = "npm") {
   if (Sys.which(npm) == "" && !file.exists(npm)) {
     stop("No se encontr\u00f3 npm. Instal\u00e1 Node.js (>= 18), que incluye npm.")
@@ -462,11 +477,12 @@ installPlaywrightEngine <- function(npm = "npm") {
 
 #' Iniciar sesion en X/Twitter con Playwright y guardar la sesion
 #'
-#' Abre un navegador Chromium con tecnicas anti-deteccion (stealth), realiza el
-#' login en X/Twitter con el flujo del modal actual y guarda la sesion
-#' autenticada (cookies + storage) como una cuenta del pool. Las demas
-#' funciones del paquete reusan esa sesion sin volver a loguearse, lo que evita
-#' el rate-limit de X.
+#' Abre un navegador 'Chromium' controlado por 'Playwright', realiza el login
+#' en X/Twitter con el flujo del modal actual y guarda la sesion autenticada
+#' (cookies + storage) como una cuenta del pool. Las demas funciones del
+#' paquete reusan esa sesion sin volver a loguearse, lo que evita inicios de
+#' sesion repetidos. La via recomendada es [importSessionX()], que reutiliza la
+#' sesion de tu navegador habitual.
 #'
 #' @param xuser Usuario de X/Twitter. Por defecto la variable de entorno
 #'   TWITTER_USER (con fallback a USER).
@@ -477,7 +493,8 @@ installPlaywrightEngine <- function(npm = "npm") {
 #' @param headless Logico. Si TRUE (por defecto) corre el navegador sin
 #'   interfaz. Pone FALSE para ver/depurar el login.
 #' @param account Nombre local de la cuenta en el pool. Por defecto "default".
-#' @param proxy Proxy opcional para rutear el trafico (util si X bloquea tu IP).
+#' @param proxy Proxy opcional para rutear el trafico (p. ej. en redes que
+#'   exigen salir por un proxy).
 #'   Acepta un string "http://host:puerto" o "usuario:clave@host:puerto", o una
 #'   lista list(server=, username=, password=). Si es un string queda guardado
 #'   como proxy de la cuenta.
@@ -485,6 +502,12 @@ installPlaywrightEngine <- function(npm = "npm") {
 #' @return Invisiblemente, el nombre de la cuenta. Lanza un error si el login
 #'   falla o si X limita el intento.
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' loginX(xuser = "mi_usuario", xpass = Sys.getenv("TWITTER_PASS"),
+#'        headless = FALSE)
+#' }
 loginX <- function(xuser = Sys.getenv("TWITTER_USER", Sys.getenv("USER")),
                    xpass = Sys.getenv("TWITTER_PASS", Sys.getenv("PASS")),
                    email = Sys.getenv("TWITTER_EMAIL", ""),

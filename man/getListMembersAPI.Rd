@@ -4,7 +4,7 @@
 \alias{getListMembersAPI}
 \title{Get the Members of an X List via the X API (experimental)}
 \usage{
-getListMembersAPI(list_id, n_users = 100, dir = getwd(), save = TRUE)
+getListMembersAPI(list_id, n_users = 100, dir = getwd(), save = FALSE)
 }
 \arguments{
 \item{list_id}{Id numerico de la lista o su URL
@@ -14,7 +14,8 @@ getListMembersAPI(list_id, n_users = 100, dir = getwd(), save = TRUE)
 
 \item{dir}{Directorio de destino del RDS. Por defecto el de trabajo.}
 
-\item{save}{Logico. Si TRUE (por defecto) guarda el resultado en un RDS.}
+\item{save}{Logico. Si TRUE guarda el resultado en un RDS dentro de \code{dir}.
+Por defecto FALSE: no se escribe ningun archivo.}
 }
 \value{
 Un tibble con una fila por usuarix (mismas columnas que

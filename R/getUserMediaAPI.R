@@ -13,7 +13,8 @@
 #' @param username Nombre de usuarix (sin @). Por defecto "NASA".
 #' @param n_tweets Numero maximo de tweets a recuperar. Por defecto 40.
 #' @param dir Directorio de destino del RDS. Por defecto el de trabajo.
-#' @param save Logico. Si TRUE (por defecto) guarda el resultado en un RDS.
+#' @param save Logico. Si TRUE guarda el resultado en un RDS dentro de `dir`.
+#'   Por defecto FALSE: no se escribe ningun archivo.
 #'
 #' @return Un tibble con un tweet por fila (mismas columnas que getUserTweetsAPI).
 #' @export
@@ -23,7 +24,7 @@
 #' importSessionX(auth_token = "...", ct0 = "...")
 #' getUserMediaAPI("NASA", n_tweets = 100)
 #' }
-getUserMediaAPI <- function(username = "NASA", n_tweets = 40, dir = getwd(), save = TRUE) {
+getUserMediaAPI <- function(username = "NASA", n_tweets = 40, dir = getwd(), save = FALSE) {
   if (!nzchar(username)) stop("Necesito un nombre de usuarix.")
   url <- paste0("https://x.com/", username, "/media")
   cat("Recolectando media de @", username, "...\n", sep = "")

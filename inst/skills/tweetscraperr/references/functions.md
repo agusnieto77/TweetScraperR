@@ -2,8 +2,8 @@
 
 Firmas exactas de las funciones exportadas. Todas las funciones de
 recolección requieren el motor instalado (`installPlaywrightEngine()`) y una
-sesión importada (`importSessionX()`). `dir = getwd()` y `save = TRUE` guardan
-un `.rds` con el resultado.
+sesión importada (`importSessionX()`). Por defecto no escriben archivos;
+con `save = TRUE` guardan un `.rds` con el resultado en `dir`.
 
 ## Sesión y motor
 
@@ -60,12 +60,12 @@ Login automatizado. X suele bloquearlo; preferir `importSessionX()`.
 Todas devuelven el tibble de 31 columnas descrito en `SKILL.md`.
 
 ```r
-getUserTweetsAPI(username = "NASA", n_tweets = 40, dir = getwd(), save = TRUE)
+getUserTweetsAPI(username = "NASA", n_tweets = 40, dir = getwd(), save = FALSE)
 ```
 Timeline de una cuenta (tweets originales).
 
 ```r
-getTweetsTimelinesAPI(usernames, n_tweets = 40, dir = getwd(), save = TRUE)
+getTweetsTimelinesAPI(usernames, n_tweets = 40, dir = getwd(), save = FALSE)
 ```
 Varias cuentas en una sola sesión de navegador; `n_tweets` es por cuenta.
 Resultado combinado, deduplicado y ordenado por fecha descendente.
@@ -73,29 +73,29 @@ Resultado combinado, deduplicado y ordenado por fecha descendente.
 ```r
 getTweetsSearchAPI(search = "#RStats", n_tweets = 40,
                    product = c("Latest", "Top", "Media"),
-                   since = NULL, until = NULL, dir = getwd(), save = TRUE)
+                   since = NULL, until = NULL, dir = getwd(), save = FALSE)
 ```
 Búsqueda con operadores de X. `since`/`until`: `"YYYY-MM-DD"` o
 `"YYYY-MM-DD_HH:MM:SS"`.
 
 ```r
-getTweetsRepliesAPI(url, n_tweets = 40, dir = getwd(), save = TRUE)
+getTweetsRepliesAPI(url, n_tweets = 40, dir = getwd(), save = FALSE)
 ```
 Tweet original más sus respuestas (hilo de conversación).
 
 ```r
-getTweetsDataAPI(urls_tweets, dir = getwd(), save = TRUE)
+getTweetsDataAPI(urls_tweets, dir = getwd(), save = FALSE)
 ```
 Datos de uno o más tweets a partir de sus URLs.
 
 ```r
-getUserMediaAPI(username = "NASA", n_tweets = 40, dir = getwd(), save = TRUE)
+getUserMediaAPI(username = "NASA", n_tweets = 40, dir = getwd(), save = FALSE)
 ```
 Tweets con fotos/videos de una cuenta. Para videos, `media` trae el mp4 de
 mayor bitrate.
 
 ```r
-getListTweetsAPI(list_id, n_tweets = 40, dir = getwd(), save = TRUE)
+getListTweetsAPI(list_id, n_tweets = 40, dir = getwd(), save = FALSE)
 ```
 Tweets recientes de una Lista de X. `list_id`: id numérico o URL
 `https://x.com/i/lists/<id>`.
@@ -108,16 +108,16 @@ Devuelven una fila por cuenta (18 columnas): `user`, `nombre`, `user_id`,
 `fecha_creacion`, `url`, `tweets_media`, `protegida`, `tipo_verificacion`.
 
 ```r
-getUsersDataAPI(usernames, dir = getwd(), save = TRUE)
-getUsersSearchAPI(search, n_users = 40, dir = getwd(), save = TRUE)
-getUserFollowersAPI(username, n_users = 100, dir = getwd(), save = TRUE)
-getUserFollowingAPI(username, n_users = 100, dir = getwd(), save = TRUE)
-getTweetsRetweetsAPI(url, n_users = 100, dir = getwd(), save = TRUE)
-getListMembersAPI(list_id, n_users = 100, dir = getwd(), save = TRUE)
+getUsersDataAPI(usernames, dir = getwd(), save = FALSE)
+getUsersSearchAPI(search, n_users = 40, dir = getwd(), save = FALSE)
+getUserFollowersAPI(username, n_users = 100, dir = getwd(), save = FALSE)
+getUserFollowingAPI(username, n_users = 100, dir = getwd(), save = FALSE)
+getTweetsRetweetsAPI(url, n_users = 100, dir = getwd(), save = FALSE)
+getListMembersAPI(list_id, n_users = 100, dir = getwd(), save = FALSE)
 ```
 
 ```r
-getUsersAboutAPI(usernames, dir = getwd(), save = TRUE)
+getUsersAboutAPI(usernames, dir = getwd(), save = FALSE)
 ```
 Ficha "Acerca de esta cuenta": `pais_cuenta`, `ubicacion_precisa`,
 `cambios_usuario`, `ultimo_cambio_usuario`, `afiliada_a`, `origen_cuenta`,
@@ -156,7 +156,7 @@ Agrega la columna `hashtags` (vector por tweet) extraída de `texto`/`tweet`.
 
 ```r
 getTweetsSentiments(tweets, api_key = Sys.getenv("OPENAI_API_KEY"),
-                    model = "gpt-4o-mini", dir = getwd(), save = TRUE)
+                    model = "gpt-4o-mini", dir = getwd(), save = FALSE)
 ```
 `tweets` es un vector de textos (p. ej. `df$texto`). Devuelve tono,
 sentimiento, odio, direccionamiento, llamado a la acción y explicación.
@@ -165,16 +165,17 @@ Envía los textos a OpenAI.
 ```r
 getTweetsImagesAnalysis(img_sources, modelo = "gpt-4o-mini",
                         api_key = Sys.getenv("OPENAI_API_KEY"),
-                        dir = getwd(), save = TRUE)
+                        dir = getwd(), save = FALSE)
 ```
 `img_sources`: URLs o rutas locales de imágenes (no videos). Devuelve
 clasificación, texto en la imagen, descripción, palabras clave y banderas de
 contenido. Envía las imágenes a OpenAI.
 
 ```r
-HTMLImgReport(results, output_file = "visualizacion_imagenes.html")
+HTMLImgReport(results, output_file)
 ```
 Reporte HTML (carrusel) a partir del resultado de `getTweetsImagesAnalysis()`.
+`output_file` es obligatorio.
 
 ```r
 extractTweetsData(data)

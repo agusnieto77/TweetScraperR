@@ -7,9 +7,14 @@
 checkPlaywrightEngine()
 }
 \value{
-Una lista con \code{ok}, version de Playwright, version de Node y ruta de
-Chromium. Lanza un error si el motor no responde.
+Invisiblemente, una lista con \code{ok}, version de Playwright, version
+de Node y ruta de Chromium. Lanza un error si el motor no responde.
 }
 \description{
 Ejecuta el comando \code{doctor} del motor y devuelve la informacion de versiones.
+}
+\examples{
+\dontrun{
+checkPlaywrightEngine()
+}
 }

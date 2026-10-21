@@ -4,14 +4,15 @@
 \alias{getUsersDataAPI}
 \title{Get a User's Profile Data via the X API (experimental)}
 \usage{
-getUsersDataAPI(usernames, dir = getwd(), save = TRUE)
+getUsersDataAPI(usernames, dir = getwd(), save = FALSE)
 }
 \arguments{
 \item{usernames}{Vector de nombres de usuarix (sin @).}
 
 \item{dir}{Directorio de destino del RDS. Por defecto el de trabajo.}
 
-\item{save}{Logico. Si TRUE (por defecto) guarda el resultado en un RDS.}
+\item{save}{Logico. Si TRUE guarda el resultado en un RDS dentro de \code{dir}.
+Por defecto FALSE: no se escribe ningun archivo.}
 }
 \value{
 Un tibble con una fila por usuarix y columnas user, nombre, user_id,

@@ -9,7 +9,7 @@ getTweetsImagesAnalysis(
   modelo = "gpt-4o-mini",
   api_key = Sys.getenv("OPENAI_API_KEY"),
   dir = getwd(),
-  save = TRUE
+  save = FALSE
 )
 }
 \arguments{
@@ -21,10 +21,10 @@ getTweetsImagesAnalysis(
 Por defecto es \code{Sys.getenv("OPENAI_API_KEY")}.}
 
 \item{dir}{Una cadena de caracteres que especifica el directorio donde se
-guardarán los resultados. Por defecto es \code{getwd()}.}
+guardan los resultados cuando \code{save = TRUE}. Por defecto es \code{getwd()}.}
 
-\item{save}{Lógico. Indica si se deben guardar los resultados (totales y
-parciales) en archivos RDS dentro de \code{dir}. Por defecto es \code{TRUE}.}
+\item{save}{Logico. Si TRUE guarda los resultados (totales y parciales) en
+archivos RDS dentro de \code{dir}. Por defecto FALSE: no se escribe ningun archivo.}
 }
 \value{
 Un tibble con las siguientes columnas:
@@ -59,7 +59,7 @@ La función realiza los siguientes pasos:
 \item Procesa la respuesta de la API para extraer los resultados del análisis.
 }
 \item Combina todos los resultados en un solo tibble.
-\item Guarda los resultados como archivos RDS en el directorio especificado, con resultados parciales cada 7 imágenes si el total es mayor a 7.
+\item Si \code{save = TRUE}, guarda los resultados como archivos RDS en el directorio especificado, con resultados parciales cada 7 imágenes si el total es mayor a 7.
 }
 
 El análisis de la imagen incluye:

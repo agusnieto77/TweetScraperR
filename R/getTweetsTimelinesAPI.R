@@ -29,7 +29,8 @@
 #' @param n_tweets Numero maximo de tweets a recuperar **por cuenta**. Por
 #'   defecto 40.
 #' @param dir Directorio de destino del RDS. Por defecto el de trabajo.
-#' @param save Logico. Si TRUE (por defecto) guarda el resultado en un RDS.
+#' @param save Logico. Si TRUE guarda el resultado en un RDS dentro de `dir`.
+#'   Por defecto FALSE: no se escribe ningun archivo.
 #'
 #' @return Un tibble con un tweet por fila (mismas columnas que
 #'   [getUserTweetsAPI()]), combinado y ordenado por fecha.
@@ -40,7 +41,7 @@
 #' importSessionX(auth_token = "...", ct0 = "...")
 #' getTweetsTimelinesAPI(c("elravignani", "NucleoIdaes", "BNMMArgentina"), n_tweets = 100)
 #' }
-getTweetsTimelinesAPI <- function(usernames, n_tweets = 40, dir = getwd(), save = TRUE) {
+getTweetsTimelinesAPI <- function(usernames, n_tweets = 40, dir = getwd(), save = FALSE) {
   if (missing(usernames) || !length(usernames)) {
     stop("Necesito al menos un nombre de usuarix.")
   }

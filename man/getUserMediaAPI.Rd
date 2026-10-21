@@ -4,7 +4,7 @@
 \alias{getUserMediaAPI}
 \title{Get a User's Media Tweets via the X API (experimental)}
 \usage{
-getUserMediaAPI(username = "NASA", n_tweets = 40, dir = getwd(), save = TRUE)
+getUserMediaAPI(username = "NASA", n_tweets = 40, dir = getwd(), save = FALSE)
 }
 \arguments{
 \item{username}{Nombre de usuarix (sin @). Por defecto "NASA".}
@@ -13,7 +13,8 @@ getUserMediaAPI(username = "NASA", n_tweets = 40, dir = getwd(), save = TRUE)
 
 \item{dir}{Directorio de destino del RDS. Por defecto el de trabajo.}
 
-\item{save}{Logico. Si TRUE (por defecto) guarda el resultado en un RDS.}
+\item{save}{Logico. Si TRUE guarda el resultado en un RDS dentro de \code{dir}.
+Por defecto FALSE: no se escribe ningun archivo.}
 }
 \value{
 Un tibble con un tweet por fila (mismas columnas que getUserTweetsAPI).

@@ -30,10 +30,10 @@ Referencia completa de argumentos y columnas: `references/functions.md`
 3. **Ejecutá código en la sesión de R** cuando tengas una sesión viva (Posit
    Assistant la tiene). Mostrá siempre el código que corriste para que la
    persona pueda reproducirlo.
-4. **Guardado**: todas las funciones de recolección guardan un `.rds` en `dir`
-   por defecto (`save = TRUE`). Si la persona solo explora, usá
-   `save = FALSE`; si quiere conservar datos, preguntá o usá el directorio de
-   trabajo y decí dónde quedó el archivo.
+4. **Guardado**: por defecto las funciones de recolección no escriben archivos
+   (`save = FALSE`). Si la persona quiere conservar datos, usá `save = TRUE`
+   (guarda un `.rds` en `dir`, por defecto el directorio de trabajo) y decí
+   dónde quedó el archivo.
 5. **Asigná siempre el resultado** a un objeto con nombre descriptivo
    (`tw_nasa`, `seg_rstats`) y mostrá un resumen corto
    (`nrow()`, rango de `fecha`, `dplyr::glimpse()`), no el tibble entero.
@@ -130,7 +130,7 @@ Chromium no admite SOCKS5 con usuario y clave.
 | Emojis más usados | `plotEmojis(df, top_n = 10)` / `plotEmojisPNG(df)` (necesita `ggimage`) |
 | Hashtags por tweet | `getTweetsHashtags(df)` |
 | Sentimiento / discurso de odio (OpenAI) | `getTweetsSentiments(df$texto)` |
-| Clasificar imágenes (OpenAI) | `getTweetsImagesAnalysis(urls)` → `HTMLImgReport(res)` |
+| Clasificar imágenes (OpenAI) | `getTweetsImagesAnalysis(urls)` → `HTMLImgReport(res, "reporte.html")` |
 
 Notas de argumentos:
 
@@ -207,7 +207,7 @@ Analizar solo fotos (excluí videos, la API de imágenes no los procesa):
 media <- tidyr::unnest(tw_nasa, c(media, media_tipo))
 fotos <- media$media[media$media_tipo == "photo"]
 res <- getTweetsImagesAnalysis(head(fotos, 10))
-HTMLImgReport(res)
+HTMLImgReport(res, output_file = "reporte_imagenes.html")
 ```
 
 Red de seguidorxs con perfil completo:

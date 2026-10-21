@@ -4,7 +4,7 @@
 \alias{getListTweetsAPI}
 \title{Get the Tweets of an X List via the X API (experimental)}
 \usage{
-getListTweetsAPI(list_id, n_tweets = 40, dir = getwd(), save = TRUE)
+getListTweetsAPI(list_id, n_tweets = 40, dir = getwd(), save = FALSE)
 }
 \arguments{
 \item{list_id}{Id numerico de la lista o su URL
@@ -14,7 +14,8 @@ getListTweetsAPI(list_id, n_tweets = 40, dir = getwd(), save = TRUE)
 
 \item{dir}{Directorio de destino del RDS. Por defecto el de trabajo.}
 
-\item{save}{Logico. Si TRUE (por defecto) guarda el resultado en un RDS.}
+\item{save}{Logico. Si TRUE guarda el resultado en un RDS dentro de \code{dir}.
+Por defecto FALSE: no se escribe ningun archivo.}
 }
 \value{
 Un tibble con un tweet por fila (mismas columnas que

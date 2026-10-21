@@ -4,7 +4,7 @@
 \alias{getTweetsRetweetsAPI}
 \title{Get the Users Who Retweeted a Tweet via the X API (experimental)}
 \usage{
-getTweetsRetweetsAPI(url, n_users = 100, dir = getwd(), save = TRUE)
+getTweetsRetweetsAPI(url, n_users = 100, dir = getwd(), save = FALSE)
 }
 \arguments{
 \item{url}{URL del tweet.}
@@ -13,7 +13,8 @@ getTweetsRetweetsAPI(url, n_users = 100, dir = getwd(), save = TRUE)
 
 \item{dir}{Directorio de destino del RDS. Por defecto el de trabajo.}
 
-\item{save}{Logico. Si TRUE (por defecto) guarda el resultado en un RDS.}
+\item{save}{Logico. Si TRUE guarda el resultado en un RDS dentro de \code{dir}.
+Por defecto FALSE: no se escribe ningun archivo.}
 }
 \value{
 Un tibble con una fila por usuarix (mismas columnas que getUsersDataAPI).

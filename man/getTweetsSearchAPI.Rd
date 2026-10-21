@@ -11,7 +11,7 @@ getTweetsSearchAPI(
   since = NULL,
   until = NULL,
   dir = getwd(),
-  save = TRUE
+  save = FALSE
 )
 }
 \arguments{
@@ -30,7 +30,8 @@ getTweetsSearchAPI(
 
 \item{dir}{Directorio de destino del RDS. Por defecto el de trabajo.}
 
-\item{save}{Logico. Si TRUE (por defecto) guarda el resultado en un RDS.}
+\item{save}{Logico. Si TRUE guarda el resultado en un RDS dentro de \code{dir}.
+Por defecto FALSE: no se escribe ningun archivo.}
 }
 \value{
 Un tibble con un tweet por fila (mismas columnas que

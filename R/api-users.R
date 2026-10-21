@@ -102,7 +102,8 @@
 #'
 #' @param usernames Vector de nombres de usuarix (sin @).
 #' @param dir Directorio de destino del RDS. Por defecto el de trabajo.
-#' @param save Logico. Si TRUE (por defecto) guarda el resultado en un RDS.
+#' @param save Logico. Si TRUE guarda el resultado en un RDS dentro de `dir`.
+#'   Por defecto FALSE: no se escribe ningun archivo.
 #'
 #' @return Un tibble con una fila por usuarix y columnas user, nombre, user_id,
 #'   descripcion, seguidores, siguiendo, tweets, favoritos, verificado,
@@ -115,7 +116,7 @@
 #' importSessionX(auth_token = "...", ct0 = "...")
 #' getUsersDataAPI(c("NASA", "rstatstweet"))
 #' }
-getUsersDataAPI <- function(usernames, dir = getwd(), save = TRUE) {
+getUsersDataAPI <- function(usernames, dir = getwd(), save = FALSE) {
   if (missing(usernames) || !length(usernames)) stop("Necesito al menos un nombre de usuarix.")
   # Una sola sesion de navegador para TODOS los perfiles (batch).
   grupos <- .pw_harvest_batch(paste0("https://x.com/", usernames), "UserByScreenName",
@@ -146,7 +147,8 @@ getUsersDataAPI <- function(usernames, dir = getwd(), save = TRUE) {
 #' @param username Nombre de usuarix (sin @).
 #' @param n_users Numero maximo de usuarixs a recuperar. Por defecto 100.
 #' @param dir Directorio de destino del RDS. Por defecto el de trabajo.
-#' @param save Logico. Si TRUE (por defecto) guarda el resultado en un RDS.
+#' @param save Logico. Si TRUE guarda el resultado en un RDS dentro de `dir`.
+#'   Por defecto FALSE: no se escribe ningun archivo.
 #'
 #' @return Un tibble con una fila por usuarix (mismas columnas que getUsersDataAPI).
 #' @export
@@ -156,7 +158,7 @@ getUsersDataAPI <- function(usernames, dir = getwd(), save = TRUE) {
 #' importSessionX(auth_token = "...", ct0 = "...")
 #' getUserFollowersAPI("rstatstweet", n_users = 200)
 #' }
-getUserFollowersAPI <- function(username, n_users = 100, dir = getwd(), save = TRUE) {
+getUserFollowersAPI <- function(username, n_users = 100, dir = getwd(), save = FALSE) {
   if (missing(username) || !nzchar(username)) stop("Necesito un nombre de usuarix.")
   cat("Recolectando seguidorxs de @", username, "...\n", sep = "")
   .collect_users(
@@ -177,7 +179,8 @@ getUserFollowersAPI <- function(username, n_users = 100, dir = getwd(), save = T
 #' @param username Nombre de usuarix (sin @).
 #' @param n_users Numero maximo de usuarixs a recuperar. Por defecto 100.
 #' @param dir Directorio de destino del RDS. Por defecto el de trabajo.
-#' @param save Logico. Si TRUE (por defecto) guarda el resultado en un RDS.
+#' @param save Logico. Si TRUE guarda el resultado en un RDS dentro de `dir`.
+#'   Por defecto FALSE: no se escribe ningun archivo.
 #'
 #' @return Un tibble con una fila por usuarix (mismas columnas que getUsersDataAPI).
 #' @export
@@ -187,7 +190,7 @@ getUserFollowersAPI <- function(username, n_users = 100, dir = getwd(), save = T
 #' importSessionX(auth_token = "...", ct0 = "...")
 #' getUserFollowingAPI("rstatstweet", n_users = 200)
 #' }
-getUserFollowingAPI <- function(username, n_users = 100, dir = getwd(), save = TRUE) {
+getUserFollowingAPI <- function(username, n_users = 100, dir = getwd(), save = FALSE) {
   if (missing(username) || !nzchar(username)) stop("Necesito un nombre de usuarix.")
   cat("Recolectando cuentas que sigue @", username, "...\n", sep = "")
   .collect_users(
@@ -208,7 +211,8 @@ getUserFollowingAPI <- function(username, n_users = 100, dir = getwd(), save = T
 #' @param url URL del tweet.
 #' @param n_users Numero maximo de usuarixs a recuperar. Por defecto 100.
 #' @param dir Directorio de destino del RDS. Por defecto el de trabajo.
-#' @param save Logico. Si TRUE (por defecto) guarda el resultado en un RDS.
+#' @param save Logico. Si TRUE guarda el resultado en un RDS dentro de `dir`.
+#'   Por defecto FALSE: no se escribe ningun archivo.
 #'
 #' @return Un tibble con una fila por usuarix (mismas columnas que getUsersDataAPI).
 #' @export
@@ -218,7 +222,7 @@ getUserFollowingAPI <- function(username, n_users = 100, dir = getwd(), save = T
 #' importSessionX(auth_token = "...", ct0 = "...")
 #' getTweetsRetweetsAPI("https://x.com/sanchezcastejon/status/2111426246517072370", n_users = 100)
 #' }
-getTweetsRetweetsAPI <- function(url, n_users = 100, dir = getwd(), save = TRUE) {
+getTweetsRetweetsAPI <- function(url, n_users = 100, dir = getwd(), save = FALSE) {
   if (missing(url) || !nzchar(url)) stop("Necesito la URL de un tweet.")
   cat("Recolectando usuarixs que repostearon: ", url, "\n", sep = "")
   prefix <- paste0("api_rt_", gsub("https://x.com/(.*)/status/(.*)", "\\1_\\2", url))
@@ -278,7 +282,8 @@ getTweetsRetweetsAPI <- function(url, n_users = 100, dir = getwd(), save = TRUE)
 #' @param usernames Vector de nombres de usuarix (acepta "NASA", "@NASA" o la
 #'   URL completa).
 #' @param dir Directorio de destino del RDS. Por defecto el de trabajo.
-#' @param save Logico. Si TRUE (por defecto) guarda el resultado en un RDS.
+#' @param save Logico. Si TRUE guarda el resultado en un RDS dentro de `dir`.
+#'   Por defecto FALSE: no se escribe ningun archivo.
 #'
 #' @return Un tibble con una fila por usuarix y columnas user, nombre, user_id,
 #'   pais_cuenta, ubicacion_precisa, cambios_usuario, ultimo_cambio_usuario,
@@ -291,7 +296,7 @@ getTweetsRetweetsAPI <- function(url, n_users = 100, dir = getwd(), save = TRUE)
 #' importSessionX(auth_token = "...", ct0 = "...")
 #' getUsersAboutAPI(c("NASA", "rstatstweet"))
 #' }
-getUsersAboutAPI <- function(usernames, dir = getwd(), save = TRUE) {
+getUsersAboutAPI <- function(usernames, dir = getwd(), save = FALSE) {
   if (missing(usernames) || !length(usernames)) stop("Necesito al menos un nombre de usuarix.")
   usernames <- .x_handle(usernames)
   grupos <- .pw_harvest_batch(paste0("https://x.com/", usernames, "/about"), "AboutAccountQuery",
@@ -323,7 +328,8 @@ getUsersAboutAPI <- function(usernames, dir = getwd(), save = TRUE) {
 #' @param search Consulta de busqueda (nombre, tema, etc.).
 #' @param n_users Numero maximo de usuarixs a recuperar. Por defecto 40.
 #' @param dir Directorio de destino del RDS. Por defecto el de trabajo.
-#' @param save Logico. Si TRUE (por defecto) guarda el resultado en un RDS.
+#' @param save Logico. Si TRUE guarda el resultado en un RDS dentro de `dir`.
+#'   Por defecto FALSE: no se escribe ningun archivo.
 #'
 #' @return Un tibble con una fila por usuarix (mismas columnas que getUsersDataAPI).
 #' @export
@@ -333,7 +339,7 @@ getUsersAboutAPI <- function(usernames, dir = getwd(), save = TRUE) {
 #' importSessionX(auth_token = "...", ct0 = "...")
 #' getUsersSearchAPI("rstats", n_users = 50)
 #' }
-getUsersSearchAPI <- function(search, n_users = 40, dir = getwd(), save = TRUE) {
+getUsersSearchAPI <- function(search, n_users = 40, dir = getwd(), save = FALSE) {
   if (missing(search) || !nzchar(search)) stop("Necesito una consulta de b\u00fasqueda.")
   cat("Buscando usuarixs: ", search, "\n", sep = "")
   .collect_users(.search_url(search, "user"), "SearchTimeline", n_users, dir, save,

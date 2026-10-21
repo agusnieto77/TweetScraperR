@@ -14,13 +14,13 @@ Source:
 [`DESCRIPTION`](https://github.com/agusnieto77/TweetScraperR/blob/main/DESCRIPTION)
 
 Nieto A (2026). *TweetScraperR: Collect Posts and User Data from 'X'
-(Formerly 'Twitter')*. R package version 0.8.1,
+(Formerly 'Twitter')*. R package version 0.8.1.9000,
 <https://github.com/agusnieto77/TweetScraperR>.
 
     @Manual{,
       title = {TweetScraperR: Collect Posts and User Data from 'X' (Formerly 'Twitter')},
       author = {Agustín Nieto},
       year = {2026},
-      note = {R package version 0.8.1},
+      note = {R package version 0.8.1.9000},
       url = {https://github.com/agusnieto77/TweetScraperR},
     }

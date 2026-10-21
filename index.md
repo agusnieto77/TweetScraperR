@@ -183,6 +183,7 @@ fueron **eliminadas** en la 0.5.0 (ver el mapeo de reemplazos en el
 | [`getUserTweetsAPI()`](https://agusnieto77.github.io/TweetScraperR/reference/getUserTweetsAPI.md) | Timeline de unx usuarix |
 | [`getTweetsTimelinesAPI()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsTimelinesAPI.md) | Timeline **combinado** de varias cuentas |
 | [`getTweetsSearchAPI()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsSearchAPI.md) | Búsqueda (`product = "Latest"/"Top"/"Media"`) |
+| [`getTweetsLiveAPI()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsLiveAPI.md) | Captura **en vivo** de una búsqueda (polling con `since_id`) |
 | [`getTweetsRepliesAPI()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsRepliesAPI.md) | Tweet y sus respuestas (hilo) |
 | [`getTweetsDataAPI()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsDataAPI.md) | Datos de tweets a partir de sus URLs |
 | [`getUserMediaAPI()`](https://agusnieto77.github.io/TweetScraperR/reference/getUserMediaAPI.md) | Tweets con media (fotos/videos) de unx usuarix |

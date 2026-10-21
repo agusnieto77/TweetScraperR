@@ -43,6 +43,8 @@ desde JSON (texto completo, métricas, media, hashtags, menciones, etc.).
   (experimental)
 - [`getTweetsSearchAPI()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsSearchAPI.md)
   : Search Tweets via the X API (experimental)
+- [`getTweetsLiveAPI()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsLiveAPI.md)
+  : Capture Tweets from a Search as They Are Published (experimental)
 - [`getTweetsRepliesAPI()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsRepliesAPI.md)
   : Get Tweet Replies / Thread via the X API (experimental)
 - [`getTweetsDataAPI()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsDataAPI.md)

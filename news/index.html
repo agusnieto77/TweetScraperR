@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">TweetScraperR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.1.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,6 +36,10 @@
       <small>Source: <a href="https://github.com/agusnieto77/TweetScraperR/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="development version" id="tweetscraperr-development-version">TweetScraperR (development version)<a class="anchor" aria-label="anchor" href="#tweetscraperr-development-version"></a></h2>
+<ul><li>Nueva [getTweetsLiveAPI()] (experimental): captura en vivo de una búsqueda “hacia adelante”. Repite [getTweetsSearchAPI()] cada <code>interval</code> segundos (mínimo 60) durante <code>duration</code> y, desde la segunda ronda, agrega <code>since_id:&lt;último ID visto&gt;</code> a la consulta para traer solo lo publicado después, sin gastar cupo en lo ya recolectado. Con <code>save = TRUE</code> guarda lo acumulado después de cada ronda; una ronda fallida no corta la captura y Esc / Ctrl+C devuelve lo acumulado. Avisa cuando una ronda llega al tope <code>n_tweets</code> (posibles huecos).</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.8.1" id="tweetscraperr-081">TweetScraperR 0.8.1<a class="anchor" aria-label="anchor" href="#tweetscraperr-081"></a></h2>
 <p>Preparación del primer envío a CRAN.</p>

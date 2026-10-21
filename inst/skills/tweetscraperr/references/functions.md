@@ -79,6 +79,15 @@ Búsqueda con operadores de X. `since`/`until`: `"YYYY-MM-DD"` o
 `"YYYY-MM-DD_HH:MM:SS"`.
 
 ```r
+getTweetsLiveAPI(search = "#RStats", interval = 300, duration = 3600,
+                 n_tweets = 100, max_tweets = Inf, dir = getwd(), save = FALSE)
+```
+Captura en vivo: repite la búsqueda "Latest" cada `interval` segundos (mínimo
+60) durante `duration`, trayendo solo tweets nuevos (`since_id`). Con
+`save = TRUE` guarda lo acumulado en cada ronda. Esc / Ctrl+C devuelve lo
+acumulado.
+
+```r
 getTweetsRepliesAPI(url, n_tweets = 40, dir = getwd(), save = FALSE)
 ```
 Tweet original más sus respuestas (hilo de conversación).

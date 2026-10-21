@@ -1,7 +1,7 @@
 Package: TweetScraperR
 Type: Package
 Title: Collect Posts and User Data from 'X' (Formerly 'Twitter')
-Version: 0.8.1
+Version: 0.8.1.9000
 Authors@R: c(
     person(given = "Agustín", family = "Nieto",
            email = "agustin.nieto77@gmail.com", role = c("aut", "cre")),

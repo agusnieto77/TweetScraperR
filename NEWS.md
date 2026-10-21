@@ -1,3 +1,14 @@
+# TweetScraperR (development version)
+
+* Nueva [getTweetsLiveAPI()] (experimental): captura en vivo de una búsqueda
+  "hacia adelante". Repite [getTweetsSearchAPI()] cada `interval` segundos
+  (mínimo 60) durante `duration` y, desde la segunda ronda, agrega
+  `since_id:<último ID visto>` a la consulta para traer solo lo publicado
+  después, sin gastar cupo en lo ya recolectado. Con `save = TRUE` guarda lo
+  acumulado después de cada ronda; una ronda fallida no corta la captura y
+  Esc / Ctrl+C devuelve lo acumulado. Avisa cuando una ronda llega al tope
+  `n_tweets` (posibles huecos).
+
 # TweetScraperR 0.8.1
 
 Preparación del primer envío a CRAN.

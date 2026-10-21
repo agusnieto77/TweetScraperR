@@ -210,6 +210,23 @@ rango <- getTweetsSearchAPI(
 #> Tweets únicos recolectados: 20
 ```
 
+#### Captura en vivo
+
+`getTweetsLiveAPI()` sigue una búsqueda "hacia adelante": repite la búsqueda
+`Latest` cada `interval` segundos (mínimo 60) durante `duration` y, desde la
+segunda ronda, pide solo lo publicado después del último tweet visto
+(`since_id:`). Con `save = TRUE` guarda lo acumulado después de cada ronda;
+Esc / Ctrl+C corta la captura y devuelve lo recolectado hasta ese momento:
+
+```{r}
+vivo <- getTweetsLiveAPI("argentina lang:es", interval = 60, duration = 60, n_tweets = 20)
+#> Captura en vivo de: argentina lang:es (cada 60 s hasta las 18:26:30)
+#> 18:25:36 | ronda 1: 20 nuevos | total: 20
+#> Ronda 2: se alcanzo el tope de 20 tweets; puede haber tweets sin recolectar. Conviene bajar `interval` o subir `n_tweets`.
+#> 18:26:37 | ronda 2: 20 nuevos | total: 40
+#> Captura terminada: 40 tweets en 2 rondas.
+```
+
 ### 3.4 Respuestas / hilo de un tweet
 
 ```{r}

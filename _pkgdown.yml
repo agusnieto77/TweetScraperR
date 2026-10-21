@@ -33,6 +33,7 @@ reference:
   - getUserTweetsAPI
   - getTweetsTimelinesAPI
   - getTweetsSearchAPI
+  - getTweetsLiveAPI
   - getTweetsRepliesAPI
   - getTweetsDataAPI
   - getUserMediaAPI

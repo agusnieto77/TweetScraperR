@@ -114,6 +114,7 @@ Chromium no admite SOCKS5 con usuario y clave.
 | Tweets de una cuenta | `getUserTweetsAPI(username, n_tweets = 40)` |
 | Timeline combinado de varias cuentas | `getTweetsTimelinesAPI(usernames, n_tweets = 40)` (n por cuenta) |
 | Buscar por palabra, hashtag, cuenta, idioma o fechas | `getTweetsSearchAPI(search, n_tweets = 40, product = "Latest", since, until)` |
+| Seguir una búsqueda en vivo (tweets nuevos a medida que se publican) | `getTweetsLiveAPI(search, interval = 300, duration = 3600, save = TRUE)` |
 | Respuestas / hilo de un tweet | `getTweetsRepliesAPI(url, n_tweets = 40)` |
 | Datos de tweets puntuales a partir de URLs | `getTweetsDataAPI(urls_tweets)` |
 | Tweets con fotos/videos de una cuenta | `getUserMediaAPI(username, n_tweets = 40)` |
@@ -146,8 +147,8 @@ Notas de argumentos:
 ## Qué devuelven
 
 **Tweets** (`getUserTweetsAPI`, `getTweetsTimelinesAPI`, `getTweetsSearchAPI`,
-`getTweetsRepliesAPI`, `getTweetsDataAPI`, `getUserMediaAPI`,
-`getListTweetsAPI`): un tibble, una fila por tweet, 31 columnas:
+`getTweetsLiveAPI`, `getTweetsRepliesAPI`, `getTweetsDataAPI`,
+`getUserMediaAPI`, `getListTweetsAPI`): un tibble, una fila por tweet, 31 columnas:
 
 `fecha` (POSIXct UTC), `user` (con `@`), `texto` (completo, también en tweets
 largos), `idioma`, `respuestas`, `retweets`, `citas`, `megustas`, `views`,

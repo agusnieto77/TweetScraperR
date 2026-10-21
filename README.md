@@ -179,6 +179,7 @@ fueron **eliminadas** en la 0.5.0 (ver el mapeo de reemplazos en el
 | `getUserTweetsAPI()` | Timeline de unx usuarix |
 | `getTweetsTimelinesAPI()` | Timeline **combinado** de varias cuentas |
 | `getTweetsSearchAPI()` | Búsqueda (`product = "Latest"/"Top"/"Media"`) |
+| `getTweetsLiveAPI()` | Captura **en vivo** de una búsqueda (polling con `since_id`) |
 | `getTweetsRepliesAPI()` | Tweet y sus respuestas (hilo) |
 | `getTweetsDataAPI()` | Datos de tweets a partir de sus URLs |
 | `getUserMediaAPI()` | Tweets con media (fotos/videos) de unx usuarix |

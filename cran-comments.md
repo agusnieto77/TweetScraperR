@@ -12,9 +12,14 @@ This is a new submission.
 
 ## Test environments
 
-* local Windows 10 x64, R 4.6.1 (`devtools::check(remote = TRUE, manual = TRUE, cran = TRUE)`)
-* win-builder, R-devel (`devtools::check_win_devel()`)
-* R-hub v2 (`rhub::rhub_check()`): linux (R-devel), macos-arm64 (R-devel), windows (R-devel)
+* local Windows 10 x64, R 4.6.1
+  (`devtools::check(remote = TRUE, manual = TRUE, cran = TRUE)`):
+  0 errors | 0 warnings | 1 note (New submission).
+* win-builder, R-devel 2026-10-20 r90728 ucrt (`devtools::check_win_devel()`):
+  1 note (New submission). A second "invalid file URI" item in that note
+  (a link to a build-ignored file in README.md) has been fixed.
+* R-hub v2 (`rhub::rhub_check()`), R-devel on linux, macos-arm64 and
+  windows: Status OK.
 
 ## External software (Node.js / Chromium)
 

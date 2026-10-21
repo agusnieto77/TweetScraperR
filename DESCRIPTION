@@ -1,16 +1,24 @@
 Package: TweetScraperR
 Type: Package
-Title: Scrape Posts and User Data from X Twitter
-Version: 0.8.0
-Description:
-    Provides functions to extract data from X/Twitter, including posts
-    (tweets), users, and associated metadata, without using the official
-    APIs. It allows collecting data from X/Twitter and handling the
-    responses conveniently in R, with a focus on easing data collection
-    for analysis and visualization. Este paquete proporciona funciones
-    para extraer datos de X/Twitter (publicaciones, usuarixs y metadatos
-    asociados) y facilita la recolección de datos para análisis y
-    visualización.
+Title: Collect Posts and User Data from 'X' (Formerly 'Twitter')
+Version: 0.8.1
+Authors@R: c(
+    person(given = "Agustín", family = "Nieto",
+           email = "agustin.nieto77@gmail.com", role = c("aut", "cre")),
+    person(given = "vladkens", role = c("ctb", "cph"),
+           comment = "Author of 'twscrape'; the account pool logic is ported from it, see inst/COPYRIGHTS")
+    )
+Description: Collects posts, user profiles, lists, followers and related
+    metadata from the social network 'X' (formerly 'Twitter') and returns
+    them as tidy data frames. Data are retrieved through a local 'Node.js'
+    engine that drives a 'Chromium' browser with 'Playwright', reusing the
+    sessions of the user's own accounts. Work can be distributed across
+    several accounts of the user while respecting the per-endpoint rate
+    limits reported by 'X'; the design of this account pool is ported from
+    the 'Python' library 'twscrape' <https://github.com/vladkens/twscrape>.
+    Also includes helpers to plot word, emoji and time frequencies, and
+    optional sentiment and image analysis through the 'OpenAI' API.
+    Documentation is written in Spanish.
 URL: https://github.com/agusnieto77/TweetScraperR, https://agusnieto77.github.io/TweetScraperR/
 BugReports: https://github.com/agusnieto77/TweetScraperR/issues
 Depends:
@@ -46,9 +54,11 @@ Suggests:
     ggimage
 VignetteBuilder: knitr
 Config/testthat/edition: 3
-Authors@R: person(given = "Agustín", family = "Nieto", email = "agustin.nieto77@gmail.com", role = c("aut", "cre"))
 License: MIT + file LICENSE
+Copyright: See file inst/COPYRIGHTS
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-SystemRequirements: Node.js (>= 18) and a Chromium-based browser; the Playwright engine is installed with installPlaywrightEngine()
+SystemRequirements: Node.js (>= 18) with npm. The 'Playwright' engine and
+    the 'Chromium' browser are not installed with the package: the user
+    downloads them explicitly by calling installPlaywrightEngine().
 Config/roxygen2/version: 8.1.0

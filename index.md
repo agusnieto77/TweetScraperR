@@ -22,10 +22,17 @@ hashtags and mentions. Authentication works by importing your **real
 browser session** (cookies), since X blocks automated login. It is a
 flexible, free, and open-source alternative.
 
-### Instalacion de la version en desarrollo
+### Instalación
 
-Puedes instalar la versión de desarrollo de TweetScraperR desde
-[GitHub](https://github.com/) con:
+Desde [R-universe](https://agusnieto77.r-universe.dev), con binarios ya
+compilados para Windows, macOS y Linux:
+
+``` r
+
+install.packages("TweetScraperR", repos = c("https://agusnieto77.r-universe.dev", "https://cloud.r-project.org"))
+```
+
+O la versión de desarrollo desde [GitHub](https://github.com/):
 
 ``` r
 

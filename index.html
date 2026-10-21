@@ -70,10 +70,13 @@
 <p><code>TweetScraperR</code> collects data from X/Twitter —tweets, users and metadata— for analysis and visualization in R, <strong>without using the paid official API</strong>. Since version <strong>0.5.0</strong>, scraping runs on a <strong>Node.js + Playwright</strong> engine and queries X’s <strong>internal GraphQL API</strong>, returning <strong>structured</strong> data from JSON: full text, exact date, metrics, media, hashtags and mentions. Authentication works by importing your <strong>real browser session</strong> (cookies), since X blocks automated login. It is a flexible, free, and open-source alternative.</p>
 </div>
 <div class="section level3">
-<h3 id="instalacion-de-la-version-en-desarrollo">Instalacion de la version en desarrollo<a class="anchor" aria-label="anchor" href="#instalacion-de-la-version-en-desarrollo"></a>
+<h3 id="instalación">Instalación<a class="anchor" aria-label="anchor" href="#instalaci%C3%B3n"></a>
 </h3>
-<p>Puedes instalar la versión de desarrollo de TweetScraperR desde <a href="https://github.com/" class="external-link">GitHub</a> con:</p>
+<p>Desde <a href="https://agusnieto77.r-universe.dev" class="external-link">R-universe</a>, con binarios ya compilados para Windows, macOS y Linux:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"TweetScraperR"</span>, repos <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"https://agusnieto77.r-universe.dev"</span>, <span class="st">"https://cloud.r-project.org"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>O la versión de desarrollo desde <a href="https://github.com/" class="external-link">GitHub</a>:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("pak")</span></span>
 <span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"agusnieto77/TweetScraperR"</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -108,7 +111,7 @@
 <li>Necesitás <strong>Node.js (&gt;= 18)</strong> instalado en tu sistema.</li>
 <li>Una sola vez, después de instalar el paquete, ejecutá:</li>
 </ul>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/agusnieto77/TweetScraperR" class="external-link">TweetScraperR</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Instala el motor de Node.js/Playwright (una sola vez)</span></span>
@@ -129,7 +132,7 @@
 <li>
 <strong>Importá la sesión</strong> en R con <code><a href="reference/importSessionX.html">importSessionX()</a></code>:</li>
 </ol>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/agusnieto77/TweetScraperR" class="external-link">TweetScraperR</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="reference/importSessionX.html">importSessionX</a></span><span class="op">(</span></span>
@@ -145,7 +148,7 @@
 <h3 id="pool-de-cuentas">Pool de cuentas<a class="anchor" aria-label="anchor" href="#pool-de-cuentas"></a>
 </h3>
 <p>X limita cada endpoint <strong>por cuenta</strong> en ventanas de 15 minutos (la búsqueda, por ejemplo, admite unas 50 consultas). Si importás <strong>varias cuentas</strong>, el paquete arma un <em>pool</em> y rota solo: cuando una cuenta agota el cupo de un endpoint queda en pausa hasta que X lo renueva y la recolección sigue con la siguiente, retomando desde donde se cortó gracias al cursor de paginación, sin volver a traer lo ya recolectado. Si X rechaza una sesión (vencida, suspendida o bloqueada) la cuenta se desactiva y también se sigue con otra. El modelo está portado de <a href="https://github.com/vladkens/twscrape" class="external-link">twscrape</a>.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/importSessionX.html">importSessionX</a></span><span class="op">(</span>auth_token <span class="op">=</span> <span class="st">"..."</span>, ct0 <span class="op">=</span> <span class="st">"..."</span><span class="op">)</span>                     <span class="co"># cuenta "default"</span></span>
 <span><span class="fu"><a href="reference/importSessionX.html">importSessionX</a></span><span class="op">(</span>cookies <span class="op">=</span> <span class="st">"auth_token=...; ct0=..."</span>, account <span class="op">=</span> <span class="st">"cuenta2"</span>,</span>
 <span>               proxy <span class="op">=</span> <span class="st">"http://usuario:clave@host:8080"</span><span class="op">)</span>             <span class="co"># proxy propio</span></span>
@@ -243,7 +246,7 @@
 </tbody>
 </table>
 <p>Las funciones de tweets devuelven un <code>tibble</code> rico: texto completo, fecha, idioma, métricas (respuestas/retweets/citas/me gusta/vistas), y list-columns <code>media</code>, <code>hashtags</code>, <code>menciones</code>, <code>urls_externas</code> y <code>emoticones</code> — listo para analizar con <code><a href="reference/plotTime.html">plotTime()</a></code>, <code><a href="reference/plotWords.html">plotWords()</a></code>, <code><a href="reference/plotEmojis.html">plotEmojis()</a></code> o <code><a href="reference/getTweetsSentiments.html">getTweetsSentiments()</a></code>.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/agusnieto77/TweetScraperR" class="external-link">TweetScraperR</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="reference/importSessionX.html">importSessionX</a></span><span class="op">(</span>auth_token <span class="op">=</span> <span class="st">"tu_auth_token"</span>, ct0 <span class="op">=</span> <span class="st">"tu_ct0"</span><span class="op">)</span></span>
 <span><span class="va">tw</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/getTweetsSearchAPI.html">getTweetsSearchAPI</a></span><span class="op">(</span><span class="st">"#RStats"</span>, n_tweets <span class="op">=</span> <span class="fl">100</span>, product <span class="op">=</span> <span class="st">"Latest"</span><span class="op">)</span></span></code></pre></div>
@@ -252,7 +255,7 @@
 <h3 id="uso-conversacional-con-agentes-de-ia-posit-assistant">Uso conversacional con agentes de IA (Posit Assistant)<a class="anchor" aria-label="anchor" href="#uso-conversacional-con-agentes-de-ia-posit-assistant"></a>
 </h3>
 <p><code><a href="reference/installAgentSkill.html">installAgentSkill()</a></code> instala una <em>skill</em> (<a href="https://agentskills.io" class="external-link">Agent Skills</a>) que le enseña a un agente de IA a usar TweetScraperR: puesta a punto, qué función corresponde a cada pedido, columnas devueltas, recetas y solución de errores. Está pensada para <strong>Posit Assistant</strong> (RStudio y Positron), que la carga sola cuando hablás de X/Twitter o la invocás con <code>/tweetscraperr</code>.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Posit Assistant, para todos tus proyectos</span></span>
 <span><span class="fu"><a href="reference/installAgentSkill.html">installAgentSkill</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
@@ -284,7 +287,7 @@
 <div class="section level3">
 <h3 id="uso-del-paquete">Uso del paquete<a class="anchor" aria-label="anchor" href="#uso-del-paquete"></a>
 </h3>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://github.com/agusnieto77/TweetScraperR" class="external-link">TweetScraperR</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># 1) Importás tu sesión UNA vez (cookies auth_token y ct0 del navegador)</span></span>
@@ -305,7 +308,7 @@
 <span><span class="co"># 5) Datos de perfil de usuarixs</span></span>
 <span><span class="va">perfiles</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/getUsersDataAPI.html">getUsersDataAPI</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"NASA"</span>, <span class="st">"rstatstweet"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Cada función de tweets devuelve un <code>tibble</code> con datos <strong>estructurados</strong> (31 columnas), listo para analizar. Salida real (<code>getUserTweetsAPI("NASA", n_tweets = 10)</code>, capturada el 2026-10-20):</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">timeline</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: 10</span></span>
 <span><span class="co">#&gt; Columns: 31</span></span>
@@ -342,7 +345,7 @@
 <span><span class="co">#&gt; $ pais             &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA</span></span></code></pre></div>
 <p><code>fuente</code>, <code>lugar</code> y <code>pais</code> solo vienen cuando X los publica (la app de publicación figura en algunos timelines, como el de las Listas; la geoetiqueta es rara).</p>
 <p>Y los perfiles (<code>getUsersDataAPI("NASA")</code>, misma fecha):</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#&gt; # A tibble: 1 × 18</span></span>
 <span><span class="co">#&gt;   user  nombre user_id  descripcion        seguidores siguiendo tweets favoritos</span></span>
 <span><span class="co">#&gt;   &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;    &lt;chr&gt;                   &lt;int&gt;     &lt;int&gt;  &lt;int&gt;     &lt;int&gt;</span></span>
@@ -351,7 +354,7 @@
 <span><span class="co">#&gt; #   imagen_perfil &lt;chr&gt;, banner &lt;chr&gt;, fecha_creacion &lt;dttm&gt;, url &lt;chr&gt;,</span></span>
 <span><span class="co">#&gt; #   tweets_media &lt;int&gt;, protegida &lt;lgl&gt;, tipo_verificacion &lt;chr&gt;</span></span></code></pre></div>
 <p>Y la ficha “Acerca de esta cuenta” (<code>getUsersAboutAPI(c("NASA", "elonmusk"))</code>):</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#&gt; # A tibble: 2 × 13</span></span>
 <span><span class="co">#&gt;   user      nombre    user_id  pais_cuenta   ubicacion_precisa cambios_usuario</span></span>
 <span><span class="co">#&gt;   &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;    &lt;chr&gt;         &lt;lgl&gt;                       &lt;int&gt;</span></span>
@@ -361,7 +364,7 @@
 <span><span class="co">#&gt; #   origen_cuenta &lt;chr&gt;, identidad_verificada &lt;lgl&gt;, verificada_desde &lt;dttm&gt;,</span></span>
 <span><span class="co">#&gt; #   fecha_creacion &lt;dttm&gt;, url &lt;chr&gt;</span></span></code></pre></div>
 <p>Y analizás/visualizás directo, sin renombrar columnas:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/plotTime.html">plotTime</a></span><span class="op">(</span><span class="va">tweets</span><span class="op">)</span>                    <span class="co"># serie temporal (columna fecha)</span></span>
 <span><span class="fu"><a href="reference/plotWords.html">plotWords</a></span><span class="op">(</span><span class="va">tweets</span><span class="op">)</span>                   <span class="co"># nube de palabras (columna texto)</span></span>
 <span><span class="fu"><a href="reference/plotEmojis.html">plotEmojis</a></span><span class="op">(</span><span class="va">tweets</span><span class="op">)</span>                  <span class="co"># ranking de emojis (columna emoticones)</span></span>

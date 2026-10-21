@@ -60,7 +60,14 @@ abierto.
 
 ### Instalación
 
-Para instalar la versión de desarrollo desde GitHub, ejecuta:
+Desde R-universe (binarios ya compilados para Windows, macOS y Linux):
+
+``` r
+
+install.packages("TweetScraperR", repos = c("https://agusnieto77.r-universe.dev", "https://cloud.r-project.org"))
+```
+
+O la versión de desarrollo desde GitHub:
 
 ``` r
 

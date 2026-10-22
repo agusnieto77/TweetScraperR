@@ -10,6 +10,7 @@ getTweetsLiveAPI(
   duration = 3600,
   n_tweets = 100,
   max_tweets = Inf,
+  db = NULL,
   dir = getwd(),
   save = FALSE
 )
@@ -25,18 +26,23 @@ getTweetsLiveAPI(
 \item{n_tweets}{Tope de tweets por ronda. La primera ronda trae hasta
 \code{n_tweets} de los mas recientes como punto de partida. Por defecto 100.}
 
-\item{max_tweets}{La captura termina al alcanzar este total acumulado. Por
-defecto \code{Inf} (solo limita \code{duration}).}
+\item{max_tweets}{La captura termina cuando la base llega a este total de
+tweets. Por defecto \code{Inf} (solo limita \code{duration}).}
 
-\item{dir}{Directorio de destino del RDS. Por defecto el de trabajo.}
+\item{db}{Ruta a una base \code{.sqlite}. Si no existe se crea; si existe, se
+continua la captura guardada en ella. Por defecto NULL.}
 
-\item{save}{Logico. Si TRUE guarda lo acumulado en un RDS dentro de \code{dir}
-despues de cada ronda (si la sesion de R se corta, lo recolectado no se
-pierde). Por defecto FALSE: no se escribe ningun archivo.}
+\item{dir}{Directorio donde se crea la base cuando \code{save = TRUE} y no se
+pasa \code{db}. Por defecto el de trabajo.}
+
+\item{save}{Logico. Si TRUE y no se pasa \code{db}, crea una base nueva
+\verb{api_live_<consulta>_<fecha>.sqlite} en \code{dir}. Por defecto FALSE: se usa
+una base temporal que se borra al terminar.}
 }
 \value{
 Un tibble con un tweet por fila, del mas nuevo al mas viejo (mismas
-columnas que \code{\link[=getTweetsSearchAPI]{getTweetsSearchAPI()}}).
+columnas que \code{\link[=getTweetsSearchAPI]{getTweetsSearchAPI()}}). Al continuar una captura incluye lo
+guardado antes.
 }
 \description{
 \if{html}{\out{<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank">}}\if{html}{\out{<img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-experimental.svg" alt="[Experimental]">}}\if{html}{\out{</a>}}
@@ -53,6 +59,12 @@ recolectar (se avisa con un mensaje); en ese caso conviene bajar \code{interval}
 o subir \code{n_tweets}. Un error en una ronda se informa y la captura sigue con
 la proxima. Interrumpir con Esc / Ctrl+C termina la captura y devuelve lo
 acumulado hasta ese momento.
+
+\strong{Guardado y reanudacion:} con \code{save = TRUE} o \code{db}, cada ronda se guarda
+en una base SQLite apenas llega. Para continuar una captura cortada, llama
+de nuevo con el mismo \code{search} y \code{db = "<ruta>.sqlite"}: la primera ronda
+pide lo posterior al tweet mas reciente guardado y \code{duration} cuenta desde
+la nueva llamada.
 }
 \examples{
 \dontrun{

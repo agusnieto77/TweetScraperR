@@ -180,6 +180,9 @@ fueron **eliminadas** en la 0.5.0 (ver el mapeo de reemplazos en el
 | `getTweetsTimelinesAPI()` | Timeline **combinado** de varias cuentas |
 | `getTweetsSearchAPI()` | Búsqueda (`product = "Latest"/"Top"/"Media"`) |
 | `getTweetsLiveAPI()` | Captura **en vivo** de una búsqueda (polling con `since_id`) |
+| `getTweetsHistoricalAPI()` | Descarga **completa** de una búsqueda en un período (por ventanas; últimos ~7 días) |
+| `getTweetsThreadsAPI()` | Árbol **completo** de respuestas de tweets ya descargados (crawler de conversaciones) |
+| `readTweetsDB()` | Lee la base `.sqlite` de una descarga larga (para retomarla o analizarla sin volver a bajar) |
 | `getTweetsRepliesAPI()` | Tweet y sus respuestas (hilo) |
 | `getTweetsDataAPI()` | Datos de tweets a partir de sus URLs |
 | `getUserMediaAPI()` | Tweets con media (fotos/videos) de unx usuarix |

@@ -42,21 +42,31 @@
 #' la proxima. Interrumpir con Esc / Ctrl+C termina la captura y devuelve lo
 #' acumulado hasta ese momento.
 #'
+#' **Guardado y reanudacion:** con `save = TRUE` o `db`, cada ronda se guarda
+#' en una base SQLite apenas llega. Para continuar una captura cortada, llama
+#' de nuevo con el mismo `search` y `db = "<ruta>.sqlite"`: la primera ronda
+#' pide lo posterior al tweet mas reciente guardado y `duration` cuenta desde
+#' la nueva llamada.
+#'
 #' @param search Consulta de busqueda (soporta operadores de X, p.ej. "lang:es",
 #'   "-filter:retweets"). Por defecto "#RStats".
 #' @param interval Segundos entre rondas. Minimo 60. Por defecto 300.
 #' @param duration Segundos totales de captura. Por defecto 3600 (una hora).
 #' @param n_tweets Tope de tweets por ronda. La primera ronda trae hasta
 #'   `n_tweets` de los mas recientes como punto de partida. Por defecto 100.
-#' @param max_tweets La captura termina al alcanzar este total acumulado. Por
-#'   defecto `Inf` (solo limita `duration`).
-#' @param dir Directorio de destino del RDS. Por defecto el de trabajo.
-#' @param save Logico. Si TRUE guarda lo acumulado en un RDS dentro de `dir`
-#'   despues de cada ronda (si la sesion de R se corta, lo recolectado no se
-#'   pierde). Por defecto FALSE: no se escribe ningun archivo.
+#' @param max_tweets La captura termina cuando la base llega a este total de
+#'   tweets. Por defecto `Inf` (solo limita `duration`).
+#' @param db Ruta a una base `.sqlite`. Si no existe se crea; si existe, se
+#'   continua la captura guardada en ella. Por defecto NULL.
+#' @param dir Directorio donde se crea la base cuando `save = TRUE` y no se
+#'   pasa `db`. Por defecto el de trabajo.
+#' @param save Logico. Si TRUE y no se pasa `db`, crea una base nueva
+#'   `api_live_<consulta>_<fecha>.sqlite` en `dir`. Por defecto FALSE: se usa
+#'   una base temporal que se borra al terminar.
 #'
 #' @return Un tibble con un tweet por fila, del mas nuevo al mas viejo (mismas
-#'   columnas que [getTweetsSearchAPI()]).
+#'   columnas que [getTweetsSearchAPI()]). Al continuar una captura incluye lo
+#'   guardado antes.
 #' @export
 #'
 #' @examples
@@ -67,22 +77,35 @@
 #' }
 getTweetsLiveAPI <- function(search = "#RStats", interval = 300, duration = 3600,
                              n_tweets = 100, max_tweets = Inf,
-                             dir = getwd(), save = FALSE) {
+                             db = NULL, dir = getwd(), save = FALSE) {
   if (!is.numeric(interval) || length(interval) != 1L || is.na(interval) || interval < 60) {
     stop("`interval` debe ser un numero de segundos >= 60.", call. = FALSE)
   }
   if (!is.numeric(duration) || length(duration) != 1L || is.na(duration) || duration <= 0) {
     stop("`duration` debe ser un numero de segundos > 0.", call. = FALSE)
   }
+  where <- .store_path(db, save, dir, paste0("api_live_", gsub("[^A-Za-z0-9]+", "_", search)))
+  if (where$temp) on.exit(.store_unlink(where$path), add = TRUE)
+  con <- .store_open(where$path)
+  on.exit(.store_close(con), add = TRUE, after = FALSE)
+  meta <- .store_meta(con)
+  if (length(meta)) {
+    if (!identical(meta$`function`, "live") || !identical(meta$search, search)) {
+      stop("La base ", where$path, " es de otra descarga (", meta$`function`, ": \"",
+           meta$search, "\").", call. = FALSE)
+    }
+    cat("Continuando captura guardada en ", where$path, "\n", sep = "")
+  } else {
+    .store_set_meta(con, list(`function` = "live", search = search,
+                              version = as.character(utils::packageVersion("TweetScraperR"))))
+  }
+
   inicio <- .live_now()
   fin <- inicio + duration
-  path <- file.path(dir, paste0("api_live_", gsub("[^A-Za-z0-9]+", "_", search), "_",
-                                format(inicio, "%Y_%m_%d_%H_%M_%S"), ".rds"))
   cat("Captura en vivo de: ", search, " (cada ", interval, " s hasta las ",
       format(fin, "%H:%M:%S"), ")\n", sep = "")
 
-  tweets <- tibble::tibble()
-  last_id <- NULL
+  last_id <- .store_max_id(con)
   ronda <- 0L
   tryCatch({
     repeat {
@@ -108,23 +131,20 @@ getTweetsLiveAPI <- function(search = "#RStats", interval = 300, duration = 3600
                   "tweets sin recolectar. Conviene bajar `interval` o subir `n_tweets`.")
         }
         last_id <- .max_status_id(c(last_id, nuevos$tweet_id))
-        nuevos <- nuevos[!nuevos$tweet_id %in% tweets[["tweet_id"]], ]
-        n_nuevos <- nrow(nuevos)
-        tweets <- dplyr::bind_rows(nuevos, tweets)
-        if (save && n_nuevos) saveRDS(tweets, path)
+        n_nuevos <- .store_add(con, nuevos)
       }
+      total <- .store_count(con)
       cat(format(.live_now(), "%H:%M:%S"), " | ronda ", ronda, ": ", n_nuevos,
-          " nuevos | total: ", nrow(tweets), "\n", sep = "")
-      if (nrow(tweets) >= max_tweets) break
+          " nuevos | total: ", total, "\n", sep = "")
+      if (total >= max_tweets) break
       espera <- min(interval, as.numeric(difftime(fin, .live_now(), units = "secs")))
       if (espera <= 0) break
       .live_sleep(espera)
     }
   }, interrupt = function(e) cat("Captura interrumpida.\n"))
 
+  tweets <- .store_read(con)
   cat("Captura terminada:", nrow(tweets), "tweets en", ronda, "rondas.\n")
-  if (save) {
-    cat(if (file.exists(path)) paste0("Guardado en ", path, "\n") else "No hubo tweets para guardar.\n")
-  }
+  if (!where$temp) cat("Guardado en ", where$path, "\n", sep = "")
   tweets
 }

@@ -80,13 +80,38 @@ días inclusivos) o una hora `"YYYY-MM-DD HH:MM:SS"` en UTC; también aceptan
 `Date` y `POSIXct` (respeta su zona horaria).
 
 ```r
+getTweetsHistoricalAPI(search, since = NULL, until = NULL, n_per_window = 900,
+                       db = NULL, dir = getwd(), save = FALSE)
+```
+Descarga completa de un período: trocea en ventanas `since_time:`/`until_time:`
+y, si una se satura, continúa desde la frontera o la subdivide. Usar en lugar de
+`getTweetsSearchAPI()` cuando se esperan más de ~500 tweets. El buscador de X
+solo tiene completos los últimos ~7 días: el tramo anterior se baja con
+Destacados en ventanas de 3 h, que da una muestra (≈10× Latest), no el total.
+`since` es obligatorio al empezar; `until = NULL` es "ahora".
+
+```r
+getTweetsThreadsAPI(tweets = NULL, n_per_window = 900, db = NULL, dir = getwd(), save = FALSE)
+```
+Crawler de conversaciones: para cada tweet de entrada (tibble de cualquier
+`*API()` o vector de `conversation_id`) trae el árbol completo de respuestas con
+una búsqueda `conversation_id:<id>`. Omite raíces sin respuestas y sigue los
+retweets en el original. El árbol se reconstruye con `respuesta_a_id`.
+
+```r
 getTweetsLiveAPI(search = "#RStats", interval = 300, duration = 3600,
-                 n_tweets = 100, max_tweets = Inf, dir = getwd(), save = FALSE)
+                 n_tweets = 100, max_tweets = Inf, db = NULL, dir = getwd(), save = FALSE)
 ```
 Captura en vivo: repite la búsqueda "Latest" cada `interval` segundos (mínimo
-60) durante `duration`, trayendo solo tweets nuevos (`since_id`). Con
-`save = TRUE` guarda lo acumulado en cada ronda. Esc / Ctrl+C devuelve lo
-acumulado.
+60) durante `duration`, trayendo solo tweets nuevos (`since_id`). Esc / Ctrl+C
+devuelve lo acumulado.
+
+**Guardado y reanudación (las tres anteriores):** con `save = TRUE` crean una
+base nueva `api_<funcion>_..._<fecha>.sqlite` en `dir` y guardan cada consulta
+apenas llega. Si la descarga se corta, se reanuda llamando de nuevo con la
+misma consulta y `db = "<ruta>.sqlite"` (en el crawler alcanza con `db`): solo
+se pide lo pendiente. `readTweetsDB(db)` lee una base sin descargar nada. Para
+descargas grandes, recomendar siempre `save = TRUE`.
 
 ```r
 getTweetsRepliesAPI(url, n_tweets = 40, dir = getwd(), save = FALSE)

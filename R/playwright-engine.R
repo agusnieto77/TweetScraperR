@@ -301,7 +301,9 @@
         "No hay una sesi\u00f3n activa de X. Import\u00e1 tu sesi\u00f3n con importSessionX(auth_token, ct0)."
       }
       if (any(lengths(bodies) > 0)) {
-        warning(msg, " Se devuelven los datos recolectados hasta el corte.", call. = FALSE)
+        # Con clase: la busqueda historica la detecta para no dar la ventana por completa.
+        warning(warningCondition(paste(msg, "Se devuelven los datos recolectados hasta el corte."),
+                                 class = "tsr_partial_harvest"))
         break
       }
       stop(msg, call. = FALSE)

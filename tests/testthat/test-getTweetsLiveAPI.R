@@ -34,10 +34,23 @@ test_that("cada ronda pide desde el mayor ID visto, acumula sin duplicar y sobre
   ))
 
   expect_equal(queries(), c("#x", "#x since_id:100", "#x since_id:101", "#x since_id:101"))
-  expect_equal(out$tweet_id, c("102", "101", "99", "100"))
-  guardado <- list.files(dir, pattern = "^api_live_.*\\.rds$", full.names = TRUE)
+  expect_equal(out$tweet_id, c("102", "101", "100", "99"))
+  guardado <- list.files(dir, pattern = "^api_live_.*\\.sqlite$", full.names = TRUE)
   expect_length(guardado, 1)
-  expect_equal(readRDS(guardado), out)
+  expect_equal(readTweetsDB(guardado), out)
+})
+
+test_that("con la misma base la captura continua desde el tweet mas reciente guardado", {
+  db <- withr::local_tempfile(fileext = ".sqlite")
+  queries <- local_fake_live(list(ids("99", "100"), ids("101")))
+
+  # Una ronda por llamada: max_tweets corta apenas la base llega al total.
+  suppressMessages(capture.output(getTweetsLiveAPI("#x", interval = 60, max_tweets = 2, db = db)))
+  suppressMessages(capture.output(out <- getTweetsLiveAPI("#x", interval = 60, max_tweets = 3, db = db)))
+
+  expect_equal(queries(), c("#x", "#x since_id:100"))
+  expect_equal(out$tweet_id, c("101", "100", "99"))
+  expect_error(getTweetsLiveAPI("#otra", db = db), "otra descarga")
 })
 
 test_that("la captura termina al alcanzar max_tweets", {

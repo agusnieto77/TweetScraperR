@@ -115,6 +115,10 @@ Chromium no admite SOCKS5 con usuario y clave.
 | Timeline combinado de varias cuentas | `getTweetsTimelinesAPI(usernames, n_tweets = 40)` (n por cuenta) |
 | Buscar por palabra, hashtag, cuenta, idioma o fechas | `getTweetsSearchAPI(search, n_tweets = 40, product = "Latest", since, until)` |
 | Seguir una búsqueda en vivo (tweets nuevos a medida que se publican) | `getTweetsLiveAPI(search, interval = 300, duration = 3600, save = TRUE)` |
+| Descargar *todos* los tweets de una búsqueda en un período (miles de tweets) | `getTweetsHistoricalAPI(search, since, until, save = TRUE)` (X solo tiene completos los últimos ~7 días) |
+| Todas las respuestas (y respuestas a respuestas) de tweets ya descargados | `getTweetsThreadsAPI(tweets, save = TRUE)` (árbol completo vía `conversation_id:`) |
+| Reanudar una descarga larga cortada (histórica, en vivo o crawler) | La misma llamada con `db = "<ruta>.sqlite"` (la base que creó `save = TRUE`) |
+| Leer lo guardado en una base sin descargar | `readTweetsDB("<ruta>.sqlite")` |
 | Respuestas / hilo de un tweet | `getTweetsRepliesAPI(url, n_tweets = 40)` |
 | Datos de tweets puntuales a partir de URLs | `getTweetsDataAPI(urls_tweets)` |
 | Tweets con fotos/videos de una cuenta | `getUserMediaAPI(username, n_tweets = 40)` |
@@ -152,8 +156,9 @@ Notas de argumentos:
 ## Qué devuelven
 
 **Tweets** (`getUserTweetsAPI`, `getTweetsTimelinesAPI`, `getTweetsSearchAPI`,
-`getTweetsLiveAPI`, `getTweetsRepliesAPI`, `getTweetsDataAPI`,
-`getUserMediaAPI`, `getListTweetsAPI`): un tibble, una fila por tweet, 31 columnas:
+`getTweetsLiveAPI`, `getTweetsHistoricalAPI`, `getTweetsThreadsAPI`,
+`getTweetsRepliesAPI`, `getTweetsDataAPI`, `getUserMediaAPI`,
+`getListTweetsAPI`): un tibble, una fila por tweet, 31 columnas:
 
 `fecha` (POSIXct UTC), `user` (con `@`), `texto` (completo, también en tweets
 largos), `idioma`, `respuestas`, `retweets`, `citas`, `megustas`, `views`,

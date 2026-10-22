@@ -344,9 +344,9 @@ test_that("si todas las cuentas quedan en pausa se devuelve lo parcial con un av
                reset = as.integer(Sys.time()) + 600L)
   ))
 
-  expect_warning(
+  w <- expect_warning(
     res <- suppressMessages(TweetScraperR:::.pw_harvest_raw("u1", "SearchTimeline")),
-    "en pausa"
+    "en pausa", class = "tsr_partial_harvest"
   )
   expect_equal(res[[1]]$bodies, "{1}")
 })

@@ -12,34 +12,46 @@
          "&src=typed_query&f=", f)
 }
 
-#' Operador de fecha de la busqueda de X para `since`/`until`
+#' Interpreta un `since`/`until` como instante UTC
 #'
-#' Un dia se pasa como `since:`/`until:` (X incluye ambos dias). Un instante
-#' se pasa como `since_time:`/`until_time:` en segundos Unix: X ya no
-#' devuelve resultados con `since:YYYY-MM-DD_HH:MM:SS`. Las horas en texto se
-#' interpretan en UTC, como la columna `fecha`.
-#' @return El operador como texto, o NULL si `x` es NULL o vacio.
+#' Acepta un dia (`"YYYY-MM-DD"` o `Date`, a las 00:00 UTC) o un instante
+#' (`"YYYY-MM-DD HH:MM[:SS]"` en UTC, con `_` o `T` como separador y sufijo
+#' `_UTC` opcional, o un `POSIXct` en cualquier zona horaria).
+#' @return `list(time = POSIXct, day = logico)`, o NULL si `x` es NULL o vacio.
 #' @noRd
-.search_time_operator <- function(x, op) {
+.parse_search_time <- function(x, op) {
   if (is.null(x) || (is.character(x) && !nzchar(x))) return(NULL)
   if (length(x) != 1L || is.na(x)) {
     stop("`", op, "` debe ser una sola fecha.", call. = FALSE)
   }
-  if (inherits(x, "Date")) return(paste0(op, ":", format(x)))
-  if (inherits(x, "POSIXct")) return(paste0(op, "_time:", as.integer(x)))
+  if (inherits(x, "Date")) return(list(time = as.POSIXct(format(x), tz = "UTC"), day = TRUE))
+  if (inherits(x, "POSIXct")) return(list(time = x, day = FALSE))
   x <- trimws(sub("_UTC$", "", as.character(x)))
   if (grepl("^\\d{4}-\\d{2}-\\d{2}$", x, perl = TRUE) &&
       !is.na(as.Date(x, format = "%Y-%m-%d", optional = TRUE))) {
-    return(paste0(op, ":", x))
+    return(list(time = as.POSIXct(x, tz = "UTC"), day = TRUE))
   }
   if (grepl("^\\d{4}-\\d{2}-\\d{2}[ _T]\\d{2}:\\d{2}(:\\d{2})?$", x, perl = TRUE)) {
     x <- sub("^(\\S{10})[ _T]", "\\1 ", x)
     t <- as.POSIXct(x, tz = "UTC", tryFormats = c("%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H:%M"),
                     optional = TRUE)
-    if (!is.na(t)) return(paste0(op, "_time:", as.integer(t)))
+    if (!is.na(t)) return(list(time = t, day = FALSE))
   }
   stop("`", op, "` no es una fecha valida: usa \"YYYY-MM-DD\" o \"YYYY-MM-DD HH:MM:SS\" (UTC).",
        call. = FALSE)
+}
+
+#' Operador de fecha de la busqueda de X para `since`/`until`
+#'
+#' Un dia se pasa como `since:`/`until:` (X incluye ambos dias). Un instante
+#' se pasa como `since_time:`/`until_time:` en segundos Unix: X ya no
+#' devuelve resultados con `since:YYYY-MM-DD_HH:MM:SS`.
+#' @return El operador como texto, o NULL si `x` es NULL o vacio.
+#' @noRd
+.search_time_operator <- function(x, op) {
+  t <- .parse_search_time(x, op)
+  if (is.null(t)) return(NULL)
+  if (t$day) paste0(op, ":", format(t$time, "%Y-%m-%d")) else paste0(op, "_time:", as.integer(t$time))
 }
 
 #' Search Tweets via the X API (experimental)

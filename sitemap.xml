@@ -18,12 +18,14 @@
 <url><loc>https://agusnieto77.github.io/TweetScraperR/reference/getListTweetsAPI.html</loc></url>
 <url><loc>https://agusnieto77.github.io/TweetScraperR/reference/getTweetsDataAPI.html</loc></url>
 <url><loc>https://agusnieto77.github.io/TweetScraperR/reference/getTweetsHashtags.html</loc></url>
+<url><loc>https://agusnieto77.github.io/TweetScraperR/reference/getTweetsHistoricalAPI.html</loc></url>
 <url><loc>https://agusnieto77.github.io/TweetScraperR/reference/getTweetsImagesAnalysis.html</loc></url>
 <url><loc>https://agusnieto77.github.io/TweetScraperR/reference/getTweetsLiveAPI.html</loc></url>
 <url><loc>https://agusnieto77.github.io/TweetScraperR/reference/getTweetsRepliesAPI.html</loc></url>
 <url><loc>https://agusnieto77.github.io/TweetScraperR/reference/getTweetsRetweetsAPI.html</loc></url>
 <url><loc>https://agusnieto77.github.io/TweetScraperR/reference/getTweetsSearchAPI.html</loc></url>
 <url><loc>https://agusnieto77.github.io/TweetScraperR/reference/getTweetsSentiments.html</loc></url>
+<url><loc>https://agusnieto77.github.io/TweetScraperR/reference/getTweetsThreadsAPI.html</loc></url>
 <url><loc>https://agusnieto77.github.io/TweetScraperR/reference/getTweetsTimelinesAPI.html</loc></url>
 <url><loc>https://agusnieto77.github.io/TweetScraperR/reference/getUserFollowersAPI.html</loc></url>
 <url><loc>https://agusnieto77.github.io/TweetScraperR/reference/getUserFollowingAPI.html</loc></url>
@@ -42,6 +44,7 @@
 <url><loc>https://agusnieto77.github.io/TweetScraperR/reference/plotTime.html</loc></url>
 <url><loc>https://agusnieto77.github.io/TweetScraperR/reference/plotWords.html</loc></url>
 <url><loc>https://agusnieto77.github.io/TweetScraperR/reference/reactivateAccountX.html</loc></url>
+<url><loc>https://agusnieto77.github.io/TweetScraperR/reference/readTweetsDB.html</loc></url>
 <url><loc>https://agusnieto77.github.io/TweetScraperR/reference/removeAccountX.html</loc></url>
 <url><loc>https://agusnieto77.github.io/TweetScraperR/reference/resetLocksX.html</loc></url>
 <url><loc>https://agusnieto77.github.io/TweetScraperR/reference/setProxyX.html</loc></url>

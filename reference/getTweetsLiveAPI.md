@@ -17,6 +17,12 @@ sin recolectar (se avisa con un mensaje); en ese caso conviene bajar
 captura sigue con la proxima. Interrumpir con Esc / Ctrl+C termina la
 captura y devuelve lo acumulado hasta ese momento.
 
+**Guardado y reanudacion:** con `save = TRUE` o `db`, cada ronda se
+guarda en una base SQLite apenas llega. Para continuar una captura
+cortada, llama de nuevo con el mismo `search` y `db = "<ruta>.sqlite"`:
+la primera ronda pide lo posterior al tweet mas reciente guardado y
+`duration` cuenta desde la nueva llamada.
+
 ## Usage
 
 ``` r
@@ -26,6 +32,7 @@ getTweetsLiveAPI(
   duration = 3600,
   n_tweets = 100,
   max_tweets = Inf,
+  db = NULL,
   dir = getwd(),
   save = FALSE
 )
@@ -53,24 +60,31 @@ getTweetsLiveAPI(
 
 - max_tweets:
 
-  La captura termina al alcanzar este total acumulado. Por defecto `Inf`
-  (solo limita `duration`).
+  La captura termina cuando la base llega a este total de tweets. Por
+  defecto `Inf` (solo limita `duration`).
+
+- db:
+
+  Ruta a una base `.sqlite`. Si no existe se crea; si existe, se
+  continua la captura guardada en ella. Por defecto NULL.
 
 - dir:
 
-  Directorio de destino del RDS. Por defecto el de trabajo.
+  Directorio donde se crea la base cuando `save = TRUE` y no se pasa
+  `db`. Por defecto el de trabajo.
 
 - save:
 
-  Logico. Si TRUE guarda lo acumulado en un RDS dentro de `dir` despues
-  de cada ronda (si la sesion de R se corta, lo recolectado no se
-  pierde). Por defecto FALSE: no se escribe ningun archivo.
+  Logico. Si TRUE y no se pasa `db`, crea una base nueva
+  `api_live_<consulta>_<fecha>.sqlite` en `dir`. Por defecto FALSE: se
+  usa una base temporal que se borra al terminar.
 
 ## Value
 
 Un tibble con un tweet por fila, del mas nuevo al mas viejo (mismas
 columnas que
 [`getTweetsSearchAPI()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsSearchAPI.md)).
+Al continuar una captura incluye lo guardado antes.
 
 ## Examples
 

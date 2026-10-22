@@ -184,6 +184,9 @@ fueron **eliminadas** en la 0.5.0 (ver el mapeo de reemplazos en el
 | [`getTweetsTimelinesAPI()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsTimelinesAPI.md) | Timeline **combinado** de varias cuentas |
 | [`getTweetsSearchAPI()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsSearchAPI.md) | Búsqueda (`product = "Latest"/"Top"/"Media"`) |
 | [`getTweetsLiveAPI()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsLiveAPI.md) | Captura **en vivo** de una búsqueda (polling con `since_id`) |
+| [`getTweetsHistoricalAPI()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsHistoricalAPI.md) | Descarga **completa** de una búsqueda en un período (por ventanas; últimos ~7 días) |
+| [`getTweetsThreadsAPI()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsThreadsAPI.md) | Árbol **completo** de respuestas de tweets ya descargados (crawler de conversaciones) |
+| [`readTweetsDB()`](https://agusnieto77.github.io/TweetScraperR/reference/readTweetsDB.md) | Lee la base `.sqlite` de una descarga larga (para retomarla o analizarla sin volver a bajar) |
 | [`getTweetsRepliesAPI()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsRepliesAPI.md) | Tweet y sus respuestas (hilo) |
 | [`getTweetsDataAPI()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsDataAPI.md) | Datos de tweets a partir de sus URLs |
 | [`getUserMediaAPI()`](https://agusnieto77.github.io/TweetScraperR/reference/getUserMediaAPI.md) | Tweets con media (fotos/videos) de unx usuarix |
@@ -429,6 +432,12 @@ desde JSON (texto completo, métricas, media, hashtags, menciones, etc.).
   : Search Tweets via the X API (experimental)
 - [`getTweetsLiveAPI()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsLiveAPI.md)
   : Capture Tweets from a Search as They Are Published (experimental)
+- [`getTweetsHistoricalAPI()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsHistoricalAPI.md)
+  : Historical Search over a Date Range (experimental)
+- [`getTweetsThreadsAPI()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsThreadsAPI.md)
+  : Crawl Full Reply Trees of Tweets (experimental)
+- [`readTweetsDB()`](https://agusnieto77.github.io/TweetScraperR/reference/readTweetsDB.md)
+  : Read Tweets Saved by a Long Download
 - [`getTweetsRepliesAPI()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsRepliesAPI.md)
   : Get Tweet Replies / Thread via the X API (experimental)
 - [`getTweetsDataAPI()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsDataAPI.md)

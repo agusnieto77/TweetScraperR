@@ -2,14 +2,56 @@
 
 ## TweetScraperR (development version)
 
+- Guardado incremental en SQLite con reanudación para las descargas
+  largas (\[getTweetsHistoricalAPI()\], \[getTweetsLiveAPI()\],
+  \[getTweetsThreadsAPI()\]). Con `save = TRUE` o el nuevo argumento
+  `db`, cada consulta se guarda en una base `.sqlite` apenas llega,
+  dentro de una transacción: un corte inesperado (Ctrl+C, error, sesión
+  de R caída) no pierde ni corrompe lo confirmado. Llamando de nuevo con
+  `db = "<ruta>.sqlite"` se reanuda: la histórica y el crawler piden
+  solo las ventanas o conversaciones pendientes (con el período y el
+  plan de ventanas fijados al crear la base, aunque se reanude otro
+  día), y la captura en vivo continúa desde el tweet más reciente
+  guardado. Una ventana o conversación con consultas fallidas o
+  incompletas queda pendiente para reintentarse. Como X trunca
+  respuestas al azar (la misma media hora densa devolvió 0 y 900 tweets
+  en dos intentos), una respuesta corta ya no cierra la ventana: se
+  sigue pidiendo lo anterior al tweet más viejo recibido; los reintentos
+  varían el límite de la consulta, y un vacío se acepta solo tras
+  confirmar con una consulta testigo que X no está frenando en silencio
+  (tras muchas consultas devuelve vacío todo sin avisar del límite); si
+  frena, la descarga se corta y queda pendiente. El avance de cada
+  ventana se guarda, así que al reanudar se sigue desde donde quedó.
+  Estas tres funciones dejan de escribir RDS. Nueva \[readTweetsDB()\]
+  para leer una base sin volver a descargar. Diseño revisado en un
+  juicio dual (dos modelos, a ciegas) antes de implementarlo.
+- Nueva \[getTweetsThreadsAPI()\] (experimental): a partir de tweets ya
+  descargados, recupera la conversación completa de cada uno
+  (respuestas, respuestas a respuestas, a cualquier profundidad) con una
+  búsqueda `conversation_id:<id>` por conversación, troceada por
+  ventanas como la búsqueda histórica. Omite las conversaciones sin
+  respuestas, pide cada una una sola vez y sigue los retweets en el
+  tweet original.
+- Nueva \[getTweetsHistoricalAPI()\] (experimental): descarga completa
+  de una búsqueda en un período. Una sola consulta de búsqueda devuelve
+  como mucho unos cientos de tweets, así que en períodos densos se
+  perdía casi todo (una hora de “milei” tiene más de mil). La función
+  trocea el período en ventanas `since_time:`/`until_time:` y, cuando
+  una ventana se satura, continúa desde la frontera o la subdivide
+  (hasta 30 min). Estrategia adaptada del “optimized search” de
+  t-hoarder-twscrape (Mariluz Congosto). El buscador de X solo tiene
+  completos los últimos ~7 días; para el tramo anterior la función usa
+  Destacados (`Top`) en ventanas fijas de 3 h, que en las pruebas
+  devolvió unas diez veces más que Latest (410 contra 37 tweets en un
+  día). Aun así es una muestra, no el total, y la función lo avisa.
 - Nueva \[getTweetsLiveAPI()\] (experimental): captura en vivo de una
   búsqueda “hacia adelante”. Repite \[getTweetsSearchAPI()\] cada
   `interval` segundos (mínimo 60) durante `duration` y, desde la segunda
   ronda, agrega `since_id:<último ID visto>` a la consulta para traer
-  solo lo publicado después, sin gastar cupo en lo ya recolectado. Con
-  `save = TRUE` guarda lo acumulado después de cada ronda; una ronda
-  fallida no corta la captura y Esc / Ctrl+C devuelve lo acumulado.
-  Avisa cuando una ronda llega al tope `n_tweets` (posibles huecos).
+  solo lo publicado después, sin gastar cupo en lo ya recolectado. Una
+  ronda fallida no corta la captura y Esc / Ctrl+C devuelve lo
+  acumulado. Avisa cuando una ronda llega al tope `n_tweets` (posibles
+  huecos).
 - Nuevo artículo “Parámetros de búsqueda” en el sitio: recorre los
   operadores de X en
   [`getTweetsSearchAPI()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsSearchAPI.md)

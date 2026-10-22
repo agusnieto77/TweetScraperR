@@ -10,7 +10,12 @@ aparecen n_tweets o mas tweets nuevos, los que exceden el tope quedan sin
 recolectar (se avisa con un mensaje); en ese caso conviene bajar interval
 o subir n_tweets. Un error en una ronda se informa y la captura sigue con
 la proxima. Interrumpir con Esc / Ctrl+C termina la captura y devuelve lo
-acumulado hasta ese momento.'><meta property="og:description" content='
+acumulado hasta ese momento.
+Guardado y reanudacion: con save = TRUE o db, cada ronda se guarda
+en una base SQLite apenas llega. Para continuar una captura cortada, llama
+de nuevo con el mismo search y db = "&amp;lt;ruta&amp;gt;.sqlite": la primera ronda
+pide lo posterior al tweet mas reciente guardado y duration cuenta desde
+la nueva llamada.'><meta property="og:description" content='
 Sigue una busqueda "hacia adelante": repite getTweetsSearchAPI() (pestania
 "Latest") cada interval segundos durante duration segundos y acumula
 solo los tweets nuevos. Desde la segunda ronda la consulta lleva el operador
@@ -21,7 +26,12 @@ aparecen n_tweets o mas tweets nuevos, los que exceden el tope quedan sin
 recolectar (se avisa con un mensaje); en ese caso conviene bajar interval
 o subir n_tweets. Un error en una ronda se informa y la captura sigue con
 la proxima. Interrumpir con Esc / Ctrl+C termina la captura y devuelve lo
-acumulado hasta ese momento.'></head><body>
+acumulado hasta ese momento.
+Guardado y reanudacion: con save = TRUE o db, cada ronda se guarda
+en una base SQLite apenas llega. Para continuar una captura cortada, llama
+de nuevo con el mismo search y db = "&amp;lt;ruta&amp;gt;.sqlite": la primera ronda
+pide lo posterior al tweet mas reciente guardado y duration cuenta desde
+la nueva llamada.'></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -73,6 +83,11 @@ recolectar (se avisa con un mensaje); en ese caso conviene bajar <code>interval<
 o subir <code>n_tweets</code>. Un error en una ronda se informa y la captura sigue con
 la proxima. Interrumpir con Esc / Ctrl+C termina la captura y devuelve lo
 acumulado hasta ese momento.</p>
+<p><strong>Guardado y reanudacion:</strong> con <code>save = TRUE</code> o <code>db</code>, cada ronda se guarda
+en una base SQLite apenas llega. Para continuar una captura cortada, llama
+de nuevo con el mismo <code>search</code> y <code>db = "&lt;ruta&gt;.sqlite"</code>: la primera ronda
+pide lo posterior al tweet mas reciente guardado y <code>duration</code> cuenta desde
+la nueva llamada.</p>
     </div>
 
     <div class="section level2">
@@ -83,6 +98,7 @@ acumulado hasta ese momento.</p>
 <span>  duration <span class="op">=</span> <span class="fl">3600</span>,</span>
 <span>  n_tweets <span class="op">=</span> <span class="fl">100</span>,</span>
 <span>  max_tweets <span class="op">=</span> <span class="cn">Inf</span>,</span>
+<span>  db <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  dir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  save <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -111,24 +127,31 @@ acumulado hasta ese momento.</p>
 
 
 <dt id="arg-max-tweets">max_tweets<a class="anchor" aria-label="anchor" href="#arg-max-tweets"></a></dt>
-<dd><p>La captura termina al alcanzar este total acumulado. Por
-defecto <code>Inf</code> (solo limita <code>duration</code>).</p></dd>
+<dd><p>La captura termina cuando la base llega a este total de
+tweets. Por defecto <code>Inf</code> (solo limita <code>duration</code>).</p></dd>
+
+
+<dt id="arg-db">db<a class="anchor" aria-label="anchor" href="#arg-db"></a></dt>
+<dd><p>Ruta a una base <code>.sqlite</code>. Si no existe se crea; si existe, se
+continua la captura guardada en ella. Por defecto NULL.</p></dd>
 
 
 <dt id="arg-dir">dir<a class="anchor" aria-label="anchor" href="#arg-dir"></a></dt>
-<dd><p>Directorio de destino del RDS. Por defecto el de trabajo.</p></dd>
+<dd><p>Directorio donde se crea la base cuando <code>save = TRUE</code> y no se
+pasa <code>db</code>. Por defecto el de trabajo.</p></dd>
 
 
 <dt id="arg-save">save<a class="anchor" aria-label="anchor" href="#arg-save"></a></dt>
-<dd><p>Logico. Si TRUE guarda lo acumulado en un RDS dentro de <code>dir</code>
-despues de cada ronda (si la sesion de R se corta, lo recolectado no se
-pierde). Por defecto FALSE: no se escribe ningun archivo.</p></dd>
+<dd><p>Logico. Si TRUE y no se pasa <code>db</code>, crea una base nueva
+<code>api_live_&lt;consulta&gt;_&lt;fecha&gt;.sqlite</code> en <code>dir</code>. Por defecto FALSE: se usa
+una base temporal que se borra al terminar.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>Un tibble con un tweet por fila, del mas nuevo al mas viejo (mismas
-columnas que <code><a href="getTweetsSearchAPI.html">getTweetsSearchAPI()</a></code>).</p>
+columnas que <code><a href="getTweetsSearchAPI.html">getTweetsSearchAPI()</a></code>). Al continuar una captura incluye lo
+guardado antes.</p>
     </div>
 
     <div class="section level2">

@@ -45,6 +45,12 @@ desde JSON (texto completo, métricas, media, hashtags, menciones, etc.).
   : Search Tweets via the X API (experimental)
 - [`getTweetsLiveAPI()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsLiveAPI.md)
   : Capture Tweets from a Search as They Are Published (experimental)
+- [`getTweetsHistoricalAPI()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsHistoricalAPI.md)
+  : Historical Search over a Date Range (experimental)
+- [`getTweetsThreadsAPI()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsThreadsAPI.md)
+  : Crawl Full Reply Trees of Tweets (experimental)
+- [`readTweetsDB()`](https://agusnieto77.github.io/TweetScraperR/reference/readTweetsDB.md)
+  : Read Tweets Saved by a Long Download
 - [`getTweetsRepliesAPI()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsRepliesAPI.md)
   : Get Tweet Replies / Thread via the X API (experimental)
 - [`getTweetsDataAPI()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsDataAPI.md)

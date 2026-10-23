@@ -213,7 +213,7 @@ rango <- getTweetsSearchAPI(
   "Feijoo", n_tweets = 20,
   since = "2026-10-17", until = "2026-10-18"
 )
-#> Buscando: Feijoo since:2026-10-17 until:2026-10-18 (Latest)
+#> Buscando: Feijoo since_time:1792195200 until_time:1792368000 (Latest)
 #> Tweets únicos recolectados: 20
 ```
 

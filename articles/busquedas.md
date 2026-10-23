@@ -265,8 +265,9 @@ head(tw[, c("user", "respuesta_a_user")], 3)
 
 [`getTweetsSearchAPI()`](https://agusnieto77.github.io/TweetScraperR/reference/getTweetsSearchAPI.md)
 tiene los argumentos `since` y `until`. Con un día (`"YYYY-MM-DD"` o un
-objeto `Date`), **los dos extremos son inclusivos**:
-`until = "2026-10-13"` incluye los tweets del 13.
+objeto `Date`), **los dos extremos son inclusivos** y los días se
+cuentan en **UTC**, como la columna `fecha`: `until = "2026-10-13"`
+incluye los tweets del 13 hasta las 23:59:59 UTC.
 
 ``` r
 
@@ -291,17 +292,13 @@ table(as.Date(tw$fecha))
 #>          5
 ```
 
-Los argumentos son un atajo: escribir `since:` y `until:` dentro de
-`search` da exactamente el mismo resultado:
-
-``` r
-
-tw <- getTweetsSearchAPI("from:NASA since:2026-10-10 until:2026-10-13", n_tweets = 20)
-table(as.Date(tw$fecha))
-#>
-#> 2026-10-11 2026-10-13
-#>          1          3
-```
+Los argumentos traducen el día a `since_time:`/`until_time:` (segundos
+Unix en UTC). Escribir `since:` y `until:` a mano dentro de `search`
+**no es equivalente**: X interpreta esos operadores en la zona horaria
+del navegador del motor (Buenos Aires, UTC-3), así que el día empieza y
+termina tres horas más tarde que en UTC. Por ejemplo, con
+`since:2026-10-19 until:2026-10-19` aparecen tweets del 20/10 entre las
+00:00 y las 02:59 UTC.
 
 ### Por hora exacta
 

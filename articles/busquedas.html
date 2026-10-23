@@ -317,8 +317,10 @@ incluidas las respuestas a otras respuestas:</p>
 <p><code><a href="../reference/getTweetsSearchAPI.html">getTweetsSearchAPI()</a></code> tiene los argumentos
 <code>since</code> y <code>until</code>. Con un día
 (<code>"YYYY-MM-DD"</code> o un objeto <code>Date</code>), <strong>los
-dos extremos son inclusivos</strong>: <code>until = "2026-10-13"</code>
-incluye los tweets del 13.</p>
+dos extremos son inclusivos</strong> y los días se cuentan en
+<strong>UTC</strong>, como la columna <code>fecha</code>:
+<code>until = "2026-10-13"</code> incluye los tweets del 13 hasta las
+23:59:59 UTC.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tw</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getTweetsSearchAPI.html">getTweetsSearchAPI</a></span><span class="op">(</span><span class="st">"from:NASA"</span>, n_tweets <span class="op">=</span> <span class="fl">20</span>,</span>
 <span>                         since <span class="op">=</span> <span class="st">"2026-10-10"</span>, until <span class="op">=</span> <span class="st">"2026-10-13"</span><span class="op">)</span></span>
@@ -335,15 +337,14 @@ el mismo día en los dos extremos se obtiene un solo día:</p>
 <span><span class="co">#&gt;</span></span>
 <span><span class="co">#&gt; 2026-10-09</span></span>
 <span><span class="co">#&gt;          5</span></span></code></pre></div>
-<p>Los argumentos son un atajo: escribir <code>since:</code> y
-<code>until:</code> dentro de <code>search</code> da exactamente el
-mismo resultado:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tw</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getTweetsSearchAPI.html">getTweetsSearchAPI</a></span><span class="op">(</span><span class="st">"from:NASA since:2026-10-10 until:2026-10-13"</span>, n_tweets <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="va">tw</span><span class="op">$</span><span class="va">fecha</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;</span></span>
-<span><span class="co">#&gt; 2026-10-11 2026-10-13</span></span>
-<span><span class="co">#&gt;          1          3</span></span></code></pre></div>
+<p>Los argumentos traducen el día a
+<code>since_time:</code>/<code>until_time:</code> (segundos Unix en
+UTC). Escribir <code>since:</code> y <code>until:</code> a mano dentro
+de <code>search</code> <strong>no es equivalente</strong>: X interpreta
+esos operadores en la zona horaria del navegador del motor (Buenos
+Aires, UTC-3), así que el día empieza y termina tres horas más tarde que
+en UTC. Por ejemplo, con <code>since:2026-10-19 until:2026-10-19</code>
+aparecen tweets del 20/10 entre las 00:00 y las 02:59 UTC.</p>
 </div>
 <div class="section level3">
 <h3 id="por-hora-exacta">Por hora exacta<a class="anchor" aria-label="anchor" href="#por-hora-exacta"></a>
@@ -355,7 +356,7 @@ se interpretan en <strong>UTC</strong>, como la columna
 los operadores <code>since_time:</code> y <code>until_time:</code> de X.
 En este caso se muestra el mensaje <code>Buscando:</code> para que se
 vea la traducción:</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tw</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getTweetsSearchAPI.html">getTweetsSearchAPI</a></span><span class="op">(</span><span class="st">"argentina"</span>, n_tweets <span class="op">=</span> <span class="fl">15</span>,</span>
 <span>                         since <span class="op">=</span> <span class="st">"2026-10-20 12:00:00"</span>, until <span class="op">=</span> <span class="st">"2026-10-20 12:10:00"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Buscando: argentina since_time:1792497600 until_time:1792498200 (Latest)</span></span>
@@ -364,7 +365,7 @@ vea la traducción:</p>
 <p>Todos los tweets caen en la franja (son los 15 más recientes de esos
 10 minutos). Para trabajar en otra zona horaria, pasá objetos
 <code>POSIXct</code>, que conservan su zona:</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.POSIXlt.html" class="external-link">as.POSIXct</a></span><span class="op">(</span><span class="st">"2026-10-20 13:00"</span>, tz <span class="op">=</span> <span class="st">"America/Argentina/Buenos_Aires"</span><span class="op">)</span></span>
 <span><span class="va">tw</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getTweetsSearchAPI.html">getTweetsSearchAPI</a></span><span class="op">(</span><span class="st">"argentina"</span>, n_tweets <span class="op">=</span> <span class="fl">15</span>, since <span class="op">=</span> <span class="va">a</span>, until <span class="op">=</span> <span class="va">a</span> <span class="op">+</span> <span class="fl">600</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Buscando: argentina since_time:1792512000 until_time:1792512600 (Latest)</span></span>
@@ -372,7 +373,7 @@ vea la traducción:</p>
 <span><span class="co">#&gt; [1] "2026-10-20 13:09:31" "2026-10-20 13:09:59"</span></span></code></pre></div>
 <p>Los operadores también se pueden escribir a mano dentro de
 <code>search</code>, con la hora en segundos Unix:</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.POSIXlt.html" class="external-link">as.POSIXct</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"2026-10-20 12:00:00"</span>, <span class="st">"2026-10-20 12:10:00"</span><span class="op">)</span>, tz <span class="op">=</span> <span class="st">"UTC"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 1792497600 1792498200</span></span>
 <span><span class="va">tw</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getTweetsSearchAPI.html">getTweetsSearchAPI</a></span><span class="op">(</span><span class="st">"argentina since_time:1792497600 until_time:1792498200"</span>,</span>
@@ -400,7 +401,7 @@ tweets que el ejemplo anterior.</p>
 <div class="section level2">
 <h2 id="idioma-lang">5. Idioma: <code>lang:</code><a class="anchor" aria-label="anchor" href="#idioma-lang"></a>
 </h2>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tw</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getTweetsSearchAPI.html">getTweetsSearchAPI</a></span><span class="op">(</span><span class="st">"messi lang:en"</span>, n_tweets <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">tw</span><span class="op">$</span><span class="va">idioma</span><span class="op">)</span></span>
 <span><span class="co">#&gt;</span></span>
@@ -413,7 +414,7 @@ tweets que el ejemplo anterior.</p>
 <h2 id="métricas-mínimas-min_faves-min_retweets-min_replies">6. Métricas mínimas: <code>min_faves:</code>,
 <code>min_retweets:</code>, <code>min_replies:</code><a class="anchor" aria-label="anchor" href="#m%C3%A9tricas-m%C3%ADnimas-min_faves-min_retweets-min_replies"></a>
 </h2>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tw</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getTweetsSearchAPI.html">getTweetsSearchAPI</a></span><span class="op">(</span><span class="st">"milei min_faves:1000"</span>, n_tweets <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">tw</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"user"</span>, <span class="st">"megustas"</span>, <span class="st">"retweets"</span><span class="op">)</span><span class="op">]</span>, <span class="fl">3</span><span class="op">)</span></span>
 <span><span class="co">#&gt; # A tibble: 3 × 3</span></span>
@@ -425,7 +426,7 @@ tweets que el ejemplo anterior.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">tw</span><span class="op">$</span><span class="va">megustas</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 1018</span></span></code></pre></div>
 <p>Se pueden combinar:</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tw</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getTweetsSearchAPI.html">getTweetsSearchAPI</a></span><span class="op">(</span><span class="st">"milei min_retweets:500 min_replies:100"</span>, n_tweets <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>retweets <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">tw</span><span class="op">$</span><span class="va">retweets</span><span class="op">)</span>, respuestas <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">tw</span><span class="op">$</span><span class="va">respuestas</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   retweets respuestas</span></span>
@@ -437,7 +438,7 @@ tweets que el ejemplo anterior.</p>
 <div class="section level3">
 <h3 id="con-imágenes-videos-o-gifs-filtermedia">Con imágenes, videos o GIFs: <code>filter:media</code><a class="anchor" aria-label="anchor" href="#con-im%C3%A1genes-videos-o-gifs-filtermedia"></a>
 </h3>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tw</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getTweetsSearchAPI.html">getTweetsSearchAPI</a></span><span class="op">(</span><span class="st">"milei filter:media"</span>, n_tweets <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">tw</span><span class="op">$</span><span class="va">media_tipo</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;</span></span>
@@ -446,7 +447,7 @@ tweets que el ejemplo anterior.</p>
 <p><code>filter:images</code> <strong>no devolvió resultados</strong> en
 las pruebas. Para quedarte solo con los tweets que tienen fotos, filtrá
 en R por <code>media_tipo</code>:</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fotos</span> <span class="op">&lt;-</span> <span class="va">tw</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">tw</span><span class="op">$</span><span class="va">media_tipo</span>, <span class="kw">function</span><span class="op">(</span><span class="va">t</span><span class="op">)</span> <span class="st">"photo"</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">t</span><span class="op">)</span>, <span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">fotos</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 10</span></span></code></pre></div>
@@ -454,7 +455,7 @@ en R por <code>media_tipo</code>:</p>
 <div class="section level3">
 <h3 id="con-video-filtervideos">Con video: <code>filter:videos</code><a class="anchor" aria-label="anchor" href="#con-video-filtervideos"></a>
 </h3>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tw</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getTweetsSearchAPI.html">getTweetsSearchAPI</a></span><span class="op">(</span><span class="st">"milei filter:videos"</span>, n_tweets <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">tw</span><span class="op">$</span><span class="va">media_tipo</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;</span></span>
@@ -467,7 +468,7 @@ en R por <code>media_tipo</code>:</p>
 <p><code>filter:links</code> trae tweets con algún enlace;
 <code>url:</code> exige un dominio (o parte de una URL) en
 particular:</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tw</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getTweetsSearchAPI.html">getTweetsSearchAPI</a></span><span class="op">(</span><span class="st">"inteligencia artificial filter:links"</span>, n_tweets <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lengths.html" class="external-link">lengths</a></span><span class="op">(</span><span class="va">tw</span><span class="op">$</span><span class="va">urls_externas</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
@@ -480,7 +481,7 @@ particular:</p>
 <h3 id="respuestas-sí-o-no-filterreplies-y--filterreplies">Respuestas sí o no: <code>filter:replies</code> y
 <code>-filter:replies</code><a class="anchor" aria-label="anchor" href="#respuestas-s%C3%AD-o-no-filterreplies-y--filterreplies"></a>
 </h3>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tw</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getTweetsSearchAPI.html">getTweetsSearchAPI</a></span><span class="op">(</span><span class="st">"milei filter:replies"</span>, n_tweets <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/any.html" class="external-link">any</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">tw</span><span class="op">$</span><span class="va">respuesta_a_id</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] FALSE</span></span>
@@ -495,7 +496,7 @@ particular:</p>
 <div class="section level3">
 <h3 id="citas-filterquote">Citas: <code>filter:quote</code><a class="anchor" aria-label="anchor" href="#citas-filterquote"></a>
 </h3>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tw</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getTweetsSearchAPI.html">getTweetsSearchAPI</a></span><span class="op">(</span><span class="st">"milei filter:quote"</span>, n_tweets <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="va">tw</span><span class="op">$</span><span class="va">es_cita</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
@@ -510,7 +511,7 @@ particular:</p>
 <code>"Latest"</code> (por defecto, orden cronológico),
 <code>"Top"</code> (destacados, mezcla fechas) o <code>"Media"</code>
 (solo tweets con fotos o videos):</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tw</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getTweetsSearchAPI.html">getTweetsSearchAPI</a></span><span class="op">(</span><span class="st">"milei"</span>, n_tweets <span class="op">=</span> <span class="fl">10</span>, product <span class="op">=</span> <span class="st">"Top"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">tw</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"fecha"</span>, <span class="st">"user"</span>, <span class="st">"megustas"</span><span class="op">)</span><span class="op">]</span>, <span class="fl">3</span><span class="op">)</span></span>
 <span><span class="co">#&gt; # A tibble: 3 × 3</span></span>
@@ -531,7 +532,7 @@ particular:</p>
 tweets que digan “inflación” <strong>o</strong> “dólar”, en español, con
 al menos 100 me gusta, que no sean respuestas y publicados desde el 1 de
 octubre:</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tw</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getTweetsSearchAPI.html">getTweetsSearchAPI</a></span><span class="op">(</span></span>
 <span>  <span class="st">"(inflación OR dólar) lang:es min_faves:100 -filter:replies"</span>,</span>
 <span>  n_tweets <span class="op">=</span> <span class="fl">15</span>, since <span class="op">=</span> <span class="st">"2026-10-01"</span></span>
@@ -556,7 +557,7 @@ octubre:</p>
 </h2>
 <p><code><a href="../reference/getTweetsLiveAPI.html">getTweetsLiveAPI()</a></code> acepta la misma consulta y la repite
 cada <code>interval</code> segundos trayendo solo tweets nuevos:</p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">vivo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getTweetsLiveAPI.html">getTweetsLiveAPI</a></span><span class="op">(</span><span class="st">"milei lang:es -filter:replies"</span>,</span>
 <span>                         interval <span class="op">=</span> <span class="fl">60</span>, duration <span class="op">=</span> <span class="fl">60</span>, n_tweets <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Captura en vivo de: milei lang:es -filter:replies (cada 60 s hasta las 19:41:20)</span></span>

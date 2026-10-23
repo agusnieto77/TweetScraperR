@@ -40,15 +40,15 @@ getTweetsSearchAPI(
 
 - since:
 
-  Desde cuando (opcional). Un dia `"YYYY-MM-DD"` (incluye ese dia) o un
-  instante `"YYYY-MM-DD HH:MM[:SS]"` en UTC (tambien con `_` o `T` como
-  separador y sufijo `_UTC`). Acepta objetos `Date` y `POSIXct`. Con
-  hora se traduce al operador `since_time:` de X.
+  Desde cuando (opcional). Un dia `"YYYY-MM-DD"` (desde las 00:00 UTC de
+  ese dia) o un instante `"YYYY-MM-DD HH:MM[:SS]"` en UTC (tambien con
+  `_` o `T` como separador y sufijo `_UTC`). Acepta objetos `Date` y
+  `POSIXct`. Se traduce al operador `since_time:` de X.
 
 - until:
 
-  Hasta cuando (opcional), mismos formatos que `since`. Un dia solo
-  incluye ese dia; con hora se traduce a `until_time:`.
+  Hasta cuando (opcional), mismos formatos que `since`. Un dia incluye
+  ese dia completo (UTC); se traduce a `until_time:`.
 
 - dir:
 

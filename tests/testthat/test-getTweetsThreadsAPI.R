@@ -93,6 +93,16 @@ test_that("una conversacion con consultas fallidas queda pendiente", {
   expect_true(any(grepl("Reanuda con getTweetsThreadsAPI", msgs)))
 })
 
+test_that("con una sola conversacion se muestra el avance por ventana; con varias, no", {
+  local_fake_threads()
+  una <- utils::capture.output(suppressMessages(getTweetsThreadsAPI(conv_ids[["a"]])))
+  varias <- utils::capture.output(suppressMessages(getTweetsThreadsAPI(unname(conv_ids))))
+
+  expect_true(any(grepl(" -> .*tweets, .*nuevos", una)))
+  expect_false(any(grepl(" -> ", varias)))
+  expect_true(any(grepl("^3/3 \\| conversacion", varias)))
+})
+
 test_that("un vector de IDs se acepta tal cual y uno invalido se rechaza", {
   expect_equal(TweetScraperR:::.thread_conversations(c("1", "1", "2")), c("1", "2"))
   expect_error(TweetScraperR:::.thread_conversations("https://x.com/a/status/1"), "invalidos")

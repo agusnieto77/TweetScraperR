@@ -30,6 +30,10 @@
 #' @noRd
 .HIST_TOP_WINDOW <- "3 hours"
 
+#' Intentos por consulta antes de darla por fallida
+#' @noRd
+.HIST_ATTEMPTS <- 3L
+
 #' Reloj de la busqueda historica (indireccion para poder testear)
 #' @noRd
 .hist_now <- function() Sys.time()
@@ -206,11 +210,12 @@
     parcial <- FALSE
     nuevos <- 0L
     # X devuelve vacios y errores intermitentes, y suele repetir el resultado
-    # de una consulta identica: hasta 3 intentos, cada uno con `until_time` un
-    # segundo mas tarde (la ventana crece, no se pierde nada; el solape se
-    # deduplica). Un vacio se acepta solo si al menos dos intentos
+    # de una consulta identica: hasta .HIST_ATTEMPTS intentos, cada uno con
+    # `until_time` un segundo mas tarde (la ventana crece, no se pierde nada;
+    # el solape se deduplica). Un vacio se acepta solo si al menos dos intentos
     # respondieron vacio sin error.
-    for (intento in 1:3) {
+    for (intento in seq_len(.HIST_ATTEMPTS)) {
+      de <- paste0(intento, "/", .HIST_ATTEMPTS)
       stats$consultas <- stats$consultas + 1L
       q <- paste0(search, " since_time:", .epoch_chr(a), " until_time:",
                   sprintf("%.0f", ceiling(as.numeric(b)) + intento - 1))
@@ -222,20 +227,20 @@
           r
         }, tsr_partial_harvest = function(w) {
           parcial <<- TRUE
-          message("Consulta incompleta (", format(a, "%Y-%m-%d %H:%M"), ", intento ", intento, "/3): ",
+          message("Consulta incompleta (", format(a, "%Y-%m-%d %H:%M"), ", intento ", de, "): ",
                   conditionMessage(w))
           invokeRestart("muffleWarning")
         }),
         error = function(e) {
           errores <<- errores + 1L
-          message("Consulta fallida (", format(a, "%Y-%m-%d %H:%M"), ", intento ", intento, "/3): ",
+          message("Consulta fallida (", format(a, "%Y-%m-%d %H:%M"), ", intento ", de, "): ",
                   conditionMessage(e))
           NULL
         })
       nuevos <- nuevos + .store_add(con, tw)
       if (NROW(tw)) {
         if (errores) message("Consulta recuperada (", format(a, "%Y-%m-%d %H:%M"), ") en el intento ",
-                             intento, "/3: ", NROW(tw), " tweets")
+                             de, ": ", NROW(tw), " tweets")
         break
       }
     }

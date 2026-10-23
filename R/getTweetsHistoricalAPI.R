@@ -222,16 +222,22 @@
           r
         }, tsr_partial_harvest = function(w) {
           parcial <<- TRUE
-          message("Consulta incompleta (", format(a, "%Y-%m-%d %H:%M"), "): ", conditionMessage(w))
+          message("Consulta incompleta (", format(a, "%Y-%m-%d %H:%M"), ", intento ", intento, "/3): ",
+                  conditionMessage(w))
           invokeRestart("muffleWarning")
         }),
         error = function(e) {
           errores <<- errores + 1L
-          message("Consulta fallida (", format(a, "%Y-%m-%d %H:%M"), "): ", conditionMessage(e))
+          message("Consulta fallida (", format(a, "%Y-%m-%d %H:%M"), ", intento ", intento, "/3): ",
+                  conditionMessage(e))
           NULL
         })
       nuevos <- nuevos + .store_add(con, tw)
-      if (NROW(tw)) break
+      if (NROW(tw)) {
+        if (errores) message("Consulta recuperada (", format(a, "%Y-%m-%d %H:%M"), ") en el intento ",
+                             intento, "/3: ", NROW(tw), " tweets")
+        break
+      }
     }
     if (parcial || (!NROW(tw) && errores >= 2L)) stats$ok <- FALSE
     if (!NROW(tw) && stats$ok) {

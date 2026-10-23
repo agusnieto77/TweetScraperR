@@ -157,6 +157,25 @@ test_that("una ventana con consultas fallidas o incompletas queda pendiente y se
   expect_equal(nrow(TweetScraperR:::.store_plan_pending(con, "hist|")), 0)
 })
 
+test_that("dos fallos y un tercer intento con datos cierran la ventana y lo avisan", {
+  corpus <- corpus_every("2026-10-20 00:00:00", "2026-10-20 23:59:59", 1800)
+  db <- withr::local_tempfile(fileext = ".sqlite")
+  local_fake_search(corpus, cap = 600, on_call = function(n, search) {
+    if (n <= 2) stop("page.goto: Timeout 60000ms exceeded.")
+  })
+
+  msgs <- testthat::capture_messages(utils::capture.output(
+    tw <- getTweetsHistoricalAPI("#x", since = "2026-10-20", until = "2026-10-20", db = db)
+  ))
+  expect_true(any(grepl("Consulta fallida .*intento 1/3", msgs)))
+  expect_true(any(grepl("Consulta fallida .*intento 2/3", msgs)))
+  expect_true(any(grepl("Consulta recuperada .*intento 3/3", msgs)))
+  expect_setequal(tw$tweet_id, corpus$tweet_id)
+  con <- TweetScraperR:::.store_open(db)
+  on.exit(DBI::dbDisconnect(con), add = TRUE)
+  expect_equal(nrow(TweetScraperR:::.store_plan_pending(con, "hist|")), 0)
+})
+
 test_that("una respuesta truncada por X no da la ventana por agotada", {
   # Regresion: X a veces devuelve una sola pagina de una ventana densa; antes
   # una respuesta de menos de 500 tweets cerraba la ventana y se perdia el resto.

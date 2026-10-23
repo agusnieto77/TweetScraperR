@@ -159,10 +159,11 @@ getTweetsThreadsAPI <- function(tweets = NULL, n_per_window = 900, db = NULL,
     for (k in seq_len(nrow(pendientes))) {
       id <- sub("^conv\\|", "", pendientes$task_key[[k]])
       # Ventanas volatiles (no se guardan en `plan`): la unidad que se marca es
-      # la conversacion entera.
+      # la conversacion entera. Con una sola conversacion (un hilo enorme puede
+      # llevar casi una hora) se muestra el avance por ventana.
       ventanas <- .hist_plan(pendientes$a[[k]], b0, cutoff, prefix = paste0("conv", id))
       run <- .hist_run(paste0("conversation_id:", id), ventanas, n_per_window, con,
-                       mark = FALSE, verbose = FALSE)
+                       mark = FALSE, verbose = nrow(pendientes) == 1L)
       if (run$complete) .store_done(con, pendientes$task_key[[k]]) else incompletas <- c(incompletas, id)
       cat(k, "/", nrow(pendientes), " | conversacion ", id, ": ", .store_count(con, id),
           " tweets", if (!run$complete) " (incompleta)", " | total: ", .store_count(con), "\n", sep = "")

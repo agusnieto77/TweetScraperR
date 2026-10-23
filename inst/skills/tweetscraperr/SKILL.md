@@ -147,7 +147,7 @@ Notas de argumentos:
   `min_replies:`, `filter:media`, `filter:videos`, `filter:links`,
   `url:dominio`, `filter:replies`, `filter:quote`, `conversation_id:<id>`.
   `product`: `"Latest"` (recientes), `"Top"` (destacados) o `"Media"`.
-  `since`/`until`: un día `"YYYY-MM-DD"` (ambos días inclusivos) o una hora
+  `since`/`until`: un día `"YYYY-MM-DD"` (ambos días inclusivos, en UTC) o una hora
   `"YYYY-MM-DD HH:MM:SS"` en UTC (o un `POSIXct`) para franjas horarias. `filter:images`
   no funciona: usar `filter:media` y filtrar por `media_tipo`. Si una búsqueda
   devuelve 0 tweets de forma inesperada, reintentarla una vez.

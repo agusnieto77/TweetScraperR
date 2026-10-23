@@ -7,9 +7,12 @@ query_of <- function(...) {
   utils::URLdecode(sub("^.*[?&]q=([^&]*).*$", "\\1", url))
 }
 
-test_that("un dia va como since:/until: y una hora como since_time:/until_time: en UTC", {
+test_that("un dia y una hora van como since_time:/until_time: en UTC; until incluye su dia", {
+  # 2026-10-08 00:00 UTC = 1791417600; 2026-10-10 00:00 UTC = 1791590400
   expect_equal(query_of(since = "2026-10-08", until = "2026-10-09"),
-               "#x since:2026-10-08 until:2026-10-09")
+               "#x since_time:1791417600 until_time:1791590400")
+  expect_equal(query_of(since = "2026-10-08", until = "2026-10-08"),
+               "#x since_time:1791417600 until_time:1791504000")
   # 2026-10-20 12:00:00 UTC = 1792497600
   expect_equal(query_of(since = "2026-10-20 12:00:00", until = "2026-10-20 12:10"),
                "#x since_time:1792497600 until_time:1792498200")
@@ -18,7 +21,7 @@ test_that("un dia va como since:/until: y una hora como since_time:/until_time: 
 })
 
 test_that("Date y POSIXct se aceptan; POSIXct respeta su zona horaria", {
-  expect_equal(query_of(since = as.Date("2026-10-08")), "#x since:2026-10-08")
+  expect_equal(query_of(since = as.Date("2026-10-08")), "#x since_time:1791417600")
   art <- as.POSIXct("2026-10-20 09:00:00", tz = "America/Argentina/Buenos_Aires")
   expect_equal(query_of(since = art), "#x since_time:1792497600")
 })

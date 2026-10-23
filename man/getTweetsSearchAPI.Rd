@@ -23,13 +23,13 @@ getTweetsSearchAPI(
 \item{product}{Pestania de resultados: "Latest" (recientes, por defecto),
 "Top" (destacados) o "Media".}
 
-\item{since}{Desde cuando (opcional). Un dia \code{"YYYY-MM-DD"} (incluye ese
-dia) o un instante \code{"YYYY-MM-DD HH:MM[:SS]"} en UTC (tambien con \verb{_} o
-\code{T} como separador y sufijo \verb{_UTC}). Acepta objetos \code{Date} y \code{POSIXct}.
-Con hora se traduce al operador \verb{since_time:} de X.}
+\item{since}{Desde cuando (opcional). Un dia \code{"YYYY-MM-DD"} (desde las
+00:00 UTC de ese dia) o un instante \code{"YYYY-MM-DD HH:MM[:SS]"} en UTC
+(tambien con \verb{_} o \code{T} como separador y sufijo \verb{_UTC}). Acepta objetos
+\code{Date} y \code{POSIXct}. Se traduce al operador \verb{since_time:} de X.}
 
 \item{until}{Hasta cuando (opcional), mismos formatos que \code{since}. Un dia
-solo incluye ese dia; con hora se traduce a \verb{until_time:}.}
+incluye ese dia completo (UTC); se traduce a \verb{until_time:}.}
 
 \item{dir}{Directorio de destino del RDS. Por defecto el de trabajo.}
 

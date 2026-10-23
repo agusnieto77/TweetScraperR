@@ -43,15 +43,18 @@
 
 #' Operador de fecha de la busqueda de X para `since`/`until`
 #'
-#' Un dia se pasa como `since:`/`until:` (X incluye ambos dias). Un instante
-#' se pasa como `since_time:`/`until_time:` en segundos Unix: X ya no
-#' devuelve resultados con `since:YYYY-MM-DD_HH:MM:SS`.
+#' Siempre se pasa como `since_time:`/`until_time:` en segundos Unix. Los
+#' operadores de dia (`since:`/`until:`) los interpreta X en la zona horaria
+#' del navegador (la del motor es la de Buenos Aires), no en UTC, y X ya no
+#' devuelve resultados con `since:YYYY-MM-DD_HH:MM:SS`. Un dia en `until`
+#' incluye ese dia completo (hasta las 00:00 UTC del siguiente).
 #' @return El operador como texto, o NULL si `x` es NULL o vacio.
 #' @noRd
 .search_time_operator <- function(x, op) {
   t <- .parse_search_time(x, op)
   if (is.null(t)) return(NULL)
-  if (t$day) paste0(op, ":", format(t$time, "%Y-%m-%d")) else paste0(op, "_time:", as.integer(t$time))
+  secs <- floor(as.numeric(t$time)) + if (t$day && op == "until") 86400 else 0
+  paste0(op, "_time:", sprintf("%.0f", secs))
 }
 
 #' Search Tweets via the X API (experimental)
@@ -73,12 +76,12 @@
 #' @param dir Directorio de destino del RDS. Por defecto el de trabajo.
 #' @param save Logico. Si TRUE guarda el resultado en un RDS dentro de `dir`.
 #'   Por defecto FALSE: no se escribe ningun archivo.
-#' @param since Desde cuando (opcional). Un dia `"YYYY-MM-DD"` (incluye ese
-#'   dia) o un instante `"YYYY-MM-DD HH:MM[:SS]"` en UTC (tambien con `_` o
-#'   `T` como separador y sufijo `_UTC`). Acepta objetos `Date` y `POSIXct`.
-#'   Con hora se traduce al operador `since_time:` de X.
+#' @param since Desde cuando (opcional). Un dia `"YYYY-MM-DD"` (desde las
+#'   00:00 UTC de ese dia) o un instante `"YYYY-MM-DD HH:MM[:SS]"` en UTC
+#'   (tambien con `_` o `T` como separador y sufijo `_UTC`). Acepta objetos
+#'   `Date` y `POSIXct`. Se traduce al operador `since_time:` de X.
 #' @param until Hasta cuando (opcional), mismos formatos que `since`. Un dia
-#'   solo incluye ese dia; con hora se traduce a `until_time:`.
+#'   incluye ese dia completo (UTC); se traduce a `until_time:`.
 #'
 #' @return Un tibble con un tweet por fila (mismas columnas que
 #'   [getUserTweetsAPI()], incluyendo media, hashtags, menciones, etc.).

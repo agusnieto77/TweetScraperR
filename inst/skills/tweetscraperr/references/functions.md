@@ -76,8 +76,9 @@ getTweetsSearchAPI(search = "#RStats", n_tweets = 40,
                    since = NULL, until = NULL, dir = getwd(), save = FALSE)
 ```
 Búsqueda con operadores de X. `since`/`until`: un día `"YYYY-MM-DD"` (ambos
-días inclusivos) o una hora `"YYYY-MM-DD HH:MM:SS"` en UTC; también aceptan
-`Date` y `POSIXct` (respeta su zona horaria).
+días inclusivos, en UTC) o una hora `"YYYY-MM-DD HH:MM:SS"` en UTC; también
+aceptan `Date` y `POSIXct` (respeta su zona horaria). Siempre se traducen a
+`since_time:`/`until_time:`.
 
 ```r
 getTweetsHistoricalAPI(search, since = NULL, until = NULL, n_per_window = 900,

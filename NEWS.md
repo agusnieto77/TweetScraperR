@@ -54,8 +54,16 @@
   dejó de devolver resultados con `since:YYYY-MM-DD_HH:MM:SS`, así que ahora
   un instante (`"YYYY-MM-DD HH:MM[:SS]"` en UTC, o un `POSIXct` en cualquier
   zona horaria) se traduce a `since_time:`/`until_time:`. Un día
-  (`"YYYY-MM-DD"` o `Date`) sigue yendo como `since:`/`until:`, con ambos días
-  inclusivos. Una fecha inválida ahora da error en vez de una búsqueda vacía.
+  (`"YYYY-MM-DD"` o `Date`) también va como `since_time:`/`until_time:`,
+  con ambos días inclusivos en UTC: `since:`/`until:` los interpreta X en la
+  zona horaria del navegador (Buenos Aires), así que el día se corría tres
+  horas (`since = until = "2026-10-19"` traía tweets del 20/10 hasta las
+  02:59 UTC). Una fecha inválida ahora da error en vez de una búsqueda vacía.
+* [getTweetsHistoricalAPI()] y [getTweetsThreadsAPI()]: los mensajes de una
+  consulta fallida o incompleta indican el intento (`intento 2/3`), y cuando
+  un reintento trae datos se avisa con `Consulta recuperada ... en el intento
+  N/3`. [getTweetsThreadsAPI()] con una sola conversación muestra el avance
+  por ventana.
 
 # TweetScraperR 0.8.1
 
